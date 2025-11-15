@@ -26,5 +26,107 @@
     }
     h1 {
       font-size: 2.4rem;
-      letter-spacing:
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+    .tagline {
+      font-size: 0.95rem;
+      color: #c7c7ff;
+      margin-bottom: 1.75rem;
+    }
+    .channels {
+      display: grid;
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+    .channel {
+      padding: 0.9rem 1rem;
+      border-radius: 999px;
+      background: rgba(10,10,30,0.85);
+      border: 1px solid rgba(129,140,248,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .channel span {
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+    .channel small {
+      font-size: 0.75rem;
+      opacity: 0.75;
+    }
+    audio {
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+    .links {
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+    }
+    .links a {
+      color: #a5b4fc;
+      text-decoration: none;
+      margin: 0 0.4rem;
+    }
+    .links a:hover {
+      text-decoration: underline;
+    }
+    .footnote {
+      margin-top: 1.5rem;
+      font-size: 0.7rem;
+      opacity: 0.55;
+    }
+  </style>
+</head>
+<body>
+  <main class="wrapper">
+    <h1>Radio RRR</h1>
+    <p class="tagline">Live internet radio · Electro · 80s · Chill</p>
 
+    <section class="channels">
+      <div class="channel">
+        <div>
+          <span>Radio RRR Electro</span><br />
+          <small>High-energy electronic & club</small>
+          <audio controls preload="none">
+            <source src="https://stream.radiorrr.com/electro.mp3" type="audio/mpeg" />
+            Your browser doesn’t support the audio element.
+          </audio>
+        </div>
+      </div>
+
+      <div class="channel">
+        <div>
+          <span>Radio RRR 80s</span><br />
+          <small>Classic 80s hits & synth</small>
+          <audio controls preload="none">
+            <source src="https://stream.radiorrr.com/80s.mp3" type="audio/mpeg" />
+            Your browser doesn’t support the audio element.
+          </audio>
+        </div>
+      </div>
+
+      <div class="channel">
+        <div>
+          <span>Radio RRR Chill</span><br />
+          <small>Lo-fi, downtempo & late-night vibes</small>
+          <audio controls preload="none">
+            <source src="https://stream.radiorrr.com/chill.mp3" type="audio/mpeg" />
+            Your browser doesn’t support the audio element.
+          </audio>
+        </div>
+      </div>
+    </section>
+
+    <div class="links">
+      <a href="https://www.instagram.com/radio.rrr/" target="_blank" rel="noopener">Instagram</a> ·
+      <a href="https://www.tiktok.com/@josh_u_rrr" target="_blank" rel="noopener">TikTok</a> ·
+      <a href="https://github.com/joshurrr" target="_blank" rel="noopener">GitHub</a>
+    </div>
+
+    <p class="footnote">Streaming 24/7 · More channels coming soon.</p>
+  </main>
+</body>
+</html>
