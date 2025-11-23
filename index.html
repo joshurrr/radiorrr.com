@@ -98,8 +98,7 @@
 <body>
   <main class="wrapper">
 
-    <img src="logo.png" alt="Radio RRR Logo"
-         style="width: 300px; max-width: 90%; margin: 0 auto 10px; display: block;">
+    <img src="logo.png" alt="Radio RRR Logo" style="width: 300px; max-width: 90%; margin: 0 auto 10px; display: block;">
 
     <p class="tagline">Streaming Electro · Synth · 80s · Chill</p>
 
@@ -108,12 +107,12 @@
     </div>
 
     <div class="channel">
-      <span id="streamTitle">Dark Synth Live Stream (guest station)</span><br />
-      <small id="streamSubtitle">Powered by Nightride / REKT Network</small>
+      <span id="streamTitle">DI.FM Lounge – Deep Chill Stream</span><br />
+      <small id="streamSubtitle">Slow tempo · Deep bass · Less treble</small>
 
       <audio id="liveStream" controls playsinline crossorigin="anonymous">
-        <source id="src1" src="https://stream.rekt.fm/darksynth.mp3" type="audio/mpeg" />
-        <source id="src2" src="https://stream.rekt.fm/darksynth.ogg" type="audio/ogg" />
+        <source id="src1" src="https://prem2.di.fm/lounge/m3u8" type="audio/mpeg" />
+        <source id="src2" src="https://prem2.di.fm/lounge/icecast/aacp/64k.m3u8" type="audio/aac" />
       </audio>
 
       <button id="kickPlay" class="kick">Play</button>
@@ -140,248 +139,225 @@
     <p class="footnote">Streaming 24/7</p>
   </main>
 
-<script defer>
-document.addEventListener("DOMContentLoaded", function () {
-  try {
-
-    /* ---------------- AUDIO + SCHEDULE ---------------- */
-
-    var audio = document.getElementById("liveStream");
-    var src1 = document.getElementById("src1");
-    var src2 = document.getElementById("src2");
-    var titleEl = document.getElementById("streamTitle");
-    var subEl = document.getElementById("streamSubtitle");
-    var statusEl = document.getElementById("status");
-    var kick = document.getElementById("kickPlay");
-
-    function setStatus(msg) { statusEl.textContent = "Status: " + msg; }
-
-    var isSunday = (new Date()).getDay() === 0;
-    if (isSunday) {
-      titleEl.textContent = "Sunday Recovery Sessions";
-      subEl.textContent = "Chill / dark synth downshift";
-    }
-
-    audio.load();
-
-
-    /* ---------------- OUTRUN VISUALIZER ---------------- */
-
-    var canvas = document.getElementById("viz");
-    var ctx = canvas.getContext("2d");
-
-    function resize() {
-      var dpr = window.devicePixelRatio || 1;
-      var w = canvas.clientWidth, h = canvas.clientHeight;
-      canvas.width = w * dpr;
-      canvas.height = h * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    }
-    resize();
-    window.addEventListener("resize", resize);
-
-    var analyser = null, dataArray = null, audioCtx = null, sourceNode = null;
-
-    function initAnalyser() {
-      if (audioCtx || analyser) return;
+  <script defer>
+    document.addEventListener("DOMContentLoaded", function () {
       try {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 1024;
-        dataArray = new Uint8Array(analyser.frequencyBinCount);
-        sourceNode = audioCtx.createMediaElementSource(audio);
-        sourceNode.connect(analyser);
-        analyser.connect(audioCtx.destination);
-      } catch (e) {
-        analyser = null;
+        var audio = document.getElementById("liveStream"),
+            src1 = document.getElementById("src1"),
+            src2 = document.getElementById("src2"),
+            titleEl = document.getElementById("streamTitle"),
+            subEl = document.getElementById("streamSubtitle"),
+            statusEl = document.getElementById("status"),
+            kick = document.getElementById("kickPlay");
+
+        function setStatus(msg) { statusEl.textContent = "Status: " + msg; }
+
+        // Sunday schedule logic
+        if ((new Date()).getDay() === 0) {
+          titleEl.textContent = "Sunday Recovery Sessions";
+          subEl.textContent = "Ultra-chill bass lounge";
+          src1.src = "https://prem2.di.fm/lounge/m3u8";
+          src2.src = "https://prem2.di.fm/lounge/icecast/aacp/64k.m3u8";
+        } else {
+          titleEl.textContent = "DI.FM Lounge – Deep Chill Stream";
+          subEl.textContent = "Slow tempo · Deep bass · Less treble";
+          src1.src = "https://prem2.di.fm/lounge/m3u8";
+          src2.src = "https://prem2.di.fm/lounge/icecast/aacp/64k.m3u8";
+        }
+
+        audio.load();
+
+        var canvas = document.getElementById("viz"),
+            ctx = canvas.getContext("2d");
+
+        function resize() {
+          var dpr = window.devicePixelRatio || 1;
+          var w = canvas.clientWidth, h = canvas.clientHeight;
+          if (!w || !h) return;
+          canvas.width = w * dpr;
+          canvas.height = h * dpr;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+        resize();
+        window.addEventListener("resize", resize);
+
+        var analyser = null, dataArray = null, audioCtx = null, sourceNode = null;
+
+        function initAnalyser() {
+          if (audioCtx || analyser) return;
+          try {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 1024;
+            dataArray = new Uint8Array(analyser.frequencyBinCount);
+            sourceNode = audioCtx.createMediaElementSource(audio);
+            sourceNode.connect(analyser);
+            analyser.connect(audioCtx.destination);
+          } catch (e) {
+            analyser = null;
+          }
+        }
+
+        function avgRange(start, end) {
+          if (!dataArray) return 0;
+          var sum = 0;
+          for (var i = start; i < end; i++) sum += dataArray[i];
+          return sum / (end - start);
+        }
+
+        var stars = [];
+        for (let i = 0; i < 120; i++) {
+          stars.push({ x: Math.random()*2 - 1, y: Math.random()*0.9 - 0.45, z: Math.random()*1 + 0.2 });
+        }
+        function resetStar(s) {
+          s.x = Math.random()*2 - 1;
+          s.y = Math.random()*0.9 - 0.45;
+          s.z = Math.random()*1 + 0.2;
+        }
+
+        function drawSun(cx, horizonY, radius, glow) {
+          var g = ctx.createRadialGradient(cx, horizonY, radius*0.2, cx, horizonY, radius);
+          g.addColorStop(0, "rgba(255,100,220,0.95)");
+          g.addColorStop(0.6, "rgba(255,70,160,0.85)");
+          g.addColorStop(1, "rgba(120,40,255,0)");
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(cx, horizonY, radius*(0.9+glow), 0, Math.PI*2);
+          ctx.fill();
+
+          ctx.save();
+          ctx.globalCompositeOperation = "source-atop";
+          ctx.fillStyle = "rgba(5,7,16,0.65)";
+          var stripeH = radius*0.12;
+          for (let y=-radius; y<radius; y+=stripeH*1.8) {
+            ctx.fillRect(cx-radius, horizonY+y, radius*2, stripeH);
+          }
+          ctx.restore();
+        }
+
+        function drawGrid(w, h, horizonY, t, energy, bassLevel) {
+          var vanX = w/2, vanY = horizonY;
+          var punch = 45 * bassLevel;
+          var wobble = 10 * bassLevel;
+
+          ctx.lineWidth = 1.2 + energy*2.6;
+          ctx.strokeStyle = "rgba(0,240,255,0.70)";
+          ctx.shadowColor = "rgba(255,0,200,0.95)";
+          ctx.shadowBlur = 14 + energy*28;
+
+          var cols = 18;
+          for (let i=0; i<=cols; i++) {
+            var x = (i/cols)*w;
+            var sway = Math.sin(t*4.5 + i*0.9) * wobble;
+            ctx.beginPath();
+            ctx.moveTo(vanX, vanY);
+            ctx.lineTo(x + sway, h);
+            ctx.stroke();
+          }
+
+          var rows = 22;
+          var speed = 0.7 + energy*2.6;
+          for (let r=1; r<=rows; r++) {
+            var p = (r/rows + t*speed) % 1;
+            var depth = p*p;
+            var y = vanY + depth*(h - vanY);
+            var frontFactor = depth;
+
+            var heave = punch * frontFactor * Math.sin(t*7.5);
+            var wavePhase = (t*2.2 - p*3.5);
+            var shock = Math.sin(wavePhase * Math.PI * 2) * (18 * bassLevel * frontFactor);
+
+            var bounce = heave + shock;
+
+            ctx.beginPath();
+            ctx.moveTo(0, y + bounce);
+            ctx.lineTo(w, y + bounce);
+            ctx.stroke();
+          }
+
+          ctx.shadowBlur = 0;
+        }
+
+        function drawScanlines(w, h, t) {
+          ctx.save();
+          ctx.globalAlpha = 0.12;
+          ctx.fillStyle = "rgba(0,0,0,1)";
+          var gap = 3;
+          var offset = (t*30)%gap;
+          for (let y=offset; y<h; y+=gap) {
+            ctx.fillRect(0, y, w, 1);
+          }
+          ctx.restore();
+        }
+
+        var t0 = performance.now();
+        function draw() {
+          var t = (performance.now()-t0)/1000;
+          var w = canvas.clientWidth, h = canvas.clientHeight;
+
+          var energy = 0.12, bassLevel = 0;
+          if (analyser && dataArray) {
+            analyser.getByteFrequencyData(dataArray);
+            bassLevel = avgRange(0,12)/255;
+            bassLevel = Math.min(1, Math.pow(bassLevel,2)*1.6);
+            var mid = avgRange(12,90)/255;
+            energy = Math.min(1, bassLevel*1.2 + mid*0.25);
+          }
+
+          var horizonY = h * 0.58;
+          var cx = w/2;
+
+          var sky = ctx.createLinearGradient(0,0,0,horizonY);
+          sky.addColorStop(0, "#140022");
+          sky.addColorStop(0.5, "#22004a");
+          sky.addColorStop(1, "#050710");
+          ctx.fillStyle = sky;
+          ctx.fillRect(0, 0, w, horizonY);
+
+          ctx.fillStyle = "rgba(255,0,180,0.06)";
+          ctx.fillRect(0, 0, w, horizonY);
+
+          for (let s of stars) {
+            s.z -= (0.003 + energy*0.01);
+            if (s.z <= 0.06) resetStar(s);
+
+            var sx = cx + (s.x/s.z)*cx;
+            var sy = horizonY*0.55 + (s.y/s.z)*(horizonY*0.7);
+            var size = (1/s.z)*(0.45 + energy*1.1);
+            ctx.fillStyle = "rgba(199,199,255,0.9)";
+            ctx.fillRect(sx, sy, size, size);
+          }
+
+          drawSun(cx, horizonY*0.98, Math.min(w,h)*0.18, energy*0.25);
+
+          var ground = ctx.createLinearGradient(0, horizonY, 0, h);
+          ground.addColorStop(0, "#050710");
+          ground.addColorStop(1, "#02030a");
+          ctx.fillStyle = ground;
+          ctx.fillRect(0, horizonY, w, h-horizonY);
+
+          drawGrid(w, h, horizonY, t, energy, bassLevel);
+          drawScanlines(w, h, t);
+
+          requestAnimationFrame(draw);
+        }
+        draw();
+
+        kick.addEventListener("click", function(){
+          initAnalyser();
+          setStatus("trying to play...");
+          audio.play().then(function(){
+            setStatus("playing");
+            if (audioCtx && audioCtx.state==="suspended") audioCtx.resume();
+          }).catch(function(err){
+            setStatus("tap Play again");
+          });
+        });
+
+      } catch (err) {
+        console.log("Init error:", err);
       }
-    }
-
-    function avgRange(start, end) {
-      if (!dataArray) return 0;
-      var sum = 0;
-      for (var i = start; i < end; i++) sum += dataArray[i];
-      return sum / (end - start);
-    }
-
-    var stars = [];
-    for (let i = 0; i < 120; i++) {
-      stars.push({
-        x: Math.random() * 2 - 1,
-        y: Math.random() * 0.9 - 0.45,
-        z: Math.random() * 1 + 0.2
-      });
-    }
-
-    function resetStar(s) {
-      s.x = Math.random() * 2 - 1;
-      s.y = Math.random() * 0.9 - 0.45;
-      s.z = Math.random() * 1 + 0.2;
-    }
-
-    function drawSun(cx, horizonY, radius, glow) {
-      var g = ctx.createRadialGradient(cx, horizonY, radius * 0.2, cx, horizonY, radius);
-      g.addColorStop(0, "rgba(255, 100, 220, 0.95)");
-      g.addColorStop(0.6, "rgba(255, 70, 160, 0.85)");
-      g.addColorStop(1, "rgba(120, 40, 255, 0)");
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(cx, horizonY, radius * (0.9 + glow), 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.save();
-      ctx.globalCompositeOperation = "source-atop";
-      ctx.fillStyle = "rgba(5,7,16,0.65)";
-      var stripeH = radius * 0.12;
-      for (let y = -radius; y < radius; y += stripeH * 1.8) {
-        ctx.fillRect(cx - radius, horizonY + y, radius * 2, stripeH);
-      }
-      ctx.restore();
-    }
-
-    /* ---------------- NEW HARD-BASS GRID ---------------- */
-
-    function drawGrid(w, h, horizonY, t, energy, bassLevel) {
-      var vanX = w / 2;
-      var vanY = horizonY;
-
-      var punch = 45 * bassLevel;   // BIG jumps
-      var wobble = 10 * bassLevel;  // side sway
-
-      ctx.lineWidth = 1.2 + energy * 2.6;
-      ctx.strokeStyle = "rgba(0, 240, 255, 0.70)";
-      ctx.shadowColor = "rgba(255, 0, 200, 0.95)";
-      ctx.shadowBlur = 14 + energy * 28;
-
-      // Vertical lines with sway
-      var cols = 18;
-      for (let i = 0; i <= cols; i++) {
-        var x = (i / cols) * w;
-        var sway = Math.sin(t * 4.5 + i * 0.9) * wobble;
-        ctx.beginPath();
-        ctx.moveTo(vanX, vanY);
-        ctx.lineTo(x + sway, h);
-        ctx.stroke();
-      }
-
-      // Horizontal lines with HUGE bass bounce + shockwave
-      var rows = 22;
-      var speed = 0.7 + energy * 2.6;
-
-      for (let r = 1; r <= rows; r++) {
-        var p = (r / rows + t * speed) % 1;
-        var depth = p * p;
-        var y = vanY + depth * (h - vanY);
-
-        var frontFactor = depth; // closer = bigger motion
-
-        var heave = punch * frontFactor * Math.sin(t * 7.5);
-
-        var wavePhase = (t * 2.2 - p * 3.5);
-        var shock = Math.sin(wavePhase * Math.PI * 2) *
-          (18 * bassLevel * frontFactor);
-
-        var bounce = heave + shock;
-
-        ctx.beginPath();
-        ctx.moveTo(0, y + bounce);
-        ctx.lineTo(w, y + bounce);
-        ctx.stroke();
-      }
-
-      ctx.shadowBlur = 0;
-    }
-
-    function drawScanlines(w, h, t) {
-      ctx.save();
-      ctx.globalAlpha = 0.12;
-      ctx.fillStyle = "rgba(0,0,0,1)";
-      var gap = 3;
-      var offset = (t * 30) % gap;
-      for (let y = offset; y < h; y += gap) ctx.fillRect(0, y, w, 1);
-      ctx.restore();
-    }
-
-    var t0 = performance.now();
-
-    function draw() {
-      var t = (performance.now() - t0) / 1000;
-      var w = canvas.clientWidth, h = canvas.clientHeight;
-
-      var energy = 0.12;
-      var bassLevel = 0;
-
-      if (analyser && dataArray) {
-        analyser.getByteFrequencyData(dataArray);
-
-        bassLevel = avgRange(0, 12) / 255;
-        bassLevel = Math.min(1, Math.pow(bassLevel, 2) * 1.6);
-
-        var mid = avgRange(12, 90) / 255;
-        energy = Math.min(1, bassLevel * 1.2 + mid * 0.25);
-      }
-
-      var horizonY = h * 0.58;
-      var cx = w / 2;
-
-      // sky
-      var sky = ctx.createLinearGradient(0, 0, 0, horizonY);
-      sky.addColorStop(0, "#140022");
-      sky.addColorStop(0.5, "#22004a");
-      sky.addColorStop(1, "#050710");
-      ctx.fillStyle = sky;
-      ctx.fillRect(0, 0, w, horizonY);
-
-      ctx.fillStyle = "rgba(255, 0, 180, 0.06)";
-      ctx.fillRect(0, 0, w, horizonY);
-
-      for (let s of stars) {
-        s.z -= 0.003 + energy * 0.01;
-        if (s.z <= 0.06) resetStar(s);
-
-        var sx = cx + (s.x / s.z) * cx;
-        var sy = horizonY * 0.55 + (s.y / s.z) * (horizonY * 0.7);
-
-        var size = (1 / s.z) * (0.45 + energy * 1.1);
-        ctx.fillStyle = "rgba(199,199,255,0.9)";
-        ctx.fillRect(sx, sy, size, size);
-      }
-
-      drawSun(cx, horizonY * 0.98, Math.min(w, h) * 0.18, energy * 0.25);
-
-      var ground = ctx.createLinearGradient(0, horizonY, 0, h);
-      ground.addColorStop(0, "#050710");
-      ground.addColorStop(1, "#02030a");
-      ctx.fillStyle = ground;
-      ctx.fillRect(0, horizonY, w, h - horizonY);
-
-      drawGrid(w, h, horizonY, t, energy, bassLevel);
-      drawScanlines(w, h, t);
-
-      requestAnimationFrame(draw);
-    }
-    requestAnimationFrame(draw);
-
-
-    /* ---------------- PLAY BUTTON ---------------- */
-
-    kick.addEventListener("click", function(){
-      initAnalyser();
-      setStatus("trying to play...");
-      audio.play().then(function(){
-        setStatus("playing");
-        if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
-      }).catch(function(err){
-        setStatus("tap Play again");
-      });
     });
-
-
-  } catch (err) {
-    console.log("Init error:", err);
-  }
-});
-</script>
-
+  </script>
 </body>
 </html>
