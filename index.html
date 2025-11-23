@@ -30,7 +30,6 @@
       color: #c7c7ff;
       margin: 0.5rem 0 1.25rem;
     }
-
     .visualizer {
       width: 100%;
       height: 260px;
@@ -39,10 +38,8 @@
       background: #050710;
       border: 1px solid rgba(129,140,248,0.5);
       margin-bottom: 1.5rem;
-      position: relative;
     }
     #viz { width: 100%; height: 100%; display: block; }
-
     .channel {
       padding: 1.2rem 1.4rem;
       border-radius: 16px;
@@ -54,44 +51,25 @@
     .channel span { font-weight: 600; font-size: 1rem; }
     .channel small { font-size: 0.8rem; opacity: 0.75; }
     audio { width: 100%; margin-top: 0.8rem; }
-
-    .status {
-      margin-top: 0.55rem;
-      font-size: 0.78rem;
-      opacity: 0.75;
-    }
+    .status { margin-top: 0.55rem; font-size: 0.78rem; opacity: 0.75; }
     .kick {
-      margin-top:0.6rem;
-      padding:0.45rem 0.7rem;
-      border-radius:10px;
-      border:1px solid rgba(129,140,248,0.6);
-      background:#0b1020;
-      color:#c7c7ff;
-      cursor:pointer;
-      font-size:0.85rem;
+      margin-top:0.6rem; padding:0.45rem 0.7rem;
+      border-radius:10px; border:1px solid rgba(129,140,248,0.6);
+      background:#0b1020; color:#c7c7ff;
+      cursor:pointer; font-size:0.85rem;
     }
-    .kick:hover { filter: brightness(1.15); }
-
     .video-container {
       position: relative;
-      width: 100%;
-      padding-bottom: 56.25%;
+      width: 100%; padding-bottom: 56.25%;
       margin-top: 0.8rem;
     }
     .video-container iframe {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border: 0;
-      top: 0; left: 0;
-      border-radius: 12px;
+      position: absolute; width: 100%; height: 100%; border: 0;
+      top: 0; left: 0; border-radius: 12px;
     }
-
     .links { margin-top: 0.75rem; font-size: 0.85rem; }
     .links a { color: #a5b4fc; text-decoration: none; margin: 0 0.4rem; }
-    .links a:hover { text-decoration: underline; }
-
-    .footnote { margin-top: 1.5rem; font-size: 0.7rem; opacity: 0.55; text-align:center; }
+    .footnote { margin-top: 1.5rem; font-size: 0.7rem; opacity: 0.55; }
   </style>
 </head>
 
@@ -109,10 +87,14 @@
 
     <div class="channel">
       <span id="streamTitle">Nightride FM – EBSM</span><br />
-      <small id="streamSubtitle">Up-tempo · Funky Electro · Bass-forward</small>
+      <small id="streamSubtitle">Up-tempo · Funky Electronic · Bass-forward</small>
 
+      <!-- DUAL-STATION FIX: Works on iPhone + Desktop -->
       <audio id="liveStream" controls playsinline crossorigin="anonymous">
-        <source id="src1" src="https://stream.nightride.fm/ebsm.mp3" type="audio/mpeg" />
+        <!-- iPhone-safe fallback -->
+        <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
+        <!-- EBSM on desktop -->
+        <source src="https://stream.nightride.fm/ebsm.ogg" type="audio/ogg" />
       </audio>
 
       <button id="kickPlay" class="kick">Play</button>
@@ -143,8 +125,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   try {
 
-    /* ---------------- AUDIO SETUP ---------------- */
-
+    /* ---------------- AUDIO ---------------- */
     var audio = document.getElementById("liveStream");
     var statusEl = document.getElementById("status");
     var kick = document.getElementById("kickPlay");
@@ -168,32 +149,28 @@ document.addEventListener("DOMContentLoaded", function () {
     resize();
     window.addEventListener("resize", resize);
 
-    var analyser = null, dataArray = null, audioCtx = null, sourceNode = null;
+    var analyser = null, dataArray = null, audioCtx = null;
 
     function initAnalyser() {
-      if (audioCtx || analyser) return;
+      if (audioCtx) return;
       try {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioCtx.createAnalyser();
         analyser.fftSize = 1024;
         dataArray = new Uint8Array(analyser.frequencyBinCount);
-        sourceNode = audioCtx.createMediaElementSource(audio);
+        var sourceNode = audioCtx.createMediaElementSource(audio);
         sourceNode.connect(analyser);
         analyser.connect(audioCtx.destination);
-      } catch (e) {
-        analyser = null;
-      }
+      } catch (e) {}
     }
 
     function avgRange(start, end) {
-      if (!dataArray) return 0;
       var sum = 0;
       for (let i = start; i < end; i++) sum += dataArray[i];
       return sum / (end - start);
     }
 
     /* ---------------- STARFIELD ---------------- */
-
     var stars = [];
     for (let i = 0; i < 120; i++) {
       stars.push({
@@ -209,146 +186,130 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function drawSun(cx, horizonY, radius, glow) {
-      var g = ctx.createRadialGradient(cx, horizonY, radius * 0.2, cx, horizonY, radius);
-      g.addColorStop(0, "rgba(255,100,220,0.95)");
-      g.addColorStop(0.6, "rgba(255,70,160,0.85)");
-      g.addColorStop(1, "rgba(120,40,255,0)");
+      var g = ctx.createRadialGradient(cx, horizonY, radius*0.2, cx, horizonY, radius);
+      g.addColorStop(0,"rgba(255,100,220,0.95)");
+      g.addColorStop(0.6,"rgba(255,70,160,0.85)");
+      g.addColorStop(1,"rgba(120,40,255,0)");
       ctx.fillStyle = g;
       ctx.beginPath();
-      ctx.arc(cx, horizonY, radius*(0.9 + glow), 0, Math.PI*2);
+      ctx.arc(cx,horizonY,radius*(0.9+glow),0,Math.PI*2);
       ctx.fill();
 
       ctx.save();
       ctx.globalCompositeOperation = "source-atop";
       ctx.fillStyle = "rgba(5,7,16,0.65)";
-      var stripeH = radius * 0.12;
-      for (let y = -radius; y < radius; y += stripeH*1.8) {
+      var stripeH = radius*0.12;
+      for (let y=-radius; y<radius; y+=stripeH*1.8)
         ctx.fillRect(cx-radius, horizonY+y, radius*2, stripeH);
-      }
       ctx.restore();
     }
 
     /* ---------------- 3D FRONT-LIFT GRID ---------------- */
 
-    function drawGrid3D(w, h, horizonY, t, energy, bassLevel) {
-      var vanX = w/2;
-      var vanY = horizonY;
+    function drawGrid3D(w,h,horizonY,t,energy,bass){
+      var vanX = w/2, vanY = horizonY;
 
-      var maxLift = 65 * bassLevel;   // how high the front pops up
-      var wobble = 8 * bassLevel;     // horizontal sway
+      var liftAmount = 65 * bass; 
+      var wobble = 8 * bass;
 
-      ctx.lineWidth = 1.3 + energy * 2.4;
-      ctx.strokeStyle = "rgba(0, 240, 255, 0.75)";
-      ctx.shadowColor = "rgba(255, 0, 200, 0.95)";
-      ctx.shadowBlur = 18 + energy * 22;
+      ctx.lineWidth = 1.3 + energy*2.4;
+      ctx.strokeStyle = "rgba(0,240,255,0.75)";
+      ctx.shadowColor = "rgba(255,0,200,0.95)";
+      ctx.shadowBlur = 18 + energy*22;
 
-      /* Vertical lines */
-      let cols = 18;
-      for (let i=0; i<=cols; i++) {
-        let x = (i/cols)*w;
-        let sway = Math.sin(t*4 + i*0.9) * wobble;
-
+      /* vertical lines */
+      for (let i=0;i<=18;i++){
+        let x=(i/18)*w;
+        let sway=Math.sin(t*4+i*0.9)*wobble;
         ctx.beginPath();
-        ctx.moveTo(vanX, vanY);
-        ctx.lineTo(x + sway, h);
+        ctx.moveTo(vanX,vanY);
+        ctx.lineTo(x+sway,h);
         ctx.stroke();
       }
 
-      /* Horizontal lines with 3D lift */
-      let rows = 22;
-      let speed = 0.8 + energy * 2.2;
+      /* horizontal lines with 3D front lift */
+      for (let r=1;r<=22;r++){
+        let p=(r/22 + t*(0.8+energy*2.2))%1;
+        let depth=p*p;
 
-      for (let r=1; r<=rows; r++) {
-        let p = (r/rows + t*speed) % 1;
-        let depth = p*p;
-        let baseY = vanY + depth*(h - vanY);
+        let baseY=vanY + depth*(h-vanY);
 
-        let frontFactor = depth;   // 0 near horizon, 1 near front
+        let frontFactor = depth;
 
-        // Bass-driven Z-axis lift
-        let lift = maxLift * frontFactor * Math.sin(t*7.0);
-
-        // Add a smooth shock ripple down the road
-        let ripple = Math.sin((t*2.2 - p*3.3)*Math.PI*2)
-                       * (22 * bassLevel * frontFactor);
+        let lift = liftAmount * frontFactor * Math.sin(t*7);
+        let ripple = Math.sin((t*2.2 - p*3.3)*Math.PI*2) * (22*bass*frontFactor);
 
         let y = baseY + lift + ripple;
 
         ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(w, y);
+        ctx.moveTo(0,y);
+        ctx.lineTo(w,y);
         ctx.stroke();
       }
 
       ctx.shadowBlur = 0;
     }
 
-    function drawScanlines(w, h, t) {
+    function drawScan(w,h,t){
       ctx.save();
-      ctx.globalAlpha = 0.12;
-      ctx.fillStyle = "rgba(0,0,0,1)";
-      let gap = 3;
-      let offset = (t*30)%gap;
-      for (let y = offset; y < h; y += gap) ctx.fillRect(0, y, w, 1);
+      ctx.globalAlpha=0.12;
+      ctx.fillStyle="rgba(0,0,0,1)";
+      var gap=3, off=(t*30)%gap;
+      for (let y=off;y<h;y+=gap) ctx.fillRect(0,y,w,1);
       ctx.restore();
     }
 
-    /* ---------------- MAIN DRAW LOOP ---------------- */
+    /* ---------------- MAIN LOOP ---------------- */
 
-    var t0 = performance.now();
-    function draw() {
-      var t = (performance.now()-t0)/1000;
-      var w = canvas.clientWidth, h = canvas.clientHeight;
-      if (!w || !h) return requestAnimationFrame(draw);
+    var t0=performance.now();
+    function draw(){
+      var t=(performance.now()-t0)/1000;
+      var w=canvas.clientWidth, h=canvas.clientHeight;
 
-      var energy = 0.12, bassLevel = 0;
-      if (analyser && dataArray) {
+      var energy=0.1, bass=0;
+      if (analyser){
         analyser.getByteFrequencyData(dataArray);
-        bassLevel = avgRange(0,14) / 255;
-        bassLevel = Math.min(1, Math.pow(bassLevel, 2.2) * 1.7);
-        var mid = avgRange(14,110)/255;
-        energy = bassLevel*1.1 + mid*0.3;
+        bass = avgRange(0,14)/255;
+        bass = Math.min(1, Math.pow(bass,2.2)*1.7);
+        let mid = avgRange(14,110)/255;
+        energy = bass*1.1 + mid*0.3;
       }
 
-      var horizonY = h * 0.58;
-      var cx = w/2;
+      var horizon=h*0.58;
+      var cx=w/2;
 
       /* sky */
-      var sky = ctx.createLinearGradient(0,0,0,horizonY);
-      sky.addColorStop(0, "#140022");
-      sky.addColorStop(0.5, "#22004a");
-      sky.addColorStop(1, "#050710");
-      ctx.fillStyle = sky;
-      ctx.fillRect(0,0,w,horizonY);
-      ctx.fillStyle = "rgba(255,0,180,0.06)";
-      ctx.fillRect(0,0,w,horizonY);
+      var g=ctx.createLinearGradient(0,0,0,horizon);
+      g.addColorStop(0,"#140022");
+      g.addColorStop(0.5,"#22004a");
+      g.addColorStop(1,"#050710");
+      ctx.fillStyle=g;
+      ctx.fillRect(0,0,w,horizon);
+
+      ctx.fillStyle="rgba(255,0,180,0.06)";
+      ctx.fillRect(0,0,w,horizon);
 
       /* stars */
-      for (let s of stars) {
-        s.z -= 0.003 + energy*0.01;
+      for (let s of stars){
+        s.z-=0.003+energy*0.01;
         if (s.z<=0.06) resetStar(s);
-        let sx = cx + (s.x/s.z)*cx;
-        let sy = horizonY*0.55 + (s.y/s.z)*(horizonY*0.7);
-        let size = (1/s.z)*(0.45 + energy*1.1);
-        ctx.fillStyle = "rgba(199,199,255,0.9)";
+        let sx=cx+(s.x/s.z)*cx;
+        let sy=horizon*0.55+(s.y/s.z)*(horizon*0.7);
+        let size=(1/s.z)*(0.45+energy*1.1);
+        ctx.fillStyle="rgba(199,199,255,0.9)";
         ctx.fillRect(sx,sy,size,size);
       }
 
-      /* sun */
-      drawSun(cx, horizonY*0.98, Math.min(w,h)*0.18, energy*0.25);
+      drawSun(cx,horizon*0.98,Math.min(w,h)*0.18,energy*0.25);
 
-      /* ground */
-      var ground = ctx.createLinearGradient(0,horizonY,0,h);
+      var ground=ctx.createLinearGradient(0,horizon,0,h);
       ground.addColorStop(0,"#050710");
       ground.addColorStop(1,"#02030a");
-      ctx.fillStyle = ground;
-      ctx.fillRect(0,horizonY,w,h-horizonY);
+      ctx.fillStyle=ground;
+      ctx.fillRect(0,horizon,w,h-horizon);
 
-      /* 3D grid */
-      drawGrid3D(w,h,horizonY,t,energy,bassLevel);
-
-      /* scanlines */
-      drawScanlines(w,h,t);
+      drawGrid3D(w,h,horizon,t,energy,bass);
+      drawScan(w,h,t);
 
       requestAnimationFrame(draw);
     }
@@ -359,17 +320,15 @@ document.addEventListener("DOMContentLoaded", function () {
     kick.addEventListener("click", function(){
       initAnalyser();
       setStatus("trying to play...");
-      audio.play().then(function(){
+      audio.play().then(()=>{
         setStatus("playing");
         if (audioCtx && audioCtx.state==="suspended") audioCtx.resume();
-      }).catch(function(err){
+      }).catch(()=>{
         setStatus("tap Play again");
       });
     });
 
-  } catch (err) {
-    console.log("Init error:", err);
-  }
+  } catch (err) { console.log(err); }
 });
 </script>
 
