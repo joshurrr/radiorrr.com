@@ -73,3 +73,154 @@
 
     .video-container {
       position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      margin-top: 0.8rem;
+    }
+    .video-container iframe {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      top: 0;
+      left: 0;
+      border-radius: 12px;
+    }
+
+    .links {
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+    }
+    .links a {
+      color: #a5b4fc;
+      text-decoration: none;
+      margin: 0 0.4rem;
+    }
+    .links a:hover {
+      text-decoration: underline;
+    }
+    .footnote {
+      margin-top: 1.5rem;
+      font-size: 0.7rem;
+      opacity: 0.55;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="wrapper">
+
+    <img src="logo.png" alt="Radio RRR Logo" style="width: 300px; margin: 0 auto 20px; display: block;">
+
+    <p class="tagline">Streaming Electro · Synth · 80s · Chill</p>
+
+    <!-- AUDIO STREAM -->
+    <div class="channel">
+      <span id="streamTitle">Dark Synth Live Stream (guest station)</span><br />
+      <small id="streamSubtitle">Powered by Nightride / REKT Network</small>
+
+      <audio id="liveStream" controls crossorigin="anonymous">
+        <!-- sources will be set by JS -->
+        Your browser doesn’t support the audio element.
+      </audio>
+
+      <button id="kickPlay" class="kick">▶ Kick Play</button>
+      <div id="status" class="status">Status: idle</div>
+    </div>
+
+    <!-- VIDEO STREAM -->
+    <div class="channel">
+      <span>video</span><br />
+      <div class="video-container">
+        <iframe 
+          src="https://www.youtube.com/embed/p6x_4q-xaYU?list=PLli1uTuS0FH6vQ05dGXjiAl2k5K5gZpZs"
+          title="YouTube playlist player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+
+    <div class="links">
+      <a href="https://www.instagram.com/radio.rrr/" target="_blank" rel="noopener">Instagram</a> ·
+      <a href="https://www.tiktok.com/@josh.u.rrr" target="_blank" rel="noopener">TikTok</a> ·
+      <a href="https://www.youtube.com/@RADIO_RRR" target="_blank" rel="noopener">YouTube</a> ·
+      <a href="https://github.com/joshurrr" target="_blank" rel="noopener">GitHub</a>
+    </div>
+
+    <p class="footnote">Streaming 24/7</p>
+
+  </main>
+
+  <script>
+    const a = document.getElementById("liveStream");
+    const titleEl = document.getElementById("streamTitle");
+    const subEl = document.getElementById("streamSubtitle");
+    const statusEl = document.getElementById("status");
+    const kick = document.getElementById("kickPlay");
+
+    function setStatus(msg) { statusEl.textContent = "Status: " + msg; }
+
+    // ---- YOUR SCHEDULE SETTINGS ----
+    const defaultTitle = "Dark Synth Live Stream (guest station)";
+    const defaultSubtitle = "Powered by Nightride / REKT Network";
+    const defaultStream = [
+      { src: "https://stream.rekt.fm/darksynth.mp3", type: "audio/mpeg" },
+      { src: "https://stream.rekt.fm:443/darksynth.mp3", type: "audio/mpeg" },
+      { src: "https://stream.rekt.fm/darksynth.ogg", type: "audio/ogg" }
+    ];
+
+    const sundayTitle = "Sunday Recovery Sessions";
+    const sundaySubtitle = "Chill / dark synth downshift";
+    const sundayStream = [
+      // PUT YOUR SUNDAY STREAM URL(S) HERE
+      { src: "https://stream.rekt.fm/darksynth.mp3", type: "audio/mpeg" },
+      { src: "https://stream.rekt.fm/darksynth.ogg", type: "audio/ogg" }
+    ];
+    // --------------------------------
+
+    function loadSources(list) {
+      a.innerHTML = "";
+      list.forEach(s => {
+        const src = document.createElement("source");
+        src.src = s.src;
+        src.type = s.type;
+        a.appendChild(src);
+      });
+      a.load();
+    }
+
+    function applySchedule() {
+      const now = new Date();
+      const isSunday = now.getDay() === 0; // 0 = Sunday
+
+      if (isSunday) {
+        titleEl.textContent = sundayTitle;
+        subEl.textContent = sundaySubtitle;
+        loadSources(sundayStream);
+      } else {
+        titleEl.textContent = defaultTitle;
+        subEl.textContent = defaultSubtitle;
+        loadSources(defaultStream);
+      }
+    }
+
+    applySchedule();
+
+    kick.addEventListener("click", () => {
+      setStatus("trying to play...");
+      a.play().then(() => setStatus("playing")).catch(err => {
+        console.log("Play failed:", err);
+        setStatus("blocked by browser (click play again or disable Shields)");
+      });
+    });
+
+    a.addEventListener("playing", () => setStatus("playing"));
+    a.addEventListener("pause", () => setStatus("paused"));
+    a.addEventListener("waiting", () => setStatus("buffering..."));
+    a.addEventListener("error", () => setStatus("error loading stream"));
+  </script>
+
+</body>
+</html>
