@@ -24,16 +24,11 @@
       box-shadow: 0 18px 40px rgba(0,0,0,0.55);
       text-align: center;
     }
-    h1 {
-      font-size: 2.4rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 0.25rem;
-    }
     .tagline {
       font-size: 0.95rem;
       color: #c7c7ff;
       margin-bottom: 1.75rem;
+      margin-top: 0.5rem;
     }
 
     .channel {
@@ -73,13 +68,13 @@
       cursor:pointer;
       font-size:0.85rem;
     }
+
     .kick:hover { filter: brightness(1.15); }
 
-    /* Video embed styling */
     .video-container {
       position: relative;
       width: 100%;
-      padding-bottom: 56.25%; /* 16:9 ratio */
+      padding-bottom: 56.25%;
       margin-top: 0.8rem;
     }
     .video-container iframe {
@@ -116,74 +111,9 @@
   <main class="wrapper">
 
     <img src="logo.png" alt="Radio RRR Logo" style="width: 300px; margin: 0 auto 20px; display: block;">
+
     <p class="tagline">Streaming Electro · Synth · 80s · Chill</p>
 
     <!-- AUDIO STREAM -->
     <div class="channel">
-      <span>Dark Synth Live Stream (guest station)</span><br />
-      <small>Powered by Nightride / REKT Network</small>
-
-      <audio id="liveStream" controls crossorigin="anonymous">
-        <!-- Primary darksynth mp3 mount -->
-        <source src="https://stream.rekt.fm/darksynth.mp3" type="audio/mpeg" />
-        <!-- Explicit HTTPS port fallback -->
-        <source src="https://stream.rekt.fm:443/darksynth.mp3" type="audio/mpeg" />
-        <!-- OGG fallback -->
-        <source src="https://stream.rekt.fm/darksynth.ogg" type="audio/ogg" />
-        Your browser doesn’t support the audio element.
-      </audio>
-
-      <button id="kickPlay" class="kick">▶ Kick Play</button>
-      <div id="status" class="status">Status: idle</div>
-    </div>
-
-    <!-- VIDEO STREAM -->
-    <div class="channel">
-      <span>video</span><br />
-      <div class="video-container">
-        <iframe 
-          width="560" 
-          height="315"
-          src="https://www.youtube.com/embed/p6x_4q-xaYU?list=PLli1uTuS0FH6vQ05dGXjiAl2k5K5gZpZs"
-          title="YouTube playlist player"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen>
-        </iframe>
-      </div>
-    </div>
-
-    <div class="links">
-      <a href="https://www.instagram.com/radio.rrr/" target="_blank" rel="noopener">Instagram</a> ·
-      <a href="https://www.tiktok.com/@josh.u.rrr" target="_blank" rel="noopener">TikTok</a> ·
-      <a href="https://www.youtube.com/@RADIO_RRR" target="_blank" rel="noopener">YouTube</a> ·
-      <a href="https://github.com/joshurrr" target="_blank" rel="noopener">GitHub</a>
-    </div>
-
-    <p class="footnote">Streaming 24/7</p>
-
-  </main>
-
-  <script>
-    const a = document.getElementById("liveStream");
-    const statusEl = document.getElementById("status");
-    const kick = document.getElementById("kickPlay");
-
-    function setStatus(msg) { statusEl.textContent = "Status: " + msg; }
-
-    kick.addEventListener("click", () => {
-      setStatus("trying to play...");
-      a.play().then(() => setStatus("playing")).catch(err => {
-        console.log("Play failed:", err);
-        setStatus("blocked by browser (click play again or disable Shields)");
-      });
-    });
-
-    a.addEventListener("playing", () => setStatus("playing"));
-    a.addEventListener("pause", () => setStatus("paused"));
-    a.addEventListener("waiting", () => setStatus("buffering..."));
-    a.addEventListener("error", () => setStatus("error loading stream"));
-  </script>
-
-</body>
-</html>
+      <span>Dark Synth Live Stream (guest sta
