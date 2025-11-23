@@ -30,7 +30,6 @@
       margin-bottom: 1.75rem;
       margin-top: 0.5rem;
     }
-
     .channel {
       padding: 1.2rem 1.4rem;
       border-radius: 16px;
@@ -51,13 +50,11 @@
       width: 100%;
       margin-top: 0.8rem;
     }
-
     .status {
       margin-top: 0.55rem;
       font-size: 0.78rem;
       opacity: 0.75;
     }
-
     .kick {
       margin-top:0.6rem;
       padding:0.45rem 0.7rem;
@@ -68,9 +65,7 @@
       cursor:pointer;
       font-size:0.85rem;
     }
-
     .kick:hover { filter: brightness(1.15); }
-
     .video-container {
       position: relative;
       width: 100%;
@@ -86,7 +81,6 @@
       left: 0;
       border-radius: 12px;
     }
-
     .links {
       margin-top: 0.75rem;
       font-size: 0.85rem;
@@ -96,9 +90,7 @@
       text-decoration: none;
       margin: 0 0.4rem;
     }
-    .links a:hover {
-      text-decoration: underline;
-    }
+    .links a:hover { text-decoration: underline; }
     .footnote {
       margin-top: 1.5rem;
       font-size: 0.7rem;
@@ -120,11 +112,13 @@
       <small id="streamSubtitle">Powered by Nightride / REKT Network</small>
 
       <audio id="liveStream" controls crossorigin="anonymous">
-        <!-- sources will be set by JS -->
-        Your browser doesn’t support the audio element.
+        <!-- default sources (Mon-Sat) -->
+        <source id="src1" src="https://stream.rekt.fm/darksynth.mp3" type="audio/mpeg" />
+        <source id="src2" src="https://stream.rekt.fm/darksynth.ogg" type="audio/ogg" />
+        Your browser does not support the audio element.
       </audio>
 
-      <button id="kickPlay" class="kick">▶ Kick Play</button>
+      <button id="kickPlay" class="kick">Play</button>
       <div id="status" class="status">Status: idle</div>
     </div>
 
@@ -132,10 +126,9 @@
     <div class="channel">
       <span>video</span><br />
       <div class="video-container">
-        <iframe 
+        <iframe
           src="https://www.youtube.com/embed/p6x_4q-xaYU?list=PLli1uTuS0FH6vQ05dGXjiAl2k5K5gZpZs"
           title="YouTube playlist player"
-          frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen>
         </iframe>
@@ -154,72 +147,60 @@
   </main>
 
   <script>
-    const a = document.getElementById("liveStream");
-    const titleEl = document.getElementById("streamTitle");
-    const subEl = document.getElementById("streamSubtitle");
-    const statusEl = document.getElementById("status");
-    const kick = document.getElementById("kickPlay");
+    (function () {
+      var audio = document.getElementById("liveStream");
+      var src1 = document.getElementById("src1");
+      var src2 = document.getElementById("src2");
+      var titleEl = document.getElementById("streamTitle");
+      var subEl = document.getElementById("streamSubtitle");
+      var statusEl = document.getElementById("status");
+      var kick = document.getElementById("kickPlay");
 
-    function setStatus(msg) { statusEl.textContent = "Status: " + msg; }
+      function setStatus(msg) { statusEl.textContent = "Status: " + msg; }
 
-    // ---- YOUR SCHEDULE SETTINGS ----
-    const defaultTitle = "Dark Synth Live Stream (guest station)";
-    const defaultSubtitle = "Powered by Nightride / REKT Network";
-    const defaultStream = [
-      { src: "https://stream.rekt.fm/darksynth.mp3", type: "audio/mpeg" },
-      { src: "https://stream.rekt.fm:443/darksynth.mp3", type: "audio/mpeg" },
-      { src: "https://stream.rekt.fm/darksynth.ogg", type: "audio/ogg" }
-    ];
+      // Your schedule
+      var defaultTitle = "Dark Synth Live Stream (guest station)";
+      var defaultSubtitle = "Powered by Nightride / REKT Network";
+      var defaultMp3 = "https://stream.rekt.fm/darksynth.mp3";
+      var defaultOgg = "https://stream.rekt.fm/darksynth.ogg";
 
-    const sundayTitle = "Sunday Recovery Sessions";
-    const sundaySubtitle = "Chill / dark synth downshift";
-    const sundayStream = [
-      // PUT YOUR SUNDAY STREAM URL(S) HERE
-      { src: "https://stream.rekt.fm/darksynth.mp3", type: "audio/mpeg" },
-      { src: "https://stream.rekt.fm/darksynth.ogg", type: "audio/ogg" }
-    ];
-    // --------------------------------
+      var sundayTitle = "Sunday Recovery Sessions";
+      var sundaySubtitle = "Chill / dark synth downshift";
+      // PUT YOUR SUNDAY STREAM HERE (mp3 + ogg if you have it)
+      var sundayMp3 = "https://stream.rekt.fm/darksynth.mp3";
+      var sundayOgg = "https://stream.rekt.fm/darksynth.ogg";
 
-    function loadSources(list) {
-      a.innerHTML = "";
-      list.forEach(s => {
-        const src = document.createElement("source");
-        src.src = s.src;
-        src.type = s.type;
-        a.appendChild(src);
-      });
-      a.load();
-    }
-
-    function applySchedule() {
-      const now = new Date();
-      const isSunday = now.getDay() === 0; // 0 = Sunday
+      var isSunday = (new Date()).getDay() === 0;
 
       if (isSunday) {
         titleEl.textContent = sundayTitle;
         subEl.textContent = sundaySubtitle;
-        loadSources(sundayStream);
+        src1.src = sundayMp3;
+        src2.src = sundayOgg;
       } else {
         titleEl.textContent = defaultTitle;
         subEl.textContent = defaultSubtitle;
-        loadSources(defaultStream);
+        src1.src = defaultMp3;
+        src2.src = defaultOgg;
       }
-    }
 
-    applySchedule();
+      audio.load();
 
-    kick.addEventListener("click", () => {
-      setStatus("trying to play...");
-      a.play().then(() => setStatus("playing")).catch(err => {
-        console.log("Play failed:", err);
-        setStatus("blocked by browser (click play again or disable Shields)");
+      kick.addEventListener("click", function () {
+        setStatus("trying to play...");
+        audio.play().then(function () {
+          setStatus("playing");
+        }).catch(function (err) {
+          console.log(err);
+          setStatus("blocked by browser (click Play again or disable Shields)");
+        });
       });
-    });
 
-    a.addEventListener("playing", () => setStatus("playing"));
-    a.addEventListener("pause", () => setStatus("paused"));
-    a.addEventListener("waiting", () => setStatus("buffering..."));
-    a.addEventListener("error", () => setStatus("error loading stream"));
+      audio.addEventListener("playing", function(){ setStatus("playing"); });
+      audio.addEventListener("pause", function(){ setStatus("paused"); });
+      audio.addEventListener("waiting", function(){ setStatus("buffering..."); });
+      audio.addEventListener("error", function(){ setStatus("error loading stream"); });
+    })();
   </script>
 
 </body>
