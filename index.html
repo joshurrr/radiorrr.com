@@ -85,15 +85,15 @@
       <canvas id="viz"></canvas>
     </div>
 
+    <!-- RADIO STREAM -->
     <div class="channel">
       <span id="streamTitle">Nightride FM – EBSM</span><br />
       <small id="streamSubtitle">Up-tempo · Funky Electronic · Bass-forward</small>
 
-      <!-- DUAL-STATION FIX: Works on iPhone + Desktop -->
       <audio id="liveStream" controls playsinline crossorigin="anonymous">
-        <!-- iPhone-safe fallback -->
+        <!-- fallback for iPhone (mp3) -->
         <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
-        <!-- EBSM on desktop -->
+        <!-- EBSM (Chrome/desktop) -->
         <source src="https://stream.nightride.fm/ebsm.ogg" type="audio/ogg" />
       </audio>
 
@@ -101,6 +101,23 @@
       <div id="status" class="status">Status: idle</div>
     </div>
 
+    <!-- TIKTOK FEED INSERTED HERE -->
+    <div class="channel">
+      <span>Latest on TikTok</span><br />
+      <small>@josh.u.rrr · newest shorts</small>
+
+      <blockquote class="tiktok-embed"
+        cite="https://www.tiktok.com/@josh.u.rrr"
+        data-unique-id="josh.u.rrr"
+        data-embed-type="creator"
+        style="max-width:100%; min-width:280px; margin-top:0.8rem;">
+        <section>
+          <a target="_blank" href="https://www.tiktok.com/@josh.u.rrr">@josh.u.rrr</a>
+        </section>
+      </blockquote>
+    </div>
+
+    <!-- YOUTUBE EMBED -->
     <div class="channel">
       <span>video</span><br />
       <div class="video-container">
@@ -121,20 +138,19 @@
     <p class="footnote">Streaming 24/7</p>
   </main>
 
+<!-- TIKTOK SCRIPT -->
+<script async src="https://www.tiktok.com/embed.js"></script>
+
 <script defer>
 document.addEventListener("DOMContentLoaded", function () {
   try {
 
-    /* ---------------- AUDIO ---------------- */
     var audio = document.getElementById("liveStream");
     var statusEl = document.getElementById("status");
     var kick = document.getElementById("kickPlay");
 
     function setStatus(msg) { statusEl.textContent = "Status: " + msg; }
-
     audio.load();
-
-    /* ---------------- VISUALIZER CORE ---------------- */
 
     var canvas = document.getElementById("viz");
     var ctx = canvas.getContext("2d");
@@ -170,7 +186,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return sum / (end - start);
     }
 
-    /* ---------------- STARFIELD ---------------- */
     var stars = [];
     for (let i = 0; i < 120; i++) {
       stars.push({
@@ -198,18 +213,16 @@ document.addEventListener("DOMContentLoaded", function () {
       ctx.save();
       ctx.globalCompositeOperation = "source-atop";
       ctx.fillStyle = "rgba(5,7,16,0.65)";
-      var stripeH = radius*0.12;
+      let stripeH = radius*0.12;
       for (let y=-radius; y<radius; y+=stripeH*1.8)
         ctx.fillRect(cx-radius, horizonY+y, radius*2, stripeH);
       ctx.restore();
     }
 
-    /* ---------------- 3D FRONT-LIFT GRID ---------------- */
-
     function drawGrid3D(w,h,horizonY,t,energy,bass){
       var vanX = w/2, vanY = horizonY;
 
-      var liftAmount = 65 * bass; 
+      var liftAmount = 65 * bass;
       var wobble = 8 * bass;
 
       ctx.lineWidth = 1.3 + energy*2.4;
@@ -217,7 +230,6 @@ document.addEventListener("DOMContentLoaded", function () {
       ctx.shadowColor = "rgba(255,0,200,0.95)";
       ctx.shadowBlur = 18 + energy*22;
 
-      /* vertical lines */
       for (let i=0;i<=18;i++){
         let x=(i/18)*w;
         let sway=Math.sin(t*4+i*0.9)*wobble;
@@ -227,7 +239,6 @@ document.addEventListener("DOMContentLoaded", function () {
         ctx.stroke();
       }
 
-      /* horizontal lines with 3D front lift */
       for (let r=1;r<=22;r++){
         let p=(r/22 + t*(0.8+energy*2.2))%1;
         let depth=p*p;
@@ -259,8 +270,6 @@ document.addEventListener("DOMContentLoaded", function () {
       ctx.restore();
     }
 
-    /* ---------------- MAIN LOOP ---------------- */
-
     var t0=performance.now();
     function draw(){
       var t=(performance.now()-t0)/1000;
@@ -278,18 +287,15 @@ document.addEventListener("DOMContentLoaded", function () {
       var horizon=h*0.58;
       var cx=w/2;
 
-      /* sky */
-      var g=ctx.createLinearGradient(0,0,0,horizon);
-      g.addColorStop(0,"#140022");
-      g.addColorStop(0.5,"#22004a");
-      g.addColorStop(1,"#050710");
-      ctx.fillStyle=g;
+      var sky=ctx.createLinearGradient(0,0,0,horizon);
+      sky.addColorStop(0,"#140022");
+      sky.addColorStop(0.5,"#22004a");
+      sky.addColorStop(1,"#050710");
+      ctx.fillStyle=sky;
       ctx.fillRect(0,0,w,horizon);
-
       ctx.fillStyle="rgba(255,0,180,0.06)";
       ctx.fillRect(0,0,w,horizon);
 
-      /* stars */
       for (let s of stars){
         s.z-=0.003+energy*0.01;
         if (s.z<=0.06) resetStar(s);
@@ -314,8 +320,6 @@ document.addEventListener("DOMContentLoaded", function () {
       requestAnimationFrame(draw);
     }
     draw();
-
-    /* ---------------- PLAY BUTTON ---------------- */
 
     kick.addEventListener("click", function(){
       initAnalyser();
