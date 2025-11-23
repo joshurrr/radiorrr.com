@@ -57,6 +57,24 @@
       margin-top: 0.8rem;
     }
 
+    .status {
+      margin-top: 0.55rem;
+      font-size: 0.78rem;
+      opacity: 0.75;
+    }
+
+    .kick {
+      margin-top:0.6rem;
+      padding:0.45rem 0.7rem;
+      border-radius:10px;
+      border:1px solid rgba(129,140,248,0.6);
+      background:#0b1020;
+      color:#c7c7ff;
+      cursor:pointer;
+      font-size:0.85rem;
+    }
+    .kick:hover { filter: brightness(1.15); }
+
     /* Video embed styling */
     .video-container {
       position: relative;
@@ -107,12 +125,18 @@
       <span>Dark Synth Live Stream (guest station)</span><br />
       <small>Powered by Nightride / REKT Network</small>
 
-      <audio controls preload="none">
+      <audio id="liveStream" controls crossorigin="anonymous">
+        <!-- Primary darksynth mp3 mount -->
         <source src="https://stream.rekt.fm/darksynth.mp3" type="audio/mpeg" />
-        <!-- Fallback in case darksynth mount is down -->
-        <source src="https://stream.nightride.fm/ebsm.mp3" type="audio/mpeg" />
+        <!-- Explicit HTTPS port fallback -->
+        <source src="https://stream.rekt.fm:443/darksynth.mp3" type="audio/mpeg" />
+        <!-- OGG fallback -->
+        <source src="https://stream.rekt.fm/darksynth.ogg" type="audio/ogg" />
         Your browser doesn’t support the audio element.
       </audio>
+
+      <button id="kickPlay" class="kick">▶ Kick Play</button>
+      <div id="status" class="status">Status: idle</div>
     </div>
 
     <!-- VIDEO STREAM -->
@@ -139,6 +163,29 @@
     </div>
 
     <p class="footnote">Streaming 24/7</p>
+
   </main>
+
+  <script>
+    const a = document.getElementById("liveStream");
+    const statusEl = document.getElementById("status");
+    const kick = document.getElementById("kickPlay");
+
+    function setStatus(msg) { statusEl.textContent = "Status: " + msg; }
+
+    kick.addEventListener("click", () => {
+      setStatus("trying to play...");
+      a.play().then(() => setStatus("playing")).catch(err => {
+        console.log("Play failed:", err);
+        setStatus("blocked by browser (click play again or disable Shields)");
+      });
+    });
+
+    a.addEventListener("playing", () => setStatus("playing"));
+    a.addEventListener("pause", () => setStatus("paused"));
+    a.addEventListener("waiting", () => setStatus("buffering..."));
+    a.addEventListener("error", () => setStatus("error loading stream"));
+  </script>
+
 </body>
 </html>
