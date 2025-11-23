@@ -31,7 +31,7 @@
       margin: 0.5rem 0 1.25rem;
     }
 
-    /* OUTRUN VISUALIZER */
+    /* Visualizer */
     .visualizer {
       width: 100%;
       height: 260px;
@@ -104,7 +104,7 @@
 
     <p class="tagline">Streaming Electro · Synth · 80s · Chill</p>
 
-    <!-- OUTRUN VISUALIZER -->
+    <!-- Visualizer -->
     <div class="visualizer">
       <canvas id="viz"></canvas>
     </div>
@@ -144,7 +144,6 @@
     <p class="footnote">Streaming 24/7</p>
   </main>
 
-  <!-- SCRIPT (DEFER) -->
   <script defer>
     document.addEventListener("DOMContentLoaded", function () {
       try {
@@ -179,7 +178,7 @@
 
 
         /* --------------------------------------------------------------
-           OUTRUN VISUALIZER
+           OUTRUN VISUALIZER + BASS GRID
         -------------------------------------------------------------- */
 
         var canvas = document.getElementById("viz");
@@ -215,8 +214,8 @@
         }
 
         function avgRange(start, end) {
-          var sum = 0;
           if (!dataArray) return 0;
+          var sum = 0;
           for (var i = start; i < end; i++) sum += dataArray[i];
           return sum / (end - start);
         }
@@ -232,7 +231,6 @@
         for (var i = 0; i < STAR_COUNT; i++) { var s = {}; resetStar(s); stars.push(s); }
 
         var t0 = performance.now();
-
 
         function drawSun(cx, horizonY, radius, glow) {
           var g = ctx.createRadialGradient(cx, horizonY, radius * 0.2, cx, horizonY, radius);
@@ -254,24 +252,33 @@
           ctx.restore();
         }
 
+        /* --------------------------------------------------------------
+           UPDATED BASS-REACTIVE GRID
+        -------------------------------------------------------------- */
         function drawGrid(w, h, horizonY, t, energy) {
           var vanX = w / 2;
           var vanY = horizonY;
+
+          var bassBoost = Math.min(1, energy * 1.4);
 
           ctx.lineWidth = 1 + energy * 2.2;
           ctx.strokeStyle = "rgba(0, 240, 255, 0.65)";
           ctx.shadowColor = "rgba(255, 0, 200, 0.9)";
           ctx.shadowBlur = 12 + energy * 25;
 
+          // Vertical lines (side sway)
           var cols = 18;
           for (var i = 0; i <= cols; i++) {
             var x = (i / cols) * w;
+            var sway = Math.sin(t * 3.2 + i * 0.7) * (6 * bassBoost);
+
             ctx.beginPath();
             ctx.moveTo(vanX, vanY);
-            ctx.lineTo(x, h);
+            ctx.lineTo(x + sway, h);
             ctx.stroke();
           }
 
+          // Horizontal lines (bass bounce)
           var rows = 22;
           var speed = 0.6 + energy * 2.2;
           for (var r = 1; r <= rows; r++) {
@@ -279,9 +286,12 @@
             var depth = p * p;
             var y = vanY + depth * (h - vanY);
 
+            var frontFactor = depth;
+            var bounce = Math.sin(t * 6.0 + r * 0.9) * (10 * bassBoost * frontFactor);
+
             ctx.beginPath();
-            ctx.moveTo(0, y);
-            ctx.lineTo(w, y);
+            ctx.moveTo(0, y + bounce);
+            ctx.lineTo(w, y + bounce);
             ctx.stroke();
           }
 
@@ -305,7 +315,7 @@
           var w = canvas.clientWidth, h = canvas.clientHeight;
           if (!w || !h) { requestAnimationFrame(draw); return; }
 
-          var energy = 0.10;
+          var energy = 0.15;
           if (analyser && dataArray) {
             analyser.getByteFrequencyData(dataArray);
             var bass = avgRange(0, 18) / 255;
@@ -317,7 +327,6 @@
 
           var horizonY = h * 0.58;
           var cx = w / 2;
-
 
           var sky = ctx.createLinearGradient(0, 0, 0, horizonY);
           sky.addColorStop(0, "#140022");
@@ -355,13 +364,6 @@
           ctx.fillRect(0, horizonY, w, h - horizonY);
 
           drawGrid(w, h, horizonY, t, energy);
-
-          var vig = ctx.createRadialGradient(cx, h * 0.6, 10, cx, h * 0.6, Math.max(w, h));
-          vig.addColorStop(0, "rgba(0,0,0,0)");
-          vig.addColorStop(1, "rgba(0,0,0,0.55)");
-          ctx.fillStyle = vig;
-          ctx.fillRect(0, 0, w, h);
-
           drawScanlines(w, h, t);
 
           requestAnimationFrame(draw);
