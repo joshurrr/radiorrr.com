@@ -104,10 +104,13 @@
 
     <!-- AUDIO STREAM -->
     <div class="channel">
-      <span>Live Stream</span><br />
-      
+      <span>Dark Synth Live Stream (guest station)</span><br />
+      <small>Powered by Nightride / REKT Network</small>
+
       <audio controls preload="none">
-        <source src="https://stream.radiorrr.com/electro.mp3" type="audio/mpeg" />
+        <source src="https://stream.rekt.fm/darksynth.mp3" type="audio/mpeg" />
+        <!-- Fallback in case darksynth mount is down -->
+        <source src="https://stream.nightride.fm/ebsm.mp3" type="audio/mpeg" />
         Your browser doesn’t support the audio element.
       </audio>
     </div>
@@ -115,16 +118,16 @@
     <!-- VIDEO STREAM -->
     <div class="channel">
       <span>video</span><br />
-         <div class="video-container">
+      <div class="video-container">
         <iframe 
-    width="560" 
-    height="315"
-    src="https://www.youtube.com/embed/p6x_4q-xaYU?list=PLli1uTuS0FH6vQ05dGXjiAl2k5K5gZpZs"
-    title="YouTube playlist player"
-    frameborder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    allowfullscreen>
-</iframe>
+          width="560" 
+          height="315"
+          src="https://www.youtube.com/embed/p6x_4q-xaYU?list=PLli1uTuS0FH6vQ05dGXjiAl2k5K5gZpZs"
+          title="YouTube playlist player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
       </div>
     </div>
 
