@@ -14,6 +14,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 1rem;
     }
     .wrapper {
       max-width: 600px;
@@ -23,23 +24,21 @@
       background: radial-gradient(circle at top, #4338ca 0, #050710 55%);
       box-shadow: 0 18px 40px rgba(0,0,0,0.55);
       text-align: center;
-      position: relative;
     }
     .tagline {
       font-size: 0.95rem;
       color: #c7c7ff;
-      margin-bottom: 1.25rem;
-      margin-top: 0.5rem;
+      margin: 0.5rem 0 1.25rem;
     }
 
+    /* OUTRUN VISUALIZER */
     .visualizer {
       width: 100%;
-      height: 220px;
+      height: 260px;
       border-radius: 14px;
       overflow: hidden;
-      background: radial-gradient(circle at center, #0a0f22 0%, #050710 70%);
+      background: #050710;
       border: 1px solid rgba(129,140,248,0.5);
-      box-shadow: inset 0 0 40px rgba(0,0,0,0.7);
       margin-bottom: 1.5rem;
       position: relative;
     }
@@ -92,18 +91,20 @@
     .links { margin-top: 0.75rem; font-size: 0.85rem; }
     .links a { color: #a5b4fc; text-decoration: none; margin: 0 0.4rem; }
     .links a:hover { text-decoration: underline; }
-    .footnote { margin-top: 1.5rem; font-size: 0.7rem; opacity: 0.55; }
+
+    .footnote { margin-top: 1.5rem; font-size: 0.7rem; opacity: 0.55; text-align:center; }
   </style>
 </head>
 
 <body>
   <main class="wrapper">
 
-    <img src="logo.png" alt="Radio RRR Logo" style="width: 300px; margin: 0 auto 20px; display: block;">
+    <img src="logo.png" alt="Radio RRR Logo"
+         style="width: 300px; max-width: 90%; margin: 0 auto 10px; display: block;">
 
     <p class="tagline">Streaming Electro · Synth · 80s · Chill</p>
 
-    <!-- DIGITAL TUNNEL VISUALIZER -->
+    <!-- OUTRUN VISUALIZER -->
     <div class="visualizer">
       <canvas id="viz"></canvas>
     </div>
@@ -116,238 +117,279 @@
       <audio id="liveStream" controls playsinline crossorigin="anonymous">
         <source id="src1" src="https://stream.rekt.fm/darksynth.mp3" type="audio/mpeg" />
         <source id="src2" src="https://stream.rekt.fm/darksynth.ogg" type="audio/ogg" />
-        Your browser does not support the audio element.
       </audio>
 
       <button id="kickPlay" class="kick">Play</button>
       <div id="status" class="status">Status: idle</div>
     </div>
 
-    <!-- VIDEO STREAM -->
+    <!-- VIDEO -->
     <div class="channel">
       <span>video</span><br />
       <div class="video-container">
         <iframe
           src="https://www.youtube.com/embed/p6x_4q-xaYU?list=PLli1uTuS0FH6vQ05dGXjiAl2k5K5gZpZs"
-          title="YouTube playlist player"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen>
         </iframe>
       </div>
     </div>
 
     <div class="links">
-      <a href="https://www.instagram.com/radio.rrr/" target="_blank" rel="noopener">Instagram</a> ·
-      <a href="https://www.tiktok.com/@josh.u.rrr" target="_blank" rel="noopener">TikTok</a> ·
-      <a href="https://www.youtube.com/@RADIO_RRR" target="_blank" rel="noopener">YouTube</a> ·
-      <a href="https://github.com/joshurrr" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.instagram.com/radio.rrr/" target="_blank">Instagram</a> ·
+      <a href="https://www.tiktok.com/@josh.u.rrr" target="_blank">TikTok</a> ·
+      <a href="https://www.youtube.com/@RADIO_RRR" target="_blank">YouTube</a> ·
+      <a href="https://github.com/joshurrr" target="_blank">GitHub</a>
     </div>
 
     <p class="footnote">Streaming 24/7</p>
-
   </main>
 
-  <script>
-    (function () {
-      // ---------- AUDIO + SCHEDULE ----------
-      var audio = document.getElementById("liveStream");
-      var src1 = document.getElementById("src1");
-      var src2 = document.getElementById("src2");
-      var titleEl = document.getElementById("streamTitle");
-      var subEl = document.getElementById("streamSubtitle");
-      var statusEl = document.getElementById("status");
-      var kick = document.getElementById("kickPlay");
+  <!-- SCRIPT (DEFER) -->
+  <script defer>
+    document.addEventListener("DOMContentLoaded", function () {
+      try {
 
-      function setStatus(msg) { statusEl.textContent = "Status: " + msg; }
+        /* --------------------------------------------------------------
+           AUDIO + SCHEDULE
+        -------------------------------------------------------------- */
 
-      var defaultTitle = "Dark Synth Live Stream (guest station)";
-      var defaultSubtitle = "Powered by Nightride / REKT Network";
-      var defaultMp3 = "https://stream.rekt.fm/darksynth.mp3";
-      var defaultOgg = "https://stream.rekt.fm/darksynth.ogg";
+        var audio = document.getElementById("liveStream");
+        var src1 = document.getElementById("src1");
+        var src2 = document.getElementById("src2");
+        var titleEl = document.getElementById("streamTitle");
+        var subEl = document.getElementById("streamSubtitle");
+        var statusEl = document.getElementById("status");
+        var kick = document.getElementById("kickPlay");
 
-      var sundayTitle = "Sunday Recovery Sessions";
-      var sundaySubtitle = "Chill / dark synth downshift";
-      var sundayMp3 = "https://stream.rekt.fm/darksynth.mp3"; // change later
-      var sundayOgg = "https://stream.rekt.fm/darksynth.ogg"; // change later
+        function setStatus(msg) { statusEl.textContent = "Status: " + msg; }
 
-      var isSunday = (new Date()).getDay() === 0;
-      if (isSunday) {
-        titleEl.textContent = sundayTitle;
-        subEl.textContent = sundaySubtitle;
-        src1.src = sundayMp3;
-        src2.src = sundayOgg;
-      } else {
-        titleEl.textContent = defaultTitle;
-        subEl.textContent = defaultSubtitle;
-        src1.src = defaultMp3;
-        src2.src = defaultOgg;
-      }
-      audio.load();
+        var defaultTitle = "Dark Synth Live Stream (guest station)";
+        var defaultSubtitle = "Powered by Nightride / REKT Network";
 
-      // ---------- VISUALIZER (safe for iOS) ----------
-      var canvas = document.getElementById("viz");
-      var ctx = canvas.getContext("2d");
-      var analyser = null;
-      var dataArray = null;
-      var audioCtx = null;
-      var sourceNode = null;
-
-      function resize() {
-        var dpr = window.devicePixelRatio || 1;
-        var w = canvas.clientWidth;
-        var h = canvas.clientHeight;
-        if (!w || !h) return; // iOS layout race guard
-        canvas.width = w * dpr;
-        canvas.height = h * dpr;
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      }
-      window.addEventListener("resize", resize);
-      window.addEventListener("load", resize);
-      resize();
-
-      function initAnalyserOnGesture() {
-        if (audioCtx || analyser) return;
-        try {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-          analyser = audioCtx.createAnalyser();
-          analyser.fftSize = 1024;
-          dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-          // This can throw on iOS if CORS headers are missing — that's why it's in try/catch.
-          sourceNode = audioCtx.createMediaElementSource(audio);
-          sourceNode.connect(analyser);
-          analyser.connect(audioCtx.destination);
-        } catch (e) {
-          console.log("iOS analyser blocked/CORS. Visualizer will idle.", e);
-          analyser = null;
-          dataArray = null;
-        }
-      }
-
-      function avgRange(start, end) {
-        var sum = 0;
-        for (var i = start; i < end; i++) sum += dataArray[i] || 0;
-        return sum / (end - start);
-      }
-
-      // Stars
-      var stars = [];
-      var STAR_COUNT = 200;
-      function resetStar(s) {
-        s.x = (Math.random() * 2 - 1);
-        s.y = (Math.random() * 2 - 1);
-        s.z = Math.random() * 1.2 + 0.2;
-      }
-      for (var i = 0; i < STAR_COUNT; i++) {
-        var s = {};
-        resetStar(s);
-        stars.push(s);
-      }
-
-      var t0 = performance.now();
-
-      function draw() {
-        var now = performance.now();
-        var t = (now - t0) / 1000;
-
-        var w = canvas.clientWidth;
-        var h = canvas.clientHeight;
-        if (!w || !h) { requestAnimationFrame(draw); return; }
-
-        var cx = w / 2;
-        var cy = h / 2;
-
-        var energy = 0.10, bass = 0, mid = 0;
-
-        if (analyser) {
-          analyser.getByteFrequencyData(dataArray);
-          bass = avgRange(0, 20) / 255;
-          mid  = avgRange(20, 120) / 255;
-          energy = Math.min(1, (bass * 0.9 + mid * 0.4));
+        var isSunday = (new Date()).getDay() === 0;
+        if (isSunday) {
+          titleEl.textContent = "Sunday Recovery Sessions";
+          subEl.textContent = "Chill / dark synth downshift";
         } else {
-          energy = 0.08 + 0.05 * Math.sin(t * 1.8);
+          titleEl.textContent = defaultTitle;
+          subEl.textContent = defaultSubtitle;
         }
 
-        ctx.fillStyle = "rgba(5,7,16,0.28)";
-        ctx.fillRect(0, 0, w, h);
+        audio.load();
 
-        var rings = 26;
-        var maxR = Math.min(w, h) * 0.9;
-        var speed = 0.30 + energy * 1.2;
 
-        for (var r = 0; r < rings; r++) {
-          var p = (r / rings + t * speed) % 1;
-          var radius = Math.pow(p, 2.1) * maxR * (0.9 + energy * 0.25);
-          var rot = t * (0.5 + energy * 1.0) + p * 2.2;
-          var alpha = Math.max(0, 1 - p) * (0.22 + energy * 0.85);
+        /* --------------------------------------------------------------
+           OUTRUN VISUALIZER
+        -------------------------------------------------------------- */
+
+        var canvas = document.getElementById("viz");
+        var ctx = canvas.getContext("2d");
+
+        function resize() {
+          var dpr = window.devicePixelRatio || 1;
+          var w = canvas.clientWidth, h = canvas.clientHeight;
+          if (!w || !h) return;
+          canvas.width = w * dpr;
+          canvas.height = h * dpr;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+        resize();
+        window.addEventListener("resize", resize);
+
+        var analyser = null, dataArray = null, audioCtx = null, sourceNode = null;
+
+        function initAnalyser() {
+          if (audioCtx || analyser) return;
+          try {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 1024;
+            dataArray = new Uint8Array(analyser.frequencyBinCount);
+            sourceNode = audioCtx.createMediaElementSource(audio);
+            sourceNode.connect(analyser);
+            analyser.connect(audioCtx.destination);
+          } catch (e) {
+            console.log("Analyser blocked/CORS. Idle viz only.", e);
+            analyser = null;
+          }
+        }
+
+        function avgRange(start, end) {
+          var sum = 0;
+          if (!dataArray) return 0;
+          for (var i = start; i < end; i++) sum += dataArray[i];
+          return sum / (end - start);
+        }
+
+        var stars = [];
+        var STAR_COUNT = 120;
+
+        function resetStar(s) {
+          s.x = (Math.random() * 2 - 1);
+          s.y = (Math.random() * 0.9 - 0.45);
+          s.z = Math.random() * 1.0 + 0.2;
+        }
+        for (var i = 0; i < STAR_COUNT; i++) { var s = {}; resetStar(s); stars.push(s); }
+
+        var t0 = performance.now();
+
+
+        function drawSun(cx, horizonY, radius, glow) {
+          var g = ctx.createRadialGradient(cx, horizonY, radius * 0.2, cx, horizonY, radius);
+          g.addColorStop(0, "rgba(255, 100, 220, 0.95)");
+          g.addColorStop(0.6, "rgba(255, 70, 160, 0.85)");
+          g.addColorStop(1, "rgba(120, 40, 255, 0.0)");
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(cx, horizonY, radius * (0.9 + glow), 0, Math.PI * 2);
+          ctx.fill();
 
           ctx.save();
-          ctx.translate(cx, cy);
-          ctx.rotate(rot);
-          ctx.lineWidth = 1 + energy * 3;
-          ctx.strokeStyle = "rgba(129,140,248," + alpha + ")";
-          ctx.beginPath();
-
-          var sides = 8;
-          for (var k = 0; k <= sides; k++) {
-            var ang = (k / sides) * Math.PI * 2;
-            var rr = radius * (0.9 + 0.1 * Math.sin(ang * 3 + t));
-            var x = Math.cos(ang) * rr;
-            var y = Math.sin(ang) * rr;
-            if (k === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+          ctx.globalCompositeOperation = "source-atop";
+          ctx.fillStyle = "rgba(5,7,16,0.65)";
+          var stripeH = radius * 0.12;
+          for (var y = -radius; y < radius; y += stripeH * 1.8) {
+            ctx.fillRect(cx - radius, horizonY + y, radius * 2, stripeH);
           }
-          ctx.stroke();
           ctx.restore();
         }
 
-        var starSpeed = 0.40 + energy * 2.0;
-        for (var j = 0; j < stars.length; j++) {
-          var st = stars[j];
-          st.z -= starSpeed * 0.01;
-          if (st.z <= 0.05) resetStar(st);
+        function drawGrid(w, h, horizonY, t, energy) {
+          var vanX = w / 2;
+          var vanY = horizonY;
 
-          var sx = cx + (st.x / st.z) * cx;
-          var sy = cy + (st.y / st.z) * cy;
+          ctx.lineWidth = 1 + energy * 2.2;
+          ctx.strokeStyle = "rgba(0, 240, 255, 0.65)";
+          ctx.shadowColor = "rgba(255, 0, 200, 0.9)";
+          ctx.shadowBlur = 12 + energy * 25;
 
-          if (sx < 0 || sx > w || sy < 0 || sy > h) {
-            resetStar(st); continue;
+          var cols = 18;
+          for (var i = 0; i <= cols; i++) {
+            var x = (i / cols) * w;
+            ctx.beginPath();
+            ctx.moveTo(vanX, vanY);
+            ctx.lineTo(x, h);
+            ctx.stroke();
           }
 
-          var size = (1 / st.z) * (0.6 + energy * 1.2);
-          var aStar = Math.min(1, (1 - st.z) * (0.12 + energy * 0.7));
+          var rows = 22;
+          var speed = 0.6 + energy * 2.2;
+          for (var r = 1; r <= rows; r++) {
+            var p = (r / rows + t * speed) % 1;
+            var depth = p * p;
+            var y = vanY + depth * (h - vanY);
 
-          ctx.fillStyle = "rgba(199,199,255," + aStar + ")";
-          ctx.fillRect(sx, sy, size, size);
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(w, y);
+            ctx.stroke();
+          }
+
+          ctx.shadowBlur = 0;
         }
 
+        function drawScanlines(w, h, t) {
+          ctx.save();
+          ctx.globalAlpha = 0.12;
+          ctx.fillStyle = "rgba(0,0,0,1)";
+          var lineGap = 3;
+          var offset = (t * 30) % lineGap;
+          for (var y = offset; y < h; y += lineGap) {
+            ctx.fillRect(0, y, w, 1);
+          }
+          ctx.restore();
+        }
+
+        function draw() {
+          var t = (performance.now() - t0) / 1000;
+          var w = canvas.clientWidth, h = canvas.clientHeight;
+          if (!w || !h) { requestAnimationFrame(draw); return; }
+
+          var energy = 0.10;
+          if (analyser && dataArray) {
+            analyser.getByteFrequencyData(dataArray);
+            var bass = avgRange(0, 18) / 255;
+            var mid  = avgRange(18, 110) / 255;
+            energy = Math.min(1, bass * 1.0 + mid * 0.35);
+          } else {
+            energy = 0.08 + 0.05 * Math.sin(t * 1.6);
+          }
+
+          var horizonY = h * 0.58;
+          var cx = w / 2;
+
+
+          var sky = ctx.createLinearGradient(0, 0, 0, horizonY);
+          sky.addColorStop(0, "#140022");
+          sky.addColorStop(0.5, "#22004a");
+          sky.addColorStop(1, "#050710");
+          ctx.fillStyle = sky;
+          ctx.fillRect(0, 0, w, horizonY);
+
+          ctx.fillStyle = "rgba(255, 0, 180, 0.06)";
+          ctx.fillRect(0, 0, w, horizonY);
+
+          for (var j = 0; j < stars.length; j++) {
+            var st = stars[j];
+            st.z -= (0.003 + energy * 0.01);
+            if (st.z <= 0.06) resetStar(st);
+
+            var sx = cx + (st.x / st.z) * cx;
+            var sy = horizonY * 0.55 + (st.y / st.z) * (horizonY * 0.7);
+
+            if (sx < 0 || sx > w || sy < 0 || sy > horizonY) {
+              resetStar(st); continue;
+            }
+
+            var size = (1 / st.z) * (0.45 + energy * 1.1);
+            ctx.fillStyle = "rgba(199,199,255,0.9)";
+            ctx.fillRect(sx, sy, size, size);
+          }
+
+          drawSun(cx, horizonY * 0.98, Math.min(w, h) * 0.18, energy * 0.25);
+
+          var ground = ctx.createLinearGradient(0, horizonY, 0, h);
+          ground.addColorStop(0, "#050710");
+          ground.addColorStop(1, "#02030a");
+          ctx.fillStyle = ground;
+          ctx.fillRect(0, horizonY, w, h - horizonY);
+
+          drawGrid(w, h, horizonY, t, energy);
+
+          var vig = ctx.createRadialGradient(cx, h * 0.6, 10, cx, h * 0.6, Math.max(w, h));
+          vig.addColorStop(0, "rgba(0,0,0,0)");
+          vig.addColorStop(1, "rgba(0,0,0,0.55)");
+          ctx.fillStyle = vig;
+          ctx.fillRect(0, 0, w, h);
+
+          drawScanlines(w, h, t);
+
+          requestAnimationFrame(draw);
+        }
         requestAnimationFrame(draw);
-      }
-      requestAnimationFrame(draw);
 
-      // User gesture: play + init analyser
-      kick.addEventListener("click", function () {
-        initAnalyserOnGesture();
-        setStatus("trying to play...");
-        audio.play().then(function () {
-          setStatus("playing");
-          if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
-        }).catch(function (err) {
-          console.log(err);
-          setStatus("blocked by browser (tap Play again)");
+
+        /* --------------------------------------------------------------
+           PLAY BUTTON
+        -------------------------------------------------------------- */
+
+        kick.addEventListener("click", function(){
+          initAnalyser();
+          setStatus("trying to play...");
+          audio.play().then(function(){
+            setStatus("playing");
+            if (audioCtx && audioCtx.state==="suspended") audioCtx.resume();
+          }).catch(function(err){
+            console.log(err);
+            setStatus("blocked by browser (tap Play again)");
+          });
         });
-      });
 
-      audio.addEventListener("playing", function(){
-        setStatus("playing");
-        initAnalyserOnGesture();
-        if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
-      });
-      audio.addEventListener("pause", function(){ setStatus("paused"); });
-      audio.addEventListener("waiting", function(){ setStatus("buffering..."); });
-      audio.addEventListener("error", function(){ setStatus("error loading stream"); });
+      } catch (err) {
+        console.log("Init error:", err);
+      }
 
-    })();
+    });
   </script>
-
 </body>
 </html>
