@@ -83,7 +83,7 @@
     <!-- RADIO STREAM + VISUALIZER TOGETHER -->
     <div class="channel">
       <span id="streamTitle">RADIO RRR Live</span><br />
-      <small id="streamSubtitle">No sound? Press play</small>
+      <small id="streamSubtitle">No sound? Press play. Still nothing? Volume maybe…</small>
 
       <div class="visualizer">
         <canvas id="viz"></canvas>
@@ -100,8 +100,8 @@
 
     <!-- TIKTOK -->
     <div class="channel">
-      <span>TikTok Latest</span><br />
-      <small>stuff we like</small>
+      <span>Latest on TikTok</span><br />
+      <small>@josh.u.rrr · newest shorts</small>
 
       <blockquote class="tiktok-embed"
         cite="https://www.tiktok.com/@josh.u.rrr"
@@ -116,8 +116,8 @@
 
     <!-- YOUTUBE LIKES PLAYLIST -->
     <div class="channel">
-      <span>YouTube Latest</span><br />
-      <small>stuff we like</small>
+      <span>YouTube Likes</span><br />
+      <small>Latest videos you've liked</small>
 
       <div class="video-container">
         <iframe
@@ -219,7 +219,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function drawGrid3D(w,h,horizonY,t,energy,bass){
-      var vanX = w/2, varY = horizonY;
+      var vanX = w/2, vanY = horizonY;  <!-- FIXED HERE -->
 
       var liftAmount = 65 * bass;
       var wobble = 8 * bass;
