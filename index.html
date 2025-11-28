@@ -50,7 +50,12 @@
     .channel span { font-weight: 600; font-size: 1rem; }
     .channel small { font-size: 0.8rem; opacity: 0.75; }
     audio { width: 100%; margin-top: 0.8rem; }
-    .status { margin-top: 0.55rem; font-size: 0.78rem; opacity: 0.75; }
+    .status {
+      margin-top: 0.55rem;
+      font-size: 0.78rem;
+      opacity: 0.75;
+      display: none; /* hide status text completely */
+    }
     .kick {
       margin-top:0.6rem; padding:0.45rem 0.7rem;
       border-radius:10px; border:1px solid rgba(129,140,248,0.6);
@@ -95,7 +100,7 @@
       </audio>
 
       <button id="kickPlay" class="kick">Play</button>
-      <div id="status" class="status">Status: idle</div>
+      <div id="status" class="status"></div>
     </div>
 
     <!-- TIKTOK -->
@@ -148,7 +153,10 @@ document.addEventListener("DOMContentLoaded", function () {
     var statusEl = document.getElementById("status");
     var kick = document.getElementById("kickPlay");
 
-    function setStatus(msg) { statusEl.textContent = "Status: " + msg; }
+    function setStatus(msg) {
+      if (statusEl) statusEl.textContent = "Status: " + msg;
+    }
+
     audio.load();
 
     var canvas = document.getElementById("viz");
@@ -219,7 +227,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function drawGrid3D(w,h,horizonY,t,energy,bass){
-      var vanX = w/2, vanY = horizonY;  <!-- FIXED HERE -->
+      var vanX = w/2, vanY = horizonY;
 
       var liftAmount = 65 * bass;
       var wobble = 8 * bass;
