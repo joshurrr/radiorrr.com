@@ -36,7 +36,6 @@
       border-radius: 14px;
       overflow: hidden;
       background: #050710;
-      /* removed border so only the outer .channel has a border */
       margin-bottom: 1.5rem;
     }
     #viz { width: 100%; height: 100%; display: block; }
@@ -81,10 +80,10 @@
 
     <p class="tagline">Streaming Electro · Synth · 80s · Chill</p>
 
-    <!-- RADIO STREAM + VISUALIZER IN ONE CARD -->
+    <!-- RADIO STREAM + VISUALIZER TOGETHER -->
     <div class="channel">
       <span id="streamTitle">RADIO RRR Live</span><br />
-      <small id="streamSubtitle">Up-tempo · Funky Electronic · Bass-forward</small>
+      <small id="streamSubtitle">No sound? Press play. Still nothing? Volume maybe…</small>
 
       <div class="visualizer">
         <canvas id="viz"></canvas>
@@ -99,7 +98,7 @@
       <div id="status" class="status">Status: idle</div>
     </div>
 
-    <!-- TIKTOK FEED -->
+    <!-- TIKTOK -->
     <div class="channel">
       <span>Latest on TikTok</span><br />
       <small>@josh.u.rrr · newest shorts</small>
@@ -115,7 +114,7 @@
       </blockquote>
     </div>
 
-    <!-- YOUTUBE LIKED VIDEOS PLAYLIST -->
+    <!-- YOUTUBE LIKES PLAYLIST -->
     <div class="channel">
       <span>YouTube Likes</span><br />
       <small>Latest videos you've liked</small>
@@ -139,7 +138,6 @@
     <p class="footnote">Streaming 24/7</p>
   </main>
 
-  <!-- TIKTOK SCRIPT -->
   <script async src="https://www.tiktok.com/embed.js"></script>
 
 <script defer>
@@ -221,7 +219,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function drawGrid3D(w,h,horizonY,t,energy,bass){
-      var vanX = w/2, vanY = horizonY;
+      var vanX = w/2, varY = horizonY;
 
       var liftAmount = 65 * bass;
       var wobble = 8 * bass;
