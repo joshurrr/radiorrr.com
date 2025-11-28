@@ -50,12 +50,7 @@
     .channel span { font-weight: 600; font-size: 1rem; }
     .channel small { font-size: 0.8rem; opacity: 0.75; }
     audio { width: 100%; margin-top: 0.8rem; }
-    .status {
-      margin-top: 0.55rem;
-      font-size: 0.78rem;
-      opacity: 0.75;
-      display: none; /* hide status text completely */
-    }
+    .status { display:none; }
     .kick {
       margin-top:0.6rem; padding:0.45rem 0.7rem;
       border-radius:10px; border:1px solid rgba(129,140,248,0.6);
@@ -158,6 +153,15 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     audio.load();
+
+    // 🔥 NEW: Stop audio when ANY external link is clicked
+    document.addEventListener("click", function(e) {
+      let target = e.target.closest("a");
+      if (!target) return;
+      if (target.href && target.href.startsWith("http")) {
+        audio.pause();
+      }
+    });
 
     var canvas = document.getElementById("viz");
     var ctx = canvas.getContext("2d");
@@ -333,15 +337,4 @@ document.addEventListener("DOMContentLoaded", function () {
       setStatus("trying to play...");
       audio.play().then(()=>{
         setStatus("playing");
-        if (audioCtx && audioCtx.state==="suspended") audioCtx.resume();
-      }).catch(()=>{
-        setStatus("tap Play again");
-      });
-    });
-
-  } catch (err) { console.log(err); }
-});
-</script>
-
-</body>
-</html>
+        if (audioCtx && audioCtx.s
