@@ -36,7 +36,7 @@
       border-radius: 14px;
       overflow: hidden;
       background: #050710;
-      border: 1px solid rgba(129,140,248,0.5);
+      /* removed border so only the outer .channel has a border */
       margin-bottom: 1.5rem;
     }
     #viz { width: 100%; height: 100%; display: block; }
@@ -81,14 +81,14 @@
 
     <p class="tagline">Streaming Electro · Synth · 80s · Chill</p>
 
-    <div class="visualizer">
-      <canvas id="viz"></canvas>
-    </div>
-
-    <!-- RADIO STREAM -->
+    <!-- RADIO STREAM + VISUALIZER IN ONE CARD -->
     <div class="channel">
       <span id="streamTitle">RADIO RRR Live</span><br />
       <small id="streamSubtitle">Up-tempo · Funky Electronic · Bass-forward</small>
+
+      <div class="visualizer">
+        <canvas id="viz"></canvas>
+      </div>
 
       <audio id="liveStream" controls playsinline crossorigin="anonymous">
         <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
