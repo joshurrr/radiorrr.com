@@ -89,9 +89,9 @@
         <canvas id="viz"></canvas>
       </div>
 
-      <!-- Darkwave stream -->
-      <audio id="liveStream" controls crossorigin="anonymous">
-        <source src="https://ice2.somafm.com/u80s-128-mp3" type="audio/mpeg" />
+      <!-- Stream URL: swap this for any HTTPS station you like -->
+      <audio id="liveStream" controls>
+        <source src="https://ice2.somafm.com/defcon-128-mp3" type="audio/mpeg" />
       </audio>
 
       <button id="kickPlay" class="kick">Play</button>
@@ -165,81 +165,28 @@ document.addEventListener("DOMContentLoaded", () => {
   resize();
   window.addEventListener("resize", resize);
 
-  // ---- Audio analyser setup ----
-  let audioCtx = null;
-  let analyser = null;
-  let dataArray = null;
-  let analyserEnabled = false;
-  let analyserInitAttempted = false;
-
-  function initAnalyser() {
-    if (analyserInitAttempted) return;
-    analyserInitAttempted = true;
-    try {
-      const AC = window.AudioContext || window.webkitAudioContext;
-      if (!AC) {
-        console.warn("No AudioContext support");
-        return;
-      }
-      audioCtx = new AC();
-      analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 1024;
-      dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-      const sourceNode = audioCtx.createMediaElementSource(audio);
-      sourceNode.connect(analyser);
-      analyser.connect(audioCtx.destination);
-
-      analyserEnabled = true;
-      console.log("Analyser enabled");
-    } catch (err) {
-      console.warn("Failed to init analyser, using fake animation:", err);
-      analyserEnabled = false;
-    }
-  }
-
-  function avgRange(arr, start, end) {
-    let sum = 0;
-    for (let i = start; i < end; i++) sum += arr[i];
-    return sum / (end - start || 1);
-  }
-
-  // ---- Sunset + bass waves visualiser ----
   let startTime = performance.now();
+  let isPlaying = false;
 
   function drawFrame() {
     const t = (performance.now() - startTime) / 1000;
     const w = canvas.clientWidth;
     const h = canvas.clientHeight;
 
-    let bass = 0, mid = 0, treble = 0, energy = 0.1;
+    // Animation speed changes depending on play state
+    const speed = isPlaying ? 1.0 : 0.4;
+    const tt = t * speed;
 
-    if (analyserEnabled && analyser && dataArray) {
-      try {
-        analyser.getByteFrequencyData(dataArray);
-        const len = dataArray.length;
-        bass   = avgRange(dataArray, 0, len * 0.08)   / 255; // low
-        mid    = avgRange(dataArray, len * 0.08, len * 0.4) / 255;
-        treble = avgRange(dataArray, len * 0.4, len)        / 255;
-        energy = bass * 1.2 + mid * 0.5 + treble * 0.3;
-      } catch (err) {
-        analyserEnabled = false;
-        console.warn("Analyser read failed, disabling:", err);
-      }
-    }
-
-    // Fallback fake movement if no analyser (CORS etc.)
-    if (!analyserEnabled) {
-      bass   = (Math.sin(t * 2.3) + 1) / 2;
-      mid    = (Math.sin(t * 1.6 + 1) + 1) / 2;
-      treble = (Math.sin(t * 3.2 + 2) + 1) / 2;
-      energy = (bass + mid + treble) / 3;
-    }
+    // Fake "bass" pulses – look musical, not actually from audio
+    const bass = (Math.sin(tt * 2.2) + 1) / 2;
+    const mid  = (Math.sin(tt * 1.3 + 1.2) + 1) / 2;
+    const treb = (Math.sin(tt * 3.1 + 0.8) + 1) / 2;
+    const energy = (bass * 1.4 + mid + treb * 0.8) / 3.2;
 
     const horizon = h * 0.55;
     const cx = w / 2;
 
-    // Sky gradient (sunset)
+    // Sky gradient
     const sky = ctx.createLinearGradient(0, 0, 0, horizon);
     sky.addColorStop(0, "#090018");
     sky.addColorStop(0.35, "#3a0060");
@@ -249,23 +196,23 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.fillRect(0, 0, w, horizon);
 
     // Stars
-    const starCount = 80;
-    ctx.fillStyle = "rgba(255,255,255,0.7)";
+    const starCount = 90;
+    ctx.fillStyle = "rgba(255,255,255,0.8)";
     for (let i = 0; i < starCount; i++) {
-      const sx = (i * 73 + (t * 20)) % w;
+      const sx = (i * 73 + (tt * 25)) % w;
       const sy = (i * 53) % (h * 0.4);
-      const size = (i % 5 === 0 ? 1.3 : 0.7);
+      const size = (i % 7 === 0 ? 1.4 : 0.7);
       ctx.fillRect(sx, sy, size, size);
     }
 
     // Sun
     const sunRadius = Math.min(w, h) * 0.16;
-    const sunY = horizon - sunRadius * 0.3 - bass * 10;
+    const sunY = horizon - sunRadius * 0.25 - bass * 10;
     const sunGlow = 0.15 + energy * 0.25;
 
     const sunGrad = ctx.createRadialGradient(cx, sunY, sunRadius * 0.1, cx, sunY, sunRadius);
-    sunGrad.addColorStop(0, "rgba(255,255,180,0.98)");
-    sunGrad.addColorStop(0.4, "rgba(255,180,80,0.95)");
+    sunGrad.addColorStop(0, "rgba(255,255,200,0.98)");
+    sunGrad.addColorStop(0.4, "rgba(255,180,80,0.96)");
     sunGrad.addColorStop(1, "rgba(255,0,80,0)");
     ctx.fillStyle = sunGrad;
     ctx.beginPath();
@@ -290,31 +237,31 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.fillStyle = waterGrad;
     ctx.fillRect(0, horizon, w, h);
 
-    // Sun reflection on water
+    // Sun reflection
     const reflectGrad = ctx.createLinearGradient(cx, horizon, cx, h);
-    reflectGrad.addColorStop(0, "rgba(255,120,120,0.6)");
-    reflectGrad.addColorStop(0.4, "rgba(255,80,160,0.3)");
-    reflectGrad.addColorStop(1, "rgba(255,0,120,0)");
+    reflectGrad.addColorStop(0, "rgba(255,120,160,0.7)");
+    reflectGrad.addColorStop(0.4, "rgba(255,80,200,0.35)");
+    reflectGrad.addColorStop(1, "rgba(255,0,150,0)");
     ctx.fillStyle = reflectGrad;
     ctx.globalAlpha = 0.55 + energy * 0.25;
-    const reflectWidth = sunRadius * 1.4 + bass * 20;
+    const reflectWidth = sunRadius * 1.4 + bass * 24;
     ctx.beginPath();
     ctx.moveTo(cx - reflectWidth, horizon);
-    ctx.quadraticCurveTo(cx, h * 0.78 + bass * 15, cx + reflectWidth, horizon);
+    ctx.quadraticCurveTo(cx, h * 0.8 + bass * 18, cx + reflectWidth, horizon);
     ctx.closePath();
     ctx.fill();
     ctx.globalAlpha = 1;
 
-    // Bass-driven waves
+    // Waves
     const waveLines = 6;
     const baseAmp = h * 0.04;
-    const baseFreq = 2.2; // number of wave cycles
+    const baseFreq = 2.2;
     for (let j = 0; j < waveLines; j++) {
       const progress = j / (waveLines - 1 || 1);
       const yBase = horizon + progress * (h - horizon);
       const amp = baseAmp * (0.4 + bass * 1.6) * (1 + progress * 0.7);
-      const speed = 1.4 + progress * 0.8;
-      const phase = t * speed * (1 + bass * 0.5) + j * 0.7;
+      const speedWave = 1.2 + progress * 0.8;
+      const phase = tt * speedWave * (1 + bass * 0.5) + j * 0.7;
 
       const lineGrad = ctx.createLinearGradient(0, yBase - amp, 0, yBase + amp);
       lineGrad.addColorStop(0, `rgba(0, 240, 255, ${0.3 + 0.5 * (1-progress)})`);
@@ -323,7 +270,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx.lineWidth = 1 + (1 - progress) * 2 + bass * 2;
 
       ctx.beginPath();
-      const steps = 80;
+      const steps = 90;
       for (let i = 0; i <= steps; i++) {
         const x = (i / steps) * w;
         const y =
@@ -340,7 +287,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.save();
     ctx.globalAlpha = 0.13;
     ctx.fillStyle = "rgba(0,0,0,1)";
-    const gap = 3, off = (t * 35) % gap;
+    const gap = 3, off = (tt * 35) % gap;
     for (let y = off; y < h; y += gap) {
       ctx.fillRect(0, y, w, 1);
     }
@@ -351,17 +298,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   requestAnimationFrame(drawFrame);
 
-  // ---- Play button and audio handlers ----
+  // Play button + audio handlers
   kick.addEventListener("click", () => {
     if (audio.paused) {
       const p = audio.play();
       if (p && p.then) {
         p.then(() => {
+          isPlaying = true;
           setStatus("playing");
-          initAnalyser();
-          if (audioCtx && audioCtx.state === "suspended") {
-            audioCtx.resume();
-          }
         }).catch(err => {
           console.warn("play() rejected", err);
           setStatus("tap the white player control above to start");
@@ -369,24 +313,23 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } else {
       audio.pause();
+      isPlaying = false;
       setStatus("paused");
     }
   });
 
   audio.addEventListener("play", () => {
+    isPlaying = true;
     setStatus("playing");
-    initAnalyser();
-    if (audioCtx && audioCtx.state === "suspended") {
-      audioCtx.resume();
-    }
   });
 
   audio.addEventListener("pause", () => {
+    isPlaying = false;
     setStatus("paused");
   });
 
   audio.addEventListener("error", () => {
-    setStatus("audio error (stream may be blocked or unreachable)");
+    setStatus("audio error (check stream URL)");
   });
 });
 </script>
