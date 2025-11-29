@@ -50,7 +50,7 @@
     .channel span { font-weight: 600; font-size: 1rem; }
     .channel small { font-size: 0.8rem; opacity: 0.75; }
     audio { width: 100%; margin-top: 0.8rem; }
-    .status { display:none; }
+    .status { display:none; font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.8; }
     .kick {
       margin-top:0.6rem; padding:0.45rem 0.7rem;
       border-radius:10px; border:1px solid rgba(129,140,248,0.6);
@@ -80,7 +80,7 @@
 
     <p class="tagline">Streaming Electro · Synth · 80s · Chill</p>
 
-    <!-- RADIO STREAM + VISUALIZER TOGETHER -->
+    <!-- RADIO STREAM + VISUALIZER -->
     <div class="channel">
       <span id="streamTitle">RADIO RRR Live</span><br />
       <small id="streamSubtitle">No sound? Press play >></small>
@@ -90,7 +90,7 @@
       </div>
 
       <audio id="liveStream" controls playsinline crossorigin="anonymous">
-        <source src="https://stream.radiorrr.com/electro.mp3" type="audio/mpeg" />
+        <source src="https://stream.nightride.fm/electro.mp3" type="audio/mpeg" />
       </audio>
 
       <button id="kickPlay" class="kick">Play</button>
@@ -113,7 +113,7 @@
       </blockquote>
     </div>
 
-    <!-- YOUTUBE LIKES PLAYLIST -->
+    <!-- YouTube Likes -->
     <div class="channel">
       <span>YouTube Likes</span><br />
       <small>Latest videos we liked</small>
@@ -148,23 +148,23 @@ document.addEventListener("DOMContentLoaded", function () {
     var kick = document.getElementById("kickPlay");
 
     function setStatus(msg) {
-      if (statusEl) {
-        statusEl.style.display = "block";
-        statusEl.textContent = "Status: " + msg;
-      }
+      statusEl.style.display = "block";
+      statusEl.textContent = "Status: " + msg;
     }
 
     audio.load();
 
+    // Stop audio when clicking external links
     document.addEventListener("click", function(e) {
       let target = e.target.closest("a");
       if (!target) return;
       if (target.href && target.href.startsWith("http")) {
         audio.pause();
-        setStatus("paused (external link clicked)");
+        setStatus("paused");
       }
     });
 
+    // VISUALIZER ENGINE
     var canvas = document.getElementById("viz");
     var ctx = canvas.getContext("2d");
 
@@ -182,18 +182,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function initAnalyser() {
       if (audioCtx) return;
-      try {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 1024;
-        dataArray = new Uint8Array(analyser.frequencyBinCount);
-        var sourceNode = audioCtx.createMediaElementSource(audio);
-        sourceNode.connect(analyser);
-        analyser.connect(audioCtx.destination);
-      } catch (e) {
-        console.error("Error creating analyser:", e);
-        setStatus("visualizer error");
-      }
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 1024;
+      dataArray = new Uint8Array(analyser.frequencyBinCount);
+      var sourceNode = audioCtx.createMediaElementSource(audio);
+      sourceNode.connect(analyser);
+      analyser.connect(audioCtx.destination);
     }
 
     function avgRange(start, end) {
@@ -203,13 +198,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     var stars = [];
-    for (let i = 0; i < 120; i++) {
-      stars.push({
-        x: Math.random()*2 - 1,
-        y: Math.random()*0.9 - 0.45,
-        z: Math.random()*1 + 0.2
-      });
-    }
+    for (let i = 0; i < 120; i++) stars.push({
+      x: Math.random()*2 - 1,
+      y: Math.random()*0.9 - 0.45,
+      z: Math.random()*1 + 0.2
+    });
     function resetStar(s) {
       s.x = Math.random()*2 - 1;
       s.y = Math.random()*0.9 - 0.45;
@@ -258,14 +251,10 @@ document.addEventListener("DOMContentLoaded", function () {
       for (let r=1;r<=22;r++){
         let p=(r/22 + t*(0.8+energy*2.2))%1;
         let depth=p*p;
-
         let baseY=vanY + depth*(h-vanY);
-
         let frontFactor = depth;
-
         let lift = liftAmount * frontFactor * Math.sin(t*7);
         let ripple = Math.sin((t*2.2 - p*3.3)*Math.PI*2) * (22*bass*frontFactor);
-
         let y = baseY + lift + ripple;
 
         ctx.beginPath();
@@ -339,32 +328,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
     kick.addEventListener("click", function () {
       initAnalyser();
-      setStatus("trying to play...");
+      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
 
-      if (audioCtx && audioCtx.state === "suspended") {
-        audioCtx.resume();
+      if (audio.paused) {
+        audio.play().then(() => setStatus("playing"))
+          .catch(err => setStatus("play blocked"));
+      } else {
+        audio.pause();
+        setStatus("paused");
       }
-
-      audio.play().then(() => {
-        setStatus("playing");
-      }).catch(err => {
-        console.error("Play error:", err);
-        setStatus("play blocked: " + (err.message || err));
-      });
     });
 
     audio.addEventListener("play", function () {
       initAnalyser();
-      if (audioCtx && audioCtx.state === "suspended") {
-        audioCtx.resume();
-      }
+      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
     });
 
   } catch (err) {
-    console.error("Visualizer init error:", err);
+    console.error(err);
     setStatus("init error");
   }
 });
 </script>
+
 </body>
 </html>
