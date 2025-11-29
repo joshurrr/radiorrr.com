@@ -142,6 +142,32 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+
+  /* -----------------------------
+     Dynamic: "RADIO RRR Live – Sunday Night Mix"
+  ----------------------------- */
+  const titleEl = document.getElementById("streamTitle");
+
+  function getDayPeriod(hour) {
+    if (hour < 12) return "Morning";
+    if (hour < 17) return "Afternoon";
+    return "Night"; // after 5pm, it's night for the station vibe
+  }
+
+  function updateTitle() {
+    const now = new Date();
+    const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    const dayName = days[now.getDay()];
+    const period = getDayPeriod(now.getHours());
+    titleEl.textContent = `RADIO RRR Live – ${dayName} ${period} Mix`;
+  }
+
+  updateTitle();
+
+  /* -----------------------------
+     Visualizer + Stream Engine
+  ----------------------------- */
+
   const audio = document.getElementById("liveStream");
   const statusEl = document.getElementById("status");
   const kick = document.getElementById("kickPlay");
@@ -153,7 +179,6 @@ document.addEventListener("DOMContentLoaded", () => {
     statusEl.textContent = "Status: " + msg;
   }
 
-  // Resize canvas for HiDPI
   function resize() {
     const dpr = window.devicePixelRatio || 1;
     const w = canvas.clientWidth;
@@ -165,7 +190,6 @@ document.addEventListener("DOMContentLoaded", () => {
   resize();
   window.addEventListener("resize", resize);
 
-  // Audio analyser (best-effort – falls back if CORS blocks it)
   let audioCtx = null;
   let analyser = null;
   let dataArray = null;
@@ -191,7 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
       analyserEnabled = true;
       console.log("Analyser enabled");
     } catch (err) {
-      console.warn("Could not init analyser, using fake animation:", err);
+      console.warn("Analyser blocked, using fake waves instead");
       analyserEnabled = false;
     }
   }
@@ -219,13 +243,11 @@ document.addEventListener("DOMContentLoaded", () => {
         mid  = avgRange(dataArray, len * 0.08, len * 0.4) / 255;
         treb = avgRange(dataArray, len * 0.4, len) / 255;
         energy = bass * 1.2 + mid * 0.6 + treb * 0.3;
-      } catch (err) {
-        console.warn("Analyser read failed, disabling:", err);
+      } catch {
         analyserEnabled = false;
       }
     }
 
-    // Fake motion if analyser is disabled or not playing
     if (!analyserEnabled || !isPlaying) {
       bass = (Math.sin(t * 2.3) + 1) / 2;
       mid  = (Math.sin(t * 1.4 + 1.2) + 1) / 2;
@@ -236,7 +258,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const horizon = h * 0.55;
     const cx = w / 2;
 
-    // Sky gradient
     const sky = ctx.createLinearGradient(0, 0, 0, horizon);
     sky.addColorStop(0, "#090018");
     sky.addColorStop(0.35, "#3a0060");
@@ -245,7 +266,6 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.fillStyle = sky;
     ctx.fillRect(0, 0, w, horizon);
 
-    // Stars (static-ish)
     const starCount = 90;
     ctx.fillStyle = "rgba(255,255,255,0.8)";
     for (let i = 0; i < starCount; i++) {
@@ -255,7 +275,6 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx.fillRect(sx, sy, size, size);
     }
 
-    // Sun
     const sunRadius = Math.min(w, h) * 0.16;
     const sunY = horizon - sunRadius * 0.25 - bass * 8;
     const sunGrad = ctx.createRadialGradient(cx, sunY, sunRadius * 0.1, cx, sunY, sunRadius);
@@ -267,7 +286,6 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.arc(cx, sunY, sunRadius, 0, Math.PI * 2);
     ctx.fill();
 
-    // Sun scanlines
     ctx.save();
     ctx.globalCompositeOperation = "source-atop";
     ctx.fillStyle = "rgba(10,5,20,0.7)";
@@ -277,7 +295,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     ctx.restore();
 
-    // Water background
     const waterGrad = ctx.createLinearGradient(0, horizon, 0, h);
     waterGrad.addColorStop(0, "#150020");
     waterGrad.addColorStop(0.5, "#05071a");
@@ -285,7 +302,6 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.fillStyle = waterGrad;
     ctx.fillRect(0, horizon, w, h);
 
-    // Sun reflection
     const reflectGrad = ctx.createLinearGradient(cx, horizon, cx, h);
     reflectGrad.addColorStop(0, "rgba(255,120,160,0.7)");
     reflectGrad.addColorStop(0.4, "rgba(255,80,200,0.35)");
@@ -300,7 +316,9 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.fill();
     ctx.globalAlpha = 1;
 
-    // Vertical "music waves" (bars) – no side-to-side wobble
+    /* ---------------------------
+       VERTICAL MUSIC BARS
+    --------------------------- */
     const barCount = 48;
     const barRegionTop = horizon + (h - horizon) * 0.15;
     const barRegionBottom = h * 0.95;
@@ -313,7 +331,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const idx = Math.floor((i / barCount) * dataArray.length);
         valueNorm = dataArray[idx] / 255;
       } else {
-        // Fake but nice-looking if analyser is off
         valueNorm = (Math.sin(t * 3 + i * 0.3) + 1) / 2;
       }
 
@@ -330,7 +347,6 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx.fillRect(x + 1, y, barWidth - 2, height);
     }
 
-    // Scanline overlay
     ctx.save();
     ctx.globalAlpha = 0.13;
     ctx.fillStyle = "rgba(0,0,0,1)";
@@ -345,7 +361,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   requestAnimationFrame(drawFrame);
 
-  // Play button + audio handlers
   kick.addEventListener("click", () => {
     if (audio.paused) {
       const p = audio.play();
@@ -357,9 +372,8 @@ document.addEventListener("DOMContentLoaded", () => {
           if (audioCtx && audioCtx.state === "suspended") {
             audioCtx.resume();
           }
-        }).catch(err => {
-          console.warn("play() rejected", err);
-          setStatus("tap the white player control above to start");
+        }).catch(() => {
+          setStatus("tap the player above to start");
         });
       }
     } else {
@@ -384,7 +398,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   audio.addEventListener("error", () => {
-    setStatus("audio error (check stream URL)");
+    setStatus("audio error (stream offline?)");
   });
 });
 </script>
