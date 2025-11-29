@@ -89,9 +89,9 @@
         <canvas id="viz"></canvas>
       </div>
 
-      <!-- WORKING TEST STREAM -->
-      <audio id="liveStream" controls>
-        <source src="https://stream.electroradio.fm/electroradio.mp3" />
+      <!-- STREAM: change this URL if you like -->
+      <audio id="liveStream" controls crossorigin="anonymous">
+        <source src="https://streams.radiomast.io/ref-128k-mp3-stereo" type="audio/mpeg" />
       </audio>
 
       <button id="kickPlay" class="kick">Play</button>
@@ -153,10 +153,11 @@ document.addEventListener("DOMContentLoaded", () => {
     statusEl.textContent = "Status: " + msg;
   }
 
-  // basic resize
+  // resize canvas for HiDPI
   function resize() {
     const dpr = window.devicePixelRatio || 1;
-    const w = canvas.clientWidth, h = canvas.clientHeight;
+    const w = canvas.clientWidth;
+    const h = canvas.clientHeight;
     canvas.width = w * dpr;
     canvas.height = h * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -164,45 +165,244 @@ document.addEventListener("DOMContentLoaded", () => {
   resize();
   window.addEventListener("resize", resize);
 
-  // simple looping viz background (no analyser yet – keeps things safe)
-  function loop() {
+  // ---- Audio analyser setup ----
+  let audioCtx = null;
+  let analyser = null;
+  let dataArray = null;
+  let analyserEnabled = false;
+  let analyserInitAttempted = false;
+
+  function initAnalyser() {
+    if (analyserInitAttempted) return;
+    analyserInitAttempted = true;
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) {
+        console.warn("No AudioContext support");
+        return;
+      }
+      audioCtx = new AC();
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 1024;
+      dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+      const sourceNode = audioCtx.createMediaElementSource(audio);
+      sourceNode.connect(analyser);
+      analyser.connect(audioCtx.destination);
+
+      analyserEnabled = true;
+      console.log("Analyser enabled");
+    } catch (err) {
+      console.warn("Failed to init analyser, falling back to fake viz:", err);
+      analyserEnabled = false;
+    }
+  }
+
+  function avgRange(arr, start, end) {
+    let sum = 0;
+    for (let i = start; i < end; i++) sum += arr[i];
+    return sum / (end - start || 1);
+  }
+
+  // ---- Visualizer animation ----
+  const stars = [];
+  for (let i = 0; i < 140; i++) {
+    stars.push({
+      x: Math.random() * 2 - 1,
+      y: Math.random() * 0.9 - 0.45,
+      z: Math.random() * 1 + 0.2
+    });
+  }
+  function resetStar(s) {
+    s.x = Math.random() * 2 - 1;
+    s.y = Math.random() * 0.9 - 0.45;
+    s.z = Math.random() * 1 + 0.2;
+  }
+
+  let startTime = performance.now();
+
+  function drawFrame() {
+    const t = (performance.now() - startTime) / 1000;
     const w = canvas.clientWidth;
     const h = canvas.clientHeight;
-    ctx.fillStyle = "#050710";
-    ctx.fillRect(0,0,w,h);
 
-    // fake grid so it doesn't look dead if analyser can't read stream
-    ctx.strokeStyle = "rgba(0,240,255,0.6)";
-    for (let i = 0; i <= 16; i++) {
-      const x = (i / 16) * w;
+    let bass = 0, mid = 0, treble = 0, energy = 0.1;
+
+    if (analyserEnabled && analyser && dataArray) {
+      try {
+        analyser.getByteFrequencyData(dataArray);
+        const len = dataArray.length;
+        bass   = avgRange(dataArray, 0, len * 0.08)   / 255; // sub
+        mid    = avgRange(dataArray, len * 0.08, len * 0.4) / 255;
+        treble = avgRange(dataArray, len * 0.4, len)        / 255;
+        energy = bass * 1.2 + mid * 0.5 + treble * 0.3;
+      } catch (err) {
+        // If CORS/security blows up once, stop trying
+        analyserEnabled = false;
+        console.warn("Analyser read failed, disabling:", err);
+      }
+    }
+
+    // fallback fake movement if no analyser
+    if (!analyserEnabled) {
+      bass   = (Math.sin(t * 2.5) + 1) / 2;
+      mid    = (Math.sin(t * 1.7 + 1) + 1) / 2;
+      treble = (Math.sin(t * 3.1 + 2) + 1) / 2;
+      energy = (bass + mid + treble) / 3;
+    }
+
+    const horizon = h * 0.58;
+    const cx = w / 2;
+
+    // sky
+    const sky = ctx.createLinearGradient(0, 0, 0, horizon);
+    sky.addColorStop(0, "#140022");
+    sky.addColorStop(0.45, "#22004a");
+    sky.addColorStop(1, "#050710");
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, w, horizon);
+
+    // starfield
+    for (const s of stars) {
+      s.z -= 0.0025 + energy * 0.012;
+      if (s.z <= 0.06) resetStar(s);
+      const sx = cx + (s.x / s.z) * cx;
+      const sy = horizon * 0.5 + (s.y / s.z) * (horizon * 0.7);
+      const size = (1 / s.z) * (0.4 + energy * 0.9);
+      ctx.fillStyle = "rgba(199,199,255,0.9)";
+      ctx.fillRect(sx, sy, size, size);
+    }
+
+    // sun glow
+    const radius = Math.min(w, h) * 0.17;
+    const sunY = horizon * 0.98 - bass * 10;
+    const sunGlow = 0.18 + energy * 0.3;
+    const g = ctx.createRadialGradient(cx, sunY, radius * 0.1, cx, sunY, radius);
+    g.addColorStop(0, "rgba(255,110,230,0.95)");
+    g.addColorStop(0.55, "rgba(255,70,160,0.9)");
+    g.addColorStop(1, "rgba(120,40,255,0)");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(cx, sunY, radius * (0.9 + sunGlow), 0, Math.PI * 2);
+    ctx.fill();
+
+    // sun scanlines
+    ctx.save();
+    ctx.globalCompositeOperation = "source-atop";
+    ctx.fillStyle = "rgba(5,7,16,0.65)";
+    const stripeH = radius * 0.11;
+    for (let y = -radius; y < radius; y += stripeH * 1.7) {
+      ctx.fillRect(cx - radius, sunY + y, radius * 2, stripeH);
+    }
+    ctx.restore();
+
+    // ground
+    const ground = ctx.createLinearGradient(0, horizon, 0, h);
+    ground.addColorStop(0, "#050710");
+    ground.addColorStop(1, "#02030a");
+    ctx.fillStyle = ground;
+    ctx.fillRect(0, horizon, w, h);
+
+    // grid
+    const vanX = cx;
+    const vanY = horizon;
+    const liftAmount = 60 * bass;
+    const wobble = 9 * mid;
+
+    ctx.lineWidth = 1.2 + energy * 2.2;
+    ctx.strokeStyle = "rgba(0,240,255,0.8)";
+    ctx.shadowColor = "rgba(255,0,200,0.9)";
+    ctx.shadowBlur = 16 + energy * 22;
+
+    // vertical lines
+    for (let i = 0; i <= 18; i++) {
+      const x = (i / 18) * w;
+      const sway = Math.sin(t * 3.5 + i * 0.9) * wobble;
       ctx.beginPath();
-      ctx.moveTo(x, h * 0.4);
-      ctx.lineTo(x, h);
+      ctx.moveTo(vanX, vanY);
+      ctx.lineTo(x + sway, h);
       ctx.stroke();
     }
-    ctx.strokeStyle = "rgba(255,0,180,0.4)";
-    for (let r = 0; r < 14; r++) {
-      const y = h * 0.4 + (r / 14) * (h * 0.6);
+
+    // horizontal lines (perspective)
+    for (let r = 1; r <= 22; r++) {
+      const p = (r / 22 + t * (0.7 + energy * 2)) % 1;
+      const depth = p * p;
+      const baseY = vanY + depth * (h - vanY);
+      const frontFactor = depth;
+      const lift = liftAmount * frontFactor * Math.sin(t * 6);
+      const ripple = Math.sin((t * 2.3 - p * 3.1) * Math.PI * 2) * (20 * bass * frontFactor);
+      const y = baseY + lift + ripple;
+
       ctx.beginPath();
       ctx.moveTo(0, y);
       ctx.lineTo(w, y);
       ctx.stroke();
     }
 
-    requestAnimationFrame(loop);
-  }
-  loop();
+    ctx.shadowBlur = 0;
 
-  // play button
+    // scanline overlay
+    ctx.save();
+    ctx.globalAlpha = 0.12;
+    ctx.fillStyle = "rgba(0,0,0,1)";
+    const gap = 3, off = (t * 30) % gap;
+    for (let y = off; y < h; y += gap) {
+      ctx.fillRect(0, y, w, 1);
+    }
+    ctx.restore();
+
+    // bar visualiser at bottom
+    const barRegionTop = horizon + (h - horizon) * 0.25;
+    const barRegionHeight = (h - barRegionTop) * 0.9;
+    const barCount = 40;
+    const barWidth = w / barCount;
+
+    let spectrum = null;
+    if (analyserEnabled && dataArray) {
+      spectrum = dataArray;
+    }
+
+    for (let i = 0; i < barCount; i++) {
+      let valueNorm;
+      if (spectrum) {
+        const idx = Math.floor((i / barCount) * spectrum.length);
+        valueNorm = spectrum[idx] / 255;
+      } else {
+        valueNorm = (Math.sin(t * 4 + i * 0.4) + 1) / 2;
+      }
+      const height = barRegionHeight * (0.1 + valueNorm * 0.9);
+      const x = i * barWidth;
+      const y = barRegionTop + barRegionHeight - height;
+
+      const grad = ctx.createLinearGradient(0, y, 0, y + height);
+      grad.addColorStop(0, "rgba(255,120,250,0.95)");
+      grad.addColorStop(0.5, "rgba(0,240,255,0.9)");
+      grad.addColorStop(1, "rgba(0,120,255,0.5)");
+      ctx.fillStyle = grad;
+      ctx.fillRect(x + 1, y, barWidth - 2, height);
+    }
+
+    requestAnimationFrame(drawFrame);
+  }
+
+  requestAnimationFrame(drawFrame);
+
+  // ---- Play button and audio handlers ----
   kick.addEventListener("click", () => {
     if (audio.paused) {
       const p = audio.play();
       if (p && p.then) {
-        p.then(() => setStatus("playing"))
-         .catch(err => {
-           console.warn("play() rejected", err);
-           setStatus("tap the white player control above to start");
-         });
+        p.then(() => {
+          setStatus("playing");
+          initAnalyser();
+          if (audioCtx && audioCtx.state === "suspended") {
+            audioCtx.resume();
+          }
+        }).catch(err => {
+          console.warn("play() rejected", err);
+          setStatus("tap the white player control above to start");
+        });
       }
     } else {
       audio.pause();
@@ -210,9 +410,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  audio.addEventListener("play", () => setStatus("playing"));
-  audio.addEventListener("pause", () => setStatus("paused"));
-  audio.addEventListener("error", () => setStatus("audio error (check stream URL / console)"));
+  audio.addEventListener("play", () => {
+    setStatus("playing");
+    initAnalyser();
+    if (audioCtx && audioCtx.state === "suspended") {
+      audioCtx.resume();
+    }
+  });
+
+  audio.addEventListener("pause", () => {
+    setStatus("paused");
+  });
+
+  audio.addEventListener("error", () => {
+    setStatus("audio error (check stream URL / console)");
+  });
 });
 </script>
 
