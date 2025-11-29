@@ -90,8 +90,7 @@
       </div>
 
       <audio id="liveStream" controls playsinline crossorigin="anonymous">
-        <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
-        <source src="https://stream.nightride.fm/ebsm.ogg" type="audio/ogg" />
+        <source src="https://stream.radiorrr.com/electro.mp3" type="audio/mpeg" />
       </audio>
 
       <button id="kickPlay" class="kick">Play</button>
@@ -149,17 +148,20 @@ document.addEventListener("DOMContentLoaded", function () {
     var kick = document.getElementById("kickPlay");
 
     function setStatus(msg) {
-      if (statusEl) statusEl.textContent = "Status: " + msg;
+      if (statusEl) {
+        statusEl.style.display = "block";
+        statusEl.textContent = "Status: " + msg;
+      }
     }
 
     audio.load();
 
-    // 🔥 NEW: Stop audio when ANY external link is clicked
     document.addEventListener("click", function(e) {
       let target = e.target.closest("a");
       if (!target) return;
       if (target.href && target.href.startsWith("http")) {
         audio.pause();
+        setStatus("paused (external link clicked)");
       }
     });
 
@@ -188,7 +190,10 @@ document.addEventListener("DOMContentLoaded", function () {
         var sourceNode = audioCtx.createMediaElementSource(audio);
         sourceNode.connect(analyser);
         analyser.connect(audioCtx.destination);
-      } catch (e) {}
+      } catch (e) {
+        console.error("Error creating analyser:", e);
+        setStatus("visualizer error");
+      }
     }
 
     function avgRange(start, end) {
@@ -332,9 +337,34 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     draw();
 
-    kick.addEventListener("click", function(){
+    kick.addEventListener("click", function () {
       initAnalyser();
       setStatus("trying to play...");
-      audio.play().then(()=>{
+
+      if (audioCtx && audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+
+      audio.play().then(() => {
         setStatus("playing");
-        if (audioCtx && audioCtx.s
+      }).catch(err => {
+        console.error("Play error:", err);
+        setStatus("play blocked: " + (err.message || err));
+      });
+    });
+
+    audio.addEventListener("play", function () {
+      initAnalyser();
+      if (audioCtx && audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+    });
+
+  } catch (err) {
+    console.error("Visualizer init error:", err);
+    setStatus("init error");
+  }
+});
+</script>
+</body>
+</html>
