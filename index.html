@@ -89,7 +89,7 @@
         <canvas id="viz"></canvas>
       </div>
 
-      <!-- STREAM: change this URL if you like -->
+      <!-- Darkwave stream -->
       <audio id="liveStream" controls crossorigin="anonymous">
         <source src="http://79.111.14.76:8000/darkwave" type="audio/mpeg" />
       </audio>
@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
     statusEl.textContent = "Status: " + msg;
   }
 
-  // resize canvas for HiDPI
+  // Resize canvas for HiDPI
   function resize() {
     const dpr = window.devicePixelRatio || 1;
     const w = canvas.clientWidth;
@@ -193,7 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
       analyserEnabled = true;
       console.log("Analyser enabled");
     } catch (err) {
-      console.warn("Failed to init analyser, falling back to fake viz:", err);
+      console.warn("Failed to init analyser, using fake animation:", err);
       analyserEnabled = false;
     }
   }
@@ -204,21 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return sum / (end - start || 1);
   }
 
-  // ---- Visualizer animation ----
-  const stars = [];
-  for (let i = 0; i < 140; i++) {
-    stars.push({
-      x: Math.random() * 2 - 1,
-      y: Math.random() * 0.9 - 0.45,
-      z: Math.random() * 1 + 0.2
-    });
-  }
-  function resetStar(s) {
-    s.x = Math.random() * 2 - 1;
-    s.y = Math.random() * 0.9 - 0.45;
-    s.z = Math.random() * 1 + 0.2;
-  }
-
+  // ---- Sunset + bass waves visualiser ----
   let startTime = performance.now();
 
   function drawFrame() {
@@ -232,156 +218,133 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         analyser.getByteFrequencyData(dataArray);
         const len = dataArray.length;
-        bass   = avgRange(dataArray, 0, len * 0.08)   / 255; // sub
+        bass   = avgRange(dataArray, 0, len * 0.08)   / 255; // low
         mid    = avgRange(dataArray, len * 0.08, len * 0.4) / 255;
         treble = avgRange(dataArray, len * 0.4, len)        / 255;
         energy = bass * 1.2 + mid * 0.5 + treble * 0.3;
       } catch (err) {
-        // If CORS/security blows up once, stop trying
         analyserEnabled = false;
         console.warn("Analyser read failed, disabling:", err);
       }
     }
 
-    // fallback fake movement if no analyser
+    // Fallback fake movement if no analyser (CORS etc.)
     if (!analyserEnabled) {
-      bass   = (Math.sin(t * 2.5) + 1) / 2;
-      mid    = (Math.sin(t * 1.7 + 1) + 1) / 2;
-      treble = (Math.sin(t * 3.1 + 2) + 1) / 2;
+      bass   = (Math.sin(t * 2.3) + 1) / 2;
+      mid    = (Math.sin(t * 1.6 + 1) + 1) / 2;
+      treble = (Math.sin(t * 3.2 + 2) + 1) / 2;
       energy = (bass + mid + treble) / 3;
     }
 
-    const horizon = h * 0.58;
+    const horizon = h * 0.55;
     const cx = w / 2;
 
-    // sky
+    // Sky gradient (sunset)
     const sky = ctx.createLinearGradient(0, 0, 0, horizon);
-    sky.addColorStop(0, "#140022");
-    sky.addColorStop(0.45, "#22004a");
-    sky.addColorStop(1, "#050710");
+    sky.addColorStop(0, "#090018");
+    sky.addColorStop(0.35, "#3a0060");
+    sky.addColorStop(0.7, "#ff0066");
+    sky.addColorStop(1, "#ff6600");
     ctx.fillStyle = sky;
     ctx.fillRect(0, 0, w, horizon);
 
-    // starfield
-    for (const s of stars) {
-      s.z -= 0.0025 + energy * 0.012;
-      if (s.z <= 0.06) resetStar(s);
-      const sx = cx + (s.x / s.z) * cx;
-      const sy = horizon * 0.5 + (s.y / s.z) * (horizon * 0.7);
-      const size = (1 / s.z) * (0.4 + energy * 0.9);
-      ctx.fillStyle = "rgba(199,199,255,0.9)";
+    // Stars
+    const starCount = 80;
+    ctx.fillStyle = "rgba(255,255,255,0.7)";
+    for (let i = 0; i < starCount; i++) {
+      const sx = (i * 73 + (t * 20)) % w;
+      const sy = (i * 53) % (h * 0.4);
+      const size = (i % 5 === 0 ? 1.3 : 0.7);
       ctx.fillRect(sx, sy, size, size);
     }
 
-    // sun glow
-    const radius = Math.min(w, h) * 0.17;
-    const sunY = horizon * 0.98 - bass * 10;
-    const sunGlow = 0.18 + energy * 0.3;
-    const g = ctx.createRadialGradient(cx, sunY, radius * 0.1, cx, sunY, radius);
-    g.addColorStop(0, "rgba(255,110,230,0.95)");
-    g.addColorStop(0.55, "rgba(255,70,160,0.9)");
-    g.addColorStop(1, "rgba(120,40,255,0)");
-    ctx.fillStyle = g;
+    // Sun
+    const sunRadius = Math.min(w, h) * 0.16;
+    const sunY = horizon - sunRadius * 0.3 - bass * 10;
+    const sunGlow = 0.15 + energy * 0.25;
+
+    const sunGrad = ctx.createRadialGradient(cx, sunY, sunRadius * 0.1, cx, sunY, sunRadius);
+    sunGrad.addColorStop(0, "rgba(255,255,180,0.98)");
+    sunGrad.addColorStop(0.4, "rgba(255,180,80,0.95)");
+    sunGrad.addColorStop(1, "rgba(255,0,80,0)");
+    ctx.fillStyle = sunGrad;
     ctx.beginPath();
-    ctx.arc(cx, sunY, radius * (0.9 + sunGlow), 0, Math.PI * 2);
+    ctx.arc(cx, sunY, sunRadius * (0.9 + sunGlow), 0, Math.PI * 2);
     ctx.fill();
 
-    // sun scanlines
+    // Sun scanlines
     ctx.save();
     ctx.globalCompositeOperation = "source-atop";
-    ctx.fillStyle = "rgba(5,7,16,0.65)";
-    const stripeH = radius * 0.11;
-    for (let y = -radius; y < radius; y += stripeH * 1.7) {
-      ctx.fillRect(cx - radius, sunY + y, radius * 2, stripeH);
+    ctx.fillStyle = "rgba(10,5,20,0.7)";
+    const stripeH = sunRadius * 0.14;
+    for (let y = -sunRadius; y < sunRadius; y += stripeH * 1.7) {
+      ctx.fillRect(cx - sunRadius, sunY + y, sunRadius * 2, stripeH);
     }
     ctx.restore();
 
-    // ground
-    const ground = ctx.createLinearGradient(0, horizon, 0, h);
-    ground.addColorStop(0, "#050710");
-    ground.addColorStop(1, "#02030a");
-    ctx.fillStyle = ground;
+    // Water background
+    const waterGrad = ctx.createLinearGradient(0, horizon, 0, h);
+    waterGrad.addColorStop(0, "#150020");
+    waterGrad.addColorStop(0.5, "#05071a");
+    waterGrad.addColorStop(1, "#02030a");
+    ctx.fillStyle = waterGrad;
     ctx.fillRect(0, horizon, w, h);
 
-    // grid
-    const vanX = cx;
-    const vanY = horizon;
-    const liftAmount = 60 * bass;
-    const wobble = 9 * mid;
+    // Sun reflection on water
+    const reflectGrad = ctx.createLinearGradient(cx, horizon, cx, h);
+    reflectGrad.addColorStop(0, "rgba(255,120,120,0.6)");
+    reflectGrad.addColorStop(0.4, "rgba(255,80,160,0.3)");
+    reflectGrad.addColorStop(1, "rgba(255,0,120,0)");
+    ctx.fillStyle = reflectGrad;
+    ctx.globalAlpha = 0.55 + energy * 0.25;
+    const reflectWidth = sunRadius * 1.4 + bass * 20;
+    ctx.beginPath();
+    ctx.moveTo(cx - reflectWidth, horizon);
+    ctx.quadraticCurveTo(cx, h * 0.78 + bass * 15, cx + reflectWidth, horizon);
+    ctx.closePath();
+    ctx.fill();
+    ctx.globalAlpha = 1;
 
-    ctx.lineWidth = 1.2 + energy * 2.2;
-    ctx.strokeStyle = "rgba(0,240,255,0.8)";
-    ctx.shadowColor = "rgba(255,0,200,0.9)";
-    ctx.shadowBlur = 16 + energy * 22;
+    // Bass-driven waves
+    const waveLines = 6;
+    const baseAmp = h * 0.04;
+    const baseFreq = 2.2; // number of wave cycles
+    for (let j = 0; j < waveLines; j++) {
+      const progress = j / (waveLines - 1 || 1);
+      const yBase = horizon + progress * (h - horizon);
+      const amp = baseAmp * (0.4 + bass * 1.6) * (1 + progress * 0.7);
+      const speed = 1.4 + progress * 0.8;
+      const phase = t * speed * (1 + bass * 0.5) + j * 0.7;
 
-    // vertical lines
-    for (let i = 0; i <= 18; i++) {
-      const x = (i / 18) * w;
-      const sway = Math.sin(t * 3.5 + i * 0.9) * wobble;
+      const lineGrad = ctx.createLinearGradient(0, yBase - amp, 0, yBase + amp);
+      lineGrad.addColorStop(0, `rgba(0, 240, 255, ${0.3 + 0.5 * (1-progress)})`);
+      lineGrad.addColorStop(1, `rgba(255, 0, 150, ${0.2 + 0.4 * progress})`);
+      ctx.strokeStyle = lineGrad;
+      ctx.lineWidth = 1 + (1 - progress) * 2 + bass * 2;
+
       ctx.beginPath();
-      ctx.moveTo(vanX, vanY);
-      ctx.lineTo(x + sway, h);
+      const steps = 80;
+      for (let i = 0; i <= steps; i++) {
+        const x = (i / steps) * w;
+        const y =
+          yBase +
+          Math.sin((i / steps) * baseFreq * Math.PI * 2 + phase) * amp *
+          (0.7 + mid * 0.6);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
       ctx.stroke();
     }
 
-    // horizontal lines (perspective)
-    for (let r = 1; r <= 22; r++) {
-      const p = (r / 22 + t * (0.7 + energy * 2)) % 1;
-      const depth = p * p;
-      const baseY = vanY + depth * (h - vanY);
-      const frontFactor = depth;
-      const lift = liftAmount * frontFactor * Math.sin(t * 6);
-      const ripple = Math.sin((t * 2.3 - p * 3.1) * Math.PI * 2) * (20 * bass * frontFactor);
-      const y = baseY + lift + ripple;
-
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(w, y);
-      ctx.stroke();
-    }
-
-    ctx.shadowBlur = 0;
-
-    // scanline overlay
+    // Scanline overlay
     ctx.save();
-    ctx.globalAlpha = 0.12;
+    ctx.globalAlpha = 0.13;
     ctx.fillStyle = "rgba(0,0,0,1)";
-    const gap = 3, off = (t * 30) % gap;
+    const gap = 3, off = (t * 35) % gap;
     for (let y = off; y < h; y += gap) {
       ctx.fillRect(0, y, w, 1);
     }
     ctx.restore();
-
-    // bar visualiser at bottom
-    const barRegionTop = horizon + (h - horizon) * 0.25;
-    const barRegionHeight = (h - barRegionTop) * 0.9;
-    const barCount = 40;
-    const barWidth = w / barCount;
-
-    let spectrum = null;
-    if (analyserEnabled && dataArray) {
-      spectrum = dataArray;
-    }
-
-    for (let i = 0; i < barCount; i++) {
-      let valueNorm;
-      if (spectrum) {
-        const idx = Math.floor((i / barCount) * spectrum.length);
-        valueNorm = spectrum[idx] / 255;
-      } else {
-        valueNorm = (Math.sin(t * 4 + i * 0.4) + 1) / 2;
-      }
-      const height = barRegionHeight * (0.1 + valueNorm * 0.9);
-      const x = i * barWidth;
-      const y = barRegionTop + barRegionHeight - height;
-
-      const grad = ctx.createLinearGradient(0, y, 0, y + height);
-      grad.addColorStop(0, "rgba(255,120,250,0.95)");
-      grad.addColorStop(0.5, "rgba(0,240,255,0.9)");
-      grad.addColorStop(1, "rgba(0,120,255,0.5)");
-      ctx.fillStyle = grad;
-      ctx.fillRect(x + 1, y, barWidth - 2, height);
-    }
 
     requestAnimationFrame(drawFrame);
   }
@@ -423,7 +386,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   audio.addEventListener("error", () => {
-    setStatus("audio error (check stream URL / console)");
+    setStatus("audio error (stream may be blocked or unreachable)");
   });
 });
 </script>
