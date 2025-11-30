@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function getDayPeriod(hour) {
     if (hour < 12) return "Morning";
     if (hour < 17) return "Afternoon";
-    return "Night";
+    return "Night"; // after 5pm, it's night for the station vibe
   }
 
   function updateTitle() {
@@ -133,13 +133,9 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx.fillRect(sx, sy, size, size);
     }
 
-    // Smooth glowing sun (no stripes)
     const sunRadius = Math.min(w, h) * 0.16;
     const sunY = horizon - sunRadius * 0.25 - bass * 8;
-    const sunGrad = ctx.createRadialGradient(
-      cx, sunY, sunRadius * 0.1,
-      cx, sunY, sunRadius
-    );
+    const sunGrad = ctx.createRadialGradient(cx, sunY, sunRadius * 0.1, cx, sunY, sunRadius);
     sunGrad.addColorStop(0, "rgba(255,255,200,0.98)");
     sunGrad.addColorStop(0.4, "rgba(255,180,80,0.96)");
     sunGrad.addColorStop(1, "rgba(255,0,80,0)");
@@ -147,7 +143,8 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.beginPath();
     ctx.arc(cx, sunY, sunRadius, 0, Math.PI * 2);
     ctx.fill();
-    // (stripe overlay removed)
+
+    // stripes on sun removed to keep it smooth
 
     const waterGrad = ctx.createLinearGradient(0, horizon, 0, h);
     waterGrad.addColorStop(0, "#150020");
@@ -182,13 +179,14 @@ document.addEventListener("DOMContentLoaded", () => {
     for (let i = 0; i < barCount; i++) {
       let valueNorm;
       if (analyserEnabled && isPlaying && dataArray) {
-        // Skip the very lowest/highest bins and spread across mids/highs
         const len = dataArray.length;
-        const minIndex = Math.floor(len * 0.05);  // cut bottom 5% (boomy bass)
-        const maxIndex = Math.floor(len * 0.9);   // avoid ultra-high noise
-        const norm = i / (barCount - 1);
-        const idx = Math.floor(minIndex + norm * (maxIndex - minIndex));
-        valueNorm = dataArray[idx] / 255;
+        // mirror low + high bins so bars aren't all left-heavy
+        let norm = i / barCount;
+        let idxLow = Math.floor(norm * len);
+        if (idxLow < 0) idxLow = 0;
+        if (idxLow >= len) idxLow = len - 1;
+        const idxHigh = len - 1 - idxLow;
+        valueNorm = (dataArray[idxLow] + dataArray[idxHigh]) / (2 * 255);
       } else {
         valueNorm = (Math.sin(t * 3 + i * 0.3) + 1) / 2;
       }
