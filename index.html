@@ -36,9 +36,10 @@
       border-radius: 14px;
       overflow: hidden;
       background: #050710;
-      margin-bottom: 1.5rem;
+      margin-bottom: 0.6rem;
     }
     #viz { width: 100%; height: 100%; display: block; }
+
     .channel {
       padding: 1.2rem 1.4rem;
       border-radius: 16px;
@@ -49,7 +50,16 @@
     }
     .channel span { font-weight: 600; font-size: 1rem; }
     .channel small { font-size: 0.8rem; opacity: 0.75; }
-    audio { width: 100%; margin-top: 0.8rem; }
+
+    /* title under animation */
+    .stream-title {
+      display: block;
+      margin: 0.4rem 0 0.4rem;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    audio { width: 100%; margin-top: 0.2rem; }
     .status { display:none; font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.8; }
     .kick {
       margin-top:0.6rem; padding:0.45rem 0.7rem;
@@ -82,11 +92,13 @@
 
     <!-- RADIO STREAM + VISUALIZER -->
     <div class="channel">
-      <span id="streamTitle">RADIO RRR Live</span><br />
 
       <div class="visualizer">
         <canvas id="viz"></canvas>
       </div>
+
+      <!-- dynamic title BELOW the animation -->
+      <span id="streamTitle" class="stream-title">RADIO RRR Live</span>
 
       <!-- Nightride stream -->
       <audio id="liveStream" controls crossorigin="anonymous">
@@ -143,7 +155,7 @@
   document.addEventListener("DOMContentLoaded", () => {
 
     /* -----------------------------
-       Dynamic title: "RADIO RRR Live – Sunday Night Chill"
+       Dynamic title
     ----------------------------- */
     const titleEl = document.getElementById("streamTitle");
 
