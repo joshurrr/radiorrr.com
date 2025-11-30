@@ -143,7 +143,7 @@
   document.addEventListener("DOMContentLoaded", () => {
 
     /* -----------------------------
-       Dynamic: "RADIO RRR Live – Sunday Night Mix"
+       Dynamic title: "RADIO RRR Live – Sunday Night Chill"
     ----------------------------- */
     const titleEl = document.getElementById("streamTitle");
 
@@ -158,7 +158,30 @@
       const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
       const dayName = days[now.getDay()];
       const period = getDayPeriod(now.getHours());
-      titleEl.textContent = `RADIO RRR Live – ${dayName} ${period} Mix`;
+
+      const variantsByPeriod = {
+        Morning: [
+          "Morning Chill",
+          "Sunrise Session",
+          "Morning Transmission"
+        ],
+        Afternoon: [
+          "Afternoon Chill",
+          "Daystream Session",
+          "Retro Run"
+        ],
+        Night: [
+          "Night Chill",
+          "After Dark",
+          "Night Transmission",
+          "Late Night Set"
+        ]
+      };
+
+      const list = variantsByPeriod[period] || ["Live Mix"];
+      const label = list[now.getDay() % list.length];
+
+      titleEl.textContent = `RADIO RRR Live – ${dayName} ${label}`;
     }
 
     updateTitle();
