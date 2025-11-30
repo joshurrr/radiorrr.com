@@ -1,261 +1,402 @@
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-
-  /* -----------------------------
-     Dynamic: "RADIO RRR Live – Sunday Night Mix"
-  ----------------------------- */
-  const titleEl = document.getElementById("streamTitle");
-
-  function getDayPeriod(hour) {
-    if (hour < 12) return "Morning";
-    if (hour < 17) return "Afternoon";
-    return "Night"; // after 5pm, it's night for the station vibe
-  }
-
-  function updateTitle() {
-    const now = new Date();
-    const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-    const dayName = days[now.getDay()];
-    const period = getDayPeriod(now.getHours());
-    titleEl.textContent = `RADIO RRR Live – ${dayName} ${period} Mix`;
-  }
-
-  updateTitle();
-
-  /* -----------------------------
-     Visualizer + Stream Engine
-  ----------------------------- */
-
-  const audio = document.getElementById("liveStream");
-  const statusEl = document.getElementById("status");
-  const kick = document.getElementById("kickPlay");
-  const canvas = document.getElementById("viz");
-  const ctx = canvas.getContext("2d");
-
-  function setStatus(msg) {
-    statusEl.style.display = "block";
-    statusEl.textContent = "Status: " + msg;
-  }
-
-  function resize() {
-    const dpr = window.devicePixelRatio || 1;
-    const w = canvas.clientWidth;
-    const h = canvas.clientHeight;
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-  resize();
-  window.addEventListener("resize", resize);
-
-  let audioCtx = null;
-  let analyser = null;
-  let dataArray = null;
-  let analyserEnabled = false;
-  let analyserInitAttempted = false;
-  let isPlaying = false;
-
-  function initAnalyser() {
-    if (analyserInitAttempted) return;
-    analyserInitAttempted = true;
-    try {
-      const AC = window.AudioContext || window.webkitAudioContext;
-      if (!AC) return;
-      audioCtx = new AC();
-      analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 1024;
-      dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-      const sourceNode = audioCtx.createMediaElementSource(audio);
-      sourceNode.connect(analyser);
-      analyser.connect(audioCtx.destination);
-
-      analyserEnabled = true;
-      console.log("Analyser enabled");
-    } catch (err) {
-      console.warn("Analyser blocked, using fake waves instead");
-      analyserEnabled = false;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Radio RRR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #050710;
+      color: #f5f5f5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
     }
-  }
+    .wrapper {
+      max-width: 600px;
+      width: 100%;
+      padding: 2.5rem 1.75rem;
+      border-radius: 18px;
+      background: radial-gradient(circle at top, #4338ca 0, #050710 55%);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+      text-align: center;
+    }
+    .tagline {
+      font-size: 0.95rem;
+      color: #c7c7ff;
+      margin: 0.5rem 0 1.25rem;
+    }
+    .visualizer {
+      width: 100%;
+      height: 260px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #050710;
+      margin-bottom: 1.5rem;
+    }
+    #viz { width: 100%; height: 100%; display: block; }
+    .channel {
+      padding: 1.2rem 1.4rem;
+      border-radius: 16px;
+      background: rgba(10,10,30,0.85);
+      border: 1px solid rgba(129,140,248,0.5);
+      margin-bottom: 1.75rem;
+      text-align: left;
+    }
+    .channel span { font-weight: 600; font-size: 1rem; }
+    .channel small { font-size: 0.8rem; opacity: 0.75; }
+    audio { width: 100%; margin-top: 0.8rem; }
+    .status { display:none; font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.8; }
+    .kick {
+      margin-top:0.6rem; padding:0.45rem 0.7rem;
+      border-radius:10px; border:1px solid rgba(129,140,248,0.6);
+      background:#0b1020; color:#c7c7ff;
+      cursor:pointer; font-size:0.85rem;
+    }
+    .video-container {
+      position: relative;
+      width: 100%; padding-bottom: 56.25%;
+      margin-top: 0.8rem;
+    }
+    .video-container iframe {
+      position: absolute; width: 100%; height: 100%; border: 0;
+      top: 0; left: 0; border-radius: 12px;
+    }
+    .links { margin-top: 0.75rem; font-size: 0.85rem; text-align:center; }
+    .links a { color: #a5b4fc; text-decoration: none; margin: 0 0.4rem; }
+    .footnote { margin-top: 1.5rem; font-size: 0.7rem; opacity: 0.55; }
+  </style>
+</head>
 
-  function avgRange(arr, start, end) {
-    let sum = 0;
-    for (let i = start; i < end; i++) sum += arr[i];
-    return sum / (end - start || 1);
-  }
+<body>
+  <main class="wrapper">
 
-  let startTime = performance.now();
+    <img src="logo.png" alt="Radio RRR Logo"
+         style="width: 300px; max-width: 90%; margin: 0 auto 10px; display: block;">
 
-  function drawFrame() {
-    const t = (performance.now() - startTime) / 1000;
-    const w = canvas.clientWidth;
-    const h = canvas.clientHeight;
+    <p class="tagline">Streaming Electro · Synth · 80s · Chill</p>
 
-    let bass = 0, mid = 0, treb = 0, energy = 0.1;
+    <!-- RADIO STREAM + VISUALIZER -->
+    <div class="channel">
+      <span id="streamTitle">RADIO RRR Live</span><br />
+      <small id="streamSubtitle">No sound? Press play >></small>
 
-    if (analyserEnabled && analyser && dataArray && isPlaying) {
+      <div class="visualizer">
+        <canvas id="viz"></canvas>
+      </div>
+
+      <!-- Nightride stream -->
+      <audio id="liveStream" controls crossorigin="anonymous">
+        <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
+      </audio>
+
+      <button id="kickPlay" class="kick">Play</button>
+      <div id="status" class="status"></div>
+    </div>
+
+    <!-- TIKTOK -->
+    <div class="channel">
+      <span>Latest on TikTok</span><br />
+      <small>@josh.u.rrr · newest shorts</small>
+
+      <blockquote class="tiktok-embed"
+        cite="https://www.tiktok.com/@josh.u.rrr"
+        data-unique-id="josh.u.rrr"
+        data-embed-type="creator"
+        style="max-width:100%; min-width:280px; margin-top:0.8rem;">
+        <section>
+          <a target="_blank" href="https://www.tiktok.com/@josh.u.rrr">@josh.u.rrr</a>
+        </section>
+      </blockquote>
+    </div>
+
+    <!-- YOUTUBE LIKES -->
+    <div class="channel">
+      <span>YouTube Likes</span><br />
+      <small>Latest videos we liked</small>
+
+      <div class="video-container">
+        <iframe
+          src="https://www.youtube.com/embed/videoseries?list=PLli1uTuS0FH7xR1QBnIvY3V9btomaSpTv"
+          allowfullscreen
+          loading="lazy">
+        </iframe>
+      </div>
+    </div>
+
+    <div class="links">
+      <a href="https://www.instagram.com/radio.rrr/" target="_blank">Instagram</a> ·
+      <a href="https://www.tiktok.com/@josh.u.rrr" target="_blank">TikTok</a> ·
+      <a href="https://www.youtube.com/@RADIO_RRR" target="_blank">YouTube</a> ·
+      <a href="https://github.com/joshurrr" target="_blank">GitHub</a>
+    </div>
+
+    <p class="footnote">Streaming 24/7</p>
+  </main>
+
+  <script async src="https://www.tiktok.com/embed.js"></script>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+
+    /* -----------------------------
+       Dynamic: "RADIO RRR Live – Sunday Night Mix"
+    ----------------------------- */
+    const titleEl = document.getElementById("streamTitle");
+
+    function getDayPeriod(hour) {
+      if (hour < 12) return "Morning";
+      if (hour < 17) return "Afternoon";
+      return "Night"; // after 5pm, it's night for the station vibe
+    }
+
+    function updateTitle() {
+      const now = new Date();
+      const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+      const dayName = days[now.getDay()];
+      const period = getDayPeriod(now.getHours());
+      titleEl.textContent = `RADIO RRR Live – ${dayName} ${period} Mix`;
+    }
+
+    updateTitle();
+
+    /* -----------------------------
+       Visualizer + Stream Engine
+    ----------------------------- */
+
+    const audio = document.getElementById("liveStream");
+    const statusEl = document.getElementById("status");
+    const kick = document.getElementById("kickPlay");
+    const canvas = document.getElementById("viz");
+    const ctx = canvas.getContext("2d");
+
+    function setStatus(msg) {
+      statusEl.style.display = "block";
+      statusEl.textContent = "Status: " + msg;
+    }
+
+    function resize() {
+      const dpr = window.devicePixelRatio || 1;
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+    window.addEventListener("resize", resize);
+
+    let audioCtx = null;
+    let analyser = null;
+    let dataArray = null;
+    let analyserEnabled = false;
+    let analyserInitAttempted = false;
+    let isPlaying = false;
+
+    function initAnalyser() {
+      if (analyserInitAttempted) return;
+      analyserInitAttempted = true;
       try {
-        analyser.getByteFrequencyData(dataArray);
-        const len = dataArray.length;
-        bass = avgRange(dataArray, 0, len * 0.08) / 255;
-        mid  = avgRange(dataArray, len * 0.08, len * 0.4) / 255;
-        treb = avgRange(dataArray, len * 0.4, len) / 255;
-        energy = bass * 1.2 + mid * 0.6 + treb * 0.3;
-      } catch {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        audioCtx = new AC();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 1024;
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+        const sourceNode = audioCtx.createMediaElementSource(audio);
+        sourceNode.connect(analyser);
+        analyser.connect(audioCtx.destination);
+
+        analyserEnabled = true;
+        console.log("Analyser enabled");
+      } catch (err) {
+        console.warn("Analyser blocked, using fake waves instead");
         analyserEnabled = false;
       }
     }
 
-    if (!analyserEnabled || !isPlaying) {
-      bass = (Math.sin(t * 2.3) + 1) / 2;
-      mid  = (Math.sin(t * 1.4 + 1.2) + 1) / 2;
-      treb = (Math.sin(t * 3.2 + 0.7) + 1) / 2;
-      energy = (bass + mid + treb) / 3;
+    function avgRange(arr, start, end) {
+      let sum = 0;
+      for (let i = start; i < end; i++) sum += arr[i];
+      return sum / (end - start || 1);
     }
 
-    const horizon = h * 0.55;
-    const cx = w / 2;
+    let startTime = performance.now();
 
-    const sky = ctx.createLinearGradient(0, 0, 0, horizon);
-    sky.addColorStop(0, "#090018");
-    sky.addColorStop(0.35, "#3a0060");
-    sky.addColorStop(0.7, "#ff0066");
-    sky.addColorStop(1, "#ff6600");
-    ctx.fillStyle = sky;
-    ctx.fillRect(0, 0, w, horizon);
+    function drawFrame() {
+      const t = (performance.now() - startTime) / 1000;
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
 
-    const starCount = 90;
-    ctx.fillStyle = "rgba(255,255,255,0.8)";
-    for (let i = 0; i < starCount; i++) {
-      const sx = (i * 73 + (t * 10)) % w;
-      const sy = (i * 53) % (h * 0.4);
-      const size = (i % 7 === 0 ? 1.4 : 0.7);
-      ctx.fillRect(sx, sy, size, size);
-    }
+      let bass = 0, mid = 0, treb = 0, energy = 0.1;
 
-    const sunRadius = Math.min(w, h) * 0.16;
-    const sunY = horizon - sunRadius * 0.25 - bass * 8;
-    const sunGrad = ctx.createRadialGradient(cx, sunY, sunRadius * 0.1, cx, sunY, sunRadius);
-    sunGrad.addColorStop(0, "rgba(255,255,200,0.98)");
-    sunGrad.addColorStop(0.4, "rgba(255,180,80,0.96)");
-    sunGrad.addColorStop(1, "rgba(255,0,80,0)");
-    ctx.fillStyle = sunGrad;
-    ctx.beginPath();
-    ctx.arc(cx, sunY, sunRadius, 0, Math.PI * 2);
-    ctx.fill();
-
-    // stripes on sun removed to keep it smooth
-
-    const waterGrad = ctx.createLinearGradient(0, horizon, 0, h);
-    waterGrad.addColorStop(0, "#150020");
-    waterGrad.addColorStop(0.5, "#05071a");
-    waterGrad.addColorStop(1, "#02030a");
-    ctx.fillStyle = waterGrad;
-    ctx.fillRect(0, horizon, w, h);
-
-    const reflectGrad = ctx.createLinearGradient(cx, horizon, cx, h);
-    reflectGrad.addColorStop(0, "rgba(255,120,160,0.7)");
-    reflectGrad.addColorStop(0.4, "rgba(255,80,200,0.35)");
-    reflectGrad.addColorStop(1, "rgba(255,0,150,0)");
-    ctx.fillStyle = reflectGrad;
-    ctx.globalAlpha = 0.55 + energy * 0.25;
-    const reflectWidth = sunRadius * 1.4 + bass * 20;
-    ctx.beginPath();
-    ctx.moveTo(cx - reflectWidth, horizon);
-    ctx.quadraticCurveTo(cx, h * 0.8 + bass * 14, cx + reflectWidth, horizon);
-    ctx.closePath();
-    ctx.fill();
-    ctx.globalAlpha = 1;
-
-    /* ---------------------------
-       VERTICAL MUSIC BARS
-    --------------------------- */
-    const barCount = 48;
-    const barRegionTop = horizon + (h - horizon) * 0.15;
-    const barRegionBottom = h * 0.95;
-    const barRegionHeight = barRegionBottom - barRegionTop;
-    const barWidth = w / barCount;
-
-    for (let i = 0; i < barCount; i++) {
-      let valueNorm;
-      if (analyserEnabled && isPlaying && dataArray) {
-        const len = dataArray.length;
-        // mirror low + high bins so bars aren't all left-heavy
-        let norm = i / barCount;
-        let idxLow = Math.floor(norm * len);
-        if (idxLow < 0) idxLow = 0;
-        if (idxLow >= len) idxLow = len - 1;
-        const idxHigh = len - 1 - idxLow;
-        valueNorm = (dataArray[idxLow] + dataArray[idxHigh]) / (2 * 255);
-      } else {
-        valueNorm = (Math.sin(t * 3 + i * 0.3) + 1) / 2;
+      if (analyserEnabled && analyser && dataArray && isPlaying) {
+        try {
+          analyser.getByteFrequencyData(dataArray);
+          const len = dataArray.length;
+          bass = avgRange(dataArray, 0, len * 0.08) / 255;
+          mid  = avgRange(dataArray, len * 0.08, len * 0.4) / 255;
+          treb = avgRange(dataArray, len * 0.4, len) / 255;
+          energy = bass * 1.2 + mid * 0.6 + treb * 0.3;
+        } catch {
+          analyserEnabled = false;
+        }
       }
 
-      const ampBoost = 0.2 + bass * 1.5;
-      const height = barRegionHeight * (0.05 + valueNorm * ampBoost);
-      const x = i * barWidth;
-      const y = barRegionBottom - height;
+      if (!analyserEnabled || !isPlaying) {
+        bass = (Math.sin(t * 2.3) + 1) / 2;
+        mid  = (Math.sin(t * 1.4 + 1.2) + 1) / 2;
+        treb = (Math.sin(t * 3.2 + 0.7) + 1) / 2;
+        energy = (bass + mid + treb) / 3;
+      }
 
-      const grad = ctx.createLinearGradient(0, y, 0, y + height);
-      grad.addColorStop(0, "rgba(255,120,250,0.95)");
-      grad.addColorStop(0.5, "rgba(0,240,255,0.9)");
-      grad.addColorStop(1, "rgba(0,120,255,0.5)");
-      ctx.fillStyle = grad;
-      ctx.fillRect(x + 1, y, barWidth - 2, height);
-    }
+      const horizon = h * 0.55;
+      const cx = w / 2;
 
-    ctx.save();
-    ctx.globalAlpha = 0.13;
-    ctx.fillStyle = "rgba(0,0,0,1)";
-    const gap = 3, off = (t * 35) % gap;
-    for (let y = off; y < h; y += gap) {
-      ctx.fillRect(0, y, w, 1);
+      const sky = ctx.createLinearGradient(0, 0, 0, horizon);
+      sky.addColorStop(0, "#090018");
+      sky.addColorStop(0.35, "#3a0060");
+      sky.addColorStop(0.7, "#ff0066");
+      sky.addColorStop(1, "#ff6600");
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, w, horizon);
+
+      const starCount = 90;
+      ctx.fillStyle = "rgba(255,255,255,0.8)";
+      for (let i = 0; i < starCount; i++) {
+        const sx = (i * 73 + (t * 10)) % w;
+        const sy = (i * 53) % (h * 0.4);
+        const size = (i % 7 === 0 ? 1.4 : 0.7);
+        ctx.fillRect(sx, sy, size, size);
+      }
+
+      const sunRadius = Math.min(w, h) * 0.16;
+      const sunY = horizon - sunRadius * 0.25 - bass * 8;
+      const sunGrad = ctx.createRadialGradient(cx, sunY, sunRadius * 0.1, cx, sunY, sunRadius);
+      sunGrad.addColorStop(0, "rgba(255,255,200,0.98)");
+      sunGrad.addColorStop(0.4, "rgba(255,180,80,0.96)");
+      sunGrad.addColorStop(1, "rgba(255,0,80,0)");
+      ctx.fillStyle = sunGrad;
+      ctx.beginPath();
+      ctx.arc(cx, sunY, sunRadius, 0, Math.PI * 2);
+      ctx.fill();
+      // stripes removed so sun is smooth
+
+      const waterGrad = ctx.createLinearGradient(0, horizon, 0, h);
+      waterGrad.addColorStop(0, "#150020");
+      waterGrad.addColorStop(0.5, "#05071a");
+      waterGrad.addColorStop(1, "#02030a");
+      ctx.fillStyle = waterGrad;
+      ctx.fillRect(0, horizon, w, h);
+
+      const reflectGrad = ctx.createLinearGradient(cx, horizon, cx, h);
+      reflectGrad.addColorStop(0, "rgba(255,120,160,0.7)");
+      reflectGrad.addColorStop(0.4, "rgba(255,80,200,0.35)");
+      reflectGrad.addColorStop(1, "rgba(255,0,150,0)");
+      ctx.fillStyle = reflectGrad;
+      ctx.globalAlpha = 0.55 + energy * 0.25;
+      const reflectWidth = sunRadius * 1.4 + bass * 20;
+      ctx.beginPath();
+      ctx.moveTo(cx - reflectWidth, horizon);
+      ctx.quadraticCurveTo(cx, h * 0.8 + bass * 14, cx + reflectWidth, horizon);
+      ctx.closePath();
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      /* ---------------------------
+         VERTICAL MUSIC BARS
+      --------------------------- */
+      const barCount = 48;
+      const barRegionTop = horizon + (h - horizon) * 0.15;
+      const barRegionBottom = h * 0.95;
+      const barRegionHeight = barRegionBottom - barRegionTop;
+      const barWidth = w / barCount;
+
+      for (let i = 0; i < barCount; i++) {
+        let valueNorm;
+        if (analyserEnabled && isPlaying && dataArray) {
+          const len = dataArray.length;
+          const norm = i / (barCount - 1);
+          // remap so higher freqs get a bit more visual space
+          const idx = Math.floor(Math.pow(norm, 0.7) * (len - 1));
+          valueNorm = dataArray[idx] / 255;
+        } else {
+          valueNorm = (Math.sin(t * 3 + i * 0.3) + 1) / 2;
+        }
+
+        const ampBoost = 0.2 + bass * 1.5;
+        const height = barRegionHeight * (0.05 + valueNorm * ampBoost);
+        const x = i * barWidth;
+        const y = barRegionBottom - height;
+
+        const grad = ctx.createLinearGradient(0, y, 0, y + height);
+        grad.addColorStop(0, "rgba(255,120,250,0.95)");
+        grad.addColorStop(0.5, "rgba(0,240,255,0.9)");
+        grad.addColorStop(1, "rgba(0,120,255,0.5)");
+        ctx.fillStyle = grad;
+        ctx.fillRect(x + 1, y, barWidth - 2, height);
+      }
+
+      ctx.save();
+      ctx.globalAlpha = 0.13;
+      ctx.fillStyle = "rgba(0,0,0,1)";
+      const gap = 3, off = (t * 35) % gap;
+      for (let y = off; y < h; y += gap) {
+        ctx.fillRect(0, y, w, 1);
+      }
+      ctx.restore();
+
+      requestAnimationFrame(drawFrame);
     }
-    ctx.restore();
 
     requestAnimationFrame(drawFrame);
-  }
 
-  requestAnimationFrame(drawFrame);
-
-  kick.addEventListener("click", () => {
-    if (audio.paused) {
-      const p = audio.play();
-      if (p && p.then) {
-        p.then(() => {
-          isPlaying = true;
-          setStatus("playing");
-          initAnalyser();
-          if (audioCtx && audioCtx.state === "suspended") {
-            audioCtx.resume();
-          }
-        }).catch(() => {
-          setStatus("tap the player above to start");
-        });
+    kick.addEventListener("click", () => {
+      if (audio.paused) {
+        const p = audio.play();
+        if (p && p.then) {
+          p.then(() => {
+            isPlaying = true;
+            setStatus("playing");
+            initAnalyser();
+            if (audioCtx && audioCtx.state === "suspended") {
+              audioCtx.resume();
+            }
+          }).catch(() => {
+            setStatus("tap the player above to start");
+          });
+        }
+      } else {
+        audio.pause();
+        isPlaying = false;
+        setStatus("paused");
       }
-    } else {
-      audio.pause();
+    });
+
+    audio.addEventListener("play", () => {
+      isPlaying = true;
+      setStatus("playing");
+      initAnalyser();
+      if (audioCtx && audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+    });
+
+    audio.addEventListener("pause", () => {
       isPlaying = false;
       setStatus("paused");
-    }
-  });
+    });
 
-  audio.addEventListener("play", () => {
-    isPlaying = true;
-    setStatus("playing");
-    initAnalyser();
-    if (audioCtx && audioCtx.state === "suspended") {
-      audioCtx.resume();
-    }
+    audio.addEventListener("error", () => {
+      setStatus("audio error (stream offline?)");
+    });
   });
+  </script>
 
-  audio.addEventListener("pause", () => {
-    isPlaying = false;
-    setStatus("paused");
-  });
-
-  audio.addEventListener("error", () => {
-    setStatus("audio error (stream offline?)");
-  });
-});
-</script>
+</body>
+</html>
