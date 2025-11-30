@@ -51,7 +51,6 @@
     .channel span { font-weight: 600; font-size: 1rem; }
     .channel small { font-size: 0.8rem; opacity: 0.75; }
 
-    /* title under animation */
     .stream-title {
       display: block;
       margin: 0.4rem 0 0.4rem;
@@ -97,10 +96,8 @@
         <canvas id="viz"></canvas>
       </div>
 
-      <!-- dynamic title BELOW the animation -->
       <span id="streamTitle" class="stream-title">RADIO RRR Live</span>
 
-      <!-- Nightride stream -->
       <audio id="liveStream" controls crossorigin="anonymous">
         <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
       </audio>
@@ -150,6 +147,7 @@
       Streaming 24/7<br>
       Contact: <a href="mailto:admin@radiorrr.com" style="color:#a5b4fc;">admin@radiorrr.com</a>
     </p>
+
   </main>
 
   <script async src="https://www.tiktok.com/embed.js"></script>
@@ -157,15 +155,12 @@
   <script>
   document.addEventListener("DOMContentLoaded", () => {
 
-    /* -----------------------------
-       Dynamic title
-    ----------------------------- */
     const titleEl = document.getElementById("streamTitle");
 
     function getDayPeriod(hour) {
       if (hour < 12) return "Morning";
       if (hour < 17) return "Afternoon";
-      return "Night"; // after 5pm, it's night for the station vibe
+      return "Night";
     }
 
     function updateTitle() {
@@ -175,22 +170,9 @@
       const period = getDayPeriod(now.getHours());
 
       const variantsByPeriod = {
-        Morning: [
-          "Morning Chill",
-          "Sunrise Session",
-          "Morning Transmission"
-        ],
-        Afternoon: [
-          "Afternoon Chill",
-          "Daystream Session",
-          "Retro Run"
-        ],
-        Night: [
-          "Night Chill",
-          "After Dark",
-          "Night Transmission",
-          "Late Night Set"
-        ]
+        Morning: ["Morning Chill","Sunrise Session","Morning Transmission"],
+        Afternoon: ["Afternoon Chill","Daystream Session","Retro Run"],
+        Night: ["Night Chill","After Dark","Night Transmission","Late Night Set"]
       };
 
       const list = variantsByPeriod[period] || ["Live Mix"];
@@ -200,10 +182,6 @@
     }
 
     updateTitle();
-
-    /* -----------------------------
-       Visualizer + Stream Engine
-    ----------------------------- */
 
     const audio = document.getElementById("liveStream");
     const statusEl = document.getElementById("status");
@@ -239,28 +217,21 @@
       analyserInitAttempted = true;
       try {
         const AC = window.AudioContext || window.webkitAudioContext;
-        if (!AC) return;
         audioCtx = new AC();
         analyser = audioCtx.createAnalyser();
         analyser.fftSize = 1024;
         dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-        const sourceNode = audioCtx.createMediaElementSource(audio);
-        sourceNode.connect(analyser);
+        const src = audioCtx.createMediaElementSource(audio);
+        src.connect(analyser);
         analyser.connect(audioCtx.destination);
-
         analyserEnabled = true;
-        console.log("Analyser enabled");
-      } catch (err) {
-        console.warn("Analyser blocked, using fake waves instead");
-        analyserEnabled = false;
-      }
+      } catch { analyserEnabled = false; }
     }
 
     function avgRange(arr, start, end) {
       let sum = 0;
       for (let i = start; i < end; i++) sum += arr[i];
-      return sum / (end - start || 1);
+      return sum / (end - start);
     }
 
     let startTime = performance.now();
@@ -272,142 +243,122 @@
 
       let bass = 0, mid = 0, treb = 0, energy = 0.1;
 
-      if (analyserEnabled && analyser && dataArray && isPlaying) {
-        try {
-          analyser.getByteFrequencyData(dataArray);
-          const len = dataArray.length;
-          bass = avgRange(dataArray, 0, len * 0.08) / 255;
-          mid  = avgRange(dataArray, len * 0.08, len * 0.4) / 255;
-          treb = avgRange(dataArray, len * 0.4, len) / 255;
-          energy = bass * 1.2 + mid * 0.6 + treb * 0.3;
-        } catch {
-          analyserEnabled = false;
-        }
+      if (analyserEnabled && isPlaying) {
+        analyser.getByteFrequencyData(dataArray);
+        const len = dataArray.length;
+        bass = avgRange(dataArray, 0, len*0.08) / 255;
+        mid  = avgRange(dataArray, len*0.08, len*0.4) / 255;
+        treb = avgRange(dataArray, len*0.4, len) / 255;
+        energy = bass*1.2 + mid*0.6 + treb*0.3;
+      } else {
+        bass = (Math.sin(t*2.3)+1)/2;
+        mid  = (Math.sin(t*1.4+1.2)+1)/2;
+        treb = (Math.sin(t*3.2+0.7)+1)/2;
+        energy = (bass+mid+treb)/3;
       }
 
-      if (!analyserEnabled || !isPlaying) {
-        bass = (Math.sin(t * 2.3) + 1) / 2;
-        mid  = (Math.sin(t * 1.4 + 1.2) + 1) / 2;
-        treb = (Math.sin(t * 3.2 + 0.7) + 1) / 2;
-        energy = (bass + mid + treb) / 3;
-      }
+      const horizon = h*0.55;
+      const cx = w/2;
 
-      const horizon = h * 0.55;
-      const cx = w / 2;
-
-      const sky = ctx.createLinearGradient(0, 0, 0, horizon);
-      sky.addColorStop(0, "#090018");
-      sky.addColorStop(0.35, "#3a0060");
-      sky.addColorStop(0.7, "#ff0066");
-      sky.addColorStop(1, "#ff6600");
+      const sky = ctx.createLinearGradient(0,0,0,horizon);
+      sky.addColorStop(0,"#090018");
+      sky.addColorStop(0.35,"#3a0060");
+      sky.addColorStop(0.7,"#ff0066");
+      sky.addColorStop(1,"#ff6600");
       ctx.fillStyle = sky;
-      ctx.fillRect(0, 0, w, horizon);
+      ctx.fillRect(0,0,w,horizon);
 
-      const starCount = 90;
-      ctx.fillStyle = "rgba(255,255,255,0.8)";
-      for (let i = 0; i < starCount; i++) {
-        const sx = (i * 73 + (t * 10)) % w;
-        const sy = (i * 53) % (h * 0.4);
-        const size = (i % 7 === 0 ? 1.4 : 0.7);
-        ctx.fillRect(sx, sy, size, size);
+      const starCount=90;
+      ctx.fillStyle="rgba(255,255,255,0.8)";
+      for(let i=0;i<starCount;i++){
+        const sx=(i*73+(t*10))%w;
+        const sy=(i*53)%(h*0.4);
+        const size=(i%7===0?1.4:0.7);
+        ctx.fillRect(sx,sy,size,size);
       }
 
-      const sunRadius = Math.min(w, h) * 0.16;
-      const sunY = horizon - sunRadius * 0.25 - bass * 8;
-      const sunGrad = ctx.createRadialGradient(cx, sunY, sunRadius * 0.1, cx, sunY, sunRadius);
-      sunGrad.addColorStop(0, "rgba(255,255,200,0.98)");
-      sunGrad.addColorStop(0.4, "rgba(255,180,80,0.96)");
-      sunGrad.addColorStop(1, "rgba(255,0,80,0)");
-      ctx.fillStyle = sunGrad;
+      const sunRadius=Math.min(w,h)*0.16;
+      const sunY=horizon-sunRadius*0.25-bass*8;
+      const g=ctx.createRadialGradient(cx,sunY,sunRadius*0.1,cx,sunY,sunRadius);
+      g.addColorStop(0,"rgba(255,255,200,0.98)");
+      g.addColorStop(0.4,"rgba(255,180,80,0.96)");
+      g.addColorStop(1,"rgba(255,0,80,0)");
+      ctx.fillStyle=g;
       ctx.beginPath();
-      ctx.arc(cx, sunY, sunRadius, 0, Math.PI * 2);
+      ctx.arc(cx,sunY,sunRadius,0,Math.PI*2);
       ctx.fill();
-      // stripes removed so sun is smooth
 
-      const waterGrad = ctx.createLinearGradient(0, horizon, 0, h);
-      waterGrad.addColorStop(0, "#150020");
-      waterGrad.addColorStop(0.5, "#05071a");
-      waterGrad.addColorStop(1, "#02030a");
-      ctx.fillStyle = waterGrad;
-      ctx.fillRect(0, horizon, w, h);
+      const waterGrad=ctx.createLinearGradient(0,horizon,0,h);
+      waterGrad.addColorStop(0,"#150020");
+      waterGrad.addColorStop(0.5,"#05071a");
+      waterGrad.addColorStop(1,"#02030a");
+      ctx.fillStyle=waterGrad;
+      ctx.fillRect(0,horizon,w,h);
 
-      const reflectGrad = ctx.createLinearGradient(cx, horizon, cx, h);
-      reflectGrad.addColorStop(0, "rgba(255,120,160,0.7)");
-      reflectGrad.addColorStop(0.4, "rgba(255,80,200,0.35)");
-      reflectGrad.addColorStop(1, "rgba(255,0,150,0)");
-      ctx.fillStyle = reflectGrad;
-      ctx.globalAlpha = 0.55 + energy * 0.25;
-      const reflectWidth = sunRadius * 1.4 + bass * 20;
+      const reflectGrad=ctx.createLinearGradient(cx,horizon,cx,h);
+      reflectGrad.addColorStop(0,"rgba(255,120,160,0.7)");
+      reflectGrad.addColorStop(0.4,"rgba(255,80,200,0.35)");
+      reflectGrad.addColorStop(1,"rgba(255,0,150,0)");
+      ctx.fillStyle=reflectGrad;
+      ctx.globalAlpha=0.55+energy*0.25;
+      const rw=sunRadius*1.4+bass*20;
       ctx.beginPath();
-      ctx.moveTo(cx - reflectWidth, horizon);
-      ctx.quadraticCurveTo(cx, h * 0.8 + bass * 14, cx + reflectWidth, horizon);
+      ctx.moveTo(cx-rw,horizon);
+      ctx.quadraticCurveTo(cx,h*0.8+bass*14,cx+rw,horizon);
       ctx.closePath();
       ctx.fill();
-      ctx.globalAlpha = 1;
+      ctx.globalAlpha=1;
 
-      /* ---------------------------
-         VERTICAL MUSIC BARS
-      --------------------------- */
-      const barCount = 48;
-      const barRegionTop = horizon + (h - horizon) * 0.15;
-      const barRegionBottom = h * 0.95;
-      const barRegionHeight = barRegionBottom - barRegionTop;
-      const barWidth = w / barCount;
+      const barCount=48;
+      const bt=horizon+(h-horizon)*0.15;
+      const bb=h*0.95;
+      const bh=bb-bt;
+      const bw=w/barCount;
 
-      for (let i = 0; i < barCount; i++) {
-        let valueNorm;
-        if (analyserEnabled && isPlaying && dataArray) {
-          const len = dataArray.length;
-          const norm = i / (barCount - 1);
-          // remap so higher freqs get a bit more visual space
-          const idx = Math.floor(Math.pow(norm, 0.7) * (len - 1));
-          valueNorm = dataArray[idx] / 255;
+      for(let i=0;i<barCount;i++){
+        let v;
+        if(analyserEnabled && isPlaying){
+          const len=dataArray.length;
+          const norm=i/(barCount-1);
+          const idx=Math.floor(Math.pow(norm,0.7)*(len-1));
+          v=dataArray[idx]/255;
         } else {
-          valueNorm = (Math.sin(t * 3 + i * 0.3) + 1) / 2;
+          v=(Math.sin(t*3+i*0.3)+1)/2;
         }
+        const amp=0.2+bass*1.5;
+        const hgt=bh*(0.05+v*amp);
+        const x=i*bw;
+        const y=bb-hgt;
 
-        const ampBoost = 0.2 + bass * 1.5;
-        const height = barRegionHeight * (0.05 + valueNorm * ampBoost);
-        const x = i * barWidth;
-        const y = barRegionBottom - height;
-
-        const grad = ctx.createLinearGradient(0, y, 0, y + height);
-        grad.addColorStop(0, "rgba(255,120,250,0.95)");
-        grad.addColorStop(0.5, "rgba(0,240,255,0.9)");
-        grad.addColorStop(1, "rgba(0,120,255,0.5)");
-        ctx.fillStyle = grad;
-        ctx.fillRect(x + 1, y, barWidth - 2, height);
+        const grad=ctx.createLinearGradient(0,y,0,y+hgt);
+        grad.addColorStop(0,"rgba(255,120,250,0.95)");
+        grad.addColorStop(0.5,"rgba(0,240,255,0.9)");
+        grad.addColorStop(1,"rgba(0,120,255,0.5)");
+        ctx.fillStyle=grad;
+        ctx.fillRect(x+1,y,bw-2,hgt);
       }
 
       ctx.save();
-      ctx.globalAlpha = 0.13;
-      ctx.fillStyle = "rgba(0,0,0,1)";
-      const gap = 3, off = (t * 35) % gap;
-      for (let y = off; y < h; y += gap) {
-        ctx.fillRect(0, y, w, 1);
+      ctx.globalAlpha=0.13;
+      ctx.fillStyle="rgba(0,0,0,1)";
+      const gap=3, off=(t*35)%gap;
+      for(let y=off;y<h;y+=gap){
+        ctx.fillRect(0,y,w,1);
       }
       ctx.restore();
 
       requestAnimationFrame(drawFrame);
     }
-
     requestAnimationFrame(drawFrame);
 
     kick.addEventListener("click", () => {
       if (audio.paused) {
-        const p = audio.play();
-        if (p && p.then) {
-          p.then(() => {
-            isPlaying = true;
-            setStatus("playing");
-            initAnalyser();
-            if (audioCtx && audioCtx.state === "suspended") {
-              audioCtx.resume();
-            }
-          }).catch(() => {
-            setStatus("tap the player above to start");
-          });
-        }
+        audio.play().then(() => {
+          isPlaying = true;
+          setStatus("playing");
+          initAnalyser();
+          if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+        }).catch(() => setStatus("tap the player above to start"));
       } else {
         audio.pause();
         isPlaying = false;
@@ -419,9 +370,7 @@
       isPlaying = true;
       setStatus("playing");
       initAnalyser();
-      if (audioCtx && audioCtx.state === "suspended") {
-        audioCtx.resume();
-      }
+      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
     });
 
     audio.addEventListener("pause", () => {
@@ -429,9 +378,7 @@
       setStatus("paused");
     });
 
-    audio.addEventListener("error", () => {
-      setStatus("audio error (stream offline?)");
-    });
+    audio.addEventListener("error", () => setStatus("audio error (stream offline?)"));
   });
   </script>
 
