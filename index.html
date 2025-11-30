@@ -1,145 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Radio RRR</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #050710;
-      color: #f5f5f5;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-    }
-    .wrapper {
-      max-width: 600px;
-      width: 100%;
-      padding: 2.5rem 1.75rem;
-      border-radius: 18px;
-      background: radial-gradient(circle at top, #4338ca 0, #050710 55%);
-      box-shadow: 0 18px 40px rgba(0,0,0,0.55);
-      text-align: center;
-    }
-    .tagline {
-      font-size: 0.95rem;
-      color: #c7c7ff;
-      margin: 0.5rem 0 1.25rem;
-    }
-    .visualizer {
-      width: 100%;
-      height: 260px;
-      border-radius: 14px;
-      overflow: hidden;
-      background: #050710;
-      margin-bottom: 1.5rem;
-    }
-    #viz { width: 100%; height: 100%; display: block; }
-    .channel {
-      padding: 1.2rem 1.4rem;
-      border-radius: 16px;
-      background: rgba(10,10,30,0.85);
-      border: 1px solid rgba(129,140,248,0.5);
-      margin-bottom: 1.75rem;
-      text-align: left;
-    }
-    .channel span { font-weight: 600; font-size: 1rem; }
-    .channel small { font-size: 0.8rem; opacity: 0.75; }
-    audio { width: 100%; margin-top: 0.8rem; }
-    .status { display:none; font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.8; }
-    .kick {
-      margin-top:0.6rem; padding:0.45rem 0.7rem;
-      border-radius:10px; border:1px solid rgba(129,140,248,0.6);
-      background:#0b1020; color:#c7c7ff;
-      cursor:pointer; font-size:0.85rem;
-    }
-    .video-container {
-      position: relative;
-      width: 100%; padding-bottom: 56.25%;
-      margin-top: 0.8rem;
-    }
-    .video-container iframe {
-      position: absolute; width: 100%; height: 100%; border: 0;
-      top: 0; left: 0; border-radius: 12px;
-    }
-    .links { margin-top: 0.75rem; font-size: 0.85rem; text-align:center; }
-    .links a { color: #a5b4fc; text-decoration: none; margin: 0 0.4rem; }
-    .footnote { margin-top: 1.5rem; font-size: 0.7rem; opacity: 0.55; }
-  </style>
-</head>
-
-<body>
-  <main class="wrapper">
-
-    <img src="logo.png" alt="Radio RRR Logo"
-         style="width: 300px; max-width: 90%; margin: 0 auto 10px; display: block;">
-
-    <p class="tagline">Streaming Electro · Synth · 80s · Chill</p>
-
-    <!-- RADIO STREAM + VISUALIZER -->
-    <div class="channel">
-      <span id="streamTitle">RADIO RRR Live</span><br />
-      <small id="streamSubtitle">No sound? Press play >></small>
-
-      <div class="visualizer">
-        <canvas id="viz"></canvas>
-      </div>
-
-      <!-- Nightride stream -->
-      <audio id="liveStream" controls crossorigin="anonymous">
-        <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
-      </audio>
-
-      <button id="kickPlay" class="kick">Play</button>
-      <div id="status" class="status"></div>
-    </div>
-
-    <!-- TIKTOK -->
-    <div class="channel">
-      <span>Latest on TikTok</span><br />
-      <small>@josh.u.rrr · newest shorts</small>
-
-      <blockquote class="tiktok-embed"
-        cite="https://www.tiktok.com/@josh.u.rrr"
-        data-unique-id="josh.u.rrr"
-        data-embed-type="creator"
-        style="max-width:100%; min-width:280px; margin-top:0.8rem;">
-        <section>
-          <a target="_blank" href="https://www.tiktok.com/@josh.u.rrr">@josh.u.rrr</a>
-        </section>
-      </blockquote>
-    </div>
-
-    <!-- YOUTUBE LIKES -->
-    <div class="channel">
-      <span>YouTube Likes</span><br />
-      <small>Latest videos we liked</small>
-
-      <div class="video-container">
-        <iframe
-          src="https://www.youtube.com/embed/videoseries?list=PLli1uTuS0FH7xR1QBnIvY3V9btomaSpTv"
-          allowfullscreen
-          loading="lazy">
-        </iframe>
-      </div>
-    </div>
-
-    <div class="links">
-      <a href="https://www.instagram.com/radio.rrr/" target="_blank">Instagram</a> ·
-      <a href="https://www.tiktok.com/@josh.u.rrr" target="_blank">TikTok</a> ·
-      <a href="https://www.youtube.com/@RADIO_RRR" target="_blank">YouTube</a> ·
-      <a href="https://github.com/joshurrr" target="_blank">GitHub</a>
-    </div>
-
-    <p class="footnote">Streaming 24/7</p>
-  </main>
-
-  <script async src="https://www.tiktok.com/embed.js"></script>
-
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -151,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function getDayPeriod(hour) {
     if (hour < 12) return "Morning";
     if (hour < 17) return "Afternoon";
-    return "Night"; // after 5pm, it's night for the station vibe
+    return "Night";
   }
 
   function updateTitle() {
@@ -275,9 +133,13 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx.fillRect(sx, sy, size, size);
     }
 
+    // Smooth glowing sun (no stripes)
     const sunRadius = Math.min(w, h) * 0.16;
     const sunY = horizon - sunRadius * 0.25 - bass * 8;
-    const sunGrad = ctx.createRadialGradient(cx, sunY, sunRadius * 0.1, cx, sunY, sunRadius);
+    const sunGrad = ctx.createRadialGradient(
+      cx, sunY, sunRadius * 0.1,
+      cx, sunY, sunRadius
+    );
     sunGrad.addColorStop(0, "rgba(255,255,200,0.98)");
     sunGrad.addColorStop(0.4, "rgba(255,180,80,0.96)");
     sunGrad.addColorStop(1, "rgba(255,0,80,0)");
@@ -285,15 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.beginPath();
     ctx.arc(cx, sunY, sunRadius, 0, Math.PI * 2);
     ctx.fill();
-
-    ctx.save();
-    ctx.globalCompositeOperation = "source-atop";
-    ctx.fillStyle = "rgba(10,5,20,0.7)";
-    const stripeH = sunRadius * 0.14;
-    for (let y = -sunRadius; y < sunRadius; y += stripeH * 1.7) {
-      ctx.fillRect(cx - sunRadius, sunY + y, sunRadius * 2, stripeH);
-    }
-    ctx.restore();
+    // (stripe overlay removed)
 
     const waterGrad = ctx.createLinearGradient(0, horizon, 0, h);
     waterGrad.addColorStop(0, "#150020");
@@ -328,7 +182,12 @@ document.addEventListener("DOMContentLoaded", () => {
     for (let i = 0; i < barCount; i++) {
       let valueNorm;
       if (analyserEnabled && isPlaying && dataArray) {
-        const idx = Math.floor((i / barCount) * dataArray.length);
+        // Skip the very lowest/highest bins and spread across mids/highs
+        const len = dataArray.length;
+        const minIndex = Math.floor(len * 0.05);  // cut bottom 5% (boomy bass)
+        const maxIndex = Math.floor(len * 0.9);   // avoid ultra-high noise
+        const norm = i / (barCount - 1);
+        const idx = Math.floor(minIndex + norm * (maxIndex - minIndex));
         valueNorm = dataArray[idx] / 255;
       } else {
         valueNorm = (Math.sin(t * 3 + i * 0.3) + 1) / 2;
@@ -402,6 +261,3 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 </script>
-
-</body>
-</html>
