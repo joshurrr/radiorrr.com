@@ -24,7 +24,6 @@
       width: 100%;
       padding: 2.5rem 1.75rem;
       border-radius: 18px;
-      /* Aesthetic Update: Simpler background, new multi-color neon box-shadow */
       background: #0d0e1f;
       border: 1px solid #1f224b;
       box-shadow: 
@@ -85,6 +84,8 @@
     /* AUDIO / STATUS */
     audio { width: 100%; margin-top: 0.2rem; }
     .status { display:none; font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.8; }
+    /* The custom kick button is removed as per the earlier recommendation */
+    .kick { display: none; }
     
     /* VIDEO EMBEDS */
     .video-container {
@@ -234,7 +235,6 @@
       canvas.width = w * dpr;
       canvas.height = h * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      // No more static gradients needed for the new visualizer
     }
     resize();
     window.addEventListener("resize", resize);
@@ -270,7 +270,7 @@
 
     let startTime = performance.now();
 
-    // 🚀 NEW CORE SPECTRUM TUNNEL VISUALIZER 🚀
+    // 🚀 CORRECTED CORE SPECTRUM TUNNEL VISUALIZER 🚀
     function drawFrame() {
       const t = (performance.now() - startTime) / 1000;
       const w = canvas.clientWidth;
@@ -281,34 +281,36 @@
       const minDim = Math.min(w, h);
 
       let bass = 0.1, mid = 0.1, treb = 0.1, energy = 0.1;
+      const GAIN = 3; // Key Fix: Amplifying the analyzed signal
 
       if (analyserEnabled && isPlaying) {
         analyser.getByteFrequencyData(dataArray);
         const len = dataArray.length;
-        bass = avgRange(dataArray, 0, len * 0.08) / 255;
-        mid  = avgRange(dataArray, len * 0.08, len * 0.4) / 255;
-        treb = avgRange(dataArray, len * 0.4, len) / 255;
+        // Key Fix: Applying the GAIN multiplier to the analyzed data
+        bass = Math.min(1, avgRange(dataArray, 0, len * 0.08) / 255 * GAIN);
+        mid  = Math.min(1, avgRange(dataArray, len * 0.08, len * 0.4) / 255 * GAIN);
+        treb = Math.min(1, avgRange(dataArray, len * 0.4, len) / 255 * GAIN);
         energy = (bass + mid + treb) / 3;
       } else {
-        // Fallback animation
+        // Fallback animation logic (used when paused/not initialized)
         bass = (Math.sin(t * 1.5) + 1) / 2;
         mid  = (Math.sin(t * 0.9 + 1.2) + 1) / 2;
         treb = (Math.sin(t * 2.1 + 0.7) + 1) / 2;
         energy = (bass + mid + treb) / 3;
       }
 
-      // 1. Digital Fade Background (Cleaner than simple clearRect)
-      ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
-      ctx.fillRect(0, 0, w, h);
-      ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+      // 1. Digital Fade Background
+      ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
       ctx.fillRect(0, 0, w, h);
       
       // 2. Draw Spectrum Circles
       const circleCount = 6;
       for (let i = 0; i < circleCount; i++) {
         const radius = (minDim * 0.05) + (i * minDim * 0.07);
-        const freqAmp = (i % 2 === 0 ? mid : treb); // Alternate between mid and treb
-        const currentRadius = radius + (freqAmp * 20);
+        const freqAmp = (i % 2 === 0 ? mid : treb);
+        
+        // Use the amplified freqAmp to drive the size
+        const currentRadius = radius + (freqAmp * 40); 
         
         ctx.beginPath();
         ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
@@ -317,18 +319,20 @@
         const hue = (t * 50 + i * 20) % 360; 
         ctx.strokeStyle = `hsl(${hue}, 100%, ${60 + freqAmp * 20}%)`;
         ctx.lineWidth = 1 + freqAmp * 2;
-        ctx.shadowBlur = 10 + freqAmp * 10;
+        ctx.shadowBlur = 10 + freqAmp * 15;
         ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
         ctx.stroke();
       }
-      ctx.shadowBlur = 0; // Reset shadow
+      ctx.shadowBlur = 0; 
 
       // 3. Draw Radial Lines (Wireframe Tunnel)
       const lineCount = 64;
       for (let i = 0; i < lineCount; i++) {
         const angle = (i * (Math.PI * 2) / lineCount) + (t * 0.05 * treb);
         const maxDist = maxDim * 0.7;
-        const lineLength = maxDist + (bass * 50);
+        
+        // Line length driven by Bass
+        const lineLength = maxDist + (bass * 80); 
 
         const x2 = cx + Math.cos(angle) * lineLength;
         const y2 = cy + Math.sin(angle) * lineLength;
@@ -337,7 +341,6 @@
         ctx.moveTo(cx, cy);
         ctx.lineTo(x2, y2);
         
-        // Color shift based on bass/mid
         const lineHue = (i * 5 + t * 50) % 360; 
         ctx.strokeStyle = `hsla(${lineHue}, 100%, 50%, ${0.2 + energy * 0.5})`;
         ctx.lineWidth = 1;
@@ -345,7 +348,8 @@
       }
       
       // 4. Central Core Pulse (Bass Reaction)
-      const coreRadius = 5 + bass * 20;
+      // Use amplified bass for core size
+      const coreRadius = 5 + bass * 35; 
       const coreGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
       coreGradient.addColorStop(0, `rgba(255, 255, 255, ${0.8 + bass * 0.2})`);
       coreGradient.addColorStop(0.5, `rgba(255, 0, 102, ${0.5 + bass * 0.5})`);
@@ -361,6 +365,7 @@
     }
     requestAnimationFrame(drawFrame);
 
+    // Event listeners attached to the native audio player
     audio.addEventListener("play", () => {
       isPlaying = true;
       setStatus("playing");
