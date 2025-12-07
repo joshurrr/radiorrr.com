@@ -46,7 +46,7 @@
       margin: 0.5rem 0 1.25rem;
     }
 
-    /* NEW: Navigation Tabs */
+    /* NAVIGATION TABS */
     .nav-tabs {
       display: flex;
       justify-content: center;
@@ -64,6 +64,7 @@
       transition: all 0.2s;
       letter-spacing: 0.05em;
       text-shadow: 0 0 5px rgba(67, 56, 202, 0.4);
+      cursor: pointer; /* Indicate it's clickable */
     }
     /* Active/Hover Neon Effect */
     .nav-tabs a:hover,
@@ -73,6 +74,16 @@
       transform: translateY(-2px);
     }
     
+    /* NEW: CONTENT PANE STYLING */
+    /* Container for all sections to manage flow */
+    .content-pane {
+        width: 100%;
+        transition: opacity 0.3s ease-in-out;
+    }
+    .hidden-pane {
+        display: none; /* Hide content when not selected */
+    }
+
     /* VISUALIZER */
     .visualizer {
       width: 100%;
@@ -131,7 +142,7 @@
       box-shadow: 0 0 12px rgba(255, 0, 102, 0.7);
     }
 
-    /* NEW: Events List Styling */
+    /* Events List Styling */
     .events-list {
       text-align: left;
       margin-top: 1rem;
@@ -198,11 +209,12 @@
     <p class="tagline">Streaming Electro · Synth · 80s · Chill</p>
 
     <nav class="nav-tabs">
-        <a href="#stream-section" class="active">Stream</a>
-        <a href="#events-section">Events</a>
+        <a data-target="stream-section" class="active">Stream</a>
+        <a data-target="events-section">Events</a>
+        <a data-target="follow-section">Follow</a>
     </nav>
     
-    <div id="stream-section">
+    <div id="stream-section" class="content-pane">
       <div class="channel">
 
         <div class="visualizer">
@@ -218,7 +230,39 @@
         <button id="kickPlay" class="kick">Play</button>
         <div id="status" class="status"></div>
       </div>
+    </div>
+    
+    <div id="events-section" class="content-pane hidden-pane">
+      <div class="channel">
+        <span>Upcoming Global Events 🌎</span><br />
+        <small>Major electronic, synthwave, and retro festivals.</small>
 
+        <div class="events-list">
+            
+            <div class="event-item">
+                <h4>Tomorrowland 🇧🇪 - Adscendo</h4>
+                <p><span class="event-date">July 18-21 & July 25-28, 2025</span></p>
+                <p>The world's biggest EDM festival returns to Belgium. Expect the new theme, stage design, and massive electronic lineups.</p>
+            </div>
+
+            <div class="event-item">
+                <h4>RetroSynth Festival 🇺🇸 - West Coast</h4>
+                <p><span class="event-date">October 11-12, 2025</span></p>
+                <p>Annual retro/synthwave gathering. News on venue and headliners expected next quarter.</p>
+            </div>
+
+            <div class="event-item">
+                <h4>Coachella 🇺🇸 - Weekend 1 & 2</h4>
+                <p><span class="event-date">April 11-13 & April 18-20, 2026</span></p>
+                <p>The iconic California festival. Lineup speculation dominates social media ahead of the January announcement.</p>
+            </div>
+            
+        </div>
+      </div>
+    </div>
+    
+    <div id="follow-section" class="content-pane hidden-pane">
+        
       <div class="channel">
         <span>Latest on TikTok</span><br />
         <small>@josh.u.rrr · newest shorts</small>
@@ -248,32 +292,6 @@
       </div>
     </div>
     
-    <div class="channel" id="events-section">
-        <span>Upcoming Global Events 🌎</span><br />
-        <small>Major electronic, synthwave, and retro festivals.</small>
-
-        <div class="events-list">
-            
-            <div class="event-item">
-                <h4>Tomorrowland 🇧🇪 - Adscendo</h4>
-                <p><span class="event-date">July 18-21 & July 25-28, 2025</span></p>
-                <p>The world's biggest EDM festival returns to Belgium. Expect the new theme, stage design, and massive electronic lineups.</p>
-            </div>
-
-            <div class="event-item">
-                <h4>RetroSynth Festival 🇺🇸 - West Coast</h4>
-                <p><span class="event-date">October 11-12, 2025</span></p>
-                <p>Annual retro/synthwave gathering. News on venue and headliners expected next quarter.</p>
-            </div>
-
-            <div class="event-item">
-                <h4>Coachella 🇺🇸 - Weekend 1 & 2</h4>
-                <p><span class="event-date">April 11-13 & April 18-20, 2026</span></p>
-                <p>The iconic California festival. Lineup speculation dominates social media ahead of the January announcement.</p>
-            </div>
-            
-        </div>
-    </div>
 
     <div class="links">
       <a href="https://www.instagram.com/radio.rrr/" target="_blank">Instagram</a> ·
@@ -295,26 +313,32 @@
   document.addEventListener("DOMContentLoaded", () => {
 
     const titleEl = document.getElementById("streamTitle");
-    const streamSection = document.getElementById('stream-section');
-    const eventsSection = document.getElementById('events-section');
     const navLinks = document.querySelectorAll('.nav-tabs a');
+    const contentPanes = document.querySelectorAll('.content-pane');
+    const GAIN = 10.0; 
 
-    // SCROLLING AND NAVIGATION LOGIC
+    // NEW: TAB SHOW/HIDE LOGIC (Replaces scrolling)
+    function switchTab(targetId) {
+        // 1. Hide all content panes
+        contentPanes.forEach(pane => {
+            pane.classList.add('hidden-pane');
+        });
+
+        // 2. Show the selected pane
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+            targetElement.classList.remove('hidden-pane');
+        }
+
+        // 3. Update active state of nav links
+        navLinks.forEach(l => l.classList.remove('active'));
+        document.querySelector(`.nav-tabs a[data-target="${targetId}"]`).classList.add('active');
+    }
+
     navLinks.forEach(link => {
       link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const targetId = e.target.getAttribute('href').substring(1);
-        const targetElement = document.getElementById(targetId);
-
-        // Remove active class from all links
-        navLinks.forEach(l => l.classList.remove('active'));
-        // Add active class to the clicked link
-        e.target.classList.add('active');
-        
-        // Simple smooth scroll to the target section
-        if (targetElement) {
-          targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        const targetId = e.target.getAttribute('data-target');
+        switchTab(targetId);
       });
     });
 
@@ -352,7 +376,7 @@
     const kick = document.getElementById("kickPlay");
     const canvas = document.getElementById("viz");
     const ctx = canvas.getContext("2d");
-    const GAIN = 10.0; 
+    
 
     function setStatus(msg) {
       statusEl.style.display = "block";
@@ -401,7 +425,7 @@
 
     let startTime = performance.now();
 
-    // WARP TUNNEL VISUALIZER (RESTORED)
+    // WARP TUNNEL VISUALIZER 
     function drawFrame() {
       const t = (performance.now() - startTime) / 1000;
       const w = canvas.clientWidth;
