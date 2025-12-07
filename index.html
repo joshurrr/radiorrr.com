@@ -5,8 +5,8 @@
   <title>Radio RRR</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   
-  <meta name="description" content="Radio RRR: 24/7 streaming Electro, Synth, 80s, and Memes Remixed." />
-  <meta property="og:title" content="Radio RRR - 24/7 Electro, Synth, 80s, Memes Remixed" />
+  <meta name="description" content="Radio RRR: 24/7 streaming Electro, Synth, 80s, and Chill music." />
+  <meta property="og:title" content="Radio RRR - 24/7 Electro, Synth, 80s, Chill Stream" />
   <meta property="og:description" content="Tune in to the best Retrowave, Synthwave, and Outrun music for your late-night drives." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://radiorrr.com/" />
@@ -129,8 +129,6 @@
       background:#0b1020; color:#c7c7ff;
       cursor:pointer; font-size:0.85rem;
       transition: all 0.3s;
-      text-decoration: none; /* Ensure link buttons look like buttons */
-      display: inline-block;
     }
     .kick:hover {
       /* REAPPLYING NEON: button hover effect */
@@ -209,8 +207,8 @@
 <body>
   <main class="wrapper">
 
-    <img src="logo.png" alt="Radio RRR Logo - Neon Retrowave Text"
-          style="width: 300px; max-width: 90%; margin: 0 auto 10px; display: block;">
+    <img src="logo.png" alt="Radio RRR Logo"
+         style="width: 300px; max-width: 90%; margin: 0 auto 10px; display: block;">
 
     <nav class="nav-tabs">
         <a data-target="stream-section" class="active">Stream</a>
@@ -268,11 +266,18 @@
     <div id="follow-section" class="content-pane hidden-pane">
         
       <div class="channel">
-        <span>Follow us on TikTok</span><br />
-        <small>@josh.u.rrr - Tap below to see our latest shorts without slowing down the page!</small>
-        <p style="margin-top: 1rem; text-align: center;">
-            <a href="https://www.tiktok.com/@josh.u.rrr" target="_blank" class="kick">Visit TikTok Channel</a>
-        </p>
+        <span>Latest on TikTok</span><br />
+        <small>@josh.u.rrr · newest shorts</small>
+
+        <blockquote class="tiktok-embed"
+          cite="https://www.tiktok.com/@josh.u.rrr"
+          data-unique-id="josh.u.rrr"
+          data-embed-type="creator"
+          style="max-width:100%; min-width:280px; margin-top:0.8rem;">
+          <section>
+            <a target="_blank" href="https://www.tiktok.com/@josh.u.rrr">@josh.u.rrr</a>
+          </section>
+        </blockquote>
       </div>
 
       <div class="channel">
@@ -305,32 +310,36 @@
 
   </main>
 
+  <script async src="https://www.tiktok.com/embed.js"></script>
+
   <script>
   document.addEventListener("DOMContentLoaded", () => {
 
     const titleEl = document.getElementById("streamTitle");
     const navLinks = document.querySelectorAll('.nav-tabs a');
     const contentPanes = document.querySelectorAll('.content-pane');
-    const GAIN = 10.0; 
-    const MIN_AMP = 0.08;
+    const GAIN = 10.0; // Higher gain for the tunnel effect
 
-    // === TAB SHOW/HIDE LOGIC ===
+    // === TAB SHOW/HIDE LOGIC (Fixed) ===
     function switchTab(targetId) {
+        // 1. Hide all content panes
         contentPanes.forEach(pane => {
             pane.classList.add('hidden-pane');
         });
+
+        // 2. Show the selected pane
         const targetElement = document.getElementById(targetId);
         if (targetElement) {
             targetElement.classList.remove('hidden-pane');
         }
+
+        // 3. Update active state of nav links
         navLinks.forEach(l => l.classList.remove('active'));
         document.querySelector(`.nav-tabs a[data-target="${targetId}"]`).classList.add('active');
-        // Ensure visualizer is resized/recalculated when tab opens
-        if (targetId === 'stream-section') {
-             resize();
-        }
     }
-    switchTab('stream-section'); // Initialize to the Stream tab
+
+    // Initialize to the Stream tab
+    switchTab('stream-section');
 
     navLinks.forEach(link => {
       link.addEventListener('click', (e) => {
@@ -339,7 +348,7 @@
       });
     });
 
-    // === TIME-BASED TITLE LOGIC ===
+    // === TIME-BASED TITLE LOGIC (Working) ===
     function getDayPeriod(hour) {
       if (hour < 12) return "Morning";
       if (hour < 17) return "Afternoon";
@@ -365,6 +374,7 @@
     }
 
     updateTitle();
+    // Re-check title every hour
     setInterval(updateTitle, 3600000); 
 
     const audio = document.getElementById("liveStream");
@@ -410,7 +420,7 @@
         const AC = window.AudioContext || window.webkitAudioContext;
         audioCtx = new AC();
         analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 256; 
+        analyser.fftSize = 256; // Higher resolution for tunnel
         dataArray = new Uint8Array(analyser.frequencyBinCount);
         const src = audioCtx.createMediaElementSource(audio);
         src.connect(analyser);
@@ -421,14 +431,8 @@
 
     let startTime = performance.now();
 
-    // === WARP TUNNEL VISUALIZER (Optimized with visibility check) ===
+    // === RESTORED: WARP TUNNEL VISUALIZER ===
     function drawFrame() {
-      // OPTIMIZATION: Only run physics/drawing if the Stream tab is visible
-      if (document.getElementById('stream-section').classList.contains('hidden-pane')) {
-         requestAnimationFrame(drawFrame);
-         return;
-      }
-
       const t = (performance.now() - startTime) / 1000;
       const w = canvas.clientWidth;
       const h = canvas.clientHeight;
@@ -442,16 +446,9 @@
         analyser.getByteFrequencyData(dataArray);
         const len = dataArray.length;
         
-        // Calculate raw audio levels
-        let calculated_bass = Math.min(1, avgRange(dataArray, 0, len * 0.2) / 255 * GAIN);
-        let calculated_mid  = Math.min(1, avgRange(dataArray, len * 0.2, len * 0.6) / 255 * GAIN);
-        let calculated_treb = Math.min(1, avgRange(dataArray, len * 0.6, len) / 255 * GAIN);
-
-        // Apply minimum amplitude for responsiveness during quiet parts
-        bass = Math.max(MIN_AMP, calculated_bass);
-        mid = Math.max(MIN_AMP, calculated_mid);
-        treb = Math.max(MIN_AMP, calculated_treb);
-
+        bass = Math.min(1, avgRange(dataArray, 0, len * 0.2) / 255 * GAIN);
+        mid  = Math.min(1, avgRange(dataArray, len * 0.2, len * 0.6) / 255 * GAIN);
+        treb = Math.min(1, avgRange(dataArray, len * 0.6, len) / 255 * GAIN);
         energy = (bass + mid + treb) / 3;
 
       } else {
@@ -536,36 +533,25 @@
     requestAnimationFrame(drawFrame);
 
 
-    // === Play/Pause Button Logic ===
+    // Play/Pause Button Logic
     kick.addEventListener("click", () => {
       if (audio.paused) {
-        setStatus("connecting...");
-        kick.textContent = "Connecting...";
-        
         audio.play().then(() => {
           isPlaying = true;
           setStatus("playing");
-          kick.textContent = "Pause";
           initAnalyser();
           if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
-        }).catch((e) => {
-            console.error("Audio Play Error:", e);
-            setStatus("error starting stream");
-            kick.textContent = "Play";
-        });
+        }).catch(() => setStatus("tap the player above to start"));
       } else {
         audio.pause();
         isPlaying = false;
         setStatus("paused");
-        kick.textContent = "Play";
       }
     });
 
-    // Update button text for manual controls
     audio.addEventListener("play", () => {
       isPlaying = true;
       setStatus("playing");
-      kick.textContent = "Pause"; 
       initAnalyser();
       if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
     });
@@ -573,13 +559,9 @@
     audio.addEventListener("pause", () => {
       isPlaying = false;
       setStatus("paused");
-      kick.textContent = "Play"; 
     });
 
-    audio.addEventListener("error", () => {
-      setStatus("audio error (stream offline?)");
-      kick.textContent = "Play"; 
-    });
+    audio.addEventListener("error", () => setStatus("audio error (stream offline?)"));
   });
   </script>
 
