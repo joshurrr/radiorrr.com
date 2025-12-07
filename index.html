@@ -1,280 +1,605 @@
+Skip to content
+Navigation Menu
+joshurrr
+radiorrr.com
+
+Type / to search
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+Insights
+Settings
+Files
+Go to file
+t
+CNAME
+README.md
+RadioRRR.png
+index.html
+logo.png
+radiorrr.com
+/index.html
+joshurrr
+joshurrr
+Update index.html
+1c674b4
+ · 
+6 minutes ago
+
+Code
+
+Blame
+569 lines (488 loc) · 17.6 KB
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Radio RRR</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  
-  <meta name="description" content="Radio RRR: 24/7 streaming Electro, Synth, 80s, and Chill music." />
-  <meta property="og:title" content="Radio RRR - 24/7 Electro, Synth, 80s, Chill Stream" />
-  <meta property="og:description" content="Tune in to the best Retrowave, Synthwave, and Outrun music for your late-night drives." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://radiorrr.com/" />
-  <meta property="og:image" content="https://radiorrr.com/logo.png" />
-  <style>
-    /* RESET */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    
-    /* BODY & CONTAINER (Restored dark background and neon wrapper) */
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #050710; /* Dark background */
-      color: #f5f5f5;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-    }
-    .wrapper {
-      max-width: 600px;
-      width: 100%;
-      padding: 2.5rem 1.75rem;
-      border-radius: 18px;
-      /* Neon Wrapper Styling */
-      background: #0d0e1f;
-      border: 1px solid rgba(129,140,248,0.3);
-      box-shadow: 
-        0 0 10px rgba(67, 56, 202, 0.5), 
-        0 0 30px rgba(255, 0, 102, 0.4);
-      text-align: center;
-      transition: all 0.3s ease-out; 
-    }
-    
-    /* NAVIGATION TABS (Restored) */
-    .nav-tabs {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      margin-top: 1rem;
-      margin-bottom: 2rem;
-      border-bottom: 2px solid rgba(255, 0, 102, 0.3);
-      padding-bottom: 0.5rem;
-    }
-    .nav-tabs a {
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: #c7c7ff;
-      text-decoration: none;
-      padding: 0 0.5rem;
-      transition: all 0.2s;
-      letter-spacing: 0.05em;
-      text-shadow: 0 0 5px rgba(67, 56, 202, 0.4);
-      cursor: pointer;
-    }
-    /* Active/Hover Neon Effect */
-    .nav-tabs a:hover,
-    .nav-tabs a.active {
-      color: #ff0066;
-      text-shadow: 0 0 10px #ff0066;
-      transform: translateY(-2px);
-    }
-    
-    /* CONTENT PANE STYLING (Restored) */
-    .content-pane {
-        width: 100%;
-        transition: opacity 0.3s ease-in-out;
-    }
-    .hidden-pane {
-        display: none; /* Hide content when not selected */
-    }
+  <meta charset="UTF-8" />
+  <title>Radio RRR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <meta name="description" content="Radio RRR: 24/7 streaming Electro, Synth, 80s, and Chill music." />
+  <meta property="og:title" content="Radio RRR - 24/7 Electro, Synth, 80s, Chill Stream" />
+  <meta property="og:description" content="Tune in to the best Retrowave, Synthwave, and Outrun music for your late-night drives." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://radiorrr.com/" />
+  <meta property="og:image" content="https://radiorrr.com/logo.png" />
+  <style>
+    /* RESET */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    /* BODY & CONTAINER */
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #050710;
+      color: #f5f5f5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .wrapper {
+      max-width: 600px;
+      width: 100%;
+      padding: 2.5rem 1.75rem;
+      border-radius: 18px;
+      /* REAPPLYING NEON: box-shadow for retro look */
+      background: #0d0e1f;
+      border: 1px solid rgba(129,140,248,0.3);
+      box-shadow: 
+        0 0 10px rgba(67, 56, 202, 0.5), 
+        0 0 30px rgba(255, 0, 102, 0.4);
+      text-align: center;
+      transition: all 0.3s ease-out; 
+    }
+    
+    /* NAVIGATION TABS */
+    .nav-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1rem; /* Added space after logo */
+      margin-bottom: 2rem;
+      border-bottom: 2px solid rgba(255, 0, 102, 0.3);
+      padding-bottom: 0.5rem;
+    }
+    .nav-tabs a {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #c7c7ff;
+      text-decoration: none;
+      padding: 0 0.5rem;
+      transition: all 0.2s;
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 5px rgba(67, 56, 202, 0.4);
+      cursor: pointer; /* Indicate it's clickable */
+    }
+    /* Active/Hover Neon Effect */
+    .nav-tabs a:hover,
+    .nav-tabs a.active {
+      color: #ff0066;
+      text-shadow: 0 0 10px #ff0066;
+      transform: translateY(-2px);
+    }
+    
+    /* CONTENT PANE STYLING */
+    .content-pane {
+        width: 100%;
+        transition: opacity 0.3s ease-in-out;
+    }
+    .hidden-pane {
+        display: none; /* Hide content when not selected */
+    }
 
-    /* VISUALIZER (Restored) */
-    .visualizer {
-      width: 100%;
-      height: 260px;
-      border-radius: 14px;
-      overflow: hidden;
-      background: #000000;
-      margin-bottom: 0.6rem;
-      /* Neon Frame */
-      border: 2px solid #ff0066; 
-      box-shadow: 0 0 15px rgba(255, 0, 102, 0.5);
-    }
-    #viz { width: 100%; height: 100%; display: block; }
+    /* VISUALIZER */
+    .visualizer {
+      width: 100%;
+      height: 260px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #000000;
+      margin-bottom: 0.6rem;
+      /* REAPPLYING NEON: frame */
+      border: 2px solid #ff0066; 
+      box-shadow: 0 0 15px rgba(255, 0, 102, 0.5);
+    }
+    #viz { width: 100%; height: 100%; display: block; }
 
-    /* CHANNEL PANELS (Restored) */
-    .channel {
-      padding: 1.2rem 1.4rem;
-      border-radius: 16px;
-      background: rgba(10,10,30,0.85);
-      border: 1px solid rgba(129,140,248,0.5);
-      margin-bottom: 1.75rem;
-      text-align: left;
-    }
-    .channel span { font-weight: 600; font-size: 1rem; }
-    .channel small { font-size: 0.8rem; color: #e0e0ff; opacity: 0.9; }
+    /* CHANNEL PANELS */
+    .channel {
+      padding: 1.2rem 1.4rem;
+      border-radius: 16px;
+      background: rgba(10,10,30,0.85);
+      border: 1px solid rgba(129,140,248,0.5);
+      margin-bottom: 1.75rem;
+      text-align: left;
+    }
+    .channel span { font-weight: 600; font-size: 1rem; }
+    .channel small { font-size: 0.8rem; color: #e0e0ff; opacity: 0.9; }
 
-    /* STREAM TITLE (Restored neon text) */
-    .stream-title {
-      display: block;
-      margin: 0.4rem 0 0.4rem;
-      font-weight: 600;
-      font-size: 1rem;
-      /* Neon Text Glow */
-      color: #ffccff;
-      text-shadow: 
-        0 0 4px #ff0066, 
-        0 0 10px #4338ca;
-      letter-spacing: 0.1em;
-      transition: all 0.3s;
-    }
+    /* STREAM TITLE */
+    .stream-title {
+      display: block;
+      margin: 0.4rem 0 0.4rem;
+      font-weight: 600;
+      font-size: 1rem;
+      /* REAPPLYING NEON: Text Glow */
+      color: #ffccff;
+      text-shadow: 
+        0 0 4px #ff0066, 
+        0 0 10px #4338ca;
+      letter-spacing: 0.1em;
+      transition: all 0.3s;
+    }
 
-    /* AUDIO / STATUS / PLAY BUTTON (Restored neon button) */
-    audio { width: 100%; margin-top: 0.2rem; }
-    .status { display:none; font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.8; }
-    .kick {
-      margin-top:0.6rem; padding:0.45rem 0.7rem;
-      border-radius:10px; border:1px solid rgba(129,140,248,0.6);
-      background:#0b1020; color:#c7c7ff;
-      cursor:pointer; font-size:0.85rem;
-      transition: all 0.3s;
-      text-decoration: none;
-      display: inline-block;
-    }
-    .kick:hover {
-      /* Neon button hover effect */
-      color: #ff0066;
-      border-color: #ff0066;
-      box-shadow: 0 0 12px rgba(255, 0, 102, 0.7);
-    }
+    /* AUDIO / STATUS / PLAY BUTTON */
+    audio { width: 100%; margin-top: 0.2rem; }
+    .status { display:none; font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.8; }
+    .kick {
+      margin-top:0.6rem; padding:0.45rem 0.7rem;
+      border-radius:10px; border:1px solid rgba(129,140,248,0.6);
+      background:#0b1020; color:#c7c7ff;
+      cursor:pointer; font-size:0.85rem;
+      transition: all 0.3s;
+    }
+    .kick:hover {
+      /* REAPPLYING NEON: button hover effect */
+      color: #ff0066;
+      border-color: #ff0066;
+      box-shadow: 0 0 12px rgba(255, 0, 102, 0.7);
+    }
 
-    /* --- SCHEDULE STYLES (Restored) --- */
-    .schedule-list {
-      text-align: left;
-      margin-top: 1rem;
-      padding-top: 0.5rem;
-      border-top: 1px solid rgba(129, 140, 248, 0.15);
-    }
-    .day-block {
-      margin: 1.5rem 0;
-      padding-bottom: 0.75rem;
-      border-bottom: 1px dashed rgba(129, 140, 248, 0.1);
-    }
-    .day-block:last-child {
-      border-bottom: none;
-      margin-bottom: 0;
-    }
-    .day-title {
-      font-weight: 700;
-      font-size: 1.2rem;
-      color: #ff0066;
-      text-shadow: 0 0 5px rgba(255, 0, 102, 0.6);
-      margin-bottom: 0.5rem;
-    }
-    .time-slot {
-      margin-bottom: 0.75rem;
-      padding-left: 1rem;
-      border-left: 3px solid #4338ca;
-    }
-    .time-slot h5 {
-      margin: 0;
-      font-size: 0.95rem;
-      color: #ffccff;
-      font-weight: 600;
-    }
-    .time-slot p {
-      margin: 0.15rem 0 0;
-      font-size: 0.8rem;
-      color: #e0e0ff;
-    }
-    .live-dj-slot {
-      border-left: 3px solid #ff0066;
-      background: rgba(255, 0, 102, 0.1);
-      padding: 0.5rem 1rem;
-      margin-top: 0.5rem;
-      border-radius: 4px;
-    }
-    .live-dj-slot h5 {
-      color: #fff;
-      text-shadow: 0 0 5px #ff0066;
-    }
-    .live-dj-slot p {
-      color: #ffccff;
-      font-weight: 700;
-    }
-    /* --- END SCHEDULE STYLES --- */
+    /* Events List Styling */
+    .events-list {
+      text-align: left;
+      margin-top: 1rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(129, 140, 248, 0.15);
+    }
+    .event-item {
+      margin: 1.25rem 0;
+      border-left: 3px solid #4338ca;
+      padding-left: 1rem;
+    }
+    .event-item h4 {
+      margin: 0;
+      font-size: 1rem;
+      color: #ffccff;
+      text-shadow: 0 0 3px rgba(255, 0, 102, 0.5);
+    }
+    .event-item p {
+      margin: 0.25rem 0 0;
+      font-size: 0.85rem;
+      color: #e0e0ff;
+    }
+    .event-date {
+      font-weight: 700;
+      color: #a5b4fc;
+    }
 
-    /* VIDEO EMBEDS */
-    .video-container {
-      position: relative;
-      width: 100%; padding-bottom: 56.25%;
-      margin-top: 0.8rem;
-    }
-    .video-container iframe {
-      position: absolute; width: 100%; height: 100%; border: 0;
-      top: 0; left: 0; border-radius: 12px;
-    }
+    /* VIDEO EMBEDS */
+    .video-container {
+      position: relative;
+      width: 100%; padding-bottom: 56.25%;
+      margin-top: 0.8rem;
+    }
+    .video-container iframe {
+      position: absolute; width: 100%; height: 100%; border: 0;
+      top: 0; left: 0; border-radius: 12px;
+    }
 
-    /* LINKS */
-    .links { margin-top: 0.75rem; font-size: 0.85rem; text-align:center; }
-    .links a { 
-      color: #a5b4fc; 
-      text-decoration: none; 
-      margin: 0 0.4rem;
-      transition: color 0.3s, text-shadow 0.3s;
-    }
-    .links a:hover {
-      color: #ff0066;
-      text-shadow: 0 0 8px #ff0066;
-    }
+    /* LINKS */
+    .links { margin-top: 0.75rem; font-size: 0.85rem; text-align:center; }
+    .links a { 
+      color: #a5b4fc; 
+      text-decoration: none; 
+      margin: 0 0.4rem;
+      transition: color 0.3s, text-shadow 0.3s;
+    }
+    .links a:hover {
+      /* REAPPLYING NEON: link hover effect */
+      color: #ff0066;
+      text-shadow: 0 0 8px #ff0066;
+    }
 
-    /* FOOTNOTE */
-    .footnote { margin-top: 1.5rem; font-size: 0.7rem; opacity: 0.55; }
-    .genre-tagline {
-        display: block;
-        font-size: 0.85rem;
-        font-weight: 700;
-        margin-bottom: 0.2rem;
-        color: #ff0066;
-        opacity: 1;
-        text-shadow: 0 0 5px rgba(255, 0, 102, 0.8);
-    }
-  </style>
+    /* FOOTNOTE - Genre line is styled prominently here */
+    .footnote { margin-top: 1.5rem; font-size: 0.7rem; opacity: 0.55; }
+    .genre-tagline {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 0.2rem;
+        color: #ff0066; /* Bright neon pink/red */
+        opacity: 1;
+        text-shadow: 0 0 5px rgba(255, 0, 102, 0.8);
+    }
+  </style>
 </head>
 
 <body>
-  <main class="wrapper">
+  <main class="wrapper">
 
-    <img src="logo.png" alt="Radio RRR Logo"
-         style="width: 300px; max-width: 90%; margin: 0 auto 10px; display: block;">
+    <img src="logo.png" alt="Radio RRR Logo"
+         style="width: 300px; max-width: 90%; margin: 0 auto 10px; display: block;">
 
-    <nav class="nav-tabs">
-        <a data-target="stream-section" class="active">Stream</a>
-        <a data-target="events-section">Schedule</a>         <a data-target="follow-section">Follow</a>
-    </nav>
-    
-    <div id="stream-section" class="content-pane">
-      <div class="channel">
+    <nav class="nav-tabs">
+        <a data-target="stream-section" class="active">Stream</a>
+        <a data-target="events-section">Events</a>
+        <a data-target="follow-section">Follow</a>
+    </nav>
+    
+    <div id="stream-section" class="content-pane">
+      <div class="channel">
 
-        <div class="visualizer">
-          <canvas id="viz"></canvas>
-        </div>
+        <div class="visualizer">
+          <canvas id="viz"></canvas>
+        </div>
 
-        <span id="streamTitle" class="stream-title">RADIO RRR Live</span>
+        <span id="streamTitle" class="stream-title">RADIO RRR Live</span>
 
-        <audio id="liveStream" controls crossorigin="anonymous">
-          <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
-        </audio>
+        <audio id="liveStream" controls crossorigin="anonymous">
+          <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
+        </audio>
 
-        <button id="kickPlay" class="kick">Play</button>
-        <div id="status" class="status"></div>
-      </div>
-    </div>
-    
-        <div id="events-section" class="content-pane hidden-pane">
-      <div class="channel">
-        <span>Weekly Broadcast Schedule 📅</span><br />
-        <small>All times are based on your local timezone. **Live DJ sets are in bold.**</small>
+        <button id="kickPlay" class="kick">Play</button>
+        <div id="status" class="status"></div>
+      </div>
+    </div>
+    
+    <div id="events-section" class="content-pane hidden-pane">
+      <div class="channel">
+        <span>Upcoming Global Events 🌎</span><br />
+        <small>Major electronic, synthwave, and retro festivals.</small>
 
-        <div class="schedule-list">
-            
-            <div class="day-block">
-              <h3 class="day-title">Monday - Thursday</h3>
-              <div class="time-slot">
-                <h5>Morning (6am - 12pm) ☀️</h5>
-                <p>The Wake-Up Wave: Chillwave, Vaporwave, and Lo-fi Electro.</p>
-              </div>
-              <div class="time-slot">
-                <h5>Afternoon (12pm - 8pm) 💻</h5>
-                <p>Synthwork & Retro Run:
+        <div class="events-list">
+            
+            <div class="event-item">
+                <h4>Tomorrowland 🇧🇪 - Adscendo</h4>
+                <p><span class="event-date">July 18-21 & July 25-28, 2025</span></p>
+                <p>The world's biggest EDM festival returns to Belgium. Expect the new theme, stage design, and massive electronic lineups.</p>
+            </div>
+
+            <div class="event-item">
+                <h4>RetroSynth Festival 🇺🇸 - West Coast</h4>
+                <p><span class="event-date">October 11-12, 2025</span></p>
+                <p>Annual retro/synthwave gathering. News on venue and headliners expected next quarter.</p>
+            </div>
+
+            <div class="event-item">
+                <h4>Coachella 🇺🇸 - Weekend 1 & 2</h4>
+                <p><span class="event-date">April 11-13 & April 18-20, 2026</span></p>
+                <p>The iconic California festival. Lineup speculation dominates social media ahead of the January announcement.</p>
+            </div>
+            
+        </div>
+      </div>
+    </div>
+    
+    <div id="follow-section" class="content-pane hidden-pane">
+        
+      <div class="channel">
+        <span>Latest on TikTok</span><br />
+        <small>@josh.u.rrr · newest shorts</small>
+
+        <blockquote class="tiktok-embed"
+          cite="https://www.tiktok.com/@josh.u.rrr"
+          data-unique-id="josh.u.rrr"
+          data-embed-type="creator"
+          style="max-width:100%; min-width:280px; margin-top:0.8rem;">
+          <section>
+            <a target="_blank" href="https://www.tiktok.com/@josh.u.rrr">@josh.u.rrr</a>
+          </section>
+        </blockquote>
+      </div>
+
+      <div class="channel">
+        <span>YouTube Likes</span><br />
+        <small>Latest videos we liked</small>
+
+        <div class="video-container">
+          <iframe
+            src="https://www.youtube.com/embed/videoseries?list=PLli1uTuS0FH7xR1QBnIvY3V9btomaSpTv"
+            allowfullscreen
+            loading="lazy">
+          </iframe>
+        </div>
+      </div>
+    </div>
+    
+
+    <div class="links">
+      <a href="https://www.instagram.com/radio.rrr/" target="_blank">Instagram</a> ·
+      <a href="https://www.tiktok.com/@josh.u.rrr" target="_blank">TikTok</a> ·
+      <a href="https://www.youtube.com/@RADIO_RRR" target="_blank">YouTube</a> ·
+      <a href="https://github.com/joshurrr" target="_blank">GitHub</a>
+    </div>
+
+    <p class="footnote">
+      <span class="genre-tagline">Electro · Synth · 80s · Chill</span>
+      Streaming 24/7<br>
+      Contact: <a href="mailto:admin@radiorrr.com" style="color:#a5b4fc;">admin@radiorrr.com</a>
+    </p>
+
+  </main>
+
+  <script async src="https://www.tiktok.com/embed.js"></script>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+
+    const titleEl = document.getElementById("streamTitle");
+    const navLinks = document.querySelectorAll('.nav-tabs a');
+    const contentPanes = document.querySelectorAll('.content-pane');
+    const GAIN = 10.0; // Higher gain for the tunnel effect
+
+    // === TAB SHOW/HIDE LOGIC (Fixed) ===
+    function switchTab(targetId) {
+        // 1. Hide all content panes
+        contentPanes.forEach(pane => {
+            pane.classList.add('hidden-pane');
+        });
+
+        // 2. Show the selected pane
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+            targetElement.classList.remove('hidden-pane');
+        }
+
+        // 3. Update active state of nav links
+        navLinks.forEach(l => l.classList.remove('active'));
+        document.querySelector(`.nav-tabs a[data-target="${targetId}"]`).classList.add('active');
+    }
+
+    // Initialize to the Stream tab
+    switchTab('stream-section');
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        const targetId = e.target.getAttribute('data-target');
+        switchTab(targetId);
+      });
+    });
+
+    // === TIME-BASED TITLE LOGIC (Working) ===
+    function getDayPeriod(hour) {
+      if (hour < 12) return "Morning";
+      if (hour < 17) return "Afternoon";
+      return "Night";
+    }
+
+    function updateTitle() {
+      const now = new Date();
+      const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+      const dayName = days[now.getDay()];
+      const period = getDayPeriod(now.getHours());
+
+      const variantsByPeriod = {
+        Morning: ["Morning Chill","Sunrise Session","Morning Transmission"],
+        Afternoon: ["Afternoon Chill","Daystream Session","Retro Run"],
+        Night: ["Night Chill","After Dark","Night Transmission","Late Night Set"]
+      };
+
+      const list = variantsByPeriod[period] || ["Live Mix"];
+      const label = list[now.getDay() % list.length];
+
+      titleEl.textContent = `RADIO RRR Live – ${dayName} ${label}`;
+    }
+
+    updateTitle();
+    // Re-check title every hour
+    setInterval(updateTitle, 3600000); 
+
+    const audio = document.getElementById("liveStream");
+    const statusEl = document.getElementById("status");
+    const kick = document.getElementById("kickPlay");
+    const canvas = document.getElementById("viz");
+    const ctx = canvas.getContext("2d");
+    
+
+    function setStatus(msg) {
+      statusEl.style.display = "block";
+      statusEl.textContent = "Status: " + msg;
+    }
+
+    function resize() {
+      const dpr = window.devicePixelRatio || 1;
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+    window.addEventListener("resize", resize);
+
+    let audioCtx = null;
+    let analyser = null;
+    let dataArray = null;
+    let analyserEnabled = false;
+    let analyserInitAttempted = false;
+    let isPlaying = false;
+
+    function avgRange(arr, start, end) {
+      let sum = 0;
+      for (let i = start; i < end; i++) sum += arr[i];
+      return sum / (end - start);
+    }
+
+    function initAnalyser() {
+      if (analyserInitAttempted) return;
+      analyserInitAttempted = true;
+      try {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AC();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 256; // Higher resolution for tunnel
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+        const src = audioCtx.createMediaElementSource(audio);
+        src.connect(analyser);
+        analyser.connect(audioCtx.destination);
+        analyserEnabled = true;
+      } catch { analyserEnabled = false; }
+    }
+
+    let startTime = performance.now();
+
+    // === RESTORED: WARP TUNNEL VISUALIZER ===
+    function drawFrame() {
+      const t = (performance.now() - startTime) / 1000;
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      const cx = w / 2;
+      const cy = h / 2;
+      const minDim = Math.min(w, h);
+
+      let bass = 0.1, mid = 0.1, treb = 0.1, energy = 0.1;
+
+      if (analyserEnabled && isPlaying) {
+        analyser.getByteFrequencyData(dataArray);
+        const len = dataArray.length;
+        
+        bass = Math.min(1, avgRange(dataArray, 0, len * 0.2) / 255 * GAIN);
+        mid  = Math.min(1, avgRange(dataArray, len * 0.2, len * 0.6) / 255 * GAIN);
+        treb = Math.min(1, avgRange(dataArray, len * 0.6, len) / 255 * GAIN);
+        energy = (bass + mid + treb) / 3;
+
+      } else {
+        // Demo mode when paused
+        bass = (Math.sin(t * 1.5) + 1) / 2;
+        mid  = (Math.sin(t * 0.9 + 1.2) + 1) / 2;
+        treb = (Math.sin(t * 2.1 + 0.7) + 1) / 2;
+        energy = (bass + mid + treb) / 3;
+      }
+
+      // 1. Digital Fade Background
+      ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+      ctx.fillRect(0, 0, w, h);
+      
+      // 2. Draw Spectrum Circles (The Rings)
+      const circleCount = 8;
+      for (let i = 0; i < circleCount; i++) {
+        const baseRadius = (minDim * 0.04) + (i * minDim * 0.05);
+        const freqAmp = i % 2 === 0 ? mid : treb;
+
+        const currentRadius = baseRadius + (freqAmp * 60); 
+        
+        ctx.beginPath();
+        ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
+        
+        const hue = (t * 50 + i * 20) % 360; 
+        ctx.strokeStyle = `hsl(${hue}, 100%, ${60 + freqAmp * 20}%)`;
+        ctx.lineWidth = 1 + freqAmp * 2.5;
+        ctx.shadowBlur = 10 + freqAmp * 20;
+        ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
+        ctx.stroke();
+      }
+      ctx.shadowBlur = 0;
+
+      // 3. Draw Radial Lines (The Wireframe)
+      const lineCount = 64;
+      for (let i = 0; i < lineCount; i++) {
+        const angle = (i * (Math.PI * 2) / lineCount) + (t * 0.05 * treb);
+        const maxDist = minDim * 0.75;
+        const lineLength = maxDist + (bass * 100); 
+
+        const x2 = cx + Math.cos(angle) * lineLength;
+        const y2 = cy + Math.sin(angle) * lineLength;
+        
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(x2, y2);
+        
+        const lineHue = (i * 5 + t * 50) % 360; 
+        ctx.strokeStyle = `hsla(${lineHue}, 100%, 60%, ${0.2 + energy * 0.6})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+      
+      // 4. Central Core Pulse (The Dot)
+      const coreRadius = 5 + bass * 50; 
+      const coreGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
+      coreGradient.addColorStop(0, `rgba(255, 255, 255, ${0.8 + bass * 0.2})`);
+      coreGradient.addColorStop(0.5, `rgba(255, 0, 102, ${0.5 + bass * 0.5})`);
+      coreGradient.addColorStop(1, "rgba(255, 0, 102, 0)");
+
+      ctx.fillStyle = coreGradient;
+      ctx.beginPath();
+      ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 5. Scanlines Effect
+      ctx.save();
+      ctx.globalAlpha = 0.13;
+      ctx.fillStyle = "rgba(0, 0, 0, 1)";
+      const gap = 3;
+      const off = (t * 35) % gap; 
+      for (let y = off; y < h; y += gap) {
+        ctx.fillRect(0, y, w, 1);
+      }
+      ctx.restore();
+
+      requestAnimationFrame(drawFrame);
+    }
+    requestAnimationFrame(drawFrame);
+
+
+    // Play/Pause Button Logic
+    kick.addEventListener("click", () => {
+      if (audio.paused) {
+        audio.play().then(() => {
+          isPlaying = true;
+          setStatus("playing");
+          initAnalyser();
+          if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+        }).catch(() => setStatus("tap the player above to start"));
+      } else {
+        audio.pause();
+        isPlaying = false;
+        setStatus("paused");
+      }
+    });
+
+    audio.addEventListener("play", () => {
+      isPlaying = true;
+      setStatus("playing");
+      initAnalyser();
+      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    });
+
+    audio.addEventListener("pause", () => {
+      isPlaying = false;
+      setStatus("paused");
+    });
+
+    audio.addEventListener("error", () => setStatus("audio error (stream offline?)"));
+  });
+  </script>
+
+</body>
+</html>
