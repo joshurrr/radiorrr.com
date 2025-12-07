@@ -189,7 +189,7 @@
   document.addEventListener("DOMContentLoaded", () => {
 
     const titleEl = document.getElementById("streamTitle");
-    const GAIN = 3.5; // Adjusted gain slightly higher for stronger reaction
+    const GAIN = 5.0; // FIX: Increased gain significantly for stronger reaction
 
     function getDayPeriod(hour) {
       if (hour < 12) return "Morning";
@@ -285,7 +285,7 @@
       if (analyserEnabled && isPlaying) {
         analyser.getByteFrequencyData(dataArray);
         const len = dataArray.length;
-        // Amplify the music data for visible movement
+        // Amplify the music data for visible movement and limit to 1
         bass = Math.min(1, avgRange(dataArray, 0, len * 0.08) / 255 * GAIN);
         mid  = Math.min(1, avgRange(dataArray, len * 0.08, len * 0.4) / 255 * GAIN);
         treb = Math.min(1, avgRange(dataArray, len * 0.4, len) / 255 * GAIN);
@@ -305,13 +305,13 @@
       ctx.fillRect(0, 0, w, h);
       
       // 2. Draw Spectrum Circles
-      const circleCount = 6;
+      const circleCount = 8; // Increased circle count
       for (let i = 0; i < circleCount; i++) {
-        const radius = (minDim * 0.05) + (i * minDim * 0.07);
+        const baseRadius = (minDim * 0.04) + (i * minDim * 0.05);
         const freqAmp = (i % 2 === 0 ? mid : treb);
         
-        // Use the amplified freqAmp to drive the size
-        const currentRadius = radius + (freqAmp * 40); 
+        // Use the amplified freqAmp to drive the size (higher multiplier)
+        const currentRadius = baseRadius + (freqAmp * 60); 
         
         ctx.beginPath();
         ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
@@ -319,8 +319,8 @@
         // Dynamic color based on time and frequency
         const hue = (t * 50 + i * 20) % 360; 
         ctx.strokeStyle = `hsl(${hue}, 100%, ${60 + freqAmp * 20}%)`;
-        ctx.lineWidth = 1 + freqAmp * 2;
-        ctx.shadowBlur = 10 + freqAmp * 15;
+        ctx.lineWidth = 1 + freqAmp * 2.5; // Increased line width sensitivity
+        ctx.shadowBlur = 10 + freqAmp * 20; // Increased blur for better neon glow
         ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
         ctx.stroke();
       }
@@ -330,10 +330,10 @@
       const lineCount = 64;
       for (let i = 0; i < lineCount; i++) {
         const angle = (i * (Math.PI * 2) / lineCount) + (t * 0.05 * treb);
-        const maxDist = maxDim * 0.7;
+        const maxDist = maxDim * 0.75; // Increased max distance
         
-        // Line length driven by Bass
-        const lineLength = maxDist + (bass * 80); 
+        // Line length driven by Bass (higher multiplier)
+        const lineLength = maxDist + (bass * 100); 
 
         const x2 = cx + Math.cos(angle) * lineLength;
         const y2 = cy + Math.sin(angle) * lineLength;
@@ -343,14 +343,14 @@
         ctx.lineTo(x2, y2);
         
         const lineHue = (i * 5 + t * 50) % 360; 
-        ctx.strokeStyle = `hsla(${lineHue}, 100%, 50%, ${0.2 + energy * 0.5})`;
+        ctx.strokeStyle = `hsla(${lineHue}, 100%, 60%, ${0.2 + energy * 0.6})`;
         ctx.lineWidth = 1;
         ctx.stroke();
       }
       
       // 4. Central Core Pulse (Bass Reaction)
-      // Use amplified bass for core size
-      const coreRadius = 5 + bass * 35; 
+      // Use amplified bass for core size (higher multiplier)
+      const coreRadius = 5 + bass * 50; 
       const coreGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
       coreGradient.addColorStop(0, `rgba(255, 255, 255, ${0.8 + bass * 0.2})`);
       coreGradient.addColorStop(0.5, `rgba(255, 0, 102, ${0.5 + bass * 0.5})`);
