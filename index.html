@@ -5,7 +5,10 @@
   <title>Radio RRR</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
+    /* RESET */
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    /* BODY & CONTAINER */
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: #050710;
@@ -21,16 +24,22 @@
       width: 100%;
       padding: 2.5rem 1.75rem;
       border-radius: 18px;
-      /* Using a simpler background color for slight performance improvement over the radial-gradient on the wrapper */
-      background: #0a0c1e; 
-      box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+      /* Aesthetic Update: Simpler background, new multi-color neon box-shadow */
+      background: #0d0e1f;
+      border: 1px solid #1f224b;
+      box-shadow: 
+        0 0 10px rgba(67, 56, 202, 0.5), 
+        0 0 30px rgba(255, 0, 102, 0.4);
       text-align: center;
+      transition: all 0.3s ease-out; 
     }
     .tagline {
       font-size: 0.95rem;
       color: #c7c7ff;
       margin: 0.5rem 0 1.25rem;
     }
+    
+    /* VISUALIZER */
     .visualizer {
       width: 100%;
       height: 260px;
@@ -38,9 +47,13 @@
       overflow: hidden;
       background: #050710;
       margin-bottom: 0.6rem;
+      /* Aesthetic Update: Neon frame for visualizer */
+      border: 2px solid #ff0066; 
+      box-shadow: 0 0 15px rgba(255, 0, 102, 0.5);
     }
     #viz { width: 100%; height: 100%; display: block; }
 
+    /* CHANNEL PANELS */
     .channel {
       padding: 1.2rem 1.4rem;
       border-radius: 16px;
@@ -50,19 +63,29 @@
       text-align: left;
     }
     .channel span { font-weight: 600; font-size: 1rem; }
-    /* Accessibility Improvement: Increased contrast by removing opacity and lightening the color slightly */
+    /* Accessibility/Aesthetic Improvement: Increased contrast/brightness */
     .channel small { font-size: 0.8rem; color: #e0e0ff; opacity: 0.9; } 
 
+    /* STREAM TITLE */
     .stream-title {
       display: block;
       margin: 0.4rem 0 0.4rem;
       font-weight: 600;
       font-size: 1rem;
+      /* Aesthetic Update: Neon Text Glow */
+      color: #ffccff;
+      text-shadow: 
+        0 0 4px #ff0066, 
+        0 0 10px #4338ca;
+      letter-spacing: 0.1em;
+      transition: all 0.3s;
     }
 
+    /* AUDIO / STATUS */
     audio { width: 100%; margin-top: 0.2rem; }
     .status { display:none; font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.8; }
-    /* Removed .kick styles as the button is removed */
+    
+    /* VIDEO EMBEDS */
     .video-container {
       position: relative;
       width: 100%; padding-bottom: 56.25%;
@@ -72,8 +95,22 @@
       position: absolute; width: 100%; height: 100%; border: 0;
       top: 0; left: 0; border-radius: 12px;
     }
+    
+    /* LINKS */
     .links { margin-top: 0.75rem; font-size: 0.85rem; text-align:center; }
-    .links a { color: #a5b4fc; text-decoration: none; margin: 0 0.4rem; }
+    .links a { 
+      color: #a5b4fc; 
+      text-decoration: none; 
+      margin: 0 0.4rem;
+      transition: color 0.3s, text-shadow 0.3s;
+    }
+    /* Aesthetic Update: Neon Hover Effect for Links */
+    .links a:hover {
+      color: #ff0066;
+      text-shadow: 0 0 8px #ff0066;
+    }
+    
+    /* FOOTNOTE */
     .footnote { margin-top: 1.5rem; font-size: 0.7rem; opacity: 0.55; }
   </style>
 </head>
@@ -176,7 +213,7 @@
       titleEl.textContent = `RADIO RRR Live – ${dayName} ${label}`;
     }
 
-    // Usability Improvement: Set initial title and then update every minute
+    // Improvement: Set initial title and then update every minute
     updateTitle();
     setInterval(updateTitle, 60000); 
 
@@ -190,7 +227,7 @@
       statusEl.textContent = "Status: " + msg;
     }
 
-    let skyGradient, waterGradient; // Variables to store pre-calculated gradients
+    let skyGradient, waterGradient; 
 
     function resize() {
       const dpr = window.devicePixelRatio || 1;
@@ -200,15 +237,16 @@
       canvas.height = h * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      // Performance Improvement: Calculate static gradients only once upon resize
       const horizon = h*0.55;
 
+      // Performance Improvement: Cache static sky gradient
       skyGradient = ctx.createLinearGradient(0,0,0,horizon);
       skyGradient.addColorStop(0,"#090018");
       skyGradient.addColorStop(0.35,"#3a0060");
       skyGradient.addColorStop(0.7,"#ff0066");
       skyGradient.addColorStop(1,"#ff6600");
 
+      // Performance Improvement: Cache static water gradient
       waterGradient = ctx.createLinearGradient(0,horizon,0,h);
       waterGradient.addColorStop(0,"#150020");
       waterGradient.addColorStop(0.5,"#05071a");
@@ -271,22 +309,30 @@
         energy = (bass+mid+treb)/3;
       }
 
-      // Using the pre-calculated sky gradient
       ctx.fillStyle = skyGradient;
       ctx.fillRect(0,0,w,horizon);
 
-      const starCount=90;
-      ctx.fillStyle="rgba(255,255,255,0.8)";
-      for(let i=0;i<starCount;i++){
-        const sx=(i*73+(t*10))%w;
-        const sy=(i*53)%(h*0.4);
-        const size=(i%7===0?1.4:0.7);
-        ctx.fillRect(sx,sy,size,size);
+      // Aesthetic Update: Two-layer starfield for parallax effect
+      const starCount = 90;
+      // Layer 1: Slow, distant stars
+      ctx.fillStyle = "rgba(255,255,255,0.8)";
+      for (let i = 0; i < starCount / 2; i++) {
+          const sx = (i * 73 + (t * 5)) % w; 
+          const sy = (i * 53) % (h * 0.4);
+          const size = (i % 7 === 0 ? 1.4 : 0.7);
+          ctx.fillRect(sx, sy, size, size);
+      }
+      // Layer 2: Fast, near stars
+      ctx.fillStyle = "rgba(200, 200, 255, 0.9)";
+      for (let i = starCount / 2; i < starCount; i++) {
+          const sx = (i * 40 + (t * 25)) % w; 
+          const sy = (i * 80) % (h * 0.35); 
+          const size = (i % 5 === 0 ? 2 : 1);
+          ctx.fillRect(sx, sy, size, size);
       }
 
       const sunRadius=Math.min(w,h)*0.16;
       const sunY=horizon-sunRadius*0.25-bass*8;
-      // This gradient must be recreated as its coordinates (sunY) change per frame
       const g=ctx.createRadialGradient(cx,sunY,sunRadius*0.1,cx,sunY,sunRadius);
       g.addColorStop(0,"rgba(255,255,200,0.98)");
       g.addColorStop(0.4,"rgba(255,180,80,0.96)");
@@ -296,7 +342,6 @@
       ctx.arc(cx,sunY,sunRadius,0,Math.PI*2);
       ctx.fill();
 
-      // Using the pre-calculated water gradient
       ctx.fillStyle = waterGradient;
       ctx.fillRect(0,horizon,w,h);
 
@@ -335,13 +380,20 @@
         const x=i*bw;
         const y=bb-hgt;
 
-        // This gradient must be recreated as its coordinates (y, y+hgt) change per frame
         const grad=ctx.createLinearGradient(0,y,0,y+hgt);
-        grad.addColorStop(0,"rgba(255,120,250,0.95)");
-        grad.addColorStop(0.5,"rgba(0,240,255,0.9)");
-        grad.addColorStop(1,"rgba(0,120,255,0.5)");
+        // Aesthetic Update: Sharper, brighter neon bar colors
+        grad.addColorStop(0, `hsl(300, 100%, ${60 + v * 30}%)`);
+        grad.addColorStop(0.5, `hsl(180, 100%, ${50 + v * 30}%)`);
+        grad.addColorStop(1, "rgba(0, 0, 0, 0)");
+
         ctx.fillStyle=grad;
         ctx.fillRect(x+1,y,bw-2,hgt);
+        
+        // Aesthetic Update: Add a subtle bar glow
+        ctx.shadowBlur = 4;
+        ctx.shadowColor = `rgba(255, 255, 255, ${v * 0.5})`;
+        ctx.fillRect(x + 1, y, bw - 2, hgt);
+        ctx.shadowBlur = 0; 
       }
 
       ctx.save();
@@ -357,14 +409,12 @@
     }
     requestAnimationFrame(drawFrame);
 
-    // Simplified Audio Event Listeners (Removed #kickPlay)
-
+    // Event listeners attached to the native audio player
     audio.addEventListener("play", () => {
       isPlaying = true;
       setStatus("playing");
       initAnalyser();
-      // Resume context only if needed (fixes mobile auto-play issues)
-      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume(); 
+      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
     });
 
     audio.addEventListener("pause", () => {
