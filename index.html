@@ -139,7 +139,7 @@
       box-shadow: 0 0 12px rgba(255, 0, 102, 0.7);
     }
 
-    /* --- NEW SCHEDULE STYLES --- */
+    /* --- NEW SCHEDULE STYLES (Kept from last edit) --- */
     .schedule-list {
       text-align: left;
       margin-top: 1rem;
@@ -223,4 +223,122 @@
 
     /* FOOTNOTE - Genre line is styled prominently here */
     .footnote { margin-top: 1.5rem; font-size: 0.7rem; opacity: 0.55; }
-    .
+    .genre-tagline {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 0.2rem;
+        color: #ff0066; /* Bright neon pink/red */
+        opacity: 1;
+        text-shadow: 0 0 5px rgba(255, 0, 102, 0.8);
+    }
+  </style>
+</head>
+
+<body>
+  <main class="wrapper">
+
+    <img src="logo.png" alt="Radio RRR Logo"
+         style="width: 300px; max-width: 90%; margin: 0 auto 10px; display: block;">
+
+    <nav class="nav-tabs">
+        <a data-target="stream-section" class="active">Stream</a>
+        <a data-target="events-section">Schedule</a>
+        <a data-target="follow-section">Follow</a>
+    </nav>
+    
+    <div id="stream-section" class="content-pane">
+      <div class="channel">
+
+        <div class="visualizer">
+          <canvas id="viz"></canvas>
+        </div>
+
+        <span id="streamTitle" class="stream-title">RADIO RRR Live</span>
+
+        <audio id="liveStream" controls crossorigin="anonymous">
+          <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
+        </audio>
+
+        <button id="kickPlay" class="kick">Play</button>
+        <div id="status" class="status"></div>
+      </div>
+    </div>
+    
+        <div id="events-section" class="content-pane hidden-pane">
+      <div class="channel">
+        <span>Weekly Broadcast Schedule 📅</span><br />
+        <small>All times are based on your local timezone. **Live DJ sets are in bold.**</small>
+
+        <div class="schedule-list">
+            
+                        <div class="day-block">
+              <h3 class="day-title">Monday - Thursday</h3>
+              <div class="time-slot">
+                <h5>Morning (6am - 12pm) ☀️</h5>
+                <p>The Wake-Up Wave: Chillwave, Vaporwave, and Lo-fi Electro.</p>
+              </div>
+              <div class="time-slot">
+                <h5>Afternoon (12pm - 8pm) 💻</h5>
+                <p>Synthwork & Retro Run: Upbeat Retrowave and Outrun for focus and energy.</p>
+              </div>
+              <div class="time-slot">
+                <h5>Evening (8pm - 6am) 🌃</h5>
+                <p>Neon Nights Mix: Classic Synthpop, Darkwave, and High-Energy Electro.</p>
+              </div>
+            </div>
+            
+                        <div class="day-block">
+              <h3 class="day-title">Friday 🚨 LIVE</h3>
+              <div class="time-slot">
+                <h5>Morning (6am - 12pm) ☀️</h5>
+                <p>The Wake-Up Wave: Chillwave, Vaporwave, and Lo-fi Electro.</p>
+              </div>
+              <div class="time-slot">
+                <h5>Afternoon (12pm - 8pm) 💻</h5>
+                <p>Synthwork & Retro Run: Upbeat Retrowave and Outrun for focus and energy.</p>
+              </div>
+              <div class="time-slot live-dj-slot">
+                <h5>Evening (8pm - 12am) - LIVE DJ SET</h5>
+                <p>Playing Live: **Josh U RRR**</p>
+              </div>
+              <div class="time-slot">
+                <h5>Late Night (12am - 6am) 🌃</h5>
+                <p>Neon Nights Mix: Classic Synthpop, Darkwave, and High-Energy Electro.</p>
+              </div>
+            </div>
+            
+                        <div class="day-block">
+              <h3 class="day-title">Saturday 🚨 LIVE</h3>
+              <div class="time-slot">
+                <h5>Morning (6am - 12pm) ☀️</h5>
+                <p>The Wake-Up Wave: Chillwave, Vaporwave, and Lo-fi Electro.</p>
+              </div>
+              <div class="time-slot">
+                <h5>Afternoon (12pm - 8pm) 💻</h5>
+                <p>Synthwork & Retro Run: Upbeat Retrowave and Outrun tracks.</p>
+              </div>
+              <div class="time-slot live-dj-slot">
+                <h5>Evening (8pm - 12am) - LIVE DJ SET</h5>
+                <p>Playing Live: **Josh U RRR**</p>
+              </div>
+              <div class="time-slot">
+                <h5>Late Night (12am - 6am) 🌃</h5>
+                <p>Neon Nights Mix: Classic Synthpop, Darkwave, and High-Energy Electro.</p>
+              </div>
+            </div>
+
+                        <div class="day-block">
+              <h3 class="day-title">Sunday</h3>
+              <div class="time-slot">
+                <h5>Morning (6am - 12pm) ☀️</h5>
+                <p>The Wake-Up Wave: Chillwave, Vaporwave, and Lo-fi Electro.</p>
+              </div>
+              <div class="time-slot">
+                <h5>Afternoon (12pm - 8pm) 💻</h5>
+                <p>Synthwork & Retro Run: Upbeat Retrowave and Outrun for focus and energy.</p>
+              </div>
+              <div class="time-slot">
+                <h5>Evening (8pm - 6am) 🌃</h5>
+                <p>Neon Nights Mix: Classic Synthpop, Darkwave, and High-Energy Electro.</p>
+              </div>
