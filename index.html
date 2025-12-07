@@ -214,7 +214,9 @@
 
     <nav class="nav-tabs">
         <a data-target="stream-section" class="active">Stream</a>
-        <a data-target="events-section">Events</a>
+        <!-- CHANGED HERE -->
+        <a data-target="events-section">Schedule</a>
+        <!-- /CHANGED -->
         <a data-target="follow-section">Follow</a>
     </nav>
     
@@ -541,7 +543,7 @@
       if (audio.paused) {
         setStatus("connecting...");
         kick.textContent = "Connecting...";
-        
+
         audio.play().then(() => {
           isPlaying = true;
           setStatus("playing");
