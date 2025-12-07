@@ -190,7 +190,7 @@
       text-shadow: 0 0 8px #ff0066;
     }
 
-    /* FOOTNOTE - Genre line is now styled prominently here */
+    /* FOOTNOTE - Genre line is styled prominently here */
     .footnote { margin-top: 1.5rem; font-size: 0.7rem; opacity: 0.55; }
     .genre-tagline {
         display: block;
@@ -318,9 +318,9 @@
     const titleEl = document.getElementById("streamTitle");
     const navLinks = document.querySelectorAll('.nav-tabs a');
     const contentPanes = document.querySelectorAll('.content-pane');
-    const GAIN = 3.0; // Reduced gain for a cleaner bar effect
+    const GAIN = 10.0; // Higher gain for the tunnel effect
 
-    // === NEW/FIXED: TAB SHOW/HIDE LOGIC ===
+    // === TAB SHOW/HIDE LOGIC (Fixed) ===
     function switchTab(targetId) {
         // 1. Hide all content panes
         contentPanes.forEach(pane => {
@@ -407,6 +407,12 @@
     let analyserInitAttempted = false;
     let isPlaying = false;
 
+    function avgRange(arr, start, end) {
+      let sum = 0;
+      for (let i = start; i < end; i++) sum += arr[i];
+      return sum / (end - start);
+    }
+
     function initAnalyser() {
       if (analyserInitAttempted) return;
       analyserInitAttempted = true;
@@ -414,7 +420,7 @@
         const AC = window.AudioContext || window.webkitAudioContext;
         audioCtx = new AC();
         analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 128; // Fewer bars for cleaner retro look
+        analyser.fftSize = 256; // Higher resolution for tunnel
         dataArray = new Uint8Array(analyser.frequencyBinCount);
         const src = audioCtx.createMediaElementSource(audio);
         src.connect(analyser);
@@ -425,64 +431,93 @@
 
     let startTime = performance.now();
 
-    // === NEW/FIXED: SIMPLE FREQUENCY BAR VISUALIZER ===
+    // === RESTORED: WARP TUNNEL VISUALIZER ===
     function drawFrame() {
       const t = (performance.now() - startTime) / 1000;
       const w = canvas.clientWidth;
       const h = canvas.clientHeight;
-      const numBars = analyserEnabled ? analyser.frequencyBinCount : 64; 
-      const barWidth = w / numBars;
-      let x = 0;
+      const cx = w / 2;
+      const cy = h / 2;
+      const minDim = Math.min(w, h);
+
+      let bass = 0.1, mid = 0.1, treb = 0.1, energy = 0.1;
+
+      if (analyserEnabled && isPlaying) {
+        analyser.getByteFrequencyData(dataArray);
+        const len = dataArray.length;
+        
+        bass = Math.min(1, avgRange(dataArray, 0, len * 0.2) / 255 * GAIN);
+        mid  = Math.min(1, avgRange(dataArray, len * 0.2, len * 0.6) / 255 * GAIN);
+        treb = Math.min(1, avgRange(dataArray, len * 0.6, len) / 255 * GAIN);
+        energy = (bass + mid + treb) / 3;
+
+      } else {
+        // Demo mode when paused
+        bass = (Math.sin(t * 1.5) + 1) / 2;
+        mid  = (Math.sin(t * 0.9 + 1.2) + 1) / 2;
+        treb = (Math.sin(t * 2.1 + 0.7) + 1) / 2;
+        energy = (bass + mid + treb) / 3;
+      }
 
       // 1. Digital Fade Background
       ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
       ctx.fillRect(0, 0, w, h);
       ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
       ctx.fillRect(0, 0, w, h);
+      
+      // 2. Draw Spectrum Circles (The Rings)
+      const circleCount = 8;
+      for (let i = 0; i < circleCount; i++) {
+        const baseRadius = (minDim * 0.04) + (i * minDim * 0.05);
+        const freqAmp = i % 2 === 0 ? mid : treb;
 
-      if (analyserEnabled && isPlaying) {
-        analyser.getByteFrequencyData(dataArray);
+        const currentRadius = baseRadius + (freqAmp * 60); 
+        
+        ctx.beginPath();
+        ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
+        
+        const hue = (t * 50 + i * 20) % 360; 
+        ctx.strokeStyle = `hsl(${hue}, 100%, ${60 + freqAmp * 20}%)`;
+        ctx.lineWidth = 1 + freqAmp * 2.5;
+        ctx.shadowBlur = 10 + freqAmp * 20;
+        ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
+        ctx.stroke();
+      }
+      ctx.shadowBlur = 0;
 
-        for (let i = 0; i < numBars; i++) {
-          const barHeight = dataArray[i] * GAIN;
-          const hgt = Math.min(h, barHeight / 255 * h * 0.95);
-          const y = h - hgt;
+      // 3. Draw Radial Lines (The Wireframe)
+      const lineCount = 64;
+      for (let i = 0; i < lineCount; i++) {
+        const angle = (i * (Math.PI * 2) / lineCount) + (t * 0.05 * treb);
+        const maxDist = minDim * 0.75;
+        const lineLength = maxDist + (bass * 100); 
 
-          // Calculate color based on frequency/bar index
-          const hue = (i / numBars * 100) + 260; // Blue/Pink range
-          
-          const grad = ctx.createLinearGradient(0, y, 0, h);
-          grad.addColorStop(0, `hsl(${hue}, 100%, 75%)`);
-          grad.addColorStop(0.5, `hsl(${hue}, 100%, 50%)`);
-          grad.addColorStop(1, "rgba(0, 0, 0, 0)");
-
-          ctx.fillStyle = grad;
-          ctx.shadowBlur = 10;
-          ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
-          ctx.fillRect(x + 1, y, barWidth - 2, hgt);
-          x += barWidth;
-        }
-
-      } else {
-        // Draw demo bars when paused
-        ctx.shadowBlur = 0;
-        for (let i = 0; i < numBars; i++) {
-          const peak = (Math.sin(t * 1.5 + i * 0.2) + 1) / 2; // Oscillation
-          const hgt = peak * h * 0.5;
-          const y = h - hgt;
-          const hue = (i / numBars * 100) + 260; 
-
-          const grad = ctx.createLinearGradient(0, y, 0, h);
-          grad.addColorStop(0, `hsl(${hue}, 100%, 75%)`);
-          grad.addColorStop(1, "rgba(0, 0, 0, 0)");
-
-          ctx.fillStyle = grad;
-          ctx.fillRect(x + 1, y, barWidth - 2, hgt);
-          x += barWidth;
-        }
+        const x2 = cx + Math.cos(angle) * lineLength;
+        const y2 = cy + Math.sin(angle) * lineLength;
+        
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(x2, y2);
+        
+        const lineHue = (i * 5 + t * 50) % 360; 
+        ctx.strokeStyle = `hsla(${lineHue}, 100%, 60%, ${0.2 + energy * 0.6})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
       }
       
-      // 2. Scanlines Effect (Retro CRT look)
+      // 4. Central Core Pulse (The Dot)
+      const coreRadius = 5 + bass * 50; 
+      const coreGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
+      coreGradient.addColorStop(0, `rgba(255, 255, 255, ${0.8 + bass * 0.2})`);
+      coreGradient.addColorStop(0.5, `rgba(255, 0, 102, ${0.5 + bass * 0.5})`);
+      coreGradient.addColorStop(1, "rgba(255, 0, 102, 0)");
+
+      ctx.fillStyle = coreGradient;
+      ctx.beginPath();
+      ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 5. Scanlines Effect
       ctx.save();
       ctx.globalAlpha = 0.13;
       ctx.fillStyle = "rgba(0, 0, 0, 1)";
