@@ -210,7 +210,7 @@
   <main class="wrapper">
 
     <img src="logo.png" alt="Radio RRR Logo - Neon Retrowave Text"
-         style="width: 300px; max-width: 90%; margin: 0 auto 10px; display: block;">
+          style="width: 300px; max-width: 90%; margin: 0 auto 10px; display: block;">
 
     <nav class="nav-tabs">
         <a data-target="stream-section" class="active">Stream</a>
@@ -312,7 +312,7 @@
     const navLinks = document.querySelectorAll('.nav-tabs a');
     const contentPanes = document.querySelectorAll('.content-pane');
     const GAIN = 10.0; 
-    const MIN_AMP = 0.08; // Added for visualizer responsiveness
+    const MIN_AMP = 0.08;
 
     // === TAB SHOW/HIDE LOGIC ===
     function switchTab(targetId) {
@@ -325,6 +325,10 @@
         }
         navLinks.forEach(l => l.classList.remove('active'));
         document.querySelector(`.nav-tabs a[data-target="${targetId}"]`).classList.add('active');
+        // Ensure visualizer is resized/recalculated when tab opens
+        if (targetId === 'stream-section') {
+             resize();
+        }
     }
     switchTab('stream-section'); // Initialize to the Stream tab
 
@@ -417,8 +421,14 @@
 
     let startTime = performance.now();
 
-    // === WARP TUNNEL VISUALIZER (Restored and improved) ===
+    // === WARP TUNNEL VISUALIZER (Optimized with visibility check) ===
     function drawFrame() {
+      // OPTIMIZATION: Only run physics/drawing if the Stream tab is visible
+      if (document.getElementById('stream-section').classList.contains('hidden-pane')) {
+         requestAnimationFrame(drawFrame);
+         return;
+      }
+
       const t = (performance.now() - startTime) / 1000;
       const w = canvas.clientWidth;
       const h = canvas.clientHeight;
@@ -437,7 +447,7 @@
         let calculated_mid  = Math.min(1, avgRange(dataArray, len * 0.2, len * 0.6) / 255 * GAIN);
         let calculated_treb = Math.min(1, avgRange(dataArray, len * 0.6, len) / 255 * GAIN);
 
-        // Apply minimum amplitude for responsiveness during quiet parts (Improvement #4)
+        // Apply minimum amplitude for responsiveness during quiet parts
         bass = Math.max(MIN_AMP, calculated_bass);
         mid = Math.max(MIN_AMP, calculated_mid);
         treb = Math.max(MIN_AMP, calculated_treb);
@@ -526,28 +536,28 @@
     requestAnimationFrame(drawFrame);
 
 
-    // === Play/Pause Button Logic (Improved with 'connecting' state) ===
+    // === Play/Pause Button Logic ===
     kick.addEventListener("click", () => {
       if (audio.paused) {
-        setStatus("connecting..."); // Improvement #3
-        kick.textContent = "Connecting..."; // Improvement #3
+        setStatus("connecting...");
+        kick.textContent = "Connecting...";
         
         audio.play().then(() => {
           isPlaying = true;
           setStatus("playing");
-          kick.textContent = "Pause"; // On success
+          kick.textContent = "Pause";
           initAnalyser();
           if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
         }).catch((e) => {
             console.error("Audio Play Error:", e);
             setStatus("error starting stream");
-            kick.textContent = "Play"; // On error, revert
+            kick.textContent = "Play";
         });
       } else {
         audio.pause();
         isPlaying = false;
         setStatus("paused");
-        kick.textContent = "Play"; // On pause, revert
+        kick.textContent = "Play";
       }
     });
 
