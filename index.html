@@ -253,7 +253,7 @@
         const AC = window.AudioContext || window.webkitAudioContext;
         audioCtx = new AC();
         analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 256; // Smaller FFT size is better for responsive bars
+        analyser.fftSize = 256; 
         dataArray = new Uint8Array(analyser.frequencyBinCount);
         const src = audioCtx.createMediaElementSource(audio);
         src.connect(analyser);
@@ -270,6 +270,17 @@
 
     let startTime = performance.now();
 
+    // Store star positions for the 3D effect
+    const starCount = 200;
+    const stars = [];
+    for (let i = 0; i < starCount; i++) {
+        stars.push({
+            x: Math.random() * 2 - 1, // -1 to 1
+            y: Math.random() * 2 - 1, // -1 to 1
+            z: Math.random() * 1000 // 0 to 1000 (distance)
+        });
+    }
+
     function drawFrame() {
       const t = (performance.now() - startTime) / 1000;
       const w = canvas.clientWidth;
@@ -277,11 +288,12 @@
       const cx = w / 2;
       const cy = h / 2;
       const minDim = Math.min(w, h);
+      const perspective = w * 0.5; // Controls the 3D effect depth
 
       let bass = 0.1, mid = 0.1, treb = 0.1, energy = 0.1;
 
       if (analyserEnabled && isPlaying) {
-        // --- VISUALIZER MODE: RADIAL BARS (PLAYING) ---
+        // --- VISUALIZER MODE: PULSING STARFIELD GRID (PLAYING) ---
         analyser.getByteFrequencyData(dataArray);
         const len = dataArray.length;
         // Calculate amplified music components
@@ -291,50 +303,10 @@
         energy = (bass + mid + treb) / 3;
 
         // 1. Digital Fade Background
-        ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
-        ctx.fillRect(0, 0, w, h);
-        ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+        ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
         ctx.fillRect(0, 0, w, h);
 
-        const barCount = 128; // Lots of bars for a smooth circle
-        const baseRadius = minDim * 0.2;
-        const maxBarHeight = minDim * 0.3;
-        const slice = (Math.PI * 2) / barCount;
-
-        ctx.save();
-        ctx.translate(cx, cy);
-
-        for (let i = 0; i < barCount; i++) {
-            // Map the bar index to the frequency data index
-            const dataIndex = Math.floor(i * (dataArray.length / barCount));
-            const amp = dataArray[dataIndex] / 255;
-            
-            // Bar height driven by amplified data
-            const hgt = (amp * maxBarHeight) * (1 + bass * 0.5); 
-
-            const angle = i * slice;
-            
-            ctx.rotate(slice);
-            
-            // Dynamic Color Shift
-            const hue = (angle / (Math.PI * 2) * 360) + (t * 10);
-            
-            const gradient = ctx.createLinearGradient(0, baseRadius, 0, baseRadius + hgt);
-            gradient.addColorStop(0, `hsla(${hue}, 100%, 70%, 1)`);
-            gradient.addColorStop(0.5, `hsla(${hue + 60}, 100%, 50%, 0.8)`);
-            gradient.addColorStop(1, `hsla(${hue + 120}, 100%, 30%, 0.5)`);
-
-            ctx.fillStyle = gradient;
-            ctx.shadowBlur = 10 + amp * 10;
-            ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
-            
-            ctx.fillRect(-1.5, baseRadius, 3, hgt); // Draw the bar (3px wide)
-        }
-        
-        ctx.restore();
-        ctx.shadowBlur = 0;
-
-        // Central Core Pulse (Bass Reaction)
+        // 2. Core Pulse
         const coreRadius = 5 + bass * 45; 
         const coreGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
         coreGradient.addColorStop(0, `rgba(255, 255, 255, ${0.8 + bass * 0.2})`);
@@ -346,9 +318,42 @@
         ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
         ctx.fill();
 
+        // 3. 3D Starfield Grid
+        // Speed and perspective driven by audio data
+        const speed = 10 + (energy * 15); 
+        const hueShift = t * 30;
+
+        for (let i = 0; i < starCount; i++) {
+            const star = stars[i];
+
+            // Move the star closer (Z-axis movement)
+            star.z -= speed;
+
+            // Loop star when it passes the camera (z <= 0)
+            if (star.z <= 0) {
+                star.z += 1000;
+                star.x = Math.random() * 2 - 1;
+                star.y = Math.random() * 2 - 1;
+            }
+
+            // Project 3D coordinates (x, y, z) to 2D screen coordinates (px, py)
+            const scale = perspective / star.z;
+            const px = cx + star.x * scale * w;
+            const py = cy + star.y * scale * h;
+
+            // Size and opacity driven by distance (scale) and energy
+            const size = 1 + scale * 5; 
+            const opacity = 0.1 + scale * 0.5 + energy * 0.3; 
+            
+            if (px < w && px > 0 && py < h && py > 0) {
+                const hue = (hueShift + i * 5) % 360;
+                ctx.fillStyle = `hsla(${hue}, 100%, 70%, ${opacity})`;
+                ctx.fillRect(px, py, size, size);
+            }
+        }
+
       } else {
         // --- VISUALIZER MODE: CORE SPECTRUM TUNNEL (PAUSED/FALLBACK) ---
-        // This is the animation you preferred when paused, driven by time (t).
         
         bass = (Math.sin(t * 1.5) + 1) / 2;
         mid  = (Math.sin(t * 0.9 + 1.2) + 1) / 2;
