@@ -5,7 +5,7 @@
   <title>Radio RRR</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <meta name="description" content="Radio RRR: 24/7 streaming Electro, Synth, 80s, and Memes Remixed." />
+  <meta name="description" content="Radio RRR: 24/7 streaming neon 80s inspired synth, electro, and remixed vibes." />
   <meta property="og:title" content="Radio RRR - 24/7 Electro, Synth, 80s, Memes Remixed" />
   <meta property="og:description" content="Tune in to the best Retrowave, Synthwave, and Outrun music for your late-night drives." />
   <meta property="og:type" content="website" />
@@ -263,6 +263,22 @@
       top: 0; left: 0; border-radius: 12px;
     }
 
+    /* TIKTOK NEON FRAME (Option B: subtle border) */
+    .neon-embed-frame {
+      margin-top: 1.2rem;
+      padding: 1rem 0.75rem;
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at top, rgba(15,23,42,0.9), rgba(3,7,18,0.98));
+      border: 1px solid rgba(129,140,248,0.7);
+      box-shadow:
+        0 0 12px rgba(129,140,248,0.45),
+        0 0 24px rgba(255,0,102,0.35);
+    }
+    .neon-embed-frame .tiktok-embed {
+      margin: 0 auto !important;
+    }
+
     /* LINKS */
     .links { margin-top: 0.75rem; font-size: 0.85rem; text-align:center; }
     .links a {
@@ -318,8 +334,8 @@
         <h1 class="hero-title">RADIO RRR</h1>
         <p class="hero-tagline">ELECTRO · 80s · SYNTH · MEMES · REMIXED</p>
         <p class="hero-sub">
-          streaming continuous deep synth mixes,
-          so turn it uP and do da cha cha.
+          Neon 80s-inspired synth, electro and remixed vibes for late nights and long drives.
+          <span>Connect your email soon</span> to personalise shows and station updates.
         </p>
         <p class="hero-now-title">
           Now scheduling: <strong>Live – Rotating shows</strong>
@@ -389,10 +405,19 @@
 
       <div class="channel">
         <span>Follow us on TikTok</span><br />
-        <small>@josh.u.rrr - Tap below to see our latest shorts without slowing down the page!</small>
-        <p style="margin-top: 1rem; text-align: center;">
-          <a href="https://www.tiktok.com/@josh.u.rrr" target="_blank" class="kick">Visit TikTok Channel</a>
-        </p>
+        <small>@josh.u.rrr — Live station clips, neon edits, and behind-the-scenes chaos.</small>
+
+        <div class="neon-embed-frame">
+          <blockquote class="tiktok-embed"
+            cite="https://www.tiktok.com/@josh.u.rrr"
+            data-unique-id="josh.u.rrr"
+            data-embed-type="creator"
+            style="max-width: 600px;">
+            <section>
+              <a target="_blank" href="https://www.tiktok.com/@josh.u.rrr">@josh.u.rrr</a>
+            </section>
+          </blockquote>
+        </div>
       </div>
 
       <div class="channel">
@@ -424,6 +449,9 @@
 
   </main>
 
+  <!-- TikTok embed script (only once) -->
+  <script async src="https://www.tiktok.com/embed.js"></script>
+
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       const navLinks = document.querySelectorAll(".nav-tabs a");
@@ -440,29 +468,19 @@
 
       /* ---- Tabs ---- */
       function switchTab(targetId) {
-        for (let pane of contentPanes) {
-          pane.classList.add("hidden-pane");
-        }
+        for (let pane of contentPanes) pane.classList.add("hidden-pane");
         const targetElement = document.getElementById(targetId);
-        if (targetElement) {
-          targetElement.classList.remove("hidden-pane");
-        }
+        if (targetElement) targetElement.classList.remove("hidden-pane");
 
-        for (let l of navLinks) {
-          l.classList.remove("active");
-        }
+        for (let l of navLinks) l.classList.remove("active");
         const activeLink = document.querySelector('.nav-tabs a[data-target="' + targetId + '"]');
-        if (activeLink) {
-          activeLink.classList.add("active");
-        }
+        if (activeLink) activeLink.classList.add("active");
       }
 
       for (let link of navLinks) {
         link.addEventListener("click", function (e) {
           const targetId = e.target.getAttribute("data-target");
-          if (targetId) {
-            switchTab(targetId);
-          }
+          if (targetId) switchTab(targetId);
         });
       }
 
@@ -478,13 +496,7 @@
       function updateTitle() {
         const now = new Date();
         const days = [
-          "Sunday",
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
-          "Saturday"
+          "Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"
         ];
         const dayName = days[now.getDay()];
         const period = getDayPeriod(now.getHours());
@@ -532,9 +544,7 @@
 
       function avgRange(arr, start, end) {
         let sum = 0;
-        for (let i = start; i < end; i++) {
-          sum += arr[i];
-        }
+        for (let i = start; i < end; i++) sum += arr[i];
         return sum / (end - start);
       }
 
@@ -577,10 +587,7 @@
         ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
         ctx.fillRect(0, 0, w, h);
 
-        let bass = 0.1;
-        let mid = 0.1;
-        let treb = 0.1;
-        let energy = 0.1;
+        let bass = 0.1, mid = 0.1, treb = 0.1, energy = 0.1;
         let useAudio = false;
 
         if (analyserEnabled && isPlaying && analyser && dataArray) {
@@ -602,7 +609,7 @@
             );
 
             bass = Math.max(MIN_AMP, calculated_bass);
-            mid = Math.max(MIN_AMP, calculated_mid);
+            mid  = Math.max(MIN_AMP, calculated_mid);
             treb = Math.max(MIN_AMP, calculated_treb);
             energy = (bass + mid + treb) / 3;
             useAudio = true;
@@ -659,12 +666,7 @@
 
           const coreRadius = 10 + bass * 30;
           const coreGradient = ctx.createRadialGradient(
-            cx,
-            cy,
-            0,
-            cx,
-            cy,
-            coreRadius
+            cx, cy, 0, cx, cy, coreRadius
           );
           coreGradient.addColorStop(0, "rgba(255,255,255," + (0.7 + treb * 0.3) + ")");
           coreGradient.addColorStop(0.4, "rgba(255,0,150," + (0.65 + bass * 0.3) + ")");
@@ -673,6 +675,7 @@
           ctx.beginPath();
           ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
           ctx.fill();
+
         } else {
           bass = (Math.sin(t * 1.5) + 1) / 2;
           mid  = (Math.sin(t * 0.9 + 1.2) + 1) / 2;
@@ -704,8 +707,7 @@
 
           const lineCount = 64;
           for (let i = 0; i < lineCount; i++) {
-            const angle =
-              (i * (Math.PI * 2)) / lineCount + t * 0.05 * treb;
+            const angle = (i * (Math.PI * 2)) / lineCount + t * 0.05 * treb;
             const maxDist = minDim * 0.75;
             const lineLength = maxDist + bass * 100;
 
@@ -725,12 +727,7 @@
 
           const coreRadius = 5 + bass * 50;
           const coreGradient = ctx.createRadialGradient(
-            cx,
-            cy,
-            0,
-            cx,
-            cy,
-            coreRadius
+            cx, cy, 0, cx, cy, coreRadius
           );
           coreGradient.addColorStop(0, "rgba(255, 255, 255, 0.9)");
           coreGradient.addColorStop(
