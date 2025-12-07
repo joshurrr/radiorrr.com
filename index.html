@@ -15,10 +15,10 @@
     /* RESET */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
-    /* BODY & CONTAINER */
+    /* BODY & CONTAINER (Restored dark background and neon wrapper) */
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #050710;
+      background: #050710; /* Dark background */
       color: #f5f5f5;
       min-height: 100vh;
       display: flex;
@@ -31,7 +31,7 @@
       width: 100%;
       padding: 2.5rem 1.75rem;
       border-radius: 18px;
-      /* REAPPLYING NEON: box-shadow for retro look */
+      /* Neon Wrapper Styling */
       background: #0d0e1f;
       border: 1px solid rgba(129,140,248,0.3);
       box-shadow: 
@@ -41,12 +41,12 @@
       transition: all 0.3s ease-out; 
     }
     
-    /* NAVIGATION TABS */
+    /* NAVIGATION TABS (Restored) */
     .nav-tabs {
       display: flex;
       justify-content: center;
       gap: 1.5rem;
-      margin-top: 1rem; /* Added space after logo */
+      margin-top: 1rem;
       margin-bottom: 2rem;
       border-bottom: 2px solid rgba(255, 0, 102, 0.3);
       padding-bottom: 0.5rem;
@@ -60,7 +60,7 @@
       transition: all 0.2s;
       letter-spacing: 0.05em;
       text-shadow: 0 0 5px rgba(67, 56, 202, 0.4);
-      cursor: pointer; /* Indicate it's clickable */
+      cursor: pointer;
     }
     /* Active/Hover Neon Effect */
     .nav-tabs a:hover,
@@ -70,7 +70,7 @@
       transform: translateY(-2px);
     }
     
-    /* CONTENT PANE STYLING */
+    /* CONTENT PANE STYLING (Restored) */
     .content-pane {
         width: 100%;
         transition: opacity 0.3s ease-in-out;
@@ -79,7 +79,7 @@
         display: none; /* Hide content when not selected */
     }
 
-    /* VISUALIZER */
+    /* VISUALIZER (Restored) */
     .visualizer {
       width: 100%;
       height: 260px;
@@ -87,13 +87,13 @@
       overflow: hidden;
       background: #000000;
       margin-bottom: 0.6rem;
-      /* REAPPLYING NEON: frame */
+      /* Neon Frame */
       border: 2px solid #ff0066; 
       box-shadow: 0 0 15px rgba(255, 0, 102, 0.5);
     }
     #viz { width: 100%; height: 100%; display: block; }
 
-    /* CHANNEL PANELS */
+    /* CHANNEL PANELS (Restored) */
     .channel {
       padding: 1.2rem 1.4rem;
       border-radius: 16px;
@@ -105,13 +105,13 @@
     .channel span { font-weight: 600; font-size: 1rem; }
     .channel small { font-size: 0.8rem; color: #e0e0ff; opacity: 0.9; }
 
-    /* STREAM TITLE */
+    /* STREAM TITLE (Restored neon text) */
     .stream-title {
       display: block;
       margin: 0.4rem 0 0.4rem;
       font-weight: 600;
       font-size: 1rem;
-      /* REAPPLYING NEON: Text Glow */
+      /* Neon Text Glow */
       color: #ffccff;
       text-shadow: 
         0 0 4px #ff0066, 
@@ -120,7 +120,7 @@
       transition: all 0.3s;
     }
 
-    /* AUDIO / STATUS / PLAY BUTTON */
+    /* AUDIO / STATUS / PLAY BUTTON (Restored neon button) */
     audio { width: 100%; margin-top: 0.2rem; }
     .status { display:none; font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.8; }
     .kick {
@@ -129,17 +129,17 @@
       background:#0b1020; color:#c7c7ff;
       cursor:pointer; font-size:0.85rem;
       transition: all 0.3s;
-      text-decoration: none; /* Ensure link buttons look like buttons */
+      text-decoration: none;
       display: inline-block;
     }
     .kick:hover {
-      /* REAPPLYING NEON: button hover effect */
+      /* Neon button hover effect */
       color: #ff0066;
       border-color: #ff0066;
       box-shadow: 0 0 12px rgba(255, 0, 102, 0.7);
     }
 
-    /* --- NEW SCHEDULE STYLES (Kept from last edit) --- */
+    /* --- SCHEDULE STYLES (Restored) --- */
     .schedule-list {
       text-align: left;
       margin-top: 1rem;
@@ -158,14 +158,14 @@
     .day-title {
       font-weight: 700;
       font-size: 1.2rem;
-      color: #ff0066; /* Neon Pink */
+      color: #ff0066;
       text-shadow: 0 0 5px rgba(255, 0, 102, 0.6);
       margin-bottom: 0.5rem;
     }
     .time-slot {
       margin-bottom: 0.75rem;
       padding-left: 1rem;
-      border-left: 3px solid #4338ca; /* Neon Blue accent */
+      border-left: 3px solid #4338ca;
     }
     .time-slot h5 {
       margin: 0;
@@ -178,9 +178,8 @@
       font-size: 0.8rem;
       color: #e0e0ff;
     }
-    /* Specific LIVE DJ Schedule Styling */
     .live-dj-slot {
-      border-left: 3px solid #ff0066; /* Special border for live sets */
+      border-left: 3px solid #ff0066;
       background: rgba(255, 0, 102, 0.1);
       padding: 0.5rem 1rem;
       margin-top: 0.5rem;
@@ -194,7 +193,7 @@
       color: #ffccff;
       font-weight: 700;
     }
-    /* --- END NEW SCHEDULE STYLES --- */
+    /* --- END SCHEDULE STYLES --- */
 
     /* VIDEO EMBEDS */
     .video-container {
@@ -216,19 +215,18 @@
       transition: color 0.3s, text-shadow 0.3s;
     }
     .links a:hover {
-      /* REAPPLYING NEON: link hover effect */
       color: #ff0066;
       text-shadow: 0 0 8px #ff0066;
     }
 
-    /* FOOTNOTE - Genre line is styled prominently here */
+    /* FOOTNOTE */
     .footnote { margin-top: 1.5rem; font-size: 0.7rem; opacity: 0.55; }
     .genre-tagline {
         display: block;
         font-size: 0.85rem;
         font-weight: 700;
         margin-bottom: 0.2rem;
-        color: #ff0066; /* Bright neon pink/red */
+        color: #ff0066;
         opacity: 1;
         text-shadow: 0 0 5px rgba(255, 0, 102, 0.8);
     }
@@ -265,14 +263,14 @@
       </div>
     </div>
     
-        <div id="events-section" class="content-pane hidden-pane">
+        <div id="events-section" class="content-pane hidden-pane">
       <div class="channel">
         <span>Weekly Broadcast Schedule 📅</span><br />
         <small>All times are based on your local timezone. **Live DJ sets are in bold.**</small>
 
         <div class="schedule-list">
             
-                        <div class="day-block">
+            <div class="day-block">
               <h3 class="day-title">Monday - Thursday</h3>
               <div class="time-slot">
                 <h5>Morning (6am - 12pm) ☀️</h5>
@@ -288,7 +286,7 @@
               </div>
             </div>
             
-                        <div class="day-block">
+            <div class="day-block">
               <h3 class="day-title">Friday 🚨 LIVE</h3>
               <div class="time-slot">
                 <h5>Morning (6am - 12pm) ☀️</h5>
@@ -308,7 +306,7 @@
               </div>
             </div>
             
-                        <div class="day-block">
+            <div class="day-block">
               <h3 class="day-title">Saturday 🚨 LIVE</h3>
               <div class="time-slot">
                 <h5>Morning (6am - 12pm) ☀️</h5>
@@ -328,17 +326,10 @@
               </div>
             </div>
 
-                        <div class="day-block">
+            <div class="day-block">
               <h3 class="day-title">Sunday</h3>
               <div class="time-slot">
                 <h5>Morning (6am - 12pm) ☀️</h5>
                 <p>The Wake-Up Wave: Chillwave, Vaporwave, and Lo-fi Electro.</p>
               </div>
-              <div class="time-slot">
-                <h5>Afternoon (12pm - 8pm) 💻</h5>
-                <p>Synthwork & Retro Run: Upbeat Retrowave and Outrun for focus and energy.</p>
-              </div>
-              <div class="time-slot">
-                <h5>Evening (8pm - 6am) 🌃</h5>
-                <p>Neon Nights Mix: Classic Synthpop, Darkwave, and High-Energy Electro.</p>
-              </div>
+              <div class="time
