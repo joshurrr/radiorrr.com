@@ -4,18 +4,8 @@
   <meta charset="UTF-8" />
   <title>Radio RRR</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  
-  <meta name="description" content="Radio RRR: 24/7 streaming Electro, Synth, 80s, and Chill music." />
-  <meta property="og:title" content="Radio RRR - 24/7 Electro, Synth, 80s, Chill Stream" />
-  <meta property="og:description" content="Tune in to the best Retrowave, Synthwave, and Outrun music for your late-night drives." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://radiorrr.com/" />
-  <meta property="og:image" content="https://radiorrr.com/logo.png" />
   <style>
-    /* RESET */
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    
-    /* BODY & CONTAINER */
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: #050710;
@@ -31,22 +21,15 @@
       width: 100%;
       padding: 2.5rem 1.75rem;
       border-radius: 18px;
-      /* UPDATED: Neon box-shadow for retro look */
-      background: #0d0e1f;
-      border: 1px solid rgba(129,140,248,0.3);
-      box-shadow: 
-        0 0 10px rgba(67, 56, 202, 0.5), 
-        0 0 30px rgba(255, 0, 102, 0.4);
+      background: radial-gradient(circle at top, #4338ca 0, #050710 55%);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.55);
       text-align: center;
-      transition: all 0.3s ease-out; 
     }
     .tagline {
       font-size: 0.95rem;
       color: #c7c7ff;
       margin: 0.5rem 0 1.25rem;
     }
-    
-    /* VISUALIZER */
     .visualizer {
       width: 100%;
       height: 260px;
@@ -54,13 +37,9 @@
       overflow: hidden;
       background: #050710;
       margin-bottom: 0.6rem;
-      /* UPDATED: Neon frame */
-      border: 2px solid #ff0066; 
-      box-shadow: 0 0 15px rgba(255, 0, 102, 0.5);
     }
     #viz { width: 100%; height: 100%; display: block; }
 
-    /* CHANNEL PANELS */
     .channel {
       padding: 1.2rem 1.4rem;
       border-radius: 16px;
@@ -70,24 +49,15 @@
       text-align: left;
     }
     .channel span { font-weight: 600; font-size: 1rem; }
-    .channel small { font-size: 0.8rem; color: #e0e0ff; opacity: 0.9; }
+    .channel small { font-size: 0.8rem; opacity: 0.75; }
 
-    /* STREAM TITLE */
     .stream-title {
       display: block;
       margin: 0.4rem 0 0.4rem;
       font-weight: 600;
       font-size: 1rem;
-      /* UPDATED: Neon Text Glow */
-      color: #ffccff;
-      text-shadow: 
-        0 0 4px #ff0066, 
-        0 0 10px #4338ca;
-      letter-spacing: 0.1em;
-      transition: all 0.3s;
     }
 
-    /* AUDIO / STATUS / PLAY BUTTON */
     audio { width: 100%; margin-top: 0.2rem; }
     .status { display:none; font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.8; }
     .kick {
@@ -95,16 +65,7 @@
       border-radius:10px; border:1px solid rgba(129,140,248,0.6);
       background:#0b1020; color:#c7c7ff;
       cursor:pointer; font-size:0.85rem;
-      transition: all 0.3s;
     }
-    .kick:hover {
-      /* UPDATED: Neon button hover effect */
-      color: #ff0066;
-      border-color: #ff0066;
-      box-shadow: 0 0 12px rgba(255, 0, 102, 0.7);
-    }
-
-    /* VIDEO EMBEDS */
     .video-container {
       position: relative;
       width: 100%; padding-bottom: 56.25%;
@@ -114,22 +75,8 @@
       position: absolute; width: 100%; height: 100%; border: 0;
       top: 0; left: 0; border-radius: 12px;
     }
-
-    /* LINKS */
     .links { margin-top: 0.75rem; font-size: 0.85rem; text-align:center; }
-    .links a { 
-      color: #a5b4fc; 
-      text-decoration: none; 
-      margin: 0 0.4rem;
-      transition: color 0.3s, text-shadow 0.3s;
-    }
-    .links a:hover {
-      /* UPDATED: Neon link hover effect */
-      color: #ff0066;
-      text-shadow: 0 0 8px #ff0066;
-    }
-
-    /* FOOTNOTE */
+    .links a { color: #a5b4fc; text-decoration: none; margin: 0 0.4rem; }
     .footnote { margin-top: 1.5rem; font-size: 0.7rem; opacity: 0.55; }
   </style>
 </head>
@@ -142,6 +89,7 @@
 
     <p class="tagline">Streaming Electro · Synth · 80s · Chill</p>
 
+    <!-- RADIO STREAM + VISUALIZER -->
     <div class="channel">
 
       <div class="visualizer">
@@ -158,6 +106,7 @@
       <div id="status" class="status"></div>
     </div>
 
+    <!-- TIKTOK -->
     <div class="channel">
       <span>Latest on TikTok</span><br />
       <small>@josh.u.rrr · newest shorts</small>
@@ -173,6 +122,7 @@
       </blockquote>
     </div>
 
+    <!-- YOUTUBE LIKES -->
     <div class="channel">
       <span>YouTube Likes</span><br />
       <small>Latest videos we liked</small>
@@ -207,7 +157,6 @@
 
     const titleEl = document.getElementById("streamTitle");
 
-    // REVERTED: Title logic to show Morning/Afternoon/Night variants
     function getDayPeriod(hour) {
       if (hour < 12) return "Morning";
       if (hour < 17) return "Afternoon";
@@ -233,8 +182,6 @@
     }
 
     updateTitle();
-    // Re-check title every hour
-    setInterval(updateTitle, 3600000); 
 
     const audio = document.getElementById("liveStream");
     const statusEl = document.getElementById("status");
@@ -313,7 +260,6 @@
       const horizon = h*0.55;
       const cx = w/2;
 
-      // Draw Sky (Original Visualizer Code)
       const sky = ctx.createLinearGradient(0,0,0,horizon);
       sky.addColorStop(0,"#090018");
       sky.addColorStop(0.35,"#3a0060");
@@ -322,7 +268,6 @@
       ctx.fillStyle = sky;
       ctx.fillRect(0,0,w,horizon);
 
-      // Draw Stars
       const starCount=90;
       ctx.fillStyle="rgba(255,255,255,0.8)";
       for(let i=0;i<starCount;i++){
@@ -332,7 +277,6 @@
         ctx.fillRect(sx,sy,size,size);
       }
 
-      // Draw Sun/Moon
       const sunRadius=Math.min(w,h)*0.16;
       const sunY=horizon-sunRadius*0.25-bass*8;
       const g=ctx.createRadialGradient(cx,sunY,sunRadius*0.1,cx,sunY,sunRadius);
@@ -344,7 +288,6 @@
       ctx.arc(cx,sunY,sunRadius,0,Math.PI*2);
       ctx.fill();
 
-      // Draw Water
       const waterGrad=ctx.createLinearGradient(0,horizon,0,h);
       waterGrad.addColorStop(0,"#150020");
       waterGrad.addColorStop(0.5,"#05071a");
@@ -352,7 +295,6 @@
       ctx.fillStyle=waterGrad;
       ctx.fillRect(0,horizon,w,h);
 
-      // Draw Reflection
       const reflectGrad=ctx.createLinearGradient(cx,horizon,cx,h);
       reflectGrad.addColorStop(0,"rgba(255,120,160,0.7)");
       reflectGrad.addColorStop(0.4,"rgba(255,80,200,0.35)");
@@ -367,7 +309,6 @@
       ctx.fill();
       ctx.globalAlpha=1;
 
-      // Draw Spectrum Bars
       const barCount=48;
       const bt=horizon+(h-horizon)*0.15;
       const bb=h*0.95;
@@ -397,7 +338,6 @@
         ctx.fillRect(x+1,y,bw-2,hgt);
       }
 
-      // NEW: Subtle Scanlines Effect
       ctx.save();
       ctx.globalAlpha=0.13;
       ctx.fillStyle="rgba(0,0,0,1)";
@@ -411,19 +351,14 @@
     }
     requestAnimationFrame(drawFrame);
 
-    // Play/Pause Button Logic
     kick.addEventListener("click", () => {
       if (audio.paused) {
-        // Attempt to play and initialize AudioContext
         audio.play().then(() => {
           isPlaying = true;
           setStatus("playing");
           initAnalyser();
           if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
-        }).catch((e) => {
-           console.error("Audio Play Error:", e);
-           setStatus("tap the player above to start");
-        });
+        }).catch(() => setStatus("tap the player above to start"));
       } else {
         audio.pause();
         isPlaying = false;
