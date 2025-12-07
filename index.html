@@ -318,4 +318,70 @@
         
         // Dynamic color based on time and frequency
         const hue = (t * 50 + i * 20) % 360; 
-        ctx.strokeStyle = `hsl(${hue},
+        ctx.strokeStyle = `hsl(${hue}, 100%, ${60 + freqAmp * 20}%)`;
+        ctx.lineWidth = 1 + freqAmp * 2;
+        ctx.shadowBlur = 10 + freqAmp * 15;
+        ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
+        ctx.stroke();
+      }
+      ctx.shadowBlur = 0; // Reset shadow
+
+      // 3. Draw Radial Lines (Wireframe Tunnel)
+      const lineCount = 64;
+      for (let i = 0; i < lineCount; i++) {
+        const angle = (i * (Math.PI * 2) / lineCount) + (t * 0.05 * treb);
+        const maxDist = maxDim * 0.7;
+        
+        // Line length driven by Bass
+        const lineLength = maxDist + (bass * 80); 
+
+        const x2 = cx + Math.cos(angle) * lineLength;
+        const y2 = cy + Math.sin(angle) * lineLength;
+        
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(x2, y2);
+        
+        const lineHue = (i * 5 + t * 50) % 360; 
+        ctx.strokeStyle = `hsla(${lineHue}, 100%, 50%, ${0.2 + energy * 0.5})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+      
+      // 4. Central Core Pulse (Bass Reaction)
+      // Use amplified bass for core size
+      const coreRadius = 5 + bass * 35; 
+      const coreGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
+      coreGradient.addColorStop(0, `rgba(255, 255, 255, ${0.8 + bass * 0.2})`);
+      coreGradient.addColorStop(0.5, `rgba(255, 0, 102, ${0.5 + bass * 0.5})`);
+      coreGradient.addColorStop(1, "rgba(255, 0, 102, 0)");
+
+      ctx.fillStyle = coreGradient;
+      ctx.beginPath();
+      ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
+      ctx.fill();
+
+
+      requestAnimationFrame(drawFrame);
+    }
+    requestAnimationFrame(drawFrame);
+
+    // Event listeners attached to the native audio player
+    audio.addEventListener("play", () => {
+      isPlaying = true;
+      setStatus("playing");
+      initAnalyser();
+      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    });
+
+    audio.addEventListener("pause", () => {
+      isPlaying = false;
+      setStatus("paused");
+    });
+
+    audio.addEventListener("error", () => setStatus("audio error (stream offline?)"));
+  });
+  </script>
+
+</body>
+</html>
