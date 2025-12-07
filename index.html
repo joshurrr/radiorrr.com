@@ -148,10 +148,10 @@
         <canvas id="viz"></canvas>
       </div>
 
-      <span id="streamTitle" class="stream-title">RADIO RRR Live – Synthwave Transmission</span>
+      <span id="streamTitle" class="stream-title">RADIO RRR Live</span>
 
       <audio id="liveStream" controls crossorigin="anonymous">
-        <source src="http://air.radiorecord.ru:805/synth_320" type="audio/mpeg" />
+        <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
       </audio>
 
       <button id="kickPlay" class="kick">Play</button>
@@ -207,12 +207,34 @@
 
     const titleEl = document.getElementById("streamTitle");
 
-    // Simplified title function (keeping static text for stability)
+    // REVERTED: Title logic to show Morning/Afternoon/Night variants
+    function getDayPeriod(hour) {
+      if (hour < 12) return "Morning";
+      if (hour < 17) return "Afternoon";
+      return "Night";
+    }
+
     function updateTitle() {
-      titleEl.textContent = `RADIO RRR Live – Synthwave Transmission`;
+      const now = new Date();
+      const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+      const dayName = days[now.getDay()];
+      const period = getDayPeriod(now.getHours());
+
+      const variantsByPeriod = {
+        Morning: ["Morning Chill","Sunrise Session","Morning Transmission"],
+        Afternoon: ["Afternoon Chill","Daystream Session","Retro Run"],
+        Night: ["Night Chill","After Dark","Night Transmission","Late Night Set"]
+      };
+
+      const list = variantsByPeriod[period] || ["Live Mix"];
+      const label = list[now.getDay() % list.length];
+
+      titleEl.textContent = `RADIO RRR Live – ${dayName} ${label}`;
     }
 
     updateTitle();
+    // Re-check title every hour
+    setInterval(updateTitle, 3600000); 
 
     const audio = document.getElementById("liveStream");
     const statusEl = document.getElementById("status");
@@ -325,4 +347,105 @@
       // Draw Water
       const waterGrad=ctx.createLinearGradient(0,horizon,0,h);
       waterGrad.addColorStop(0,"#150020");
-      waterGrad.addColorStop(0.5,"#
+      waterGrad.addColorStop(0.5,"#05071a");
+      waterGrad.addColorStop(1,"#02030a");
+      ctx.fillStyle=waterGrad;
+      ctx.fillRect(0,horizon,w,h);
+
+      // Draw Reflection
+      const reflectGrad=ctx.createLinearGradient(cx,horizon,cx,h);
+      reflectGrad.addColorStop(0,"rgba(255,120,160,0.7)");
+      reflectGrad.addColorStop(0.4,"rgba(255,80,200,0.35)");
+      reflectGrad.addColorStop(1,"rgba(255,0,150,0)");
+      ctx.fillStyle=reflectGrad;
+      ctx.globalAlpha=0.55+energy*0.25;
+      const rw=sunRadius*1.4+bass*20;
+      ctx.beginPath();
+      ctx.moveTo(cx-rw,horizon);
+      ctx.quadraticCurveTo(cx,h*0.8+bass*14,cx+rw,horizon);
+      ctx.closePath();
+      ctx.fill();
+      ctx.globalAlpha=1;
+
+      // Draw Spectrum Bars
+      const barCount=48;
+      const bt=horizon+(h-horizon)*0.15;
+      const bb=h*0.95;
+      const bh=bb-bt;
+      const bw=w/barCount;
+
+      for(let i=0;i<barCount;i++){
+        let v;
+        if(analyserEnabled && isPlaying){
+          const len=dataArray.length;
+          const norm=i/(barCount-1);
+          const idx=Math.floor(Math.pow(norm,0.7)*(len-1));
+          v=dataArray[idx]/255;
+        } else {
+          v=(Math.sin(t*3+i*0.3)+1)/2;
+        }
+        const amp=0.2+bass*1.5;
+        const hgt=bh*(0.05+v*amp);
+        const x=i*bw;
+        const y=bb-hgt;
+
+        const grad=ctx.createLinearGradient(0,y,0,y+hgt);
+        grad.addColorStop(0,"rgba(255,120,250,0.95)");
+        grad.addColorStop(0.5,"rgba(0,240,255,0.9)");
+        grad.addColorStop(1,"rgba(0,120,255,0.5)");
+        ctx.fillStyle=grad;
+        ctx.fillRect(x+1,y,bw-2,hgt);
+      }
+
+      // NEW: Subtle Scanlines Effect
+      ctx.save();
+      ctx.globalAlpha=0.13;
+      ctx.fillStyle="rgba(0,0,0,1)";
+      const gap=3, off=(t*35)%gap;
+      for(let y=off;y<h;y+=gap){
+        ctx.fillRect(0,y,w,1);
+      }
+      ctx.restore();
+
+      requestAnimationFrame(drawFrame);
+    }
+    requestAnimationFrame(drawFrame);
+
+    // Play/Pause Button Logic
+    kick.addEventListener("click", () => {
+      if (audio.paused) {
+        // Attempt to play and initialize AudioContext
+        audio.play().then(() => {
+          isPlaying = true;
+          setStatus("playing");
+          initAnalyser();
+          if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+        }).catch((e) => {
+           console.error("Audio Play Error:", e);
+           setStatus("tap the player above to start");
+        });
+      } else {
+        audio.pause();
+        isPlaying = false;
+        setStatus("paused");
+      }
+    });
+
+    audio.addEventListener("play", () => {
+      isPlaying = true;
+      setStatus("playing");
+      initAnalyser();
+      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    });
+
+    audio.addEventListener("pause", () => {
+      isPlaying = false;
+      setStatus("paused");
+    });
+
+    audio.addEventListener("error", () => setStatus("audio error (stream offline?)"));
+  });
+  </script>
+
+</body>
+</html>
