@@ -31,7 +31,7 @@
       width: 100%;
       padding: 2.5rem 1.75rem;
       border-radius: 18px;
-      /* Aesthetic Update: Simpler dark background, new multi-color neon box-shadow */
+      /* UPDATED: Neon box-shadow for retro look */
       background: #0d0e1f;
       border: 1px solid rgba(129,140,248,0.3);
       box-shadow: 
@@ -52,48 +52,13 @@
       height: 260px;
       border-radius: 14px;
       overflow: hidden;
-      background: #000000; 
+      background: #050710;
       margin-bottom: 0.6rem;
-      /* Aesthetic Update: Neon frame */
+      /* UPDATED: Neon frame */
       border: 2px solid #ff0066; 
       box-shadow: 0 0 15px rgba(255, 0, 102, 0.5);
-      position: relative; /* IMPORTANT for overlay positioning */
     }
     #viz { width: 100%; height: 100%; display: block; }
-
-    /* NEW: PLAY OVERLAY STYLES */
-    #playOverlay {
-        position: absolute;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        display: flex; /* Will be flex only when paused/initial */
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background: rgba(0, 0, 0, 0.98);
-        cursor: pointer;
-        z-index: 10;
-        transition: opacity 0.4s;
-    }
-    #playOverlay .pulse {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: #ffccff;
-        text-shadow: 0 0 8px #ff0066, 0 0 20px #4338ca;
-        animation: pulse 1.5s infinite alternate;
-        letter-spacing: 0.15em;
-        margin-bottom: 0.5rem;
-    }
-    #playOverlay small {
-        color: #a5b4fc;
-        font-size: 0.9rem;
-        text-shadow: 0 0 2px rgba(67, 56, 202, 0.5);
-    }
-    @keyframes pulse {
-        from { opacity: 1; }
-        to { opacity: 0.7; }
-    }
-    /* END NEW STYLES */
 
     /* CHANNEL PANELS */
     .channel {
@@ -105,7 +70,7 @@
       text-align: left;
     }
     .channel span { font-weight: 600; font-size: 1rem; }
-    .channel small { font-size: 0.8rem; color: #e0e0ff; opacity: 0.9; } 
+    .channel small { font-size: 0.8rem; color: #e0e0ff; opacity: 0.9; }
 
     /* STREAM TITLE */
     .stream-title {
@@ -113,7 +78,7 @@
       margin: 0.4rem 0 0.4rem;
       font-weight: 600;
       font-size: 1rem;
-      /* Aesthetic Update: Neon Text Glow */
+      /* UPDATED: Neon Text Glow */
       color: #ffccff;
       text-shadow: 
         0 0 4px #ff0066, 
@@ -122,10 +87,23 @@
       transition: all 0.3s;
     }
 
-    /* AUDIO / STATUS */
+    /* AUDIO / STATUS / PLAY BUTTON */
     audio { width: 100%; margin-top: 0.2rem; }
     .status { display:none; font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.8; }
-    
+    .kick {
+      margin-top:0.6rem; padding:0.45rem 0.7rem;
+      border-radius:10px; border:1px solid rgba(129,140,248,0.6);
+      background:#0b1020; color:#c7c7ff;
+      cursor:pointer; font-size:0.85rem;
+      transition: all 0.3s;
+    }
+    .kick:hover {
+      /* UPDATED: Neon button hover effect */
+      color: #ff0066;
+      border-color: #ff0066;
+      box-shadow: 0 0 12px rgba(255, 0, 102, 0.7);
+    }
+
     /* VIDEO EMBEDS */
     .video-container {
       position: relative;
@@ -136,7 +114,7 @@
       position: absolute; width: 100%; height: 100%; border: 0;
       top: 0; left: 0; border-radius: 12px;
     }
-    
+
     /* LINKS */
     .links { margin-top: 0.75rem; font-size: 0.85rem; text-align:center; }
     .links a { 
@@ -146,10 +124,11 @@
       transition: color 0.3s, text-shadow 0.3s;
     }
     .links a:hover {
+      /* UPDATED: Neon link hover effect */
       color: #ff0066;
       text-shadow: 0 0 8px #ff0066;
     }
-    
+
     /* FOOTNOTE */
     .footnote { margin-top: 1.5rem; font-size: 0.7rem; opacity: 0.55; }
   </style>
@@ -158,10 +137,8 @@
 <body>
   <main class="wrapper">
 
-    <h1 style="margin: 0 auto 10px;">
-        <img src="logo.png" alt="Radio RRR Logo"
-             style="width: 300px; max-width: 90%; display: block; margin: 0 auto;">
-    </h1>
+    <img src="logo.png" alt="Radio RRR Logo"
+         style="width: 300px; max-width: 90%; margin: 0 auto 10px; display: block;">
 
     <p class="tagline">Streaming Electro · Synth · 80s · Chill</p>
 
@@ -169,10 +146,6 @@
 
       <div class="visualizer">
         <canvas id="viz"></canvas>
-        <div id="playOverlay" style="display: flex;">
-            <span class="pulse">CLICK TO START TRANSMISSION</span>
-            <small>Synthwave / Outrun</small>
-        </div>
       </div>
 
       <span id="streamTitle" class="stream-title">RADIO RRR Live – Synthwave Transmission</span>
@@ -181,7 +154,8 @@
         <source src="http://air.radiorecord.ru:805/synth_320" type="audio/mpeg" />
       </audio>
 
-      <div id="status" class="status">Status: Ready</div>
+      <button id="kickPlay" class="kick">Play</button>
+      <div id="status" class="status"></div>
     </div>
 
     <div class="channel">
@@ -226,29 +200,25 @@
 
   </main>
 
-  <script async defer src="https://www.tiktok.com/embed.js"></script>
+  <script async src="https://www.tiktok.com/embed.js"></script>
 
   <script>
   document.addEventListener("DOMContentLoaded", () => {
 
     const titleEl = document.getElementById("streamTitle");
-    const GAIN = 10.0; 
 
-    // --- References to HTML Elements ---
-    const audio = document.getElementById("liveStream");
-    const statusEl = document.getElementById("status");
-    const canvas = document.getElementById("viz");
-    const ctx = canvas.getContext("2d");
-    const playOverlay = document.getElementById("playOverlay");
-    // ------------------------------------
-
-
-    // Static title for robustness since "Now Playing" metadata is complex
+    // Simplified title function (keeping static text for stability)
     function updateTitle() {
       titleEl.textContent = `RADIO RRR Live – Synthwave Transmission`;
     }
-    updateTitle(); 
 
+    updateTitle();
+
+    const audio = document.getElementById("liveStream");
+    const statusEl = document.getElementById("status");
+    const kick = document.getElementById("kickPlay");
+    const canvas = document.getElementById("viz");
+    const ctx = canvas.getContext("2d");
 
     function setStatus(msg) {
       statusEl.style.display = "block";
@@ -280,7 +250,7 @@
         const AC = window.AudioContext || window.webkitAudioContext;
         audioCtx = new AC();
         analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 256; 
+        analyser.fftSize = 1024;
         dataArray = new Uint8Array(analyser.frequencyBinCount);
         const src = audioCtx.createMediaElementSource(audio);
         src.connect(analyser);
@@ -301,84 +271,58 @@
       const t = (performance.now() - startTime) / 1000;
       const w = canvas.clientWidth;
       const h = canvas.clientHeight;
-      const cx = w / 2;
-      const cy = h / 2;
-      const minDim = Math.min(w, h);
 
-      let bass = 0.1, mid = 0.1, treb = 0.1, energy = 0.1;
+      let bass = 0, mid = 0, treb = 0, energy = 0.1;
 
       if (analyserEnabled && isPlaying) {
-        // --- VISUALIZER MODE: RESPONSIVE NEON TUNNEL (PLAYING) ---
         analyser.getByteFrequencyData(dataArray);
         const len = dataArray.length;
-        
-        // Calculate amplified music components
-        bass = Math.min(1, avgRange(dataArray, 0, len * 0.2) / 255 * GAIN);
-        mid  = Math.min(1, avgRange(dataArray, len * 0.2, len * 0.6) / 255 * GAIN);
-        treb = Math.min(1, avgRange(dataArray, len * 0.6, len) / 255 * GAIN);
-        energy = (bass + mid + treb) / 3;
-
+        bass = avgRange(dataArray, 0, len*0.08) / 255;
+        mid  = avgRange(dataArray, len*0.08, len*0.4) / 255;
+        treb = avgRange(dataArray, len*0.4, len) / 255;
+        energy = bass*1.2 + mid*0.6 + treb*0.3;
       } else {
-        // --- VISUALIZER MODE: ANIMATED NEON TUNNEL (PAUSED/FALLBACK) ---
-        bass = (Math.sin(t * 1.5) + 1) / 2;
-        mid  = (Math.sin(t * 0.9 + 1.2) + 1) / 2;
-        treb = (Math.sin(t * 2.1 + 0.7) + 1) / 2;
-        energy = (bass + mid + treb) / 3;
+        bass = (Math.sin(t*2.3)+1)/2;
+        mid  = (Math.sin(t*1.4+1.2)+1)/2;
+        treb = (Math.sin(t*3.2+0.7)+1)/2;
+        energy = (bass+mid+treb)/3;
       }
 
-      // 1. Digital Fade Background
-      ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
-      ctx.fillRect(0, 0, w, h);
-      ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
-      ctx.fillRect(0, 0, w, h);
-      
-      // 2. Draw Spectrum Circles (The Rings)
-      const circleCount = 8;
-      for (let i = 0; i < circleCount; i++) {
-        const baseRadius = (minDim * 0.04) + (i * minDim * 0.05);
-        const freqAmp = i % 2 === 0 ? mid : treb;
+      const horizon = h*0.55;
+      const cx = w/2;
 
-        const currentRadius = baseRadius + (freqAmp * 60); 
-        
-        ctx.beginPath();
-        ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
-        
-        const hue = (t * 50 + i * 20) % 360; 
-        ctx.strokeStyle = `hsl(${hue}, 100%, ${60 + freqAmp * 20}%)`;
-        ctx.lineWidth = 1 + freqAmp * 2.5;
-        ctx.shadowBlur = 10 + freqAmp * 20;
-        ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
-        ctx.stroke();
+      // Draw Sky (Original Visualizer Code)
+      const sky = ctx.createLinearGradient(0,0,0,horizon);
+      sky.addColorStop(0,"#090018");
+      sky.addColorStop(0.35,"#3a0060");
+      sky.addColorStop(0.7,"#ff0066");
+      sky.addColorStop(1,"#ff6600");
+      ctx.fillStyle = sky;
+      ctx.fillRect(0,0,w,horizon);
+
+      // Draw Stars
+      const starCount=90;
+      ctx.fillStyle="rgba(255,255,255,0.8)";
+      for(let i=0;i<starCount;i++){
+        const sx=(i*73+(t*10))%w;
+        const sy=(i*53)%(h*0.4);
+        const size=(i%7===0?1.4:0.7);
+        ctx.fillRect(sx,sy,size,size);
       }
-      ctx.shadowBlur = 0;
 
-      // 3. Draw Radial Lines (The Wireframe)
-      const lineCount = 64;
-      for (let i = 0; i < lineCount; i++) {
-        const angle = (i * (Math.PI * 2) / lineCount) + (t * 0.05 * treb);
-        const maxDist = minDim * 0.75;
-        const lineLength = maxDist + (bass * 100); 
-
-        const x2 = cx + Math.cos(angle) * lineLength;
-        const y2 = cy + Math.sin(angle) * lineLength;
-        
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(x2, y2);
-        
-        const lineHue = (i * 5 + t * 50) % 360; 
-        ctx.strokeStyle = `hsla(${lineHue}, 100%, 60%, ${0.2 + energy * 0.6})`;
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      }
-      
-      // 4. Central Core Pulse (The Dot)
-      const coreRadius = 5 + bass * 50; 
-      const coreGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
-      coreGradient.addColorStop(0, `rgba(255, 255, 255, ${0.8 + bass * 0.2})`);
-      coreGradient.addColorStop(0.5, `rgba(255, 0, 102, ${0.5 + bass * 0.5})`);
-      coreGradient.addColorStop(1, "rgba(255, 0, 102, 0)");
-
-      ctx.fillStyle = coreGradient;
+      // Draw Sun/Moon
+      const sunRadius=Math.min(w,h)*0.16;
+      const sunY=horizon-sunRadius*0.25-bass*8;
+      const g=ctx.createRadialGradient(cx,sunY,sunRadius*0.1,cx,sunY,sunRadius);
+      g.addColorStop(0,"rgba(255,255,200,0.98)");
+      g.addColorStop(0.4,"rgba(255,180,80,0.96)");
+      g.addColorStop(1,"rgba(255,0,80,0)");
+      ctx.fillStyle=g;
       ctx.beginPath();
-      ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
+      ctx.arc(cx,sunY,sunRadius,0,Math.PI*2);
+      ctx.fill();
+
+      // Draw Water
+      const waterGrad=ctx.createLinearGradient(0,horizon,0,h);
+      waterGrad.addColorStop(0,"#150020");
+      waterGrad.addColorStop(0.5,"#
