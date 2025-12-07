@@ -360,9 +360,10 @@
 
         <span id="streamTitle" class="stream-title">RADIO RRR Live</span>
 
-        <audio id="liveStream" controls crossorigin="anonymous">
+        <audio id="liveStream" controls>
           <!-- change this if your main mount is different -->
           <source src="https://stream.radiorrr.com/electro.mp3" type="audio/mpeg" />
+          Your browser does not support the audio element.
         </audio>
 
         <button id="kickPlay" class="kick">Play</button>
@@ -381,7 +382,7 @@
             <h4>Morning – Neon Sunrise Chill</h4>
             <p><span class="event-date">06:00 – 12:00</span></p>
             <p>
-              Matches your morning playlist: chilled synthwave, soft electro, lofi textures and
+              Morning playlist: chilled synthwave, soft electro, lofi textures and
               relaxed 80s-inspired cuts for coffee, commute, and easing into the day.
             </p>
           </div>
@@ -390,7 +391,7 @@
             <h4>Afternoon – Daydrive Synthwave</h4>
             <p><span class="event-date">12:00 – 18:00</span></p>
             <p>
-              Uses the afternoon playlist: mid-tempo outrun, retrowave and synth-focused bangers
+              Afternoon playlist: mid-tempo outrun, retrowave and synth bangers
               for work, driving, and daytime sessions.
             </p>
           </div>
@@ -399,7 +400,7 @@
             <h4>Evening & Night – Night Drive Electro</h4>
             <p><span class="event-date">18:00 – 06:00</span></p>
             <p>
-              Runs the evening / night playlist: heavier electro, darker synth, and high-energy
+              Evening/night playlist: heavier electro, darker synth, and high-energy
               remixes tuned for late-night coding, neon skylines, and insomnia.
             </p>
           </div>
@@ -470,9 +471,6 @@
       const canvas = document.getElementById("viz");
       const ctx = canvas && canvas.getContext ? canvas.getContext("2d") : null;
 
-      const GAIN = 8.0;
-      const MIN_AMP = 0.05;
-
       /* ---- Tabs ---- */
       function switchTab(targetId) {
         for (let pane of contentPanes) pane.classList.add("hidden-pane");
@@ -537,7 +535,7 @@
         statusEl.textContent = "Status: " + msg;
       }
 
-      /* ---- Canvas Resize ---- */
+      /* ---- Visualizer (time-based only, no audio analyser) ---- */
       function resize() {
         if (!canvas || !ctx) return;
         const dpr = window.devicePixelRatio || 1;
@@ -550,50 +548,14 @@
       resize();
       window.addEventListener("resize", resize);
 
-      /* ---- Audio analyser ---- */
-      let audioCtx = null;
-      let analyser = null;
-      let dataArray = null;
-      let analyserEnabled = false;
-      let analyserInitAttempted = false;
-      let isPlaying = false;
-
-      function avgRange(arr, start, end) {
-        let sum = 0;
-        for (let i = start; i < end; i++) sum += arr[i];
-        return sum / (end - start);
-      }
-
-      function initAnalyser() {
-        if (analyserInitAttempted) return;
-        analyserInitAttempted = true;
-        if (!audio) return;
-        try {
-          const AC = window.AudioContext || window.webkitAudioContext;
-          audioCtx = new AC();
-          analyser = audioCtx.createAnalyser();
-          analyser.fftSize = 256;
-          dataArray = new Uint8Array(analyser.frequencyBinCount);
-          const src = audioCtx.createMediaElementSource(audio);
-          src.connect(analyser);
-          analyser.connect(audioCtx.destination);
-          analyserEnabled = true;
-        } catch (err) {
-          console.error("Analyser init failed:", err);
-          analyserEnabled = false;
-        }
-      }
-
       let startTime = performance.now();
 
-      /* ---- Visualizer ---- */
       function drawFrame() {
         const streamPane = document.getElementById("stream-section");
         if (!streamPane || streamPane.classList.contains("hidden-pane")) {
           requestAnimationFrame(drawFrame);
           return;
         }
-
         if (!canvas || !ctx) {
           requestAnimationFrame(drawFrame);
           return;
@@ -606,180 +568,65 @@
         const cy = h / 2;
         const minDim = Math.min(w, h);
 
-        ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
+        ctx.fillStyle = "rgba(0, 0, 0, 1)";
         ctx.fillRect(0, 0, w, h);
 
-        let bass = 0.1, mid = 0.1, treb = 0.1, energy = 0.1;
-        let useAudio = false;
-
-        if (analyserEnabled && isPlaying && analyser && dataArray) {
-          try {
-            analyser.getByteFrequencyData(dataArray);
-            const len = dataArray.length;
-
-            const calculated_bass = Math.min(
-              1,
-              (avgRange(dataArray, 0, Math.floor(len * 0.15)) / 255) * GAIN
-            );
-            const calculated_mid = Math.min(
-              1,
-              (avgRange(dataArray, Math.floor(len * 0.15), Math.floor(len * 0.5)) / 255) * GAIN
-            );
-            const calculated_treb = Math.min(
-              1,
-              (avgRange(dataArray, Math.floor(len * 0.5), len) / 255) * GAIN
-            );
-
-            bass = Math.max(MIN_AMP, calculated_bass);
-            mid  = Math.max(MIN_AMP, calculated_mid);
-            treb = Math.max(MIN_AMP, calculated_treb);
-            energy = (bass + mid + treb) / 3;
-            useAudio = true;
-          } catch (err) {
-            console.error("Analyser frame failed, falling back to demo:", err);
-            analyserEnabled = false;
-          }
-        }
-
-        if (useAudio) {
-          const bgGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, minDim * 0.8);
-          bgGrad.addColorStop(0, "rgba(255,0,102," + (0.18 + energy * 0.35) + ")");
-          bgGrad.addColorStop(0.4, "rgba(67,56,202," + (0.1 + mid * 0.25) + ")");
-          bgGrad.addColorStop(1, "rgba(0,0,0,0)");
-          ctx.fillStyle = bgGrad;
-          ctx.fillRect(0, 0, w, h);
-
-          const barCount = 72;
-          const innerRadius = minDim * 0.14;
-          const outerRadiusBase = minDim * 0.38;
-
-          for (let i = 0; i < barCount; i++) {
-            const idx = Math.floor((i / barCount) * dataArray.length);
-            const v = dataArray[idx] / 255;
-            const barAmp = Math.pow(v, 1.25);
-            const radius = innerRadius + barAmp * outerRadiusBase;
-
-            const angle = (i / barCount) * Math.PI * 2;
-            const x1 = cx + Math.cos(angle) * innerRadius;
-            const y1 = cy + Math.sin(angle) * innerRadius;
-            const x2 = cx + Math.cos(angle) * radius;
-            const y2 = cy + Math.sin(angle) * radius;
-
-            const hue = (210 + i * 2 + t * 40) % 360;
-            ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x2, y2);
-            ctx.strokeStyle = "hsla(" + hue + ", 100%, " + (40 + barAmp * 40) + "%, " +
-              (0.25 + barAmp * 0.7) + ")";
-            ctx.lineWidth = 0.8 + barAmp * 2.8;
-            ctx.stroke();
-          }
+        // Simple animated rings + lines (no audio input)
+        const circleCount = 10;
+        for (let i = 0; i < circleCount; i++) {
+          const baseRadius = minDim * 0.05 + i * minDim * 0.05;
+          const osc = Math.sin(t * 1.2 + i * 0.6) * 0.15;
+          const currentRadius = baseRadius * (1 + osc);
 
           ctx.beginPath();
-          const ringRadius = innerRadius + outerRadiusBase * 1.05 + bass * 35;
-          ctx.arc(cx, cy, ringRadius, 0, Math.PI * 2);
-          const ringHue = (t * 80) % 360;
-          ctx.strokeStyle = "hsla(" + ringHue + ", 100%, 60%, " + (0.35 + energy * 0.4) + ")";
-          ctx.lineWidth = 1.5 + energy * 3.5;
-          ctx.shadowBlur = 18 + energy * 32;
-          ctx.shadowColor = ctx.strokeStyle;
+          ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
+
+          const hue = (t * 50 + i * 30) % 360;
+          ctx.strokeStyle = "hsla(" + hue + ", 100%, 60%, 0.7)";
+          ctx.lineWidth = 1.4;
+          ctx.shadowBlur = 15;
+          ctx.shadowColor = "hsla(" + hue + ", 100%, 50%, 1)";
           ctx.stroke();
-          ctx.shadowBlur = 0;
+        }
+        ctx.shadowBlur = 0;
 
-          const coreRadius = 10 + bass * 30;
-          const coreGradient = ctx.createRadialGradient(
-            cx, cy, 0, cx, cy, coreRadius
-          );
-          coreGradient.addColorStop(0, "rgba(255,255,255," + (0.7 + treb * 0.3) + ")");
-          coreGradient.addColorStop(0.4, "rgba(255,0,150," + (0.65 + bass * 0.3) + ")");
-          coreGradient.addColorStop(1, "rgba(255,0,150,0)");
-          ctx.fillStyle = coreGradient;
+        const lineCount = 64;
+        for (let i = 0; i < lineCount; i++) {
+          const angle = (i * (Math.PI * 2)) / lineCount + t * 0.2;
+          const inner = minDim * 0.08;
+          const outer = minDim * 0.48 + Math.sin(t * 1.7 + i * 0.2) * 12;
+
+          const x1 = cx + Math.cos(angle) * inner;
+          const y1 = cy + Math.sin(angle) * inner;
+          const x2 = cx + Math.cos(angle) * outer;
+          const y2 = cy + Math.sin(angle) * outer;
+
+          const hue = (t * 60 + i * 6) % 360;
           ctx.beginPath();
-          ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
-          ctx.fill();
-        } else {
-          const tBass = (Math.sin(t * 1.5) + 1) / 2;
-          const tMid  = (Math.sin(t * 0.9 + 1.2) + 1) / 2;
-          const tTreb = (Math.sin(t * 2.1 + 0.7) + 1) / 2;
-          bass = tBass;
-          mid  = tMid;
-          treb = tTreb;
-          energy = (bass + mid + treb) / 3;
-
-          ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
-          ctx.fillRect(0, 0, w, h);
-          ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
-          ctx.fillRect(0, 0, w, h);
-
-          const circleCount = 8;
-          for (let i = 0; i < circleCount; i++) {
-            const baseRadius = minDim * 0.04 + i * minDim * 0.05;
-            const freqAmp = (i % 2 === 0) ? mid : treb;
-            const currentRadius = baseRadius + freqAmp * 60;
-
-            ctx.beginPath();
-            ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
-
-            const hue = (t * 50 + i * 20) % 360;
-            ctx.strokeStyle = "hsl(" + hue + ", 100%, " + (60 + freqAmp * 20) + "%)";
-            ctx.lineWidth = 1 + freqAmp * 2.5;
-            ctx.shadowBlur = 10 + freqAmp * 20;
-            ctx.shadowColor = "hsl(" + hue + ", 100%, 50%)";
-            ctx.stroke();
-          }
-          ctx.shadowBlur = 0;
-
-          const lineCount = 64;
-          for (let i = 0; i < lineCount; i++) {
-            const angle = (i * (Math.PI * 2)) / lineCount + t * 0.05 * treb;
-            const maxDist = minDim * 0.75;
-            const lineLength = maxDist + bass * 100;
-
-            const x2 = cx + Math.cos(angle) * lineLength;
-            const y2 = cy + Math.sin(angle) * lineLength;
-
-            ctx.beginPath();
-            ctx.moveTo(cx, cy);
-            ctx.lineTo(x2, y2);
-
-            const lineHue = (i * 5 + t * 50) % 360;
-            ctx.strokeStyle = "hsla(" + lineHue + ", 100%, 60%, " +
-              (0.2 + energy * 0.6) + ")";
-            ctx.lineWidth = 1;
-            ctx.stroke();
-          }
-
-          const coreRadius = 5 + bass * 50;
-          const coreGradient = ctx.createRadialGradient(
-            cx, cy, 0, cx, cy, coreRadius
-          );
-          coreGradient.addColorStop(0, "rgba(255, 255, 255, 0.9)");
-          coreGradient.addColorStop(
-            0.5,
-            "rgba(255, 0, 102," + (0.7 + bass * 0.3) + ")"
-          );
-          coreGradient.addColorStop(1, "rgba(255, 0, 102, 0)");
-          ctx.fillStyle = coreGradient;
-          ctx.beginPath();
-          ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.strokeStyle = "hsla(" + hue + ", 100%, 65%, 0.5)";
+          ctx.lineWidth = 1;
+          ctx.stroke();
         }
 
-        ctx.save();
-        ctx.globalAlpha = 0.13;
-        ctx.fillStyle = "rgba(0, 0, 0, 1)";
-        const gap = 3;
-        const off = (t * 35) % gap;
-        for (let y = off; y < h; y += gap) {
-          ctx.fillRect(0, y, w, 1);
-        }
-        ctx.restore();
+        const coreRadius = 10 + Math.sin(t * 2.2) * 4;
+        const coreGradient = ctx.createRadialGradient(
+          cx, cy, 0, cx, cy, coreRadius * 3
+        );
+        coreGradient.addColorStop(0, "rgba(255, 255, 255, 0.9)");
+        coreGradient.addColorStop(0.4, "rgba(255, 0, 150, 0.8)");
+        coreGradient.addColorStop(1, "rgba(255, 0, 150, 0)");
+        ctx.fillStyle = coreGradient;
+        ctx.beginPath();
+        ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
+        ctx.fill();
 
         requestAnimationFrame(drawFrame);
       }
       requestAnimationFrame(drawFrame);
 
-      /* ---- Play/Pause ---- */
+      /* ---- Play/Pause (just controlling the native audio) ---- */
       const kick = document.getElementById("kickPlay");
       if (kick && audio) {
         kick.addEventListener("click", function () {
@@ -790,45 +637,33 @@
             audio
               .play()
               .then(function () {
-                isPlaying = true;
                 setStatus("playing");
                 kick.textContent = "Pause";
-                initAnalyser();
-                if (audioCtx && audioCtx.state === "suspended") {
-                  audioCtx.resume();
-                }
               })
               .catch(function (e) {
                 console.error("Audio Play Error:", e);
-                setStatus("error starting stream");
+                setStatus("error: " + (e && e.message ? e.message : "could not start stream"));
                 kick.textContent = "Play";
               });
           } else {
             audio.pause();
-            isPlaying = false;
             setStatus("paused");
             kick.textContent = "Play";
           }
         });
 
         audio.addEventListener("play", function () {
-          isPlaying = true;
           setStatus("playing");
           kick.textContent = "Pause";
-          initAnalyser();
-          if (audioCtx && audioCtx.state === "suspended") {
-            audioCtx.resume();
-          }
         });
 
         audio.addEventListener("pause", function () {
-          isPlaying = false;
           setStatus("paused");
           kick.textContent = "Play";
         });
 
         audio.addEventListener("error", function () {
-          setStatus("audio error (stream offline?)");
+          setStatus("audio error (stream offline or blocked)");
           kick.textContent = "Play";
         });
       }
