@@ -24,7 +24,7 @@
       width: 100%;
       padding: 2.5rem 1.75rem;
       border-radius: 18px;
-      /* Reverting to the sunset/gradient background you had */
+      /* Sunset/Gradient Background */
       background: radial-gradient(circle at top, #4338ca 0, #050710 55%);
       box-shadow: 0 18px 40px rgba(0,0,0,0.55);
       text-align: center;
@@ -80,8 +80,6 @@
     audio { width: 100%; margin-top: 0.2rem; }
     .status { display:none; font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.8; }
     
-    /* Removed .kick style as the button is being removed */
-
     .video-container {
       position: relative;
       width: 100%; padding-bottom: 56.25%;
@@ -183,7 +181,7 @@
   document.addEventListener("DOMContentLoaded", () => {
 
     const titleEl = document.getElementById("streamTitle");
-    const GAIN = 10.0; // <<< MASSIVE GAIN INCREASE
+    const GAIN = 10.0; // <<< THIS IS THE CRITICAL HIGH GAIN VALUE
 
     function getDayPeriod(hour) {
       if (hour < 12) return "Morning";
@@ -247,7 +245,7 @@
         const AC = window.AudioContext || window.webkitAudioContext;
         audioCtx = new AC();
         analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 1024; // Good for bars and reflection
+        analyser.fftSize = 1024;
         dataArray = new Uint8Array(analyser.frequencyBinCount);
         const src = audioCtx.createMediaElementSource(audio);
         src.connect(analyser);
@@ -280,16 +278,16 @@
         bass = Math.min(1, avgRange(dataArray, 0, len * 0.08) / 255 * GAIN);
         mid  = Math.min(1, avgRange(dataArray, len * 0.08, len * 0.4) / 255 * GAIN);
         treb = Math.min(1, avgRange(dataArray, len * 0.4, len) / 255 * GAIN);
-        energy = bass * 1.2 + mid * 0.6 + treb * 0.3; // Energy based on amplified signal
+        energy = bass * 1.2 + mid * 0.6 + treb * 0.3; 
       } else {
-        // Fallback Animation (The look you like when paused)
+        // Paused Mode: Fallback Animation (The look you like)
         bass = (Math.sin(t * 2.3) + 1) / 2;
         mid  = (Math.sin(t * 1.4 + 1.2) + 1) / 2;
         treb = (Math.sin(t * 3.2 + 0.7) + 1) / 2;
         energy = (bass + mid + treb) / 3;
       }
 
-      // 1. SKY (Same for both modes)
+      // 1. SKY
       const sky = ctx.createLinearGradient(0, 0, 0, horizon);
       sky.addColorStop(0, "#090018");
       sky.addColorStop(0.35, "#3a0060");
@@ -298,7 +296,7 @@
       ctx.fillStyle = sky;
       ctx.fillRect(0, 0, w, horizon);
 
-      // 2. STARS (Same for both modes)
+      // 2. STARS
       const starCount = 90;
       ctx.fillStyle = "rgba(255,255,255,0.8)";
       for (let i = 0; i < starCount; i++) {
@@ -308,9 +306,9 @@
         ctx.fillRect(sx, sy, size, size);
       }
 
-      // 3. SUN/CORE (Bounces slightly based on BASS, amplified by GAIN)
+      // 3. SUN/CORE (Bounces based on amplified BASS)
       const sunRadius = Math.min(w, h) * 0.16;
-      const sunY = horizon - sunRadius * 0.25 - bass * 35; // Increased bounce
+      const sunY = horizon - sunRadius * 0.25 - bass * 35; 
       const g = ctx.createRadialGradient(cx, sunY, sunRadius * 0.1, cx, sunY, sunRadius);
       g.addColorStop(0, "rgba(255,255,200,0.98)");
       g.addColorStop(0.4, "rgba(255,180,80,0.96)");
@@ -320,7 +318,7 @@
       ctx.arc(cx, sunY, sunRadius, 0, Math.PI * 2);
       ctx.fill();
 
-      // 4. WATER (Same for both modes)
+      // 4. WATER
       const waterGrad = ctx.createLinearGradient(0, horizon, 0, h);
       waterGrad.addColorStop(0, "#150020");
       waterGrad.addColorStop(0.5, "#05071a");
@@ -328,85 +326,19 @@
       ctx.fillStyle = waterGrad;
       ctx.fillRect(0, horizon, w, h);
 
-      // 5. REFLECTION (Bounces based on ENERGY, amplified)
+      // 5. REFLECTION (Bounces based on amplified ENERGY)
       const reflectGrad = ctx.createLinearGradient(cx, horizon, cx, h);
       reflectGrad.addColorStop(0, "rgba(255,120,160,0.7)");
       reflectGrad.addColorStop(0.4, "rgba(255,80,200,0.35)");
       reflectGrad.addColorStop(1, "rgba(255,0,150,0)");
       ctx.fillStyle = reflectGrad;
-      ctx.globalAlpha = 0.55 + energy * 0.45; // Increased opacity fluctuation
-      const rw = sunRadius * 1.4 + bass * 50; // Increased width fluctuation
+      ctx.globalAlpha = 0.55 + energy * 0.45; 
+      const rw = sunRadius * 1.4 + bass * 50; 
       ctx.beginPath();
       ctx.moveTo(cx - rw, horizon);
-      ctx.quadraticCurveTo(cx, h * 0.8 + bass * 20, cx + rw, horizon); // Increased height fluctuation
+      ctx.quadraticCurveTo(cx, h * 0.8 + bass * 20, cx + rw, horizon); 
       ctx.closePath();
       ctx.fill();
       ctx.globalAlpha = 1;
 
-      // 6. RADIAL BARS (Visible only when playing)
-      const barCount = 48;
-      const bt = horizon + (h - horizon) * 0.15;
-      const bb = h * 0.95;
-      const bh = bb - bt;
-      const bw = w / barCount;
-
-      for (let i = 0; i < barCount; i++) {
-        let v;
-        if (analyserEnabled && isPlaying) {
-          // Play Mode: Use amplified audio data
-          const len = dataArray.length;
-          const norm = i / (barCount - 1);
-          const idx = Math.floor(Math.pow(norm, 0.7) * (len - 1));
-          // Apply GAIN directly to the bar height
-          v = Math.min(1, (dataArray[idx] / 255) * GAIN); 
-        } else {
-          // Paused Mode: Use time-based animation
-          v = (Math.sin(t * 3 + i * 0.3) + 1) / 2;
-        }
-        
-        const amp = 0.2 + bass * 1.5; // Base amplitude slightly increased
-        const hgt = bh * (0.05 + v * amp);
-        const x = i * bw;
-        const y = bb - hgt;
-
-        const grad = ctx.createLinearGradient(0, y, 0, y + hgt);
-        grad.addColorStop(0, "rgba(255,120,250,0.95)");
-        grad.addColorStop(0.5, "rgba(0,240,255,0.9)");
-        grad.addColorStop(1, "rgba(0,120,255,0.5)");
-        ctx.fillStyle = grad;
-        ctx.fillRect(x + 1, y, bw - 2, hgt);
-      }
-
-      // 7. SCAN LINES (Same for both modes)
-      ctx.save();
-      ctx.globalAlpha = 0.13;
-      ctx.fillStyle = "rgba(0,0,0,1)";
-      const gap = 3, off = (t * 35) % gap;
-      for (let y = off; y < h; y += gap) {
-        ctx.fillRect(0, y, w, 1);
-      }
-      ctx.restore();
-
-      requestAnimationFrame(drawFrame);
-    }
-    requestAnimationFrame(drawFrame);
-
-    // Event listeners attached to the native audio player
-    audio.addEventListener("play", () => {
-      isPlaying = true;
-      setStatus("playing");
-      initAnalyser();
-      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
-    });
-
-    audio.addEventListener("pause", () => {
-      isPlaying = false;
-      setStatus("paused");
-    });
-
-    audio.addEventListener("error", () => setStatus("audio error (stream offline?)"));
-  });
-  </script>
-
-</body>
-</html>
+      // 6. RADIAL BARS (The responsive part
