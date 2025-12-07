@@ -263,7 +263,7 @@
       top: 0; left: 0; border-radius: 12px;
     }
 
-    /* TIKTOK NEON FRAME (Option B: subtle border) */
+    /* TIKTOK NEON FRAME */
     .neon-embed-frame {
       margin-top: 1.2rem;
       padding: 1rem 0.75rem;
@@ -334,10 +334,12 @@
         <h1 class="hero-title">RADIO RRR</h1>
         <p class="hero-tagline">ELECTRO · 80s · SYNTH · MEMES · REMIXED</p>
         <p class="hero-sub">
-          neon synth and electro, streaming nonstop.
-          </p>
+          Neon synth and electro, streaming nonstop across <span>Morning</span>,
+          <span>Afternoon</span>, and <span>Night Drive</span> playlists.
+        </p>
         <p class="hero-now-title">
-          Now Playing: <strong>Live electro mix</strong>
+          Now Playing:
+          <strong id="heroNowPlaying">Loading current block…</strong>
         </p>
       </div>
     </section>
@@ -360,8 +362,8 @@
         <span id="streamTitle" class="stream-title">RADIO RRR Live</span>
 
         <audio id="liveStream" controls crossorigin="anonymous">
-          <!-- swap this URL later to your stream.radiorrr.com one -->
-          <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
+          <!-- If your main stream is different (e.g. /live.mp3), change this URL -->
+          <source src="https://stream.radiorrr.com/electro.mp3" type="audio/mpeg" />
         </audio>
 
         <button id="kickPlay" class="kick">Play</button>
@@ -372,27 +374,37 @@
     <!-- SCHEDULE TAB -->
     <div id="events-section" class="content-pane hidden-pane">
       <div class="channel">
-        <span>Schedule & Global Events 🌎</span><br />
-        <small>Major electronic, synthwave, and retro festivals.</small>
+        <span>Radio RRR Schedule</span><br />
+        <small>Daily rotation across Morning, Afternoon, and Evening blocks.</small>
 
         <div class="events-list">
+          <!-- These descriptions should roughly match your AzuraCast playlist titles/roles -->
 
           <div class="event-item">
-            <h4>Tomorrowland 🇧🇪 - Adscendo</h4>
-            <p><span class="event-date">July 18-21 & July 25-28, 2025</span></p>
-            <p>The world's biggest EDM festival returns to Belgium. Expect the new theme, stage design, and massive electronic lineups.</p>
+            <h4>Morning – Neon Sunrise Chill</h4>
+            <p><span class="event-date">06:00 – 12:00</span></p>
+            <p>
+              Matches your morning playlist: chilled synthwave, soft electro, lofi textures and
+              relaxed 80s-inspired cuts for coffee, commute, and waking the brain up gently.
+            </p>
           </div>
 
           <div class="event-item">
-            <h4>RetroSynth Festival 🇺🇸 - West Coast</h4>
-            <p><span class="event-date">October 11-12, 2025</span></p>
-            <p>Annual retro/synthwave gathering. News on venue and headliners expected next quarter.</p>
+            <h4>Afternoon – Daydrive Synthwave</h4>
+            <p><span class="event-date">12:00 – 18:00</span></p>
+            <p>
+              Uses the afternoon playlist: mid-tempo outrun, retrowave and synth-focused bangers
+              designed for work, driving, and daytime sessions without blowing your ears out.
+            </p>
           </div>
 
           <div class="event-item">
-            <h4>Coachella 🇺🇸 - Weekend 1 & 2</h4>
-            <p><span class="event-date">April 11-13 & April 18-20, 2026</span></p>
-            <p>The iconic California festival. Lineup speculation dominates social media ahead of the January announcement.</p>
+            <h4>Evening & Night – Night Drive Electro</h4>
+            <p><span class="event-date">18:00 – 06:00</span></p>
+            <p>
+              Runs the evening / night playlist: heavier electro, darker synth, and high-energy
+              remixes tuned for late-night coding, neon skylines, and insomnia-driven deep dives.
+            </p>
           </div>
 
         </div>
@@ -456,6 +468,7 @@
       const navLinks = document.querySelectorAll(".nav-tabs a");
       const contentPanes = document.querySelectorAll(".content-pane");
       const titleEl = document.getElementById("streamTitle");
+      const heroNowEl = document.getElementById("heroNowPlaying");
       const audio = document.getElementById("liveStream");
       const statusEl = document.getElementById("status");
       const kick = document.getElementById("kickPlay");
@@ -485,14 +498,27 @@
 
       switchTab("stream-section"); // default tab
 
-      /* ---- Time-based title ---- */
+      /* ---- Day period + labels ---- */
       function getDayPeriod(hour) {
-        if (hour < 12) return "Morning";
-        if (hour < 17) return "Afternoon";
-        return "Night";
+        // Morning / Afternoon / Evening buckets that match the schedule block
+        if (hour >= 6 && hour < 12) return "Morning";
+        if (hour >= 12 && hour < 18) return "Afternoon";
+        return "Evening";
       }
 
-      function updateTitle() {
+      function getBlockLabel(dayName, period) {
+        // You can edit these strings to exactly match your AzuraCast playlist titles.
+        const labels = {
+          Morning: "Neon Sunrise Chill",
+          Afternoon: "Daydrive Synthwave",
+          Evening: "Night Drive Electro"
+        };
+
+        const base = labels[period] || "Live Mix";
+        return dayName + " " + period + " – " + base;
+      }
+
+      function updateTitles() {
         const now = new Date();
         const days = [
           "Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"
@@ -500,20 +526,18 @@
         const dayName = days[now.getDay()];
         const period = getDayPeriod(now.getHours());
 
-        const variantsByPeriod = {
-          Morning: ["Morning Chill", "Sunrise Session", "Morning Transmission"],
-          Afternoon: ["Afternoon Chill", "Daystream Session", "Retro Run"],
-          Night: ["Night Chill", "After Dark", "Night Transmission", "Late Night Set"]
-        };
+        const blockLabel = getBlockLabel(dayName, period);
 
-        const list = variantsByPeriod[period] || ["Live Mix"];
-        const label = list[now.getDay() % list.length];
+        // Stream title under visualizer
+        titleEl.textContent = "RADIO RRR Live – " + blockLabel;
 
-        titleEl.textContent = "RADIO RRR Live – " + dayName + " " + label;
+        // Hero "Now Playing" label
+        heroNowEl.textContent = blockLabel;
       }
 
-      updateTitle();
-      setInterval(updateTitle, 3600000);
+      updateTitles();
+      // update every 15 minutes just in case tab stays open across a boundary
+      setInterval(updateTitles, 15 * 60 * 1000);
 
       /* ---- Status ---- */
       function setStatus(msg) {
