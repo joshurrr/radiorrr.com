@@ -46,7 +46,7 @@
       display: flex;
       justify-content: center;
       gap: 1.5rem;
-      margin-top: 1rem; /* Added space after logo */
+      margin-top: 1rem; 
       margin-bottom: 2rem;
       border-bottom: 2px solid rgba(255, 0, 102, 0.3);
       padding-bottom: 0.5rem;
@@ -60,7 +60,7 @@
       transition: all 0.2s;
       letter-spacing: 0.05em;
       text-shadow: 0 0 5px rgba(67, 56, 202, 0.4);
-      cursor: pointer; /* Indicate it's clickable */
+      cursor: pointer; 
     }
     /* Active/Hover Neon Effect */
     .nav-tabs a:hover,
@@ -76,7 +76,7 @@
         transition: opacity 0.3s ease-in-out;
     }
     .hidden-pane {
-        display: none; /* Hide content when not selected */
+        display: none; 
     }
 
     /* VISUALIZER */
@@ -129,7 +129,7 @@
       background:#0b1020; color:#c7c7ff;
       cursor:pointer; font-size:0.85rem;
       transition: all 0.3s;
-      text-decoration: none; /* Ensure link buttons look like buttons */
+      text-decoration: none; 
       display: inline-block;
     }
     .kick:hover {
@@ -268,19 +268,17 @@
     <div id="follow-section" class="content-pane hidden-pane">
         
       <div class="channel">
-        <span>TikTok Profile Summary 🎶</span><br />
-        <small>@josh.u.rrr - Updated periodically, click to view the live feed.</small>
-        
-        <div style="margin-top: 1rem; padding: 1rem; background: #000000; border-radius: 8px; border: 1px solid #4338ca; text-align: center;">
-            <h4 style="margin: 0 0 0.5rem; color: #ff0066;">@josh.u.rrr</h4>
-            <p style="font-size: 0.9rem; color: #a5b4fc; margin-bottom: 1rem; font-weight: 700;">
-                5.4K Followers · 1.2M Likes
-            </p>
-            <p style="font-size: 0.8rem; color: #c7c7ff; font-style: italic; margin-bottom: 1rem; padding: 0 0.5rem;">
-                Sample latest videos: 'Retro Drive Mix', 'Synthwave Setup Tour', 'New Track Drop'
-            </p>
-            <a href="https://www.tiktok.com/@josh.u.rrr" target="_blank" class="kick" style="margin-top: 0.5rem;">Go to TikTok</a>
-        </div>
+        <span>Follow us on TikTok</span><br />
+        <small>@josh.u.rrr - Latest videos, loads asynchronously.</small>
+
+        <blockquote class="tiktok-embed" data-video-id="6917631388902172934" cite="https://www.tiktok.com/@josh.u.rrr/video/6917631388902172934"
+           style="max-width: 325px; min-width: 300px; margin: 1rem auto 0;" >
+           <section>
+            <a target="_blank" title="@josh.u.rrr" href="https://www.tiktok.com/@josh.u.rrr?refer=embed">@josh.u.rrr</a>
+            <p>Listen up. 🎧</p> 
+            <a target="_blank" title="♬ original sound - Radio RRR" href="https://www.tiktok.com/music/original-sound-6917631393693248518">♬ original sound - Radio RRR</a> 
+           </section>
+        </blockquote>
       </div>
 
       <div class="channel">
@@ -312,6 +310,8 @@
     </p>
 
   </main>
+  
+  <script async src="https://www.tiktok.com/embed.js"></script>
 
   <script>
   document.addEventListener("DOMContentLoaded", () => {
@@ -319,10 +319,10 @@
     const titleEl = document.getElementById("streamTitle");
     const navLinks = document.querySelectorAll('.nav-tabs a');
     const contentPanes = document.querySelectorAll('.content-pane');
-    const GAIN = 5.0; // Lower gain for stability
-    
+    const GAIN = 10.0; 
+    const MIN_AMP = 0.08; 
 
-    // === TAB SHOW/HIDE LOGIC (Verified Functional) ===
+    // === TAB SHOW/HIDE LOGIC ===
     function switchTab(targetId) {
         contentPanes.forEach(pane => {
             pane.classList.add('hidden-pane');
@@ -337,7 +337,7 @@
             activeLink.classList.add('active');
         }
     }
-    switchTab('stream-section'); // Initialize to the Stream tab
+    switchTab('stream-section');
 
     navLinks.forEach(link => {
       link.addEventListener('click', (e) => {
@@ -416,10 +416,32 @@
       try {
         const AC = window.AudioContext || window.webkitAudioContext;
         audioCtx = new AC();
-        // Use a smaller FFT size for the simpler visualizer
         analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 64; 
+        analyser.fftSize = 256; 
         dataArray = new Uint8Array(analyser.frequencyBinCount);
         const src = audioCtx.createMediaElementSource(audio);
         src.connect(analyser);
-        analyser.connect(audioCtx.destination
+        analyser.connect(audioCtx.destination);
+        analyserEnabled = true;
+      } catch { analyserEnabled = false; }
+    }
+
+    let startTime = performance.now();
+
+    // === WARP TUNNEL VISUALIZER (Restored with Safety Catch) ===
+    function drawFrame() {
+      // CRITICAL SAFETY BLOCK: If any complex drawing logic fails, 
+      // it will catch the error, allowing requestAnimationFrame and the 
+      // rest of the page JS (like menus) to continue working.
+      try {
+        const t = (performance.now() - startTime) / 1000;
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+        const minDim = Math.min(w, h);
+
+        let bass = 0.1, mid = 0.1, treb = 0.1, energy = 0.1;
+
+        if (analyserEnabled && isPlaying) {
+          analyser.getByteFrequency
