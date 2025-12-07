@@ -129,8 +129,6 @@
       background:#0b1020; color:#c7c7ff;
       cursor:pointer; font-size:0.85rem;
       transition: all 0.3s;
-      text-decoration: none; /* Ensure link buttons look like buttons */
-      display: inline-block;
     }
     .kick:hover {
       /* REAPPLYING NEON: button hover effect */
@@ -139,53 +137,33 @@
       box-shadow: 0 0 12px rgba(255, 0, 102, 0.7);
     }
 
-    /* --- NEW SCHEDULE STYLES --- */
-    .schedule-list {
+    /* Events List Styling */
+    .events-list {
       text-align: left;
       margin-top: 1rem;
       padding-top: 0.5rem;
       border-top: 1px solid rgba(129, 140, 248, 0.15);
     }
-    .schedule-block {
+    .event-item {
       margin: 1.25rem 0;
-      border-left: 3px solid #ff0066; /* Neon accent for schedule blocks */
+      border-left: 3px solid #4338ca;
       padding-left: 1rem;
     }
-    .schedule-time {
+    .event-item h4 {
       margin: 0;
       font-size: 1rem;
       color: #ffccff;
       text-shadow: 0 0 3px rgba(255, 0, 102, 0.5);
     }
-    .schedule-block p {
+    .event-item p {
       margin: 0.25rem 0 0;
       font-size: 0.85rem;
       color: #e0e0ff;
     }
-    /* Specific LIVE DJ Schedule Styling */
-    .live-set-note {
-      margin-top: 0.75rem;
-      padding: 0.5rem 0.75rem;
-      border: 1px solid #4338ca;
-      background: rgba(67, 56, 202, 0.1);
-      border-radius: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .live-dj {
+    .event-date {
       font-weight: 700;
-      color: #ff0066;
-      text-transform: uppercase;
-      font-size: 0.9rem;
-      text-shadow: 0 0 5px #ff0066;
-    }
-    .live-days {
-      font-weight: 600;
       color: #a5b4fc;
-      font-size: 0.85rem;
     }
-    /* --- END NEW SCHEDULE STYLES --- */
 
     /* VIDEO EMBEDS */
     .video-container {
@@ -229,8 +207,8 @@
 <body>
   <main class="wrapper">
 
-    <img src="logo.png" alt="Radio RRR Logo - Neon Retrowave Text"
-          style="width: 300px; max-width: 90%; margin: 0 auto 10px; display: block;">
+    <img src="logo.png" alt="Radio RRR Logo"
+         style="width: 300px; max-width: 90%; margin: 0 auto 10px; display: block;">
 
     <nav class="nav-tabs">
         <a data-target="stream-section" class="active">Stream</a>
@@ -258,41 +236,48 @@
     
     <div id="events-section" class="content-pane hidden-pane">
       <div class="channel">
-        <span>Weekly Broadcast Schedule 🎧</span><br />
-        <small>All times are based on your local timezone.</small>
+        <span>Upcoming Global Events 🌎</span><br />
+        <small>Major electronic, synthwave, and retro festivals.</small>
 
-        <div class="schedule-list">
-          
-          <div class="schedule-block">
-              <h4 class="schedule-time">Morning (6am - 12pm) ☀️</h4>
-              <p>The Wake-Up Wave: Chillwave, Vaporwave, and Lo-fi Electro for a smooth start to your day.</p>
-          </div>
-          
-          <div class="schedule-block">
-              <h4 class="schedule-time">Afternoon (12pm - 8pm) 💻</h4>
-              <p>Synthwork & Retro Run: Upbeat Retrowave and Outrun tracks for focus and energy.</p>
-          </div>
+        <div class="events-list">
+            
+            <div class="event-item">
+                <h4>Tomorrowland 🇧🇪 - Adscendo</h4>
+                <p><span class="event-date">July 18-21 & July 25-28, 2025</span></p>
+                <p>The world's biggest EDM festival returns to Belgium. Expect the new theme, stage design, and massive electronic lineups.</p>
+            </div>
 
-          <div class="schedule-block">
-              <h4 class="schedule-time">Evenings (8pm - 6am) 🌃</h4>
-              <p>Neon Nights Mix: Classic Synthpop, Darkwave, and High-Energy Electro.</p>
-              
-              <div class="live-set-note">
-                <span class="live-dj">LIVE: Josh U RRR</span>
-                <span class="live-days">Friday & Saturday (8pm - 12am)</span>
-              </div>
-          </div>
+            <div class="event-item">
+                <h4>RetroSynth Festival 🇺🇸 - West Coast</h4>
+                <p><span class="event-date">October 11-12, 2025</span></p>
+                <p>Annual retro/synthwave gathering. News on venue and headliners expected next quarter.</p>
+            </div>
+
+            <div class="event-item">
+                <h4>Coachella 🇺🇸 - Weekend 1 & 2</h4>
+                <p><span class="event-date">April 11-13 & April 18-20, 2026</span></p>
+                <p>The iconic California festival. Lineup speculation dominates social media ahead of the January announcement.</p>
+            </div>
+            
         </div>
       </div>
     </div>
+    
     <div id="follow-section" class="content-pane hidden-pane">
         
       <div class="channel">
-        <span>Follow us on TikTok</span><br />
-        <small>@josh.u.rrr - Tap below to see our latest shorts without slowing down the page!</small>
-        <p style="margin-top: 1rem; text-align: center;">
-            <a href="https://www.tiktok.com/@josh.u.rrr" target="_blank" class="kick">Visit TikTok Channel</a>
-        </p>
+        <span>Latest on TikTok</span><br />
+        <small>@josh.u.rrr · newest shorts</small>
+
+        <blockquote class="tiktok-embed"
+          cite="https://www.tiktok.com/@josh.u.rrr"
+          data-unique-id="josh.u.rrr"
+          data-embed-type="creator"
+          style="max-width:100%; min-width:280px; margin-top:0.8rem;">
+          <section>
+            <a target="_blank" href="https://www.tiktok.com/@josh.u.rrr">@josh.u.rrr</a>
+          </section>
+        </blockquote>
       </div>
 
       <div class="channel">
@@ -325,32 +310,36 @@
 
   </main>
 
+  <script async src="https://www.tiktok.com/embed.js"></script>
+
   <script>
   document.addEventListener("DOMContentLoaded", () => {
 
     const titleEl = document.getElementById("streamTitle");
     const navLinks = document.querySelectorAll('.nav-tabs a');
     const contentPanes = document.querySelectorAll('.content-pane');
-    const GAIN = 10.0; 
-    const MIN_AMP = 0.08;
+    const GAIN = 10.0; // Higher gain for the tunnel effect
 
-    // === TAB SHOW/HIDE LOGIC ===
+    // === TAB SHOW/HIDE LOGIC (Fixed) ===
     function switchTab(targetId) {
+        // 1. Hide all content panes
         contentPanes.forEach(pane => {
             pane.classList.add('hidden-pane');
         });
+
+        // 2. Show the selected pane
         const targetElement = document.getElementById(targetId);
         if (targetElement) {
             targetElement.classList.remove('hidden-pane');
         }
+
+        // 3. Update active state of nav links
         navLinks.forEach(l => l.classList.remove('active'));
         document.querySelector(`.nav-tabs a[data-target="${targetId}"]`).classList.add('active');
-        // Ensure visualizer is resized/recalculated when tab opens
-        if (targetId === 'stream-section') {
-             resize();
-        }
     }
-    switchTab('stream-section'); // Initialize to the Stream tab
+
+    // Initialize to the Stream tab
+    switchTab('stream-section');
 
     navLinks.forEach(link => {
       link.addEventListener('click', (e) => {
@@ -359,7 +348,7 @@
       });
     });
 
-    // === TIME-BASED TITLE LOGIC ===
+    // === TIME-BASED TITLE LOGIC (Working) ===
     function getDayPeriod(hour) {
       if (hour < 12) return "Morning";
       if (hour < 17) return "Afternoon";
@@ -385,6 +374,7 @@
     }
 
     updateTitle();
+    // Re-check title every hour
     setInterval(updateTitle, 3600000); 
 
     const audio = document.getElementById("liveStream");
@@ -430,7 +420,7 @@
         const AC = window.AudioContext || window.webkitAudioContext;
         audioCtx = new AC();
         analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 256; 
+        analyser.fftSize = 256; // Higher resolution for tunnel
         dataArray = new Uint8Array(analyser.frequencyBinCount);
         const src = audioCtx.createMediaElementSource(audio);
         src.connect(analyser);
@@ -441,14 +431,8 @@
 
     let startTime = performance.now();
 
-    // === WARP TUNNEL VISUALIZER (Optimized with visibility check) ===
+    // === RESTORED: WARP TUNNEL VISUALIZER ===
     function drawFrame() {
-      // OPTIMIZATION: Only run physics/drawing if the Stream tab is visible
-      if (document.getElementById('stream-section').classList.contains('hidden-pane')) {
-         requestAnimationFrame(drawFrame);
-         return;
-      }
-
       const t = (performance.now() - startTime) / 1000;
       const w = canvas.clientWidth;
       const h = canvas.clientHeight;
@@ -462,16 +446,9 @@
         analyser.getByteFrequencyData(dataArray);
         const len = dataArray.length;
         
-        // Calculate raw audio levels
-        let calculated_bass = Math.min(1, avgRange(dataArray, 0, len * 0.2) / 255 * GAIN);
-        let calculated_mid  = Math.min(1, avgRange(dataArray, len * 0.2, len * 0.6) / 255 * GAIN);
-        let calculated_treb = Math.min(1, avgRange(dataArray, len * 0.6, len) / 255 * GAIN);
-
-        // Apply minimum amplitude for responsiveness during quiet parts
-        bass = Math.max(MIN_AMP, calculated_bass);
-        mid = Math.max(MIN_AMP, calculated_mid);
-        treb = Math.max(MIN_AMP, calculated_treb);
-
+        bass = Math.min(1, avgRange(dataArray, 0, len * 0.2) / 255 * GAIN);
+        mid  = Math.min(1, avgRange(dataArray, len * 0.2, len * 0.6) / 255 * GAIN);
+        treb = Math.min(1, avgRange(dataArray, len * 0.6, len) / 255 * GAIN);
         energy = (bass + mid + treb) / 3;
 
       } else {
@@ -556,36 +533,25 @@
     requestAnimationFrame(drawFrame);
 
 
-    // === Play/Pause Button Logic ===
+    // Play/Pause Button Logic
     kick.addEventListener("click", () => {
       if (audio.paused) {
-        setStatus("connecting...");
-        kick.textContent = "Connecting...";
-        
         audio.play().then(() => {
           isPlaying = true;
           setStatus("playing");
-          kick.textContent = "Pause";
           initAnalyser();
           if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
-        }).catch((e) => {
-            console.error("Audio Play Error:", e);
-            setStatus("error starting stream");
-            kick.textContent = "Play";
-        });
+        }).catch(() => setStatus("tap the player above to start"));
       } else {
         audio.pause();
         isPlaying = false;
         setStatus("paused");
-        kick.textContent = "Play";
       }
     });
 
-    // Update button text for manual controls
     audio.addEventListener("play", () => {
       isPlaying = true;
       setStatus("playing");
-      kick.textContent = "Pause"; 
       initAnalyser();
       if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
     });
@@ -593,13 +559,9 @@
     audio.addEventListener("pause", () => {
       isPlaying = false;
       setStatus("paused");
-      kick.textContent = "Play"; 
     });
 
-    audio.addEventListener("error", () => {
-      setStatus("audio error (stream offline?)");
-      kick.textContent = "Play"; 
-    });
+    audio.addEventListener("error", () => setStatus("audio error (stream offline?)"));
   });
   </script>
 
