@@ -46,7 +46,7 @@
       display: flex;
       justify-content: center;
       gap: 1.5rem;
-      margin-top: 1rem; 
+      margin-top: 1rem; /* Added space after logo */
       margin-bottom: 2rem;
       border-bottom: 2px solid rgba(255, 0, 102, 0.3);
       padding-bottom: 0.5rem;
@@ -60,7 +60,7 @@
       transition: all 0.2s;
       letter-spacing: 0.05em;
       text-shadow: 0 0 5px rgba(67, 56, 202, 0.4);
-      cursor: pointer; 
+      cursor: pointer; /* Indicate it's clickable */
     }
     /* Active/Hover Neon Effect */
     .nav-tabs a:hover,
@@ -76,7 +76,7 @@
         transition: opacity 0.3s ease-in-out;
     }
     .hidden-pane {
-        display: none; 
+        display: none; /* Hide content when not selected */
     }
 
     /* VISUALIZER */
@@ -129,7 +129,7 @@
       background:#0b1020; color:#c7c7ff;
       cursor:pointer; font-size:0.85rem;
       transition: all 0.3s;
-      text-decoration: none; 
+      text-decoration: none; /* Ensure link buttons look like buttons */
       display: inline-block;
     }
     .kick:hover {
@@ -304,3 +304,122 @@
       <a href="https://www.youtube.com/@RADIO_RRR" target="_blank">YouTube</a> ·
       <a href="https://github.com/joshurrr" target="_blank">GitHub</a>
     </div>
+
+    <p class="footnote">
+      <span class="genre-tagline">Electro · Synth · 80s · Chill</span>
+      Streaming 24/7<br>
+      Contact: <a href="mailto:admin@radiorrr.com" style="color:#a5b4fc;">admin@radiorrr.com</a>
+    </p>
+
+  </main>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+
+    const titleEl = document.getElementById("streamTitle");
+    const navLinks = document.querySelectorAll('.nav-tabs a');
+    const contentPanes = document.querySelectorAll('.content-pane');
+    const GAIN = 5.0; // Lower gain for stability
+    
+
+    // === TAB SHOW/HIDE LOGIC (Verified Functional) ===
+    function switchTab(targetId) {
+        contentPanes.forEach(pane => {
+            pane.classList.add('hidden-pane');
+        });
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+            targetElement.classList.remove('hidden-pane');
+        }
+        navLinks.forEach(l => l.classList.remove('active'));
+        const activeLink = document.querySelector(`.nav-tabs a[data-target="${targetId}"]`);
+        if (activeLink) {
+            activeLink.classList.add('active');
+        }
+    }
+    switchTab('stream-section'); // Initialize to the Stream tab
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        const targetId = e.target.getAttribute('data-target');
+        switchTab(targetId);
+      });
+    });
+
+    // === TIME-BASED TITLE LOGIC ===
+    function getDayPeriod(hour) {
+      if (hour < 12) return "Morning";
+      if (hour < 17) return "Afternoon";
+      return "Night";
+    }
+
+    function updateTitle() {
+      const now = new Date();
+      const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+      const dayName = days[now.getDay()];
+      const period = getDayPeriod(now.getHours());
+
+      const variantsByPeriod = {
+        Morning: ["Morning Chill","Sunrise Session","Morning Transmission"],
+        Afternoon: ["Afternoon Chill","Daystream Session","Retro Run"],
+        Night: ["Night Chill","After Dark","Night Transmission","Late Night Set"]
+      };
+
+      const list = variantsByPeriod[period] || ["Live Mix"];
+      const label = list[now.getDay() % list.length];
+
+      titleEl.textContent = `RADIO RRR Live – ${dayName} ${label}`;
+    }
+
+    updateTitle();
+    setInterval(updateTitle, 3600000); 
+
+    const audio = document.getElementById("liveStream");
+    const statusEl = document.getElementById("status");
+    const kick = document.getElementById("kickPlay");
+    const canvas = document.getElementById("viz");
+    const ctx = canvas.getContext("2d");
+    
+
+    function setStatus(msg) {
+      statusEl.style.display = "block";
+      statusEl.textContent = "Status: " + msg;
+    }
+
+    function resize() {
+      const dpr = window.devicePixelRatio || 1;
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+    window.addEventListener("resize", resize);
+
+    let audioCtx = null;
+    let analyser = null;
+    let dataArray = null;
+    let analyserEnabled = false;
+    let analyserInitAttempted = false;
+    let isPlaying = false;
+
+    function avgRange(arr, start, end) {
+      let sum = 0;
+      for (let i = start; i < end; i++) sum += arr[i];
+      return sum / (end - start);
+    }
+
+    function initAnalyser() {
+      if (analyserInitAttempted) return;
+      analyserInitAttempted = true;
+      try {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AC();
+        // Use a smaller FFT size for the simpler visualizer
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 64; 
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+        const src = audioCtx.createMediaElementSource(audio);
+        src.connect(analyser);
+        analyser.connect(audioCtx.destination
