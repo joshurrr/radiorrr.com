@@ -4,18 +4,8 @@
   <meta charset="UTF-8" />
   <title>Radio RRR</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  
-  <meta name="description" content="Radio RRR: 24/7 streaming Electro, Synth, 80s, and Chill music." />
-  <meta property="og:title" content="Radio RRR - 24/7 Electro, Synth, 80s, Chill Stream" />
-  <meta property="og:description" content="Tune in to the best Retrowave, Synthwave, and Outrun music for your late-night drives." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://radiorrr.com/" />
-  <meta property="og:image" content="https://radiorrr.com/logo.png" />
   <style>
-    /* RESET */
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    
-    /* BODY & CONTAINER */
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: #050710;
@@ -31,69 +21,26 @@
       width: 100%;
       padding: 2.5rem 1.75rem;
       border-radius: 18px;
-      /* REAPPLYING NEON: box-shadow for retro look */
-      background: #0d0e1f;
-      border: 1px solid rgba(129,140,248,0.3);
-      box-shadow: 
-        0 0 10px rgba(67, 56, 202, 0.5), 
-        0 0 30px rgba(255, 0, 102, 0.4);
+      /* Restored original wrapper styling */
+      background: radial-gradient(circle at top, #4338ca 0, #050710 55%);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.55);
       text-align: center;
-      transition: all 0.3s ease-out; 
     }
-    
-    /* NAVIGATION TABS */
-    .nav-tabs {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      margin-top: 1rem; 
-      margin-bottom: 2rem;
-      border-bottom: 2px solid rgba(255, 0, 102, 0.3);
-      padding-bottom: 0.5rem;
-    }
-    .nav-tabs a {
-      font-weight: 700;
-      font-size: 1.1rem;
+    .tagline {
+      font-size: 0.95rem;
       color: #c7c7ff;
-      text-decoration: none;
-      padding: 0 0.5rem;
-      transition: all 0.2s;
-      letter-spacing: 0.05em;
-      text-shadow: 0 0 5px rgba(67, 56, 202, 0.4);
-      cursor: pointer; 
+      margin: 0.5rem 0 1.25rem;
     }
-    /* Active/Hover Neon Effect */
-    .nav-tabs a:hover,
-    .nav-tabs a.active {
-      color: #ff0066;
-      text-shadow: 0 0 10px #ff0066;
-      transform: translateY(-2px);
-    }
-    
-    /* CONTENT PANE STYLING */
-    .content-pane {
-        width: 100%;
-        transition: opacity 0.3s ease-in-out;
-    }
-    .hidden-pane {
-        display: none; 
-    }
-
-    /* VISUALIZER */
     .visualizer {
       width: 100%;
       height: 260px;
       border-radius: 14px;
       overflow: hidden;
-      background: #000000;
+      background: #050710;
       margin-bottom: 0.6rem;
-      /* REAPPLYING NEON: frame */
-      border: 2px solid #ff0066; 
-      box-shadow: 0 0 15px rgba(255, 0, 102, 0.5);
     }
     #viz { width: 100%; height: 100%; display: block; }
 
-    /* CHANNEL PANELS */
     .channel {
       padding: 1.2rem 1.4rem;
       border-radius: 16px;
@@ -103,24 +50,15 @@
       text-align: left;
     }
     .channel span { font-weight: 600; font-size: 1rem; }
-    .channel small { font-size: 0.8rem; color: #e0e0ff; opacity: 0.9; }
+    .channel small { font-size: 0.8rem; opacity: 0.75; }
 
-    /* STREAM TITLE */
     .stream-title {
       display: block;
       margin: 0.4rem 0 0.4rem;
       font-weight: 600;
       font-size: 1rem;
-      /* REAPPLYING NEON: Text Glow */
-      color: #ffccff;
-      text-shadow: 
-        0 0 4px #ff0066, 
-        0 0 10px #4338ca;
-      letter-spacing: 0.1em;
-      transition: all 0.3s;
     }
 
-    /* AUDIO / STATUS / PLAY BUTTON */
     audio { width: 100%; margin-top: 0.2rem; }
     .status { display:none; font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.8; }
     .kick {
@@ -128,46 +66,7 @@
       border-radius:10px; border:1px solid rgba(129,140,248,0.6);
       background:#0b1020; color:#c7c7ff;
       cursor:pointer; font-size:0.85rem;
-      transition: all 0.3s;
-      text-decoration: none; 
-      display: inline-block;
     }
-    .kick:hover {
-      /* REAPPLYING NEON: button hover effect */
-      color: #ff0066;
-      border-color: #ff0066;
-      box-shadow: 0 0 12px rgba(255, 0, 102, 0.7);
-    }
-
-    /* Events List Styling */
-    .events-list {
-      text-align: left;
-      margin-top: 1rem;
-      padding-top: 0.5rem;
-      border-top: 1px solid rgba(129, 140, 248, 0.15);
-    }
-    .event-item {
-      margin: 1.25rem 0;
-      border-left: 3px solid #4338ca;
-      padding-left: 1rem;
-    }
-    .event-item h4 {
-      margin: 0;
-      font-size: 1rem;
-      color: #ffccff;
-      text-shadow: 0 0 3px rgba(255, 0, 102, 0.5);
-    }
-    .event-item p {
-      margin: 0.25rem 0 0;
-      font-size: 0.85rem;
-      color: #e0e0ff;
-    }
-    .event-date {
-      font-weight: 700;
-      color: #a5b4fc;
-    }
-
-    /* VIDEO EMBEDS */
     .video-container {
       position: relative;
       width: 100%; padding-bottom: 56.25%;
@@ -177,124 +76,63 @@
       position: absolute; width: 100%; height: 100%; border: 0;
       top: 0; left: 0; border-radius: 12px;
     }
-
-    /* LINKS */
     .links { margin-top: 0.75rem; font-size: 0.85rem; text-align:center; }
-    .links a { 
-      color: #a5b4fc; 
-      text-decoration: none; 
-      margin: 0 0.4rem;
-      transition: color 0.3s, text-shadow 0.3s;
-    }
-    .links a:hover {
-      /* REAPPLYING NEON: link hover effect */
-      color: #ff0066;
-      text-shadow: 0 0 8px #ff0066;
-    }
-
-    /* FOOTNOTE - Genre line is styled prominently here */
+    .links a { color: #a5b4fc; text-decoration: none; margin: 0 0.4rem; }
     .footnote { margin-top: 1.5rem; font-size: 0.7rem; opacity: 0.55; }
-    .genre-tagline {
-        display: block;
-        font-size: 0.85rem;
-        font-weight: 700;
-        margin-bottom: 0.2rem;
-        color: #ff0066; /* Bright neon pink/red */
-        opacity: 1;
-        text-shadow: 0 0 5px rgba(255, 0, 102, 0.8);
-    }
   </style>
 </head>
 
 <body>
   <main class="wrapper">
 
-    <img src="logo.png" alt="Radio RRR Logo - Neon Retrowave Text"
+    <img src="logo.png" alt="Radio RRR Logo"
          style="width: 300px; max-width: 90%; margin: 0 auto 10px; display: block;">
 
-    <nav class="nav-tabs">
-        <a data-target="stream-section" class="active">Stream</a>
-        <a data-target="events-section">Events</a>
-        <a data-target="follow-section">Follow</a>
-    </nav>
-    
-    <div id="stream-section" class="content-pane">
-      <div class="channel">
+    <p class="tagline">Streaming Electro · Synth · 80s · Chill</p>
 
-        <div class="visualizer">
-          <canvas id="viz"></canvas>
-        </div>
+    <div class="channel">
 
-        <span id="streamTitle" class="stream-title">RADIO RRR Live</span>
+      <div class="visualizer">
+        <canvas id="viz"></canvas>
+      </div>
 
-        <audio id="liveStream" controls crossorigin="anonymous">
-          <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
-        </audio>
+      <span id="streamTitle" class="stream-title">RADIO RRR Live</span>
 
-        <button id="kickPlay" class="kick">Play</button>
-        <div id="status" class="status"></div>
+      <audio id="liveStream" controls crossorigin="anonymous">
+        <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
+      </audio>
+
+      <button id="kickPlay" class="kick">Play</button>
+      <div id="status" class="status"></div>
+    </div>
+
+    <div class="channel">
+      <span>Latest on TikTok</span><br />
+      <small>@josh.u.rrr · newest shorts</small>
+
+      <blockquote class="tiktok-embed"
+        cite="https://www.tiktok.com/@josh.u.rrr"
+        data-unique-id="josh.u.rrr"
+        data-embed-type="creator"
+        style="max-width:100%; min-width:280px; margin-top:0.8rem;">
+        <section>
+          <a target="_blank" href="https://www.tiktok.com/@josh.u.rrr">@josh.u.rrr</a>
+        </section>
+      </blockquote>
+    </div>
+
+    <div class="channel">
+      <span>YouTube Likes</span><br />
+      <small>Latest videos we liked</small>
+
+      <div class="video-container">
+        <iframe
+          src="https://www.youtube.com/embed/videoseries?list=PLli1uTuS0FH7xR1QBnIvY3V9btomaSpTv"
+          allowfullscreen
+          loading="lazy">
+        </iframe>
       </div>
     </div>
-    
-    <div id="events-section" class="content-pane hidden-pane">
-      <div class="channel">
-        <span>Upcoming Global Events 🌎</span><br />
-        <small>Major electronic, synthwave, and retro festivals.</small>
-
-        <div class="events-list">
-            
-            <div class="event-item">
-                <h4>Tomorrowland 🇧🇪 - Adscendo</h4>
-                <p><span class="event-date">July 18-21 & July 25-28, 2025</span></p>
-                <p>The world's biggest EDM festival returns to Belgium. Expect the new theme, stage design, and massive electronic lineups.</p>
-            </div>
-
-            <div class="event-item">
-                <h4>RetroSynth Festival 🇺🇸 - West Coast</h4>
-                <p><span class="event-date">October 11-12, 2025</span></p>
-                <p>Annual retro/synthwave gathering. News on venue and headliners expected next quarter.</p>
-            </div>
-
-            <div class="event-item">
-                <h4>Coachella 🇺🇸 - Weekend 1 & 2</h4>
-                <p><span class="event-date">April 11-13 & April 18-20, 2026</span></p>
-                <p>The iconic California festival. Lineup speculation dominates social media ahead of the January announcement.</p>
-            </div>
-            
-        </div>
-      </div>
-    </div>
-    
-    <div id="follow-section" class="content-pane hidden-pane">
-        
-      <div class="channel">
-        <span>Follow us on TikTok</span><br />
-        <small>@josh.u.rrr - Latest videos, loads asynchronously.</small>
-
-        <blockquote class="tiktok-embed" data-video-id="6917631388902172934" cite="https://www.tiktok.com/@josh.u.rrr/video/6917631388902172934"
-           style="max-width: 325px; min-width: 300px; margin: 1rem auto 0;" >
-           <section>
-            <a target="_blank" title="@josh.u.rrr" href="https://www.tiktok.com/@josh.u.rrr?refer=embed">@josh.u.rrr</a>
-            <p>Listen up. 🎧</p> 
-            <a target="_blank" title="♬ original sound - Radio RRR" href="https://www.tiktok.com/music/original-sound-6917631393693248518">♬ original sound - Radio RRR</a> 
-           </section>
-        </blockquote>
-      </div>
-
-      <div class="channel">
-        <span>YouTube Likes</span><br />
-        <small>Latest videos we liked</small>
-
-        <div class="video-container">
-          <iframe
-            src="https://www.youtube.com/embed/videoseries?list=PLli1uTuS0FH7xR1QBnIvY3V9btomaSpTv"
-            allowfullscreen
-            loading="lazy">
-          </iframe>
-        </div>
-      </div>
-    </div>
-    
 
     <div class="links">
       <a href="https://www.instagram.com/radio.rrr/" target="_blank">Instagram</a> ·
@@ -304,49 +142,19 @@
     </div>
 
     <p class="footnote">
-      <span class="genre-tagline">Electro · Synth · 80s · Chill</span>
       Streaming 24/7<br>
       Contact: <a href="mailto:admin@radiorrr.com" style="color:#a5b4fc;">admin@radiorrr.com</a>
     </p>
 
   </main>
-  
+
   <script async src="https://www.tiktok.com/embed.js"></script>
 
   <script>
   document.addEventListener("DOMContentLoaded", () => {
 
     const titleEl = document.getElementById("streamTitle");
-    const navLinks = document.querySelectorAll('.nav-tabs a');
-    const contentPanes = document.querySelectorAll('.content-pane');
-    const GAIN = 10.0; 
-    const MIN_AMP = 0.08; 
 
-    // === TAB SHOW/HIDE LOGIC ===
-    function switchTab(targetId) {
-        contentPanes.forEach(pane => {
-            pane.classList.add('hidden-pane');
-        });
-        const targetElement = document.getElementById(targetId);
-        if (targetElement) {
-            targetElement.classList.remove('hidden-pane');
-        }
-        navLinks.forEach(l => l.classList.remove('active'));
-        const activeLink = document.querySelector(`.nav-tabs a[data-target="${targetId}"]`);
-        if (activeLink) {
-            activeLink.classList.add('active');
-        }
-    }
-    switchTab('stream-section');
-
-    navLinks.forEach(link => {
-      link.addEventListener('click', (e) => {
-        const targetId = e.target.getAttribute('data-target');
-        switchTab(targetId);
-      });
-    });
-
-    // === TIME-BASED TITLE LOGIC ===
     function getDayPeriod(hour) {
       if (hour < 12) return "Morning";
       if (hour < 17) return "Afternoon";
@@ -372,6 +180,7 @@
     }
 
     updateTitle();
+    // Start title updates (you had this missing in your uploaded script)
     setInterval(updateTitle, 3600000); 
 
     const audio = document.getElementById("liveStream");
@@ -379,7 +188,6 @@
     const kick = document.getElementById("kickPlay");
     const canvas = document.getElementById("viz");
     const ctx = canvas.getContext("2d");
-    
 
     function setStatus(msg) {
       statusEl.style.display = "block";
@@ -404,12 +212,6 @@
     let analyserInitAttempted = false;
     let isPlaying = false;
 
-    function avgRange(arr, start, end) {
-      let sum = 0;
-      for (let i = start; i < end; i++) sum += arr[i];
-      return sum / (end - start);
-    }
-
     function initAnalyser() {
       if (analyserInitAttempted) return;
       analyserInitAttempted = true;
@@ -417,7 +219,8 @@
         const AC = window.AudioContext || window.webkitAudioContext;
         audioCtx = new AC();
         analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 256; 
+        // Reduced FFT size for simplicity and stability
+        analyser.fftSize = 64; 
         dataArray = new Uint8Array(analyser.frequencyBinCount);
         const src = audioCtx.createMediaElementSource(audio);
         src.connect(analyser);
@@ -426,22 +229,98 @@
       } catch { analyserEnabled = false; }
     }
 
+    function avgRange(arr, start, end) {
+      let sum = 0;
+      for (let i = start; i < end; i++) sum += arr[i];
+      return sum / (end - start);
+    }
+
     let startTime = performance.now();
 
-    // === WARP TUNNEL VISUALIZER (Restored with Safety Catch) ===
+    // === SIMPLE, STABLE VISUALIZER (Replaces complex/crashing code) ===
     function drawFrame() {
-      // CRITICAL SAFETY BLOCK: If any complex drawing logic fails, 
-      // it will catch the error, allowing requestAnimationFrame and the 
-      // rest of the page JS (like menus) to continue working.
-      try {
-        const t = (performance.now() - startTime) / 1000;
-        const w = canvas.clientWidth;
-        const h = canvas.clientHeight;
-        const cx = w / 2;
-        const cy = h / 2;
-        const minDim = Math.min(w, h);
+      // Use a simple color pulse as a reliable fallback/demo
+      const t = (performance.now() - startTime) / 1000;
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      const cx = w/2;
+      const cy = h/2;
 
-        let bass = 0.1, mid = 0.1, treb = 0.1, energy = 0.1;
+      let energy = 0.5;
 
-        if (analyserEnabled && isPlaying) {
-          analyser.getByteFrequency
+      // Handle audio input
+      if (analyserEnabled && isPlaying) {
+        analyser.getByteFrequencyData(dataArray);
+        const avg = avgRange(dataArray, 0, dataArray.length);
+        energy = Math.min(1, avg / 255 * 5.0); // Simple gain
+      } else {
+        // Simple pulsing demo when paused/no audio
+        energy = (Math.sin(t*2) + 1) / 2;
+      }
+
+      // 1. Background
+      ctx.fillStyle = "#000000";
+      ctx.fillRect(0, 0, w, h);
+      
+      // 2. Central Pulse
+      const baseRadius = Math.min(w, h) * 0.1;
+      const currentRadius = baseRadius + energy * 50; 
+      const hue = (t * 50) % 360; 
+
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, currentRadius);
+      g.addColorStop(0, `hsl(${hue}, 100%, 70%)`);
+      g.addColorStop(0.5, `hsl(${hue + 30}, 80%, 40%, 0.5)`);
+      g.addColorStop(1, `hsl(${hue + 60}, 50%, 20%, 0)`);
+      
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 3. Simple Neon Dot
+      ctx.shadowBlur = 10 + energy * 15;
+      ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
+      ctx.fillStyle = `hsl(${hue}, 100%, 80%)`;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 5 + energy * 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      
+      requestAnimationFrame(drawFrame);
+    }
+    requestAnimationFrame(drawFrame);
+
+    // Play/Pause button logic (simplified to match your current HTML)
+    kick.addEventListener("click", () => {
+      if (audio.paused) {
+        audio.play().then(() => {
+          isPlaying = true;
+          setStatus("playing");
+          initAnalyser();
+          if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+        }).catch(() => setStatus("tap the player above to start"));
+      } else {
+        audio.pause();
+        isPlaying = false;
+        setStatus("paused");
+      }
+    });
+
+    audio.addEventListener("play", () => {
+      isPlaying = true;
+      setStatus("playing");
+      initAnalyser();
+      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    });
+
+    audio.addEventListener("pause", () => {
+      isPlaying = false;
+      setStatus("paused");
+    });
+
+    audio.addEventListener("error", () => setStatus("audio error (stream offline?)"));
+  });
+  </script>
+
+</body>
+</html>
