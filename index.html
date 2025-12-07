@@ -31,7 +31,7 @@
       width: 100%;
       padding: 2.5rem 1.75rem;
       border-radius: 18px;
-      /* RESTORED NEON: box-shadow for retro look */
+      /* REAPPLYING NEON: box-shadow for retro look */
       background: #0d0e1f;
       border: 1px solid rgba(129,140,248,0.3);
       box-shadow: 
@@ -40,21 +40,54 @@
       text-align: center;
       transition: all 0.3s ease-out; 
     }
-    .tagline {
-      font-size: 0.95rem;
+    
+    /* NAVIGATION TABS */
+    .nav-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1rem; 
+      margin-bottom: 2rem;
+      border-bottom: 2px solid rgba(255, 0, 102, 0.3);
+      padding-bottom: 0.5rem;
+    }
+    .nav-tabs a {
+      font-weight: 700;
+      font-size: 1.1rem;
       color: #c7c7ff;
-      margin: 0.5rem 0 1.25rem;
+      text-decoration: none;
+      padding: 0 0.5rem;
+      transition: all 0.2s;
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 5px rgba(67, 56, 202, 0.4);
+      cursor: pointer; 
+    }
+    /* Active/Hover Neon Effect */
+    .nav-tabs a:hover,
+    .nav-tabs a.active {
+      color: #ff0066;
+      text-shadow: 0 0 10px #ff0066;
+      transform: translateY(-2px);
     }
     
+    /* CONTENT PANE STYLING */
+    .content-pane {
+        width: 100%;
+        transition: opacity 0.3s ease-in-out;
+    }
+    .hidden-pane {
+        display: none; 
+    }
+
     /* VISUALIZER */
     .visualizer {
       width: 100%;
       height: 260px;
       border-radius: 14px;
       overflow: hidden;
-      background: #000000; /* Darker background for tunnel effect */
+      background: #000000;
       margin-bottom: 0.6rem;
-      /* RESTORED NEON: frame */
+      /* REAPPLYING NEON: frame */
       border: 2px solid #ff0066; 
       box-shadow: 0 0 15px rgba(255, 0, 102, 0.5);
     }
@@ -78,7 +111,7 @@
       margin: 0.4rem 0 0.4rem;
       font-weight: 600;
       font-size: 1rem;
-      /* RESTORED NEON: Text Glow */
+      /* REAPPLYING NEON: Text Glow */
       color: #ffccff;
       text-shadow: 
         0 0 4px #ff0066, 
@@ -96,12 +129,42 @@
       background:#0b1020; color:#c7c7ff;
       cursor:pointer; font-size:0.85rem;
       transition: all 0.3s;
+      text-decoration: none; 
+      display: inline-block;
     }
     .kick:hover {
-      /* RESTORED NEON: button hover effect */
+      /* REAPPLYING NEON: button hover effect */
       color: #ff0066;
       border-color: #ff0066;
       box-shadow: 0 0 12px rgba(255, 0, 102, 0.7);
+    }
+
+    /* Events List Styling */
+    .events-list {
+      text-align: left;
+      margin-top: 1rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(129, 140, 248, 0.15);
+    }
+    .event-item {
+      margin: 1.25rem 0;
+      border-left: 3px solid #4338ca;
+      padding-left: 1rem;
+    }
+    .event-item h4 {
+      margin: 0;
+      font-size: 1rem;
+      color: #ffccff;
+      text-shadow: 0 0 3px rgba(255, 0, 102, 0.5);
+    }
+    .event-item p {
+      margin: 0.25rem 0 0;
+      font-size: 0.85rem;
+      color: #e0e0ff;
+    }
+    .event-date {
+      font-weight: 700;
+      color: #a5b4fc;
     }
 
     /* VIDEO EMBEDS */
@@ -124,67 +187,114 @@
       transition: color 0.3s, text-shadow 0.3s;
     }
     .links a:hover {
-      /* RESTORED NEON: link hover effect */
+      /* REAPPLYING NEON: link hover effect */
       color: #ff0066;
       text-shadow: 0 0 8px #ff0066;
     }
 
-    /* FOOTNOTE */
+    /* FOOTNOTE - Genre line is styled prominently here */
     .footnote { margin-top: 1.5rem; font-size: 0.7rem; opacity: 0.55; }
+    .genre-tagline {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 0.2rem;
+        color: #ff0066; /* Bright neon pink/red */
+        opacity: 1;
+        text-shadow: 0 0 5px rgba(255, 0, 102, 0.8);
+    }
   </style>
 </head>
 
 <body>
   <main class="wrapper">
 
-    <img src="logo.png" alt="Radio RRR Logo"
+    <img src="logo.png" alt="Radio RRR Logo - Neon Retrowave Text"
          style="width: 300px; max-width: 90%; margin: 0 auto 10px; display: block;">
 
-    <p class="tagline">Streaming Electro · Synth · 80s · Chill</p>
+    <nav class="nav-tabs">
+        <a data-target="stream-section" class="active">Stream</a>
+        <a data-target="events-section">Events</a>
+        <a data-target="follow-section">Follow</a>
+    </nav>
+    
+    <div id="stream-section" class="content-pane">
+      <div class="channel">
 
-    <div class="channel">
+        <div class="visualizer">
+          <canvas id="viz"></canvas>
+        </div>
 
-      <div class="visualizer">
-        <canvas id="viz"></canvas>
-      </div>
+        <span id="streamTitle" class="stream-title">RADIO RRR Live</span>
 
-      <span id="streamTitle" class="stream-title">RADIO RRR Live</span>
+        <audio id="liveStream" controls crossorigin="anonymous">
+          <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
+        </audio>
 
-      <audio id="liveStream" controls crossorigin="anonymous">
-        <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
-      </audio>
-
-      <button id="kickPlay" class="kick">Play</button>
-      <div id="status" class="status"></div>
-    </div>
-
-    <div class="channel">
-      <span>Latest on TikTok</span><br />
-      <small>@josh.u.rrr · newest shorts</small>
-
-      <blockquote class="tiktok-embed"
-        cite="https://www.tiktok.com/@josh.u.rrr"
-        data-unique-id="josh.u.rrr"
-        data-embed-type="creator"
-        style="max-width:100%; min-width:280px; margin-top:0.8rem;">
-        <section>
-          <a target="_blank" href="https://www.tiktok.com/@josh.u.rrr">@josh.u.rrr</a>
-        </section>
-      </blockquote>
-    </div>
-
-    <div class="channel">
-      <span>YouTube Likes</span><br />
-      <small>Latest videos we liked</small>
-
-      <div class="video-container">
-        <iframe
-          src="https://www.youtube.com/embed/videoseries?list=PLli1uTuS0FH7xR1QBnIvY3V9btomaSpTv"
-          allowfullscreen
-          loading="lazy">
-        </iframe>
+        <button id="kickPlay" class="kick">Play</button>
+        <div id="status" class="status"></div>
       </div>
     </div>
+    
+    <div id="events-section" class="content-pane hidden-pane">
+      <div class="channel">
+        <span>Upcoming Global Events 🌎</span><br />
+        <small>Major electronic, synthwave, and retro festivals.</small>
+
+        <div class="events-list">
+            
+            <div class="event-item">
+                <h4>Tomorrowland 🇧🇪 - Adscendo</h4>
+                <p><span class="event-date">July 18-21 & July 25-28, 2025</span></p>
+                <p>The world's biggest EDM festival returns to Belgium. Expect the new theme, stage design, and massive electronic lineups.</p>
+            </div>
+
+            <div class="event-item">
+                <h4>RetroSynth Festival 🇺🇸 - West Coast</h4>
+                <p><span class="event-date">October 11-12, 2025</span></p>
+                <p>Annual retro/synthwave gathering. News on venue and headliners expected next quarter.</p>
+            </div>
+
+            <div class="event-item">
+                <h4>Coachella 🇺🇸 - Weekend 1 & 2</h4>
+                <p><span class="event-date">April 11-13 & April 18-20, 2026</span></p>
+                <p>The iconic California festival. Lineup speculation dominates social media ahead of the January announcement.</p>
+            </div>
+            
+        </div>
+      </div>
+    </div>
+    
+    <div id="follow-section" class="content-pane hidden-pane">
+        
+      <div class="channel">
+        <span>Follow us on TikTok</span><br />
+        <small>@josh.u.rrr - Latest videos, loads asynchronously.</small>
+
+        <blockquote class="tiktok-embed" data-video-id="6917631388902172934" cite="https://www.tiktok.com/@josh.u.rrr/video/6917631388902172934"
+           style="max-width: 325px; min-width: 300px; margin: 1rem auto 0;" >
+           <section>
+            <a target="_blank" title="@josh.u.rrr" href="https://www.tiktok.com/@josh.u.rrr?refer=embed">@josh.u.rrr</a>
+            <p>Listen up. 🎧</p> 
+            <a target="_blank" title="♬ original sound - Radio RRR" href="https://www.tiktok.com/music/original-sound-6917631393693248518">♬ original sound - Radio RRR</a> 
+           </section>
+        </blockquote>
+      </div>
+
+      <div class="channel">
+        <span>YouTube Likes</span><br />
+        <small>Latest videos we liked</small>
+
+        <div class="video-container">
+          <iframe
+            src="https://www.youtube.com/embed/videoseries?list=PLli1uTuS0FH7xR1QBnIvY3V9btomaSpTv"
+            allowfullscreen
+            loading="lazy">
+          </iframe>
+        </div>
+      </div>
+    </div>
+    
 
     <div class="links">
       <a href="https://www.instagram.com/radio.rrr/" target="_blank">Instagram</a> ·
@@ -194,21 +304,49 @@
     </div>
 
     <p class="footnote">
+      <span class="genre-tagline">Electro · Synth · 80s · Chill</span>
       Streaming 24/7<br>
       Contact: <a href="mailto:admin@radiorrr.com" style="color:#a5b4fc;">admin@radiorrr.com</a>
     </p>
 
   </main>
-
+  
   <script async src="https://www.tiktok.com/embed.js"></script>
 
   <script>
   document.addEventListener("DOMContentLoaded", () => {
 
     const titleEl = document.getElementById("streamTitle");
+    const navLinks = document.querySelectorAll('.nav-tabs a');
+    const contentPanes = document.querySelectorAll('.content-pane');
     const GAIN = 10.0; 
+    const MIN_AMP = 0.08; 
 
-    // Dynamic Title Logic (RESTORED)
+    // === TAB SHOW/HIDE LOGIC ===
+    function switchTab(targetId) {
+        contentPanes.forEach(pane => {
+            pane.classList.add('hidden-pane');
+        });
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+            targetElement.classList.remove('hidden-pane');
+        }
+        navLinks.forEach(l => l.classList.remove('active'));
+        const activeLink = document.querySelector(`.nav-tabs a[data-target="${targetId}"]`);
+        if (activeLink) {
+            activeLink.classList.add('active');
+        }
+    }
+    switchTab('stream-section');
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        const targetId = e.target.getAttribute('data-target');
+        switchTab(targetId);
+      });
+    });
+
+    // === TIME-BASED TITLE LOGIC ===
     function getDayPeriod(hour) {
       if (hour < 12) return "Morning";
       if (hour < 17) return "Afternoon";
@@ -241,6 +379,7 @@
     const kick = document.getElementById("kickPlay");
     const canvas = document.getElementById("viz");
     const ctx = canvas.getContext("2d");
+    
 
     function setStatus(msg) {
       statusEl.style.display = "block";
@@ -265,6 +404,12 @@
     let analyserInitAttempted = false;
     let isPlaying = false;
 
+    function avgRange(arr, start, end) {
+      let sum = 0;
+      for (let i = start; i < end; i++) sum += arr[i];
+      return sum / (end - start);
+    }
+
     function initAnalyser() {
       if (analyserInitAttempted) return;
       analyserInitAttempted = true;
@@ -281,137 +426,153 @@
       } catch { analyserEnabled = false; }
     }
 
-    function avgRange(arr, start, end) {
-      let sum = 0;
-      for (let i = start; i < end; i++) sum += arr[i];
-      return sum / (end - start);
-    }
-
     let startTime = performance.now();
 
-    // WARP TUNNEL VISUALIZER (RESTORED)
+    // === WARP TUNNEL VISUALIZER (Restored with Safety Catch) ===
     function drawFrame() {
-      const t = (performance.now() - startTime) / 1000;
-      const w = canvas.clientWidth;
-      const h = canvas.clientHeight;
-      const cx = w / 2;
-      const cy = h / 2;
-      const minDim = Math.min(w, h);
+      // CRITICAL SAFETY BLOCK: If any complex drawing logic fails, 
+      // it will catch the error, allowing requestAnimationFrame and the 
+      // rest of the page JS (like menus) to continue working.
+      try {
+        const t = (performance.now() - startTime) / 1000;
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+        const minDim = Math.min(w, h);
 
-      let bass = 0.1, mid = 0.1, treb = 0.1, energy = 0.1;
+        let bass = 0.1, mid = 0.1, treb = 0.1, energy = 0.1;
 
-      if (analyserEnabled && isPlaying) {
-        // --- VISUALIZER MODE: RESPONSIVE NEON TUNNEL (PLAYING) ---
-        analyser.getByteFrequencyData(dataArray);
-        const len = dataArray.length;
+        if (analyserEnabled && isPlaying) {
+          analyser.getByteFrequencyData(dataArray);
+          const len = dataArray.length;
+          
+          let calculated_bass = Math.min(1, avgRange(dataArray, 0, len * 0.2) / 255 * GAIN);
+          let calculated_mid  = Math.min(1, avgRange(dataArray, len * 0.2, len * 0.6) / 255 * GAIN);
+          let calculated_treb = Math.min(1, avgRange(dataArray, len * 0.6, len) / 255 * GAIN);
+
+          // Apply minimum amplitude for responsiveness during quiet parts
+          bass = Math.max(MIN_AMP, calculated_bass);
+          mid = Math.max(MIN_AMP, calculated_mid);
+          treb = Math.max(MIN_AMP, calculated_treb);
+
+          energy = (bass + mid + treb) / 3;
+
+        } else {
+          // Demo mode when paused
+          bass = (Math.sin(t * 1.5) + 1) / 2;
+          mid  = (Math.sin(t * 0.9 + 1.2) + 1) / 2;
+          treb = (Math.sin(t * 2.1 + 0.7) + 1) / 2;
+          energy = (bass + mid + treb) / 3;
+        }
+
+        // 1. Digital Fade Background
+        ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+        ctx.fillRect(0, 0, w, h);
         
-        // Calculate amplified music components
-        bass = Math.min(1, avgRange(dataArray, 0, len * 0.2) / 255 * GAIN);
-        mid  = Math.min(1, avgRange(dataArray, len * 0.2, len * 0.6) / 255 * GAIN);
-        treb = Math.min(1, avgRange(dataArray, len * 0.6, len) / 255 * GAIN);
-        energy = (bass + mid + treb) / 3;
+        // 2. Draw Spectrum Circles (The Rings)
+        const circleCount = 8;
+        for (let i = 0; i < circleCount; i++) {
+          const baseRadius = (minDim * 0.04) + (i * minDim * 0.05);
+          const freqAmp = i % 2 === 0 ? mid : treb;
 
-      } else {
-        // --- VISUALIZER MODE: ANIMATED NEON TUNNEL (PAUSED/FALLBACK) ---
-        bass = (Math.sin(t * 1.5) + 1) / 2;
-        mid  = (Math.sin(t * 0.9 + 1.2) + 1) / 2;
-        treb = (Math.sin(t * 2.1 + 0.7) + 1) / 2;
-        energy = (bass + mid + treb) / 3;
-      }
+          const currentRadius = baseRadius + (freqAmp * 60); 
+          
+          ctx.beginPath();
+          ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
+          
+          const hue = (t * 50 + i * 20) % 360; 
+          ctx.strokeStyle = `hsl(${hue}, 100%, ${60 + freqAmp * 20}%)`;
+          ctx.lineWidth = 1 + freqAmp * 2.5;
+          ctx.shadowBlur = 10 + freqAmp * 20;
+          ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
+          ctx.stroke();
+        }
+        ctx.shadowBlur = 0;
 
-      // 1. Digital Fade Background
-      ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
-      ctx.fillRect(0, 0, w, h);
-      ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
-      ctx.fillRect(0, 0, w, h);
-      
-      // 2. Draw Spectrum Circles (The Rings)
-      const circleCount = 8;
-      for (let i = 0; i < circleCount; i++) {
-        const baseRadius = (minDim * 0.04) + (i * minDim * 0.05);
-        const freqAmp = i % 2 === 0 ? mid : treb;
+        // 3. Draw Radial Lines (The Wireframe)
+        const lineCount = 64;
+        for (let i = 0; i < lineCount; i++) {
+          const angle = (i * (Math.PI * 2) / lineCount) + (t * 0.05 * treb);
+          const maxDist = minDim * 0.75;
+          const lineLength = maxDist + (bass * 100); 
 
-        const currentRadius = baseRadius + (freqAmp * 60); 
+          const x2 = cx + Math.cos(angle) * lineLength;
+          const y2 = cy + Math.sin(angle) * lineLength;
+          
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(x2, y2);
+          
+          const lineHue = (i * 5 + t * 50) % 360; 
+          ctx.strokeStyle = `hsla(${lineHue}, 100%, 60%, ${0.2 + energy * 0.6})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
         
+        // 4. Central Core Pulse (The Dot)
+        const coreRadius = 5 + bass * 50; 
+        const coreGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
+        coreGradient.addColorStop(0, `rgba(255, 255, 255, ${0.8 + bass * 0.2})`);
+        coreGradient.addColorStop(0.5, `rgba(255, 0, 102, ${0.5 + bass * 0.5})`);
+        coreGradient.addColorStop(1, "rgba(255, 0, 102, 0)");
+
+        ctx.fillStyle = coreGradient;
         ctx.beginPath();
-        ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
-        
-        const hue = (t * 50 + i * 20) % 360; 
-        ctx.strokeStyle = `hsl(${hue}, 100%, ${60 + freqAmp * 20}%)`;
-        ctx.lineWidth = 1 + freqAmp * 2.5;
-        ctx.shadowBlur = 10 + freqAmp * 20;
-        ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
-        ctx.stroke();
+        ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 5. Scanlines Effect
+        ctx.save();
+        ctx.globalAlpha = 0.13;
+        ctx.fillStyle = "rgba(0, 0, 0, 1)";
+        const gap = 3;
+        const off = (t * 35) % gap; 
+        for (let y = off; y < h; y += gap) {
+          ctx.fillRect(0, y, w, 1);
+        }
+        ctx.restore();
+      } catch (e) {
+          // If the visualizer fails, we log it but do not crash the page.
+          console.error("Visualizer drawing error (non-fatal):", e);
       }
-      ctx.shadowBlur = 0;
-
-      // 3. Draw Radial Lines (The Wireframe)
-      const lineCount = 64;
-      for (let i = 0; i < lineCount; i++) {
-        const angle = (i * (Math.PI * 2) / lineCount) + (t * 0.05 * treb);
-        const maxDist = minDim * 0.75;
-        const lineLength = maxDist + (bass * 100); 
-
-        const x2 = cx + Math.cos(angle) * lineLength;
-        const y2 = cy + Math.sin(angle) * lineLength;
-        
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(x2, y2);
-        
-        const lineHue = (i * 5 + t * 50) % 360; 
-        ctx.strokeStyle = `hsla(${lineHue}, 100%, 60%, ${0.2 + energy * 0.6})`;
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      }
-      
-      // 4. Central Core Pulse (The Dot)
-      const coreRadius = 5 + bass * 50; 
-      const coreGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
-      coreGradient.addColorStop(0, `rgba(255, 255, 255, ${0.8 + bass * 0.2})`);
-      coreGradient.addColorStop(0.5, `rgba(255, 0, 102, ${0.5 + bass * 0.5})`);
-      coreGradient.addColorStop(1, "rgba(255, 0, 102, 0)");
-
-      ctx.fillStyle = coreGradient;
-      ctx.beginPath();
-      ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
-      ctx.fill();
-
-      // 5. Scanlines Effect (Kept)
-      ctx.save();
-      ctx.globalAlpha = 0.13;
-      ctx.fillStyle = "rgba(0, 0, 0, 1)";
-      const gap = 3;
-      const off = (t * 35) % gap; 
-      for (let y = off; y < h; y += gap) {
-        ctx.fillRect(0, y, w, 1);
-      }
-      ctx.restore();
 
       requestAnimationFrame(drawFrame);
     }
     requestAnimationFrame(drawFrame);
 
 
-    // Play/Pause Button Logic
+    // === Play/Pause Button Logic ===
     kick.addEventListener("click", () => {
       if (audio.paused) {
+        setStatus("connecting..."); 
+        kick.textContent = "Connecting..."; 
+        
         audio.play().then(() => {
           isPlaying = true;
           setStatus("playing");
+          kick.textContent = "Pause"; 
           initAnalyser();
           if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
-        }).catch(() => setStatus("tap the player above to start"));
+        }).catch((e) => {
+            console.error("Audio Play Error:", e);
+            setStatus("error starting stream");
+            kick.textContent = "Play"; 
+        });
       } else {
         audio.pause();
         isPlaying = false;
         setStatus("paused");
+        kick.textContent = "Play"; 
       }
     });
 
     audio.addEventListener("play", () => {
       isPlaying = true;
       setStatus("playing");
+      kick.textContent = "Pause"; 
       initAnalyser();
       if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
     });
@@ -419,9 +580,13 @@
     audio.addEventListener("pause", () => {
       isPlaying = false;
       setStatus("paused");
+      kick.textContent = "Play"; 
     });
 
-    audio.addEventListener("error", () => setStatus("audio error (stream offline?)"));
+    audio.addEventListener("error", () => {
+      setStatus("audio error (stream offline?)");
+      kick.textContent = "Play"; 
+    });
   });
   </script>
 
