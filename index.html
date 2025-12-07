@@ -392,4 +392,174 @@
       const h = canvas.clientHeight;
       canvas.width = w * dpr;
       canvas.height = h * dpr;
-      ctx.
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+    window.addEventListener("resize", resize);
+
+    let audioCtx = null;
+    let analyser = null;
+    let dataArray = null;
+    let analyserEnabled = false;
+    let analyserInitAttempted = false;
+    let isPlaying = false;
+
+    function initAnalyser() {
+      if (analyserInitAttempted) return;
+      analyserInitAttempted = true;
+      try {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AC();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 256; 
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+        const src = audioCtx.createMediaElementSource(audio);
+        src.connect(analyser);
+        analyser.connect(audioCtx.destination);
+        analyserEnabled = true;
+      } catch { analyserEnabled = false; }
+    }
+
+    function avgRange(arr, start, end) {
+      let sum = 0;
+      for (let i = start; i < end; i++) sum += arr[i];
+      return sum / (end - start);
+    }
+
+    let startTime = performance.now();
+
+    // WARP TUNNEL VISUALIZER 
+    function drawFrame() {
+      const t = (performance.now() - startTime) / 1000;
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      const cx = w / 2;
+      const cy = h / 2;
+      const minDim = Math.min(w, h);
+
+      let bass = 0.1, mid = 0.1, treb = 0.1, energy = 0.1;
+
+      if (analyserEnabled && isPlaying) {
+        analyser.getByteFrequencyData(dataArray);
+        const len = dataArray.length;
+        
+        bass = Math.min(1, avgRange(dataArray, 0, len * 0.2) / 255 * GAIN);
+        mid  = Math.min(1, avgRange(dataArray, len * 0.2, len * 0.6) / 255 * GAIN);
+        treb = Math.min(1, avgRange(dataArray, len * 0.6, len) / 255 * GAIN);
+        energy = (bass + mid + treb) / 3;
+
+      } else {
+        bass = (Math.sin(t * 1.5) + 1) / 2;
+        mid  = (Math.sin(t * 0.9 + 1.2) + 1) / 2;
+        treb = (Math.sin(t * 2.1 + 0.7) + 1) / 2;
+        energy = (bass + mid + treb) / 3;
+      }
+
+      // 1. Digital Fade Background
+      ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+      ctx.fillRect(0, 0, w, h);
+      
+      // 2. Draw Spectrum Circles (The Rings)
+      const circleCount = 8;
+      for (let i = 0; i < circleCount; i++) {
+        const baseRadius = (minDim * 0.04) + (i * minDim * 0.05);
+        const freqAmp = i % 2 === 0 ? mid : treb;
+
+        const currentRadius = baseRadius + (freqAmp * 60); 
+        
+        ctx.beginPath();
+        ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
+        
+        const hue = (t * 50 + i * 20) % 360; 
+        ctx.strokeStyle = `hsl(${hue}, 100%, ${60 + freqAmp * 20}%)`;
+        ctx.lineWidth = 1 + freqAmp * 2.5;
+        ctx.shadowBlur = 10 + freqAmp * 20;
+        ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
+        ctx.stroke();
+      }
+      ctx.shadowBlur = 0;
+
+      // 3. Draw Radial Lines (The Wireframe)
+      const lineCount = 64;
+      for (let i = 0; i < lineCount; i++) {
+        const angle = (i * (Math.PI * 2) / lineCount) + (t * 0.05 * treb);
+        const maxDist = minDim * 0.75;
+        const lineLength = maxDist + (bass * 100); 
+
+        const x2 = cx + Math.cos(angle) * lineLength;
+        const y2 = cy + Math.sin(angle) * lineLength;
+        
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(x2, y2);
+        
+        const lineHue = (i * 5 + t * 50) % 360; 
+        ctx.strokeStyle = `hsla(${lineHue}, 100%, 60%, ${0.2 + energy * 0.6})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+      
+      // 4. Central Core Pulse (The Dot)
+      const coreRadius = 5 + bass * 50; 
+      const coreGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
+      coreGradient.addColorStop(0, `rgba(255, 255, 255, ${0.8 + bass * 0.2})`);
+      coreGradient.addColorStop(0.5, `rgba(255, 0, 102, ${0.5 + bass * 0.5})`);
+      coreGradient.addColorStop(1, "rgba(255, 0, 102, 0)");
+
+      ctx.fillStyle = coreGradient;
+      ctx.beginPath();
+      ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 5. Scanlines Effect
+      ctx.save();
+      ctx.globalAlpha = 0.13;
+      ctx.fillStyle = "rgba(0, 0, 0, 1)";
+      const gap = 3;
+      const off = (t * 35) % gap; 
+      for (let y = off; y < h; y += gap) {
+        ctx.fillRect(0, y, w, 1);
+      }
+      ctx.restore();
+
+      requestAnimationFrame(drawFrame);
+    }
+    requestAnimationFrame(drawFrame);
+
+
+    // Play/Pause Button Logic
+    kick.addEventListener("click", () => {
+      if (audio.paused) {
+        audio.play().then(() => {
+          isPlaying = true;
+          setStatus("playing");
+          initAnalyser();
+          if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+        }).catch(() => setStatus("tap the player above to start"));
+      } else {
+        audio.pause();
+        isPlaying = false;
+        setStatus("paused");
+      }
+    });
+
+    audio.addEventListener("play", () => {
+      isPlaying = true;
+      setStatus("playing");
+      initAnalyser();
+      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    });
+
+    audio.addEventListener("pause", () => {
+      isPlaying = false;
+      setStatus("paused");
+    });
+
+    audio.addEventListener("error", () => setStatus("audio error (stream offline?)"));
+  });
+  </script>
+
+</body>
+</html>
