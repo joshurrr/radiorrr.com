@@ -24,10 +24,14 @@
       width: 100%;
       padding: 2.5rem 1.75rem;
       border-radius: 18px;
-      /* Sunset/Gradient Background */
-      background: radial-gradient(circle at top, #4338ca 0, #050710 55%);
-      box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+      /* Aesthetic Update: Simpler dark background, new multi-color neon box-shadow */
+      background: #0d0e1f;
+      border: 1px solid #1f224b;
+      box-shadow: 
+        0 0 10px rgba(67, 56, 202, 0.5), 
+        0 0 30px rgba(255, 0, 102, 0.4);
       text-align: center;
+      transition: all 0.3s ease-out; 
     }
     .tagline {
       font-size: 0.95rem;
@@ -41,9 +45,10 @@
       height: 260px;
       border-radius: 14px;
       overflow: hidden;
+      /* Background is now pure black for contrast with bright neon */
       background: #000000; 
       margin-bottom: 0.6rem;
-      /* Restored Neon Border for Aesthetic */
+      /* Aesthetic Update: Neon frame for visualizer */
       border: 2px solid #ff0066; 
       box-shadow: 0 0 15px rgba(255, 0, 102, 0.5);
     }
@@ -67,7 +72,7 @@
       margin: 0.4rem 0 0.4rem;
       font-weight: 600;
       font-size: 1rem;
-      /* Restored Neon Text Glow */
+      /* Aesthetic Update: Neon Text Glow */
       color: #ffccff;
       text-shadow: 
         0 0 4px #ff0066, 
@@ -80,6 +85,7 @@
     audio { width: 100%; margin-top: 0.2rem; }
     .status { display:none; font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.8; }
     
+    /* VIDEO EMBEDS */
     .video-container {
       position: relative;
       width: 100%; padding-bottom: 56.25%;
@@ -98,6 +104,7 @@
       margin: 0 0.4rem;
       transition: color 0.3s, text-shadow 0.3s;
     }
+    /* Aesthetic Update: Neon Hover Effect for Links */
     .links a:hover {
       color: #ff0066;
       text-shadow: 0 0 8px #ff0066;
@@ -181,7 +188,7 @@
   document.addEventListener("DOMContentLoaded", () => {
 
     const titleEl = document.getElementById("streamTitle");
-    const GAIN = 10.0; // <<< THIS IS THE CRITICAL HIGH GAIN VALUE
+    const GAIN = 10.0; // CRITICAL HIGH GAIN VALUE for low-signal streams
 
     function getDayPeriod(hour) {
       if (hour < 12) return "Morning";
@@ -245,7 +252,7 @@
         const AC = window.AudioContext || window.webkitAudioContext;
         audioCtx = new AC();
         analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 1024;
+        analyser.fftSize = 256; 
         dataArray = new Uint8Array(analyser.frequencyBinCount);
         const src = audioCtx.createMediaElementSource(audio);
         src.connect(analyser);
@@ -267,78 +274,115 @@
       const w = canvas.clientWidth;
       const h = canvas.clientHeight;
       const cx = w / 2;
-      const horizon = h * 0.55;
+      const cy = h / 2;
+      const minDim = Math.min(w, h);
 
       let bass = 0.1, mid = 0.1, treb = 0.1, energy = 0.1;
 
       if (analyserEnabled && isPlaying) {
+        // --- VISUALIZER MODE: RESPONSIVE NEON TUNNEL (PLAYING) ---
         analyser.getByteFrequencyData(dataArray);
         const len = dataArray.length;
-        // Apply massive GAIN and cap at 1.0
-        bass = Math.min(1, avgRange(dataArray, 0, len * 0.08) / 255 * GAIN);
-        mid  = Math.min(1, avgRange(dataArray, len * 0.08, len * 0.4) / 255 * GAIN);
-        treb = Math.min(1, avgRange(dataArray, len * 0.4, len) / 255 * GAIN);
-        energy = bass * 1.2 + mid * 0.6 + treb * 0.3; 
+        
+        // Calculate amplified music components
+        bass = Math.min(1, avgRange(dataArray, 0, len * 0.2) / 255 * GAIN);
+        mid  = Math.min(1, avgRange(dataArray, len * 0.2, len * 0.6) / 255 * GAIN);
+        treb = Math.min(1, avgRange(dataArray, len * 0.6, len) / 255 * GAIN);
+        energy = (bass + mid + treb) / 3;
+
       } else {
-        // Paused Mode: Fallback Animation (The look you like)
-        bass = (Math.sin(t * 2.3) + 1) / 2;
-        mid  = (Math.sin(t * 1.4 + 1.2) + 1) / 2;
-        treb = (Math.sin(t * 3.2 + 0.7) + 1) / 2;
+        // --- VISUALIZER MODE: ANIMATED NEON TUNNEL (PAUSED/FALLBACK) ---
+        // This is the cool, time-based animation you love when paused.
+        bass = (Math.sin(t * 1.5) + 1) / 2;
+        mid  = (Math.sin(t * 0.9 + 1.2) + 1) / 2;
+        treb = (Math.sin(t * 2.1 + 0.7) + 1) / 2;
         energy = (bass + mid + treb) / 3;
       }
 
-      // 1. SKY
-      const sky = ctx.createLinearGradient(0, 0, 0, horizon);
-      sky.addColorStop(0, "#090018");
-      sky.addColorStop(0.35, "#3a0060");
-      sky.addColorStop(0.7, "#ff0066");
-      sky.addColorStop(1, "#ff6600");
-      ctx.fillStyle = sky;
-      ctx.fillRect(0, 0, w, horizon);
+      // 1. Digital Fade Background
+      ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+      ctx.fillRect(0, 0, w, h);
+      
+      // 2. Draw Spectrum Circles (The Rings)
+      const circleCount = 8;
+      for (let i = 0; i < circleCount; i++) {
+        const baseRadius = (minDim * 0.04) + (i * minDim * 0.05);
+        // Use live audio data when playing, or time data when paused
+        const freqAmp = analyserEnabled && isPlaying ? 
+            (i % 2 === 0 ? mid : treb) : 
+            (i % 2 === 0 ? mid : treb);
 
-      // 2. STARS
-      const starCount = 90;
-      ctx.fillStyle = "rgba(255,255,255,0.8)";
-      for (let i = 0; i < starCount; i++) {
-        const sx = (i * 73 + (t * 10)) % w;
-        const sy = (i * 53) % (h * 0.4);
-        const size = (i % 7 === 0 ? 1.4 : 0.7);
-        ctx.fillRect(sx, sy, size, size);
+        const currentRadius = baseRadius + (freqAmp * 60); 
+        
+        ctx.beginPath();
+        ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
+        
+        const hue = (t * 50 + i * 20) % 360; 
+        ctx.strokeStyle = `hsl(${hue}, 100%, ${60 + freqAmp * 20}%)`;
+        ctx.lineWidth = 1 + freqAmp * 2.5;
+        ctx.shadowBlur = 10 + freqAmp * 20;
+        ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
+        ctx.stroke();
       }
+      ctx.shadowBlur = 0;
 
-      // 3. SUN/CORE (Bounces based on amplified BASS)
-      const sunRadius = Math.min(w, h) * 0.16;
-      const sunY = horizon - sunRadius * 0.25 - bass * 35; 
-      const g = ctx.createRadialGradient(cx, sunY, sunRadius * 0.1, cx, sunY, sunRadius);
-      g.addColorStop(0, "rgba(255,255,200,0.98)");
-      g.addColorStop(0.4, "rgba(255,180,80,0.96)");
-      g.addColorStop(1, "rgba(255,0,80,0)");
-      ctx.fillStyle = g;
+      // 3. Draw Radial Lines (The Wireframe)
+      const lineCount = 64;
+      for (let i = 0; i < lineCount; i++) {
+        const angle = (i * (Math.PI * 2) / lineCount) + (t * 0.05 * treb);
+        const maxDist = minDim * 0.75;
+        // The length extension bounces with the bass/energy
+        const lineLength = maxDist + (bass * 100); 
+
+        const x2 = cx + Math.cos(angle) * lineLength;
+        const y2 = cy + Math.sin(angle) * lineLength;
+        
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(x2, y2);
+        
+        const lineHue = (i * 5 + t * 50) % 360; 
+        // Opacity bounces with total energy
+        ctx.strokeStyle = `hsla(${lineHue}, 100%, 60%, ${0.2 + energy * 0.6})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+      
+      // 4. Central Core Pulse (The Dot)
+      const coreRadius = 5 + bass * 50; 
+      const coreGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
+      coreGradient.addColorStop(0, `rgba(255, 255, 255, ${0.8 + bass * 0.2})`);
+      coreGradient.addColorStop(0.5, `rgba(255, 0, 102, ${0.5 + bass * 0.5})`);
+      coreGradient.addColorStop(1, "rgba(255, 0, 102, 0)");
+
+      ctx.fillStyle = coreGradient;
       ctx.beginPath();
-      ctx.arc(cx, sunY, sunRadius, 0, Math.PI * 2);
+      ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
       ctx.fill();
 
-      // 4. WATER
-      const waterGrad = ctx.createLinearGradient(0, horizon, 0, h);
-      waterGrad.addColorStop(0, "#150020");
-      waterGrad.addColorStop(0.5, "#05071a");
-      waterGrad.addColorStop(1, "#02030a");
-      ctx.fillStyle = waterGrad;
-      ctx.fillRect(0, horizon, w, h);
+      requestAnimationFrame(drawFrame);
+    }
+    requestAnimationFrame(drawFrame);
 
-      // 5. REFLECTION (Bounces based on amplified ENERGY)
-      const reflectGrad = ctx.createLinearGradient(cx, horizon, cx, h);
-      reflectGrad.addColorStop(0, "rgba(255,120,160,0.7)");
-      reflectGrad.addColorStop(0.4, "rgba(255,80,200,0.35)");
-      reflectGrad.addColorStop(1, "rgba(255,0,150,0)");
-      ctx.fillStyle = reflectGrad;
-      ctx.globalAlpha = 0.55 + energy * 0.45; 
-      const rw = sunRadius * 1.4 + bass * 50; 
-      ctx.beginPath();
-      ctx.moveTo(cx - rw, horizon);
-      ctx.quadraticCurveTo(cx, h * 0.8 + bass * 20, cx + rw, horizon); 
-      ctx.closePath();
-      ctx.fill();
-      ctx.globalAlpha = 1;
+    // Event listeners attached to the native audio player
+    audio.addEventListener("play", () => {
+      isPlaying = true;
+      setStatus("playing");
+      // IMPORTANT: Initializing the audio context requires a user gesture (like hitting play)
+      initAnalyser();
+      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    });
 
-      // 6. RADIAL BARS (The responsive part
+    audio.addEventListener("pause", () => {
+      isPlaying = false;
+      setStatus("paused");
+    });
+
+    audio.addEventListener("error", () => setStatus("audio error (stream offline?)"));
+  });
+  </script>
+
+</body>
+</html>
