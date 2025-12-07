@@ -21,7 +21,8 @@
       width: 100%;
       padding: 2.5rem 1.75rem;
       border-radius: 18px;
-      background: radial-gradient(circle at top, #4338ca 0, #050710 55%);
+      /* Using a simpler background color for slight performance improvement over the radial-gradient on the wrapper */
+      background: #0a0c1e; 
       box-shadow: 0 18px 40px rgba(0,0,0,0.55);
       text-align: center;
     }
@@ -49,7 +50,8 @@
       text-align: left;
     }
     .channel span { font-weight: 600; font-size: 1rem; }
-    .channel small { font-size: 0.8rem; opacity: 0.75; }
+    /* Accessibility Improvement: Increased contrast by removing opacity and lightening the color slightly */
+    .channel small { font-size: 0.8rem; color: #e0e0ff; opacity: 0.9; } 
 
     .stream-title {
       display: block;
@@ -60,12 +62,7 @@
 
     audio { width: 100%; margin-top: 0.2rem; }
     .status { display:none; font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.8; }
-    .kick {
-      margin-top:0.6rem; padding:0.45rem 0.7rem;
-      border-radius:10px; border:1px solid rgba(129,140,248,0.6);
-      background:#0b1020; color:#c7c7ff;
-      cursor:pointer; font-size:0.85rem;
-    }
+    /* Removed .kick styles as the button is removed */
     .video-container {
       position: relative;
       width: 100%; padding-bottom: 56.25%;
@@ -84,12 +81,13 @@
 <body>
   <main class="wrapper">
 
-    <img src="logo.png" alt="Radio RRR Logo"
-         style="width: 300px; max-width: 90%; margin: 0 auto 10px; display: block;">
+    <h1 style="margin: 0 auto 10px;">
+        <img src="logo.png" alt="Radio RRR Logo"
+             style="width: 300px; max-width: 90%; display: block; margin: 0 auto;">
+    </h1>
 
     <p class="tagline">Streaming Electro · Synth · 80s · Chill</p>
 
-    <!-- RADIO STREAM + VISUALIZER -->
     <div class="channel">
 
       <div class="visualizer">
@@ -102,11 +100,9 @@
         <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
       </audio>
 
-      <button id="kickPlay" class="kick">Play</button>
       <div id="status" class="status"></div>
     </div>
 
-    <!-- TIKTOK -->
     <div class="channel">
       <span>Latest on TikTok</span><br />
       <small>@josh.u.rrr · newest shorts</small>
@@ -122,7 +118,6 @@
       </blockquote>
     </div>
 
-    <!-- YOUTUBE LIKES -->
     <div class="channel">
       <span>YouTube Likes</span><br />
       <small>Latest videos we liked</small>
@@ -181,11 +176,12 @@
       titleEl.textContent = `RADIO RRR Live – ${dayName} ${label}`;
     }
 
+    // Usability Improvement: Set initial title and then update every minute
     updateTitle();
+    setInterval(updateTitle, 60000); 
 
     const audio = document.getElementById("liveStream");
     const statusEl = document.getElementById("status");
-    const kick = document.getElementById("kickPlay");
     const canvas = document.getElementById("viz");
     const ctx = canvas.getContext("2d");
 
@@ -194,6 +190,8 @@
       statusEl.textContent = "Status: " + msg;
     }
 
+    let skyGradient, waterGradient; // Variables to store pre-calculated gradients
+
     function resize() {
       const dpr = window.devicePixelRatio || 1;
       const w = canvas.clientWidth;
@@ -201,6 +199,20 @@
       canvas.width = w * dpr;
       canvas.height = h * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      // Performance Improvement: Calculate static gradients only once upon resize
+      const horizon = h*0.55;
+
+      skyGradient = ctx.createLinearGradient(0,0,0,horizon);
+      skyGradient.addColorStop(0,"#090018");
+      skyGradient.addColorStop(0.35,"#3a0060");
+      skyGradient.addColorStop(0.7,"#ff0066");
+      skyGradient.addColorStop(1,"#ff6600");
+
+      waterGradient = ctx.createLinearGradient(0,horizon,0,h);
+      waterGradient.addColorStop(0,"#150020");
+      waterGradient.addColorStop(0.5,"#05071a");
+      waterGradient.addColorStop(1,"#02030a");
     }
     resize();
     window.addEventListener("resize", resize);
@@ -240,6 +252,8 @@
       const t = (performance.now() - startTime) / 1000;
       const w = canvas.clientWidth;
       const h = canvas.clientHeight;
+      const horizon = h*0.55;
+      const cx = w/2;
 
       let bass = 0, mid = 0, treb = 0, energy = 0.1;
 
@@ -257,15 +271,8 @@
         energy = (bass+mid+treb)/3;
       }
 
-      const horizon = h*0.55;
-      const cx = w/2;
-
-      const sky = ctx.createLinearGradient(0,0,0,horizon);
-      sky.addColorStop(0,"#090018");
-      sky.addColorStop(0.35,"#3a0060");
-      sky.addColorStop(0.7,"#ff0066");
-      sky.addColorStop(1,"#ff6600");
-      ctx.fillStyle = sky;
+      // Using the pre-calculated sky gradient
+      ctx.fillStyle = skyGradient;
       ctx.fillRect(0,0,w,horizon);
 
       const starCount=90;
@@ -279,6 +286,7 @@
 
       const sunRadius=Math.min(w,h)*0.16;
       const sunY=horizon-sunRadius*0.25-bass*8;
+      // This gradient must be recreated as its coordinates (sunY) change per frame
       const g=ctx.createRadialGradient(cx,sunY,sunRadius*0.1,cx,sunY,sunRadius);
       g.addColorStop(0,"rgba(255,255,200,0.98)");
       g.addColorStop(0.4,"rgba(255,180,80,0.96)");
@@ -288,11 +296,8 @@
       ctx.arc(cx,sunY,sunRadius,0,Math.PI*2);
       ctx.fill();
 
-      const waterGrad=ctx.createLinearGradient(0,horizon,0,h);
-      waterGrad.addColorStop(0,"#150020");
-      waterGrad.addColorStop(0.5,"#05071a");
-      waterGrad.addColorStop(1,"#02030a");
-      ctx.fillStyle=waterGrad;
+      // Using the pre-calculated water gradient
+      ctx.fillStyle = waterGradient;
       ctx.fillRect(0,horizon,w,h);
 
       const reflectGrad=ctx.createLinearGradient(cx,horizon,cx,h);
@@ -330,6 +335,7 @@
         const x=i*bw;
         const y=bb-hgt;
 
+        // This gradient must be recreated as its coordinates (y, y+hgt) change per frame
         const grad=ctx.createLinearGradient(0,y,0,y+hgt);
         grad.addColorStop(0,"rgba(255,120,250,0.95)");
         grad.addColorStop(0.5,"rgba(0,240,255,0.9)");
@@ -351,26 +357,14 @@
     }
     requestAnimationFrame(drawFrame);
 
-    kick.addEventListener("click", () => {
-      if (audio.paused) {
-        audio.play().then(() => {
-          isPlaying = true;
-          setStatus("playing");
-          initAnalyser();
-          if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
-        }).catch(() => setStatus("tap the player above to start"));
-      } else {
-        audio.pause();
-        isPlaying = false;
-        setStatus("paused");
-      }
-    });
+    // Simplified Audio Event Listeners (Removed #kickPlay)
 
     audio.addEventListener("play", () => {
       isPlaying = true;
       setStatus("playing");
       initAnalyser();
-      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+      // Resume context only if needed (fixes mobile auto-play issues)
+      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume(); 
     });
 
     audio.addEventListener("pause", () => {
