@@ -189,7 +189,7 @@
   document.addEventListener("DOMContentLoaded", () => {
 
     const titleEl = document.getElementById("streamTitle");
-    const GAIN = 5.0; // FIX: Increased gain significantly for stronger reaction
+    const GAIN = 5.0; // High gain for low-signal streams
 
     function getDayPeriod(hour) {
       if (hour < 12) return "Morning";
@@ -253,7 +253,7 @@
         const AC = window.AudioContext || window.webkitAudioContext;
         audioCtx = new AC();
         analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 1024;
+        analyser.fftSize = 256; // Smaller FFT size is better for responsive bars
         dataArray = new Uint8Array(analyser.frequencyBinCount);
         const src = audioCtx.createMediaElementSource(audio);
         src.connect(analyser);
@@ -270,97 +270,148 @@
 
     let startTime = performance.now();
 
-    // 🚀 CORE SPECTRUM TUNNEL VISUALIZER 🚀
     function drawFrame() {
       const t = (performance.now() - startTime) / 1000;
       const w = canvas.clientWidth;
       const h = canvas.clientHeight;
       const cx = w / 2;
       const cy = h / 2;
-      const maxDim = Math.max(w, h);
       const minDim = Math.min(w, h);
 
       let bass = 0.1, mid = 0.1, treb = 0.1, energy = 0.1;
 
       if (analyserEnabled && isPlaying) {
+        // --- VISUALIZER MODE: RADIAL BARS (PLAYING) ---
         analyser.getByteFrequencyData(dataArray);
         const len = dataArray.length;
-        // Amplify the music data for visible movement and limit to 1
-        bass = Math.min(1, avgRange(dataArray, 0, len * 0.08) / 255 * GAIN);
-        mid  = Math.min(1, avgRange(dataArray, len * 0.08, len * 0.4) / 255 * GAIN);
-        treb = Math.min(1, avgRange(dataArray, len * 0.4, len) / 255 * GAIN);
+        // Calculate amplified music components
+        bass = Math.min(1, avgRange(dataArray, 0, len * 0.2) / 255 * GAIN);
+        mid  = Math.min(1, avgRange(dataArray, len * 0.2, len * 0.6) / 255 * GAIN);
+        treb = Math.min(1, avgRange(dataArray, len * 0.6, len) / 255 * GAIN);
         energy = (bass + mid + treb) / 3;
+
+        // 1. Digital Fade Background
+        ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+        ctx.fillRect(0, 0, w, h);
+
+        const barCount = 128; // Lots of bars for a smooth circle
+        const baseRadius = minDim * 0.2;
+        const maxBarHeight = minDim * 0.3;
+        const slice = (Math.PI * 2) / barCount;
+
+        ctx.save();
+        ctx.translate(cx, cy);
+
+        for (let i = 0; i < barCount; i++) {
+            // Map the bar index to the frequency data index
+            const dataIndex = Math.floor(i * (dataArray.length / barCount));
+            const amp = dataArray[dataIndex] / 255;
+            
+            // Bar height driven by amplified data
+            const hgt = (amp * maxBarHeight) * (1 + bass * 0.5); 
+
+            const angle = i * slice;
+            
+            ctx.rotate(slice);
+            
+            // Dynamic Color Shift
+            const hue = (angle / (Math.PI * 2) * 360) + (t * 10);
+            
+            const gradient = ctx.createLinearGradient(0, baseRadius, 0, baseRadius + hgt);
+            gradient.addColorStop(0, `hsla(${hue}, 100%, 70%, 1)`);
+            gradient.addColorStop(0.5, `hsla(${hue + 60}, 100%, 50%, 0.8)`);
+            gradient.addColorStop(1, `hsla(${hue + 120}, 100%, 30%, 0.5)`);
+
+            ctx.fillStyle = gradient;
+            ctx.shadowBlur = 10 + amp * 10;
+            ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
+            
+            ctx.fillRect(-1.5, baseRadius, 3, hgt); // Draw the bar (3px wide)
+        }
+        
+        ctx.restore();
+        ctx.shadowBlur = 0;
+
+        // Central Core Pulse (Bass Reaction)
+        const coreRadius = 5 + bass * 45; 
+        const coreGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
+        coreGradient.addColorStop(0, `rgba(255, 255, 255, ${0.8 + bass * 0.2})`);
+        coreGradient.addColorStop(0.5, `rgba(255, 0, 102, ${0.5 + bass * 0.5})`);
+        coreGradient.addColorStop(1, "rgba(255, 0, 102, 0)");
+
+        ctx.fillStyle = coreGradient;
+        ctx.beginPath();
+        ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
+        ctx.fill();
+
       } else {
-        // Fallback animation logic (used when paused/not initialized)
+        // --- VISUALIZER MODE: CORE SPECTRUM TUNNEL (PAUSED/FALLBACK) ---
+        // This is the animation you preferred when paused, driven by time (t).
+        
         bass = (Math.sin(t * 1.5) + 1) / 2;
         mid  = (Math.sin(t * 0.9 + 1.2) + 1) / 2;
         treb = (Math.sin(t * 2.1 + 0.7) + 1) / 2;
         energy = (bass + mid + treb) / 3;
-      }
 
-      // 1. Digital Fade Background
-      ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
-      ctx.fillRect(0, 0, w, h);
-      ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
-      ctx.fillRect(0, 0, w, h);
-      
-      // 2. Draw Spectrum Circles
-      const circleCount = 8; // Increased circle count
-      for (let i = 0; i < circleCount; i++) {
-        const baseRadius = (minDim * 0.04) + (i * minDim * 0.05);
-        const freqAmp = (i % 2 === 0 ? mid : treb);
+        // 1. Digital Fade Background
+        ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+        ctx.fillRect(0, 0, w, h);
         
-        // Use the amplified freqAmp to drive the size (higher multiplier)
-        const currentRadius = baseRadius + (freqAmp * 60); 
+        // 2. Draw Spectrum Circles
+        const circleCount = 8;
+        for (let i = 0; i < circleCount; i++) {
+          const baseRadius = (minDim * 0.04) + (i * minDim * 0.05);
+          const freqAmp = (i % 2 === 0 ? mid : treb);
+          const currentRadius = baseRadius + (freqAmp * 60); 
+          
+          ctx.beginPath();
+          ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
+          
+          const hue = (t * 50 + i * 20) % 360; 
+          ctx.strokeStyle = `hsl(${hue}, 100%, ${60 + freqAmp * 20}%)`;
+          ctx.lineWidth = 1 + freqAmp * 2.5;
+          ctx.shadowBlur = 10 + freqAmp * 20;
+          ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
+          ctx.stroke();
+        }
+        ctx.shadowBlur = 0;
+
+        // 3. Draw Radial Lines (Wireframe Tunnel)
+        const lineCount = 64;
+        for (let i = 0; i < lineCount; i++) {
+          const angle = (i * (Math.PI * 2) / lineCount) + (t * 0.05 * treb);
+          const maxDist = minDim * 0.75;
+          const lineLength = maxDist + (bass * 100); 
+
+          const x2 = cx + Math.cos(angle) * lineLength;
+          const y2 = cy + Math.sin(angle) * lineLength;
+          
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(x2, y2);
+          
+          const lineHue = (i * 5 + t * 50) % 360; 
+          ctx.strokeStyle = `hsla(${lineHue}, 100%, 60%, ${0.2 + energy * 0.6})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
         
+        // 4. Central Core Pulse (Bass Reaction)
+        const coreRadius = 5 + bass * 50; 
+        const coreGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
+        coreGradient.addColorStop(0, `rgba(255, 255, 255, ${0.8 + bass * 0.2})`);
+        coreGradient.addColorStop(0.5, `rgba(255, 0, 102, ${0.5 + bass * 0.5})`);
+        coreGradient.addColorStop(1, "rgba(255, 0, 102, 0)");
+
+        ctx.fillStyle = coreGradient;
         ctx.beginPath();
-        ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
-        
-        // Dynamic color based on time and frequency
-        const hue = (t * 50 + i * 20) % 360; 
-        ctx.strokeStyle = `hsl(${hue}, 100%, ${60 + freqAmp * 20}%)`;
-        ctx.lineWidth = 1 + freqAmp * 2.5; // Increased line width sensitivity
-        ctx.shadowBlur = 10 + freqAmp * 20; // Increased blur for better neon glow
-        ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
-        ctx.stroke();
+        ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
+        ctx.fill();
       }
-      ctx.shadowBlur = 0; // Reset shadow
-
-      // 3. Draw Radial Lines (Wireframe Tunnel)
-      const lineCount = 64;
-      for (let i = 0; i < lineCount; i++) {
-        const angle = (i * (Math.PI * 2) / lineCount) + (t * 0.05 * treb);
-        const maxDist = maxDim * 0.75; // Increased max distance
-        
-        // Line length driven by Bass (higher multiplier)
-        const lineLength = maxDist + (bass * 100); 
-
-        const x2 = cx + Math.cos(angle) * lineLength;
-        const y2 = cy + Math.sin(angle) * lineLength;
-        
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(x2, y2);
-        
-        const lineHue = (i * 5 + t * 50) % 360; 
-        ctx.strokeStyle = `hsla(${lineHue}, 100%, 60%, ${0.2 + energy * 0.6})`;
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      }
-      
-      // 4. Central Core Pulse (Bass Reaction)
-      // Use amplified bass for core size (higher multiplier)
-      const coreRadius = 5 + bass * 50; 
-      const coreGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
-      coreGradient.addColorStop(0, `rgba(255, 255, 255, ${0.8 + bass * 0.2})`);
-      coreGradient.addColorStop(0.5, `rgba(255, 0, 102, ${0.5 + bass * 0.5})`);
-      coreGradient.addColorStop(1, "rgba(255, 0, 102, 0)");
-
-      ctx.fillStyle = coreGradient;
-      ctx.beginPath();
-      ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
-      ctx.fill();
-
 
       requestAnimationFrame(drawFrame);
     }
