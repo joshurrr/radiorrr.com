@@ -46,7 +46,7 @@
       margin: 0.5rem 0 1.25rem;
     }
 
-    /* NEW: Navigation Tabs */
+    /* NAVIGATION TABS */
     .nav-tabs {
       display: flex;
       justify-content: center;
@@ -131,7 +131,7 @@
       box-shadow: 0 0 12px rgba(255, 0, 102, 0.7);
     }
 
-    /* NEW: Events List Styling */
+    /* Events List Styling */
     .events-list {
       text-align: left;
       margin-top: 1rem;
@@ -200,6 +200,7 @@
     <nav class="nav-tabs">
         <a href="#stream-section" class="active">Stream</a>
         <a href="#events-section">Events</a>
+        <a href="#follow-section">Follow</a>
     </nav>
     
     <div id="stream-section">
@@ -218,7 +219,10 @@
         <button id="kickPlay" class="kick">Play</button>
         <div id="status" class="status"></div>
       </div>
-
+    </div>
+    
+    <div id="follow-section">
+        
       <div class="channel">
         <span>Latest on TikTok</span><br />
         <small>@josh.u.rrr · newest shorts</small>
@@ -295,9 +299,8 @@
   document.addEventListener("DOMContentLoaded", () => {
 
     const titleEl = document.getElementById("streamTitle");
-    const streamSection = document.getElementById('stream-section');
-    const eventsSection = document.getElementById('events-section');
     const navLinks = document.querySelectorAll('.nav-tabs a');
+    const GAIN = 10.0; 
 
     // SCROLLING AND NAVIGATION LOGIC
     navLinks.forEach(link => {
@@ -352,7 +355,7 @@
     const kick = document.getElementById("kickPlay");
     const canvas = document.getElementById("viz");
     const ctx = canvas.getContext("2d");
-    const GAIN = 10.0; 
+    
 
     function setStatus(msg) {
       statusEl.style.display = "block";
@@ -401,7 +404,7 @@
 
     let startTime = performance.now();
 
-    // WARP TUNNEL VISUALIZER (RESTORED)
+    // WARP TUNNEL VISUALIZER 
     function drawFrame() {
       const t = (performance.now() - startTime) / 1000;
       const w = canvas.clientWidth;
