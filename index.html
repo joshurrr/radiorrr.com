@@ -24,7 +24,7 @@
       width: 100%;
       padding: 2.5rem 1.75rem;
       border-radius: 18px;
-      /* Aesthetic Update: Simpler background, new multi-color neon box-shadow */
+      /* Aesthetic Update: Neon styling restored */
       background: #0d0e1f;
       border: 1px solid #1f224b;
       box-shadow: 
@@ -189,7 +189,7 @@
   document.addEventListener("DOMContentLoaded", () => {
 
     const titleEl = document.getElementById("streamTitle");
-    const GAIN = 5.0; // High gain for low-signal streams
+    const GAIN = 8.0; // MASSIVE GAIN INCREASE for stronger visual reaction
 
     function getDayPeriod(hour) {
       if (hour < 12) return "Morning";
@@ -270,17 +270,6 @@
 
     let startTime = performance.now();
 
-    // Store star positions for the 3D effect
-    const starCount = 200;
-    const stars = [];
-    for (let i = 0; i < starCount; i++) {
-        stars.push({
-            x: Math.random() * 2 - 1, // -1 to 1
-            y: Math.random() * 2 - 1, // -1 to 1
-            z: Math.random() * 1000 // 0 to 1000 (distance)
-        });
-    }
-
     function drawFrame() {
       const t = (performance.now() - startTime) / 1000;
       const w = canvas.clientWidth;
@@ -288,26 +277,68 @@
       const cx = w / 2;
       const cy = h / 2;
       const minDim = Math.min(w, h);
-      const perspective = w * 0.5; // Controls the 3D effect depth
 
       let bass = 0.1, mid = 0.1, treb = 0.1, energy = 0.1;
 
       if (analyserEnabled && isPlaying) {
-        // --- VISUALIZER MODE: PULSING STARFIELD GRID (PLAYING) ---
+        // --- VISUALIZER MODE: RADIAL BARS (PLAYING) ---
         analyser.getByteFrequencyData(dataArray);
         const len = dataArray.length;
+        
         // Calculate amplified music components
+        // We use Math.min(1, ...) to cap the value at 1.0 even with high gain, 
+        // preventing values from going out of control.
         bass = Math.min(1, avgRange(dataArray, 0, len * 0.2) / 255 * GAIN);
         mid  = Math.min(1, avgRange(dataArray, len * 0.2, len * 0.6) / 255 * GAIN);
         treb = Math.min(1, avgRange(dataArray, len * 0.6, len) / 255 * GAIN);
         energy = (bass + mid + treb) / 3;
 
         // 1. Digital Fade Background
-        ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
+        ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
         ctx.fillRect(0, 0, w, h);
 
-        // 2. Core Pulse
-        const coreRadius = 5 + bass * 45; 
+        const barCount = 128;
+        const baseRadius = minDim * 0.2;
+        const maxBarHeight = minDim * 0.3;
+        const slice = (Math.PI * 2) / barCount;
+
+        ctx.save();
+        ctx.translate(cx, cy);
+
+        for (let i = 0; i < barCount; i++) {
+            const dataIndex = Math.floor(i * (dataArray.length / barCount));
+            // Use GAIN multiplier directly on the data point for max reaction
+            const amp = Math.min(1, (dataArray[dataIndex] / 255) * GAIN * 0.8); 
+            
+            // Bar height driven by amplified data (guaranteed to fill if amp > 0)
+            const hgt = (amp * maxBarHeight) * (1 + bass * 0.5); 
+
+            const angle = i * slice;
+            
+            ctx.rotate(slice);
+            
+            // Dynamic Color Shift
+            const hue = (angle / (Math.PI * 2) * 360) + (t * 10);
+            
+            const gradient = ctx.createLinearGradient(0, baseRadius, 0, baseRadius + hgt);
+            gradient.addColorStop(0, `hsla(${hue}, 100%, 70%, 1)`);
+            gradient.addColorStop(0.5, `hsla(${hue + 60}, 100%, 50%, 0.8)`);
+            gradient.addColorStop(1, `hsla(${hue + 120}, 100%, 30%, 0.5)`);
+
+            ctx.fillStyle = gradient;
+            ctx.shadowBlur = 10 + amp * 20; // Increased glow
+            ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
+            
+            ctx.fillRect(-1.5, baseRadius, 3, hgt); 
+        }
+        
+        ctx.restore();
+        ctx.shadowBlur = 0;
+
+        // Central Core Pulse (Bass Reaction)
+        const coreRadius = 5 + bass * 60; // Increased pulse size
         const coreGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
         coreGradient.addColorStop(0, `rgba(255, 255, 255, ${0.8 + bass * 0.2})`);
         coreGradient.addColorStop(0.5, `rgba(255, 0, 102, ${0.5 + bass * 0.5})`);
@@ -318,42 +349,10 @@
         ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
         ctx.fill();
 
-        // 3. 3D Starfield Grid
-        // Speed and perspective driven by audio data
-        const speed = 10 + (energy * 15); 
-        const hueShift = t * 30;
-
-        for (let i = 0; i < starCount; i++) {
-            const star = stars[i];
-
-            // Move the star closer (Z-axis movement)
-            star.z -= speed;
-
-            // Loop star when it passes the camera (z <= 0)
-            if (star.z <= 0) {
-                star.z += 1000;
-                star.x = Math.random() * 2 - 1;
-                star.y = Math.random() * 2 - 1;
-            }
-
-            // Project 3D coordinates (x, y, z) to 2D screen coordinates (px, py)
-            const scale = perspective / star.z;
-            const px = cx + star.x * scale * w;
-            const py = cy + star.y * scale * h;
-
-            // Size and opacity driven by distance (scale) and energy
-            const size = 1 + scale * 5; 
-            const opacity = 0.1 + scale * 0.5 + energy * 0.3; 
-            
-            if (px < w && px > 0 && py < h && py > 0) {
-                const hue = (hueShift + i * 5) % 360;
-                ctx.fillStyle = `hsla(${hue}, 100%, 70%, ${opacity})`;
-                ctx.fillRect(px, py, size, size);
-            }
-        }
 
       } else {
         // --- VISUALIZER MODE: CORE SPECTRUM TUNNEL (PAUSED/FALLBACK) ---
+        // This is the animation you preferred when paused, driven by time (t).
         
         bass = (Math.sin(t * 1.5) + 1) / 2;
         mid  = (Math.sin(t * 0.9 + 1.2) + 1) / 2;
@@ -377,7 +376,7 @@
           ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
           
           const hue = (t * 50 + i * 20) % 360; 
-          ctx.strokeStyle = `hsl(${hue}, 100%, ${60 + freqAmp * 20}%)`;
+          ctx.strokeStyle = `hsl(${hue}, 100%, 60%, 1)`; // Solid color for paused state
           ctx.lineWidth = 1 + freqAmp * 2.5;
           ctx.shadowBlur = 10 + freqAmp * 20;
           ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
