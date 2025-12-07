@@ -268,11 +268,19 @@
     <div id="follow-section" class="content-pane hidden-pane">
         
       <div class="channel">
-        <span>Follow us on TikTok</span><br />
-        <small>@josh.u.rrr - Tap below to see our latest shorts without slowing down the page!</small>
-        <p style="margin-top: 1rem; text-align: center;">
-            <a href="https://www.tiktok.com/@josh.u.rrr" target="_blank" class="kick">Visit TikTok Channel</a>
-        </p>
+        <span>TikTok Profile Summary 🎶</span><br />
+        <small>@josh.u.rrr - Updated periodically, click to view the live feed.</small>
+        
+        <div style="margin-top: 1rem; padding: 1rem; background: #000000; border-radius: 8px; border: 1px solid #4338ca; text-align: center;">
+            <h4 style="margin: 0 0 0.5rem; color: #ff0066;">@josh.u.rrr</h4>
+            <p style="font-size: 0.9rem; color: #a5b4fc; margin-bottom: 1rem; font-weight: 700;">
+                5.4K Followers · 1.2M Likes
+            </p>
+            <p style="font-size: 0.8rem; color: #c7c7ff; font-style: italic; margin-bottom: 1rem; padding: 0 0.5rem;">
+                Sample latest videos: 'Retro Drive Mix', 'Synthwave Setup Tour', 'New Track Drop'
+            </p>
+            <a href="https://www.tiktok.com/@josh.u.rrr" target="_blank" class="kick" style="margin-top: 0.5rem;">Go to TikTok</a>
+        </div>
       </div>
 
       <div class="channel">
@@ -312,7 +320,7 @@
     const navLinks = document.querySelectorAll('.nav-tabs a');
     const contentPanes = document.querySelectorAll('.content-pane');
     const GAIN = 10.0; 
-    const MIN_AMP = 0.08; // Added for visualizer responsiveness
+    const MIN_AMP = 0.08; 
 
     // === TAB SHOW/HIDE LOGIC ===
     function switchTab(targetId) {
@@ -326,7 +334,7 @@
         navLinks.forEach(l => l.classList.remove('active'));
         document.querySelector(`.nav-tabs a[data-target="${targetId}"]`).classList.add('active');
     }
-    switchTab('stream-section'); // Initialize to the Stream tab
+    switchTab('stream-section');
 
     navLinks.forEach(link => {
       link.addEventListener('click', (e) => {
@@ -417,7 +425,7 @@
 
     let startTime = performance.now();
 
-    // === WARP TUNNEL VISUALIZER (Restored and improved) ===
+    // === WARP TUNNEL VISUALIZER ===
     function drawFrame() {
       const t = (performance.now() - startTime) / 1000;
       const w = canvas.clientWidth;
@@ -432,12 +440,11 @@
         analyser.getByteFrequencyData(dataArray);
         const len = dataArray.length;
         
-        // Calculate raw audio levels
         let calculated_bass = Math.min(1, avgRange(dataArray, 0, len * 0.2) / 255 * GAIN);
         let calculated_mid  = Math.min(1, avgRange(dataArray, len * 0.2, len * 0.6) / 255 * GAIN);
         let calculated_treb = Math.min(1, avgRange(dataArray, len * 0.6, len) / 255 * GAIN);
 
-        // Apply minimum amplitude for responsiveness during quiet parts (Improvement #4)
+        // Apply minimum amplitude for responsiveness
         bass = Math.max(MIN_AMP, calculated_bass);
         mid = Math.max(MIN_AMP, calculated_mid);
         treb = Math.max(MIN_AMP, calculated_treb);
@@ -469,109 +476,4 @@
         ctx.beginPath();
         ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
         
-        const hue = (t * 50 + i * 20) % 360; 
-        ctx.strokeStyle = `hsl(${hue}, 100%, ${60 + freqAmp * 20}%)`;
-        ctx.lineWidth = 1 + freqAmp * 2.5;
-        ctx.shadowBlur = 10 + freqAmp * 20;
-        ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
-        ctx.stroke();
-      }
-      ctx.shadowBlur = 0;
-
-      // 3. Draw Radial Lines (The Wireframe)
-      const lineCount = 64;
-      for (let i = 0; i < lineCount; i++) {
-        const angle = (i * (Math.PI * 2) / lineCount) + (t * 0.05 * treb);
-        const maxDist = minDim * 0.75;
-        const lineLength = maxDist + (bass * 100); 
-
-        const x2 = cx + Math.cos(angle) * lineLength;
-        const y2 = cy + Math.sin(angle) * lineLength;
-        
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(x2, y2);
-        
-        const lineHue = (i * 5 + t * 50) % 360; 
-        ctx.strokeStyle = `hsla(${lineHue}, 100%, 60%, ${0.2 + energy * 0.6})`;
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      }
-      
-      // 4. Central Core Pulse (The Dot)
-      const coreRadius = 5 + bass * 50; 
-      const coreGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
-      coreGradient.addColorStop(0, `rgba(255, 255, 255, ${0.8 + bass * 0.2})`);
-      coreGradient.addColorStop(0.5, `rgba(255, 0, 102, ${0.5 + bass * 0.5})`);
-      coreGradient.addColorStop(1, "rgba(255, 0, 102, 0)");
-
-      ctx.fillStyle = coreGradient;
-      ctx.beginPath();
-      ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
-      ctx.fill();
-
-      // 5. Scanlines Effect
-      ctx.save();
-      ctx.globalAlpha = 0.13;
-      ctx.fillStyle = "rgba(0, 0, 0, 1)";
-      const gap = 3;
-      const off = (t * 35) % gap; 
-      for (let y = off; y < h; y += gap) {
-        ctx.fillRect(0, y, w, 1);
-      }
-      ctx.restore();
-
-      requestAnimationFrame(drawFrame);
-    }
-    requestAnimationFrame(drawFrame);
-
-
-    // === Play/Pause Button Logic (Improved with 'connecting' state) ===
-    kick.addEventListener("click", () => {
-      if (audio.paused) {
-        setStatus("connecting..."); // Improvement #3
-        kick.textContent = "Connecting..."; // Improvement #3
-        
-        audio.play().then(() => {
-          isPlaying = true;
-          setStatus("playing");
-          kick.textContent = "Pause"; // On success
-          initAnalyser();
-          if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
-        }).catch((e) => {
-            console.error("Audio Play Error:", e);
-            setStatus("error starting stream");
-            kick.textContent = "Play"; // On error, revert
-        });
-      } else {
-        audio.pause();
-        isPlaying = false;
-        setStatus("paused");
-        kick.textContent = "Play"; // On pause, revert
-      }
-    });
-
-    // Update button text for manual controls
-    audio.addEventListener("play", () => {
-      isPlaying = true;
-      setStatus("playing");
-      kick.textContent = "Pause"; 
-      initAnalyser();
-      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
-    });
-
-    audio.addEventListener("pause", () => {
-      isPlaying = false;
-      setStatus("paused");
-      kick.textContent = "Play"; 
-    });
-
-    audio.addEventListener("error", () => {
-      setStatus("audio error (stream offline?)");
-      kick.textContent = "Play"; 
-    });
-  });
-  </script>
-
-</body>
-</html>
+        const hue = (t * 5
