@@ -116,10 +116,6 @@
       opacity: 0.9;
       margin-bottom: 0.6rem;
     }
-    .hero-sub span {
-      color: #a5b4fc;
-      font-weight: 600;
-    }
     .hero-now-title {
       font-size: 0.9rem;
       color: #c7d2fe;
@@ -130,7 +126,7 @@
       font-weight: 700;
     }
 
-    /* NAVIGATION TABS */
+    /* NAVIGATION TABS (with block/pill look) */
     .nav-tabs {
       display: flex;
       justify-content: center;
@@ -158,7 +154,12 @@
       box-shadow:
         0 0 8px rgba(15,23,42,0.8);
       text-shadow: 0 0 4px rgba(67, 56, 202, 0.6);
-      transition: transform 0.15s ease, box-shadow 0.2s ease, color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+      transition:
+        transform 0.15s ease,
+        box-shadow 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
     }
     .nav-tabs a:hover {
       transform: translateY(-1px);
@@ -179,14 +180,8 @@
       color: #ffffff;
     }
 
-    /* CONTENT PANE STYLING */
-    .content-pane {
-      width: 100%;
-      transition: opacity 0.3s ease-in-out;
-    }
-    .hidden-pane {
-      display: none;
-    }
+    .content-pane { width: 100%; transition: opacity 0.3s ease-in-out; }
+    .hidden-pane { display: none; }
 
     /* VISUALIZER */
     .visualizer {
@@ -213,7 +208,6 @@
     .channel span { font-weight: 600; font-size: 1rem; }
     .channel small { font-size: 0.8rem; color: #e0e0ff; opacity: 0.9; }
 
-    /* STREAM TITLE */
     .stream-title {
       display: block;
       margin: 0.4rem 0 0.4rem;
@@ -224,10 +218,8 @@
         0 0 4px #ff0066,
         0 0 10px #4338ca;
       letter-spacing: 0.1em;
-      transition: all 0.3s;
     }
 
-    /* AUDIO / STATUS / PLAY BUTTON */
     audio { width: 100%; margin-top: 0.2rem; }
     .status { display:none; font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.8; }
     .kick {
@@ -245,7 +237,6 @@
       box-shadow: 0 0 12px rgba(255, 0, 102, 0.7);
     }
 
-    /* Events / Schedule List Styling */
     .events-list {
       text-align: left;
       margin-top: 1rem;
@@ -268,12 +259,7 @@
       font-size: 0.85rem;
       color: #e0e0ff;
     }
-    .event-date {
-      font-weight: 700;
-      color: #a5b4fc;
-    }
 
-    /* VIDEO EMBEDS */
     .video-container {
       position: relative;
       width: 100%; padding-bottom: 56.25%;
@@ -284,7 +270,6 @@
       top: 0; left: 0; border-radius: 12px;
     }
 
-    /* TIKTOK NEON FRAME */
     .neon-embed-frame {
       margin-top: 1.2rem;
       padding: 1rem 0.75rem;
@@ -300,7 +285,6 @@
       margin: 0 auto !important;
     }
 
-    /* LINKS */
     .links { margin-top: 0.75rem; font-size: 0.85rem; text-align:center; }
     .links a {
       color: #a5b4fc;
@@ -313,7 +297,6 @@
       text-shadow: 0 0 8px #ff0066;
     }
 
-    /* FOOTNOTE / TAGLINE */
     .footnote { margin-top: 1.5rem; font-size: 0.7rem; opacity: 0.55; text-align:center; }
     .genre-tagline {
       display: block;
@@ -321,20 +304,16 @@
       font-weight: 700;
       margin-bottom: 0.2rem;
       color: #ff0066;
-      opacity: 1;
       text-shadow: 0 0 5px rgba(255, 0, 102, 0.8);
     }
 
-    /* RESPONSIVE */
     @media (max-width: 720px) {
       .hero {
         flex-direction: column;
         align-items: center;
         text-align: center;
       }
-      .hero-right {
-        text-align: center;
-      }
+      .hero-right { text-align: center; }
     }
   </style>
 </head>
@@ -380,7 +359,7 @@
 
         <span id="streamTitle" class="stream-title">RADIO RRR Live</span>
 
-        <audio id="liveStream" controls>
+        <audio id="liveStream" controls crossorigin="anonymous">
           <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
           Your browser does not support the audio element.
         </audio>
@@ -490,25 +469,32 @@
       const canvas = document.getElementById("viz");
       const ctx = canvas && canvas.getContext ? canvas.getContext("2d") : null;
 
+      let audioCtx = null;
+      let analyser = null;
+      let dataArray = null;
+      let analyserReady = false;
+
+      /* ---- Tabs ---- */
       function switchTab(targetId) {
-        for (let pane of contentPanes) pane.classList.add("hidden-pane");
+        contentPanes.forEach(pane => pane.classList.add("hidden-pane"));
         const targetElement = document.getElementById(targetId);
         if (targetElement) targetElement.classList.remove("hidden-pane");
 
-        for (let l of navLinks) l.classList.remove("active");
+        navLinks.forEach(l => l.classList.remove("active"));
         const activeLink = document.querySelector('.nav-tabs a[data-target="' + targetId + '"]');
         if (activeLink) activeLink.classList.add("active");
       }
 
-      for (let link of navLinks) {
+      navLinks.forEach(link => {
         link.addEventListener("click", function (e) {
           const targetId = e.target.getAttribute("data-target");
           if (targetId) switchTab(targetId);
         });
-      }
+      });
 
       switchTab("stream-section"); // default tab
 
+      /* ---- Day period + labels ---- */
       function getDayPeriod(hour) {
         if (hour >= 6 && hour < 12) return "Morning";
         if (hour >= 12 && hour < 18) return "Afternoon";
@@ -545,12 +531,35 @@
       updateTitles();
       setInterval(updateTitles, 15 * 60 * 1000);
 
+      /* ---- Status ---- */
       function setStatus(msg) {
         if (!statusEl) return;
         statusEl.style.display = "block";
         statusEl.textContent = "Status: " + msg;
       }
 
+      /* ---- Audio analyser setup ---- */
+      function initAudioAnalyser() {
+        if (audioCtx || !audio) return;
+        try {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (!AC) return;
+          audioCtx = new AC();
+          const source = audioCtx.createMediaElementSource(audio);
+          analyser = audioCtx.createAnalyser();
+          analyser.fftSize = 1024;
+          const bufferLength = analyser.frequencyBinCount;
+          dataArray = new Uint8Array(bufferLength);
+          source.connect(analyser);
+          analyser.connect(audioCtx.destination);
+          analyserReady = true;
+        } catch (e) {
+          console.warn("Analyser init failed:", e);
+          analyserReady = false;
+        }
+      }
+
+      /* ---- Visualizer ---- */
       function resize() {
         if (!canvas || !ctx) return;
         const dpr = window.devicePixelRatio || 1;
@@ -567,10 +576,6 @@
 
       function drawFrame() {
         const streamPane = document.getElementById("stream-section");
-        if (!streamPane || streamPane.classList.contains("hidden-pane")) {
-          requestAnimationFrame(drawFrame);
-          return;
-        }
         if (!canvas || !ctx) {
           requestAnimationFrame(drawFrame);
           return;
@@ -583,33 +588,56 @@
         const cy = h / 2;
         const minDim = Math.min(w, h);
 
+        let energy = 0.25; // base motion so it's never fully static
+        let spectrum = null;
+
+        if (analyserReady && analyser && dataArray) {
+          analyser.getByteFrequencyData(dataArray);
+          spectrum = dataArray;
+
+          let bassSum = 0;
+          const bassCount = Math.min(40, dataArray.length);
+          for (let i = 0; i < bassCount; i++) {
+            bassSum += dataArray[i];
+          }
+          energy = (bassSum / bassCount) / 255; // 0..1
+        }
+
         ctx.fillStyle = "rgba(0, 0, 0, 1)";
         ctx.fillRect(0, 0, w, h);
 
+        // Circles react to overall bass energy
         const circleCount = 10;
         for (let i = 0; i < circleCount; i++) {
           const baseRadius = minDim * 0.05 + i * minDim * 0.05;
-          const osc = Math.sin(t * 1.2 + i * 0.6) * 0.15;
+          const osc = Math.sin(t * 1.2 + i * 0.6) * (0.1 + energy * 0.35);
           const currentRadius = baseRadius * (1 + osc);
 
           ctx.beginPath();
           ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
 
-          const hue = (t * 50 + i * 30) % 360;
-          ctx.strokeStyle = "hsla(" + hue + ", 100%, 60%, 0.7)";
+          const hue = (t * 40 + i * 28) % 360;
+          ctx.strokeStyle = "hsla(" + hue + ", 100%, 60%, " + (0.4 + energy * 0.5) + ")";
           ctx.lineWidth = 1.4;
-          ctx.shadowBlur = 15;
+          ctx.shadowBlur = 14 + energy * 18;
           ctx.shadowColor = "hsla(" + hue + ", 100%, 50%, 1)";
           ctx.stroke();
         }
         ctx.shadowBlur = 0;
 
+        // Spokes react to higher frequencies
         const lineCount = 64;
         for (let i = 0; i < lineCount; i++) {
           const angle = (i * (Math.PI * 2)) / lineCount + t * 0.2;
           const inner = minDim * 0.08;
-          const outer = minDim * 0.48 + Math.sin(t * 1.7 + i * 0.2) * 12;
 
+          let mag = 0.5;
+          if (spectrum) {
+            const idx = Math.floor((i / lineCount) * spectrum.length);
+            mag = (spectrum[idx] || 0) / 255; // 0..1
+          }
+
+          const outer = minDim * (0.35 + mag * 0.25);
           const x1 = cx + Math.cos(angle) * inner;
           const y1 = cy + Math.sin(angle) * inner;
           const x2 = cx + Math.cos(angle) * outer;
@@ -619,17 +647,18 @@
           ctx.beginPath();
           ctx.moveTo(x1, y1);
           ctx.lineTo(x2, y2);
-          ctx.strokeStyle = "hsla(" + hue + ", 100%, 65%, 0.5)";
-          ctx.lineWidth = 1;
+          ctx.strokeStyle = "hsla(" + hue + ", 100%, " + (50 + mag * 20) + "%, " + (0.3 + mag * 0.6) + ")";
+          ctx.lineWidth = 0.8 + mag * 1.4;
           ctx.stroke();
         }
 
-        const coreRadius = 10 + Math.sin(t * 2.2) * 4;
+        // Core pulse
+        const coreRadius = 10 + energy * 14 + Math.sin(t * 3.0) * 3;
         const coreGradient = ctx.createRadialGradient(
           cx, cy, 0, cx, cy, coreRadius * 3
         );
-        coreGradient.addColorStop(0, "rgba(255, 255, 255, 0.9)");
-        coreGradient.addColorStop(0.4, "rgba(255, 0, 150, 0.8)");
+        coreGradient.addColorStop(0, "rgba(255, 255, 255, 0.95)");
+        coreGradient.addColorStop(0.4, "rgba(255, 0, 150, 0.9)");
         coreGradient.addColorStop(1, "rgba(255, 0, 150, 0)");
         ctx.fillStyle = coreGradient;
         ctx.beginPath();
@@ -640,12 +669,20 @@
       }
       requestAnimationFrame(drawFrame);
 
+      /* ---- Play/Pause + AudioContext handling ---- */
       const kick = document.getElementById("kickPlay");
       if (kick && audio) {
         kick.addEventListener("click", function () {
           if (audio.paused) {
             setStatus("connecting...");
             kick.textContent = "Connecting...";
+
+            // Init analyser on first user interaction
+            if (!audioCtx) {
+              initAudioAnalyser();
+            } else if (audioCtx.state === "suspended") {
+              audioCtx.resume();
+            }
 
             audio
               .play()
@@ -666,6 +703,12 @@
         });
 
         audio.addEventListener("play", function () {
+          if (audioCtx && audioCtx.state === "suspended") {
+            audioCtx.resume();
+          }
+          if (!audioCtx) {
+            initAudioAnalyser();
+          }
           setStatus("playing");
           kick.textContent = "Pause";
         });
