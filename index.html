@@ -99,15 +99,7 @@
         0 0 16px rgba(59,130,246,0.8);
       margin-bottom: 0.3rem;
     }
-    .hero-tagline {
-      font-size: 0.95rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #fb7185;
-      text-shadow: 0 0 6px rgba(248,113,113,0.8);
-      margin-bottom: 0.5rem;
-    }
+    /* tagline removed from hero */
     .hero-sub {
       font-size: 0.9rem;
       color: #e5e7eb;
@@ -349,8 +341,11 @@
           LIVE · BROADCASTING 24/7
         </div>
         <h1 class="hero-title">RADIO RRR</h1>
-        <p class="hero-tagline">ELECTRO · 80s · SYNTH · MEMES · REMIXED</p>
-               <p class="hero-now-title">
+        <!-- tagline removed from here -->
+        <p class="hero-sub">
+          Neon electro from the day before the day after yesterday
+        </p>
+        <p class="hero-now-title">
           Now Playing:
           <strong id="heroNowPlaying">Loading current block…</strong>
         </p>
@@ -469,7 +464,7 @@
     </div>
 
     <p class="footnote">
-      <span class="genre-tagline">Electro · Synth · 80s · Chill</span>
+      <span class="genre-tagline">ELECTRO · 80s · SYNTH · MEMES · REMIXED</span>
       Streaming 24/7<br>
       Contact: <a href="mailto:admin@radiorrr.com" style="color:#a5b4fc;">admin@radiorrr.com</a>
     </p>
@@ -638,11 +633,11 @@
           energy = (bassSum / bassCount) / 255;
         }
 
-        /* ---- BLACK BACKGROUND ---- */
+        /* ---- base: black ---- */
         ctx.fillStyle = "rgba(0, 0, 0, 1)";
         ctx.fillRect(0, 0, w, h);
 
-        /* ---- pastel background WAVE LINES over black ---- */
+        /* ---- pastel background waves (on black) ---- */
         const bandCount = 6;
         for (let i = 0; i < bandCount; i++) {
           const yBase = (h / (bandCount + 1)) * (i + 1);
@@ -655,30 +650,31 @@
             if (x === 0) ctx.moveTo(x, y);
             else ctx.lineTo(x, y);
           }
-          ctx.strokeStyle = "hsla(" + hue + ", 80%, 80%, 0.12)";
-          ctx.lineWidth = 3;
+          ctx.strokeStyle = "hsla(" + hue + ", 80%, 75%, 0.18)";
+          ctx.lineWidth = 2;
           ctx.stroke();
         }
 
-        /* ---- neon circular lines / spokes ---- */
+        /* ---- neon circular rings ---- */
         const circleCount = 10;
         for (let i = 0; i < circleCount; i++) {
           const baseRadius = minDim * 0.08 + i * minDim * 0.045;
-          const osc = Math.sin(t * 1.4 + i * 0.7) * (0.08 + energy * 0.4);
+          const osc = Math.sin(t * 1.4 + i * 0.7) * (0.1 + energy * 0.45);
           const currentRadius = baseRadius * (1 + osc);
 
           ctx.beginPath();
           ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
 
           const hue = (t * 35 + i * 28) % 360;
-          ctx.strokeStyle = "hsla(" + hue + ", 100%, " + (60 + energy * 20) + "%, " + (0.4 + energy * 0.5) + ")";
-          ctx.lineWidth = 1.7;
-          ctx.shadowBlur = 16 + energy * 24;
+          ctx.strokeStyle = "hsla(" + hue + ", 100%, " + (60 + energy * 20) + "%, " + (0.4 + energy * 0.4) + ")";
+          ctx.lineWidth = 1.8;
+          ctx.shadowBlur = 14 + energy * 22;
           ctx.shadowColor = "hsla(" + hue + ", 100%, 55%, 1)";
           ctx.stroke();
         }
         ctx.shadowBlur = 0;
 
+        /* ---- neon spokes reacting to spectrum ---- */
         const lineCount = 96;
         for (let i = 0; i < lineCount; i++) {
           const angle = (i * (Math.PI * 2)) / lineCount + t * 0.25;
@@ -690,8 +686,8 @@
             mag = (spectrum[idx] || 0) / 255;
           }
 
-          const beatBoost = energy * 0.4;
-          const outer = minDim * (0.30 + mag * 0.45 + beatBoost);
+          const beatBoost = energy * 0.5;
+          const outer = minDim * (0.30 + mag * 0.50 + beatBoost);
 
           const x1 = cx + Math.cos(angle) * inner;
           const y1 = cy + Math.sin(angle) * inner;
@@ -704,12 +700,12 @@
           ctx.moveTo(x1, y1);
           ctx.lineTo(x2, y2);
           ctx.strokeStyle = "hsla(" + hue + ", 100%, " + (55 + mag * 25) + "%, " + alpha + ")";
-          ctx.lineWidth = 0.8 + mag * 1.8;
+          ctx.lineWidth = 1 + mag * 2.0;
           ctx.stroke();
         }
 
-        // core pulse
-        const coreRadius = 10 + energy * 16 + Math.sin(t * 3.2) * 3;
+        /* ---- neon core pulse ---- */
+        const coreRadius = 10 + energy * 18 + Math.sin(t * 3.2) * 3;
         const coreGradient = ctx.createRadialGradient(
           cx, cy, 0, cx, cy, coreRadius * 3
         );
