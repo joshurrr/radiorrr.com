@@ -13,10 +13,8 @@
   <meta property="og:image" content="https://radiorrr.com/logo.png" />
 
   <style>
-    /* RESET */
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* BODY & CONTAINER */
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: #050710;
@@ -117,16 +115,20 @@
       margin-bottom: 0.6rem;
     }
     .hero-now-title {
-      font-size: 0.9rem;
-      color: #c7d2fe;
-      margin-top: 0.25rem;
+      font-size: 1.1rem;          /* bigger */
+      font-weight: 700;
+      color: #f9a8d4;
+      margin-top: 0.35rem;
+      text-shadow:
+        0 0 6px rgba(129,140,248,0.9),
+        0 0 10px rgba(59,130,246,0.9);
     }
     .hero-now-title strong {
-      color: #f9a8d4;
-      font-weight: 700;
+      color: #ffffff;
+      font-weight: 800;
     }
 
-    /* NAVIGATION TABS (with block/pill look) */
+    /* NAV TABS (neon pill buttons with icons) */
     .nav-tabs {
       display: flex;
       justify-content: center;
@@ -140,13 +142,14 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 0.35rem 1.2rem;
+      gap: 0.45rem;
+      padding: 0.40rem 1.35rem;
       border-radius: 999px;
       font-weight: 700;
-      font-size: 1.05rem;
+      font-size: 1.02rem;
       color: #c7c7ff;
       text-decoration: none;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       cursor: pointer;
       border: 1px solid rgba(129,140,248,0.6);
       background:
@@ -160,6 +163,26 @@
         color 0.2s ease,
         border-color 0.2s ease,
         background 0.2s ease;
+      overflow: hidden;
+    }
+    .nav-tabs a::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 55%);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+    .nav-icon {
+      font-size: 0.95rem;
+      opacity: 0.85;
+      transform: translateY(0);
+      transition: transform 0.2s ease;
+    }
+    .nav-label {
+      text-transform: uppercase;
     }
     .nav-tabs a:hover {
       transform: translateY(-1px);
@@ -169,15 +192,21 @@
         0 0 14px rgba(129,140,248,0.5);
       color: #ffe4ff;
     }
+    .nav-tabs a:hover::after {
+      opacity: 1;
+    }
     .nav-tabs a.active {
-      transform: translateY(-2px);
+      transform: translateY(-2px) scale(1.02);
       border-color: #ff0066;
       background:
         linear-gradient(135deg, rgba(34, 9, 53, 0.98), rgba(5, 24, 61, 0.98));
       box-shadow:
-        0 0 12px rgba(255, 0, 102, 0.75),
-        0 0 18px rgba(129,140,248,0.8);
+        0 0 14px rgba(255, 0, 102, 0.85),
+        0 0 18px rgba(129,140,248,0.9);
       color: #ffffff;
+    }
+    .nav-tabs a.active .nav-icon {
+      transform: translateY(-1px);
     }
 
     .content-pane { width: 100%; transition: opacity 0.3s ease-in-out; }
@@ -207,18 +236,6 @@
     }
     .channel span { font-weight: 600; font-size: 1rem; }
     .channel small { font-size: 0.8rem; color: #e0e0ff; opacity: 0.9; }
-
-    .stream-title {
-      display: block;
-      margin: 0.4rem 0 0.4rem;
-      font-weight: 600;
-      font-size: 1rem;
-      color: #ffccff;
-      text-shadow:
-        0 0 4px #ff0066,
-        0 0 10px #4338ca;
-      letter-spacing: 0.1em;
-    }
 
     audio { width: 100%; margin-top: 0.2rem; }
     .status { display:none; font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.8; }
@@ -333,7 +350,9 @@
         </div>
         <h1 class="hero-title">RADIO RRR</h1>
         <p class="hero-tagline">ELECTRO · 80s · SYNTH · MEMES · REMIXED</p>
-       
+        <p class="hero-sub">
+          Neon electro from the day before the day after yesterday
+        </p>
         <p class="hero-now-title">
           Now Playing:
           <strong id="heroNowPlaying">Loading current block…</strong>
@@ -343,19 +362,28 @@
 
     <!-- NAV TABS -->
     <nav class="nav-tabs">
-      <a data-target="stream-section" class="active">Stream</a>
-      <a data-target="events-section">Schedule</a>
-      <a data-target="video-section">Video</a>
+      <a data-target="stream-section" class="active">
+        <span class="nav-icon">📻</span>
+        <span class="nav-label">Radio</span>
+      </a>
+      <a data-target="events-section">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">Schedule</span>
+      </a>
+      <a data-target="video-section">
+        <span class="nav-icon">🎬</span>
+        <span class="nav-label">Video</span>
+      </a>
     </nav>
 
-    <!-- STREAM TAB -->
+    <!-- RADIO TAB -->
     <div id="stream-section" class="content-pane">
       <div class="channel">
         <div class="visualizer">
           <canvas id="viz"></canvas>
         </div>
 
-        <span id="streamTitle" class="stream-title">RADIO RRR Live</span>
+        <!-- Removed duplicate title line down here -->
 
         <audio id="liveStream" controls crossorigin="anonymous">
           <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
@@ -409,7 +437,7 @@
 
       <div class="channel">
         <span>TikTok Clips</span><br />
-        <small>Videos with music, filters and stuff</small>
+        <small>Videos Music and Stuff</small>
 
         <div class="neon-embed-frame">
           <blockquote class="tiktok-embed"
@@ -438,10 +466,10 @@
       </div>
     </div>
 
-    <div class="links">      
+    <div class="links">
+      <a href="https://www.instagram.com/radio.rrr/" target="_blank">Instagram</a> ·
       <a href="https://www.tiktok.com/@josh.u.rrr" target="_blank">TikTok</a> ·
       <a href="https://www.youtube.com/@RADIO_RRR" target="_blank">YouTube</a> ·
-      <a href="https://www.instagram.com/radio.rrr/" target="_blank">Instagram</a> ·
       <a href="https://github.com/joshurrr" target="_blank">GitHub</a>
     </div>
 
@@ -460,7 +488,6 @@
     document.addEventListener("DOMContentLoaded", function () {
       const navLinks = document.querySelectorAll(".nav-tabs a");
       const contentPanes = document.querySelectorAll(".content-pane");
-      const titleEl = document.getElementById("streamTitle");
       const heroNowEl = document.getElementById("heroNowPlaying");
       const audio = document.getElementById("liveStream");
       const statusEl = document.getElementById("status");
@@ -471,6 +498,32 @@
       let analyser = null;
       let dataArray = null;
       let analyserReady = false;
+      let uiAudioCtx = null; // for nav click sounds
+
+      /* ---- Small UI click sound for nav tabs ---- */
+      function playNavClick() {
+        try {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (!AC) return;
+          if (!uiAudioCtx) uiAudioCtx = new AC();
+
+          const now = uiAudioCtx.currentTime;
+          const osc = uiAudioCtx.createOscillator();
+          const gain = uiAudioCtx.createGain();
+
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(880, now);
+          gain.gain.setValueAtTime(0.05, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+
+          osc.connect(gain);
+          gain.connect(uiAudioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.1);
+        } catch (e) {
+          // if browser blocks it, just ignore
+        }
+      }
 
       /* ---- Tabs ---- */
       function switchTab(targetId) {
@@ -485,8 +538,11 @@
 
       navLinks.forEach(link => {
         link.addEventListener("click", function (e) {
-          const targetId = e.target.getAttribute("data-target");
-          if (targetId) switchTab(targetId);
+          const targetId = e.currentTarget.getAttribute("data-target");
+          if (targetId) {
+            switchTab(targetId);
+            playNavClick();
+          }
         });
       });
 
@@ -518,9 +574,6 @@
         const period = getDayPeriod(now.getHours());
         const blockLabel = getBlockLabel(dayName, period);
 
-        if (titleEl) {
-          titleEl.textContent = "RADIO RRR Live – " + blockLabel;
-        }
         if (heroNowEl) {
           heroNowEl.textContent = blockLabel;
         }
@@ -573,7 +626,6 @@
       let startTime = performance.now();
 
       function drawFrame() {
-        const streamPane = document.getElementById("stream-section");
         if (!canvas || !ctx) {
           requestAnimationFrame(drawFrame);
           return;
@@ -586,7 +638,7 @@
         const cy = h / 2;
         const minDim = Math.min(w, h);
 
-        let energy = 0.25; // base motion so it's never fully static
+        let energy = 0.25;
         let spectrum = null;
 
         if (analyserReady && analyser && dataArray) {
@@ -598,13 +650,12 @@
           for (let i = 0; i < bassCount; i++) {
             bassSum += dataArray[i];
           }
-          energy = (bassSum / bassCount) / 255; // 0..1
+          energy = (bassSum / bassCount) / 255;
         }
 
         ctx.fillStyle = "rgba(0, 0, 0, 1)";
         ctx.fillRect(0, 0, w, h);
 
-        // Circles react to overall bass energy
         const circleCount = 10;
         for (let i = 0; i < circleCount; i++) {
           const baseRadius = minDim * 0.05 + i * minDim * 0.05;
@@ -623,7 +674,6 @@
         }
         ctx.shadowBlur = 0;
 
-        // Spokes react to higher frequencies
         const lineCount = 64;
         for (let i = 0; i < lineCount; i++) {
           const angle = (i * (Math.PI * 2)) / lineCount + t * 0.2;
@@ -632,7 +682,7 @@
           let mag = 0.5;
           if (spectrum) {
             const idx = Math.floor((i / lineCount) * spectrum.length);
-            mag = (spectrum[idx] || 0) / 255; // 0..1
+            mag = (spectrum[idx] || 0) / 255;
           }
 
           const outer = minDim * (0.35 + mag * 0.25);
@@ -650,7 +700,6 @@
           ctx.stroke();
         }
 
-        // Core pulse
         const coreRadius = 10 + energy * 14 + Math.sin(t * 3.0) * 3;
         const coreGradient = ctx.createRadialGradient(
           cx, cy, 0, cx, cy, coreRadius * 3
@@ -675,7 +724,6 @@
             setStatus("connecting...");
             kick.textContent = "Connecting...";
 
-            // Init analyser on first user interaction
             if (!audioCtx) {
               initAudioAnalyser();
             } else if (audioCtx.state === "suspended") {
