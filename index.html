@@ -13,8 +13,10 @@
   <meta property="og:image" content="https://radiorrr.com/logo.png" />
 
   <style>
+    /* RESET */
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* BODY & CONTAINER */
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: #050710;
@@ -36,8 +38,10 @@
         0 0 10px rgba(67, 56, 202, 0.5),
         0 0 30px rgba(255, 0, 102, 0.4);
       text-align: center;
+      transition: all 0.3s ease-out;
     }
 
+    /* HERO BANNER */
     .hero {
       display: flex;
       align-items: center;
@@ -49,17 +53,84 @@
                   radial-gradient(circle at bottom right, rgba(56,189,248,0.35), transparent 55%),
                   #050716;
       border: 1px solid rgba(129,140,248,0.6);
-      box-shadow: 0 0 12px rgba(255, 0, 102, 0.45),
-                  0 0 26px rgba(56,189,248,0.35);
+      box-shadow:
+        0 0 12px rgba(255, 0, 102, 0.45),
+        0 0 26px rgba(56,189,248,0.35);
       margin-bottom: 1.75rem;
       text-align: left;
     }
-    .hero-left img { width: 180px; border-radius: 10px; }
-    .hero-title { font-size: 1.7rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: #e0e7ff; }
-    .hero-tagline { font-size: 0.95rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #fb7185; }
-    .hero-sub { font-size: 0.9rem; color: #e5e7eb; margin-bottom: 0.6rem; }
-    .hero-now-title { font-size: 0.9rem; color: #c7d2fe; }
+    .hero-left img {
+      width: 180px;
+      max-width: 100%;
+      border-radius: 10px;
+      display: block;
+    }
+    .hero-right {
+      flex: 1;
+      min-width: 0;
+    }
+    .live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.12rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      background: rgba(239, 68, 68, 0.18);
+      border: 1px solid rgba(248, 113, 113, 0.6);
+      color: #fecaca;
+      margin-bottom: 0.55rem;
+    }
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #f87171;
+      box-shadow: 0 0 8px rgba(248,113,113,0.95);
+    }
+    .hero-title {
+      font-size: 1.7rem;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #e0e7ff;
+      text-shadow:
+        0 0 8px rgba(129,140,248,0.75),
+        0 0 16px rgba(59,130,246,0.8);
+      margin-bottom: 0.3rem;
+    }
+    .hero-tagline {
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #fb7185;
+      text-shadow: 0 0 6px rgba(248,113,113,0.8);
+      margin-bottom: 0.5rem;
+    }
+    .hero-sub {
+      font-size: 0.9rem;
+      color: #e5e7eb;
+      opacity: 0.9;
+      margin-bottom: 0.6rem;
+    }
+    .hero-sub span {
+      color: #a5b4fc;
+      font-weight: 600;
+    }
+    .hero-now-title {
+      font-size: 0.9rem;
+      color: #c7d2fe;
+      margin-top: 0.25rem;
+    }
+    .hero-now-title strong {
+      color: #f9a8d4;
+      font-weight: 700;
+    }
 
+    /* NAVIGATION TABS */
     .nav-tabs {
       display: flex;
       justify-content: center;
@@ -74,28 +145,42 @@
       font-size: 1.05rem;
       color: #c7c7ff;
       text-decoration: none;
+      padding: 0 0.5rem;
+      transition: all 0.2s;
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 5px rgba(67, 56, 202, 0.4);
       cursor: pointer;
     }
-    .nav-tabs a.active,
-    .nav-tabs a:hover {
+    .nav-tabs a:hover,
+    .nav-tabs a.active {
       color: #ff0066;
       text-shadow: 0 0 10px #ff0066;
       transform: translateY(-2px);
     }
 
-    .content-pane { width: 100%; }
-    .hidden-pane { display: none; }
+    /* CONTENT PANE STYLING */
+    .content-pane {
+      width: 100%;
+      transition: opacity 0.3s ease-in-out;
+    }
+    .hidden-pane {
+      display: none;
+    }
 
+    /* VISUALIZER */
     .visualizer {
       width: 100%;
       height: 260px;
       border-radius: 14px;
       overflow: hidden;
-      background: black;
+      background: #000000;
       margin-bottom: 0.6rem;
       border: 2px solid #ff0066;
+      box-shadow: 0 0 15px rgba(255, 0, 102, 0.5);
     }
+    #viz { width: 100%; height: 100%; display: block; }
 
+    /* CHANNEL PANELS */
     .channel {
       padding: 1.2rem 1.4rem;
       border-radius: 16px;
@@ -104,66 +189,180 @@
       margin-bottom: 1.75rem;
       text-align: left;
     }
+    .channel span { font-weight: 600; font-size: 1rem; }
+    .channel small { font-size: 0.8rem; color: #e0e0ff; opacity: 0.9; }
 
-    .stream-title { font-size: 1rem; color: #ffccff; margin: 0.4rem 0; }
+    /* STREAM TITLE */
+    .stream-title {
+      display: block;
+      margin: 0.4rem 0 0.4rem;
+      font-weight: 600;
+      font-size: 1rem;
+      color: #ffccff;
+      text-shadow:
+        0 0 4px #ff0066,
+        0 0 10px #4338ca;
+      letter-spacing: 0.1em;
+      transition: all 0.3s;
+    }
 
+    /* AUDIO / STATUS / PLAY BUTTON */
     audio { width: 100%; margin-top: 0.2rem; }
-    .kick { margin-top: 0.6rem; padding: 0.45rem 0.7rem; border-radius: 10px; cursor: pointer; }
+    .status { display:none; font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.8; }
+    .kick {
+      margin-top:0.6rem; padding:0.45rem 0.7rem;
+      border-radius:10px; border:1px solid rgba(129,140,248,0.6);
+      background:#0b1020; color:#c7c7ff;
+      cursor:pointer; font-size:0.85rem;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .kick:hover {
+      color: #ff0066;
+      border-color: #ff0066;
+      box-shadow: 0 0 12px rgba(255, 0, 102, 0.7);
+    }
 
+    /* Events / Schedule List Styling */
+    .events-list {
+      text-align: left;
+      margin-top: 1rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(129, 140, 248, 0.15);
+    }
+    .event-item {
+      margin: 1.25rem 0;
+      border-left: 3px solid #4338ca;
+      padding-left: 1rem;
+    }
+    .event-item h4 {
+      margin: 0;
+      font-size: 1rem;
+      color: #ffccff;
+      text-shadow: 0 0 3px rgba(255, 0, 102, 0.5);
+    }
+    .event-item p {
+      margin: 0.25rem 0 0;
+      font-size: 0.85rem;
+      color: #e0e0ff;
+    }
+    .event-date {
+      font-weight: 700;
+      color: #a5b4fc;
+    }
+
+    /* VIDEO EMBEDS */
     .video-container {
       position: relative;
-      width: 100%;
-      padding-bottom: 56.25%;
+      width: 100%; padding-bottom: 56.25%;
       margin-top: 0.8rem;
     }
-    .video-container iframe { position: absolute; width: 100%; height: 100%; border-radius: 12px; }
-
-    .neon-embed-frame {
-      margin-top: 1.2rem;
-      padding: 1rem;
-      border-radius: 16px;
-      border: 1px solid rgba(129,140,248,0.7);
+    .video-container iframe {
+      position: absolute; width: 100%; height: 100%; border: 0;
+      top: 0; left: 0; border-radius: 12px;
     }
 
-    .links { margin-top: 0.75rem; font-size: 0.85rem; }
-    .links a { color: #a5b4fc; text-decoration: none; }
+    /* TIKTOK NEON FRAME */
+    .neon-embed-frame {
+      margin-top: 1.2rem;
+      padding: 1rem 0.75rem;
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at top, rgba(15,23,42,0.9), rgba(3,7,18,0.98));
+      border: 1px solid rgba(129,140,248,0.7);
+      box-shadow:
+        0 0 12px rgba(129,140,248,0.45),
+        0 0 24px rgba(255,0,102,0.35);
+    }
+    .neon-embed-frame .tiktok-embed {
+      margin: 0 auto !important;
+    }
 
+    /* LINKS */
+    .links { margin-top: 0.75rem; font-size: 0.85rem; text-align:center; }
+    .links a {
+      color: #a5b4fc;
+      text-decoration: none;
+      margin: 0 0.4rem;
+      transition: color 0.3s, text-shadow 0.3s;
+    }
+    .links a:hover {
+      color: #ff0066;
+      text-shadow: 0 0 8px #ff0066;
+    }
+
+    /* FOOTNOTE / TAGLINE */
+    .footnote { margin-top: 1.5rem; font-size: 0.7rem; opacity: 0.55; text-align:center; }
+    .genre-tagline {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+      color: #ff0066;
+      opacity: 1;
+      text-shadow: 0 0 5px rgba(255, 0, 102, 0.8);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 720px) {
+      .hero {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .hero-right {
+        text-align: center;
+      }
+    }
   </style>
 </head>
 
 <body>
   <main class="wrapper">
 
-    <!-- HERO -->
+    <!-- HERO BANNER -->
     <section class="hero">
       <div class="hero-left">
-        <img src="logo.png" alt="Radio RRR Logo">
+        <img src="logo.png" alt="Radio RRR Logo - Neon Retrowave Text">
       </div>
       <div class="hero-right">
-        <div class="live-pill"><span class="live-dot"></span> LIVE · BROADCASTING 24/7</div>
+        <div class="live-pill">
+          <span class="live-dot"></span>
+          LIVE · BROADCASTING 24/7
+        </div>
         <h1 class="hero-title">RADIO RRR</h1>
-        <p class="hero-tagline">ELECTRO · 80s · SYNTH · MEMES · REMIXED</p>
-        <p class="hero-sub">Neon electro from the day before the day after yesterday</p>
-        <p class="hero-now-title">Now Playing: <strong id="heroNowPlaying">Loading…</strong></p>
+        <p class="hero-tagline"> · 80s · SYNTH · MEMES · REMIXED</p>
+        <p class="hero-sub">
+          Neon electro from the day before the day after yesterday
+        </p>
+        <p class="hero-now-title">
+          Now Playing:
+          <strong id="heroNowPlaying">Loading current block…</strong>
+        </p>
       </div>
     </section>
 
-    <!-- UPDATED NAV TABS -->
+    <!-- NAV TABS -->
     <nav class="nav-tabs">
-      <a data-target="stream-section" class="active">Radio</a>
+      <a data-target="stream-section" class="active">Stream</a>
       <a data-target="events-section">Schedule</a>
       <a data-target="video-section">Video</a>
     </nav>
 
-    <!-- RADIO TAB -->
+    <!-- STREAM TAB -->
     <div id="stream-section" class="content-pane">
       <div class="channel">
-        <div class="visualizer"><canvas id="viz"></canvas></div>
+        <div class="visualizer">
+          <canvas id="viz"></canvas>
+        </div>
 
         <span id="streamTitle" class="stream-title">RADIO RRR Live</span>
 
         <audio id="liveStream" controls>
+          <!-- change this if your main mount is different -->
           <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
+          Your browser does not support the audio element.
         </audio>
 
         <button id="kickPlay" class="kick">Play</button>
@@ -171,7 +370,7 @@
       </div>
     </div>
 
-    <!-- SCHEDULE -->
+    <!-- SCHEDULE TAB -->
     <div id="events-section" class="content-pane hidden-pane">
       <div class="channel">
         <span>Radio RRR Schedule</span><br />
@@ -180,76 +379,293 @@
         <div class="events-list">
           <div class="event-item">
             <h4>Morning – Neon Sunrise Chill</h4>
-            <p>06:00 – 12:00</p>
+            <p><span class="event-date">06:00 – 12:00</span></p>
+            <p>
+              Morning playlist: chilled synthwave, soft electro, lofi textures and
+              relaxed 80s-inspired cuts for coffee, commute, and easing into the day.
+            </p>
           </div>
+
           <div class="event-item">
             <h4>Afternoon – Daydrive Synthwave</h4>
-            <p>12:00 – 18:00</p>
+            <p><span class="event-date">12:00 – 18:00</span></p>
+            <p>
+              Afternoon playlist: mid-tempo outrun, retrowave and synth bangers
+              for work, driving, and daytime sessions.
+            </p>
           </div>
+
           <div class="event-item">
             <h4>Evening & Night – Night Drive Electro</h4>
-            <p>18:00 – 06:00</p>
+            <p><span class="event-date">18:00 – 06:00</span></p>
+            <p>
+              Evening/night playlist: heavier electro, darker synth, and high-energy
+              remixes tuned for late-night coding, neon skylines, and insomnia.
+            </p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- VIDEO -->
+    <!-- VIDEO TAB (TikTok + YouTube) -->
     <div id="video-section" class="content-pane hidden-pane">
+
       <div class="channel">
         <span>TikTok Clips</span><br />
-        <small>Videos Music and Stuff</small>
-
+        <small>@josh.u.rrr — Videos with music, filters and stuff.</small>
         <div class="neon-embed-frame">
           <blockquote class="tiktok-embed"
             cite="https://www.tiktok.com/@josh.u.rrr"
             data-unique-id="josh.u.rrr"
             data-embed-type="creator"
             style="max-width: 600px;">
-            <section><a target="_blank" href="https://www.tiktok.com/@josh.u.rrr">@josh.u.rrr</a></section>
+            <section>
+              <a target="_blank" href="https://www.tiktok.com/@josh.u.rrr">@josh.u.rrr</a>
+            </section>
           </blockquote>
         </div>
       </div>
 
       <div class="channel">
-        <span>YouTube Likes</span>
+        <span>YouTube Likes</span><br />
+        <small>Latest videos we liked</small>
+
         <div class="video-container">
           <iframe
             src="https://www.youtube.com/embed/videoseries?list=PLli1uTuS0FH7xR1QBnIvY3V9btomaSpTv"
-            allowfullscreen loading="lazy"></iframe>
+            allowfullscreen
+            loading="lazy">
+          </iframe>
         </div>
       </div>
     </div>
 
     <div class="links">
-      <a href="#">Instagram</a> ·
-      <a href="#">TikTok</a> ·
-      <a href="#">YouTube</a> ·
-      <a href="#">GitHub</a>
+      <a href="https://www.instagram.com/radio.rrr/" target="_blank">Instagram</a> ·
+      <a href="https://www.tiktok.com/@josh.u.rrr" target="_blank">TikTok</a> ·
+      <a href="https://www.youtube.com/@RADIO_RRR" target="_blank">YouTube</a> ·
+      <a href="https://github.com/joshurrr" target="_blank">GitHub</a>
     </div>
+
+    <p class="footnote">
+      <span class="genre-tagline">Electro · Synth · 80s · Chill</span>
+      Streaming 24/7<br>
+      Contact: <a href="mailto:admin@radiorrr.com" style="color:#a5b4fc;">admin@radiorrr.com</a>
+    </p>
 
   </main>
 
+  <!-- TikTok embed script (only once) -->
   <script async src="https://www.tiktok.com/embed.js"></script>
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      const nav = document.querySelectorAll(".nav-tabs a");
-      const panes = document.querySelectorAll(".content-pane");
+      const navLinks = document.querySelectorAll(".nav-tabs a");
+      const contentPanes = document.querySelectorAll(".content-pane");
+      const titleEl = document.getElementById("streamTitle");
+      const heroNowEl = document.getElementById("heroNowPlaying");
+      const audio = document.getElementById("liveStream");
+      const statusEl = document.getElementById("status");
+      const canvas = document.getElementById("viz");
+      const ctx = canvas && canvas.getContext ? canvas.getContext("2d") : null;
 
-      nav.forEach(link => {
-        link.addEventListener("click", e => {
-          const target = e.target.getAttribute("data-target");
+      /* ---- Tabs ---- */
+      function switchTab(targetId) {
+        for (let pane of contentPanes) pane.classList.add("hidden-pane");
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) targetElement.classList.remove("hidden-pane");
 
-          panes.forEach(p => p.classList.add("hidden-pane"));
-          document.getElementById(target).classList.remove("hidden-pane");
+        for (let l of navLinks) l.classList.remove("active");
+        const activeLink = document.querySelector('.nav-tabs a[data-target="' + targetId + '"]');
+        if (activeLink) activeLink.classList.add("active");
+      }
 
-          nav.forEach(n => n.classList.remove("active"));
-          e.target.classList.add("active");
+      for (let link of navLinks) {
+        link.addEventListener("click", function (e) {
+          const targetId = e.target.getAttribute("data-target");
+          if (targetId) switchTab(targetId);
         });
-      });
+      }
+
+      switchTab("stream-section"); // default tab
+
+      /* ---- Day period + labels ---- */
+      function getDayPeriod(hour) {
+        if (hour >= 6 && hour < 12) return "Morning";
+        if (hour >= 12 && hour < 18) return "Afternoon";
+        return "Evening";
+      }
+
+      function getBlockLabel(dayName, period) {
+        const labels = {
+          Morning: "Neon Sunrise Chill",
+          Afternoon: "Daydrive Synthwave",
+          Evening: "Night Drive Electro"
+        };
+        const base = labels[period] || "Live Mix";
+        return dayName + " " + period + " – " + base;
+      }
+
+      function updateTitles() {
+        const now = new Date();
+        const days = [
+          "Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"
+        ];
+        const dayName = days[now.getDay()];
+        const period = getDayPeriod(now.getHours());
+        const blockLabel = getBlockLabel(dayName, period);
+
+        if (titleEl) {
+          titleEl.textContent = "RADIO RRR Live – " + blockLabel;
+        }
+        if (heroNowEl) {
+          heroNowEl.textContent = blockLabel;
+        }
+      }
+
+      updateTitles();
+      setInterval(updateTitles, 15 * 60 * 1000);
+
+      /* ---- Status ---- */
+      function setStatus(msg) {
+        if (!statusEl) return;
+        statusEl.style.display = "block";
+        statusEl.textContent = "Status: " + msg;
+      }
+
+      /* ---- Visualizer (time-based only, no audio analyser) ---- */
+      function resize() {
+        if (!canvas || !ctx) return;
+        const dpr = window.devicePixelRatio || 1;
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight;
+        canvas.width = w * dpr;
+        canvas.height = h * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      resize();
+      window.addEventListener("resize", resize);
+
+      let startTime = performance.now();
+
+      function drawFrame() {
+        const streamPane = document.getElementById("stream-section");
+        if (!streamPane || streamPane.classList.contains("hidden-pane")) {
+          requestAnimationFrame(drawFrame);
+          return;
+        }
+        if (!canvas || !ctx) {
+          requestAnimationFrame(drawFrame);
+          return;
+        }
+
+        const t = (performance.now() - startTime) / 1000;
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+        const minDim = Math.min(w, h);
+
+        ctx.fillStyle = "rgba(0, 0, 0, 1)";
+        ctx.fillRect(0, 0, w, h);
+
+        // Simple animated rings + lines (no audio input)
+        const circleCount = 10;
+        for (let i = 0; i < circleCount; i++) {
+          const baseRadius = minDim * 0.05 + i * minDim * 0.05;
+          const osc = Math.sin(t * 1.2 + i * 0.6) * 0.15;
+          const currentRadius = baseRadius * (1 + osc);
+
+          ctx.beginPath();
+          ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
+
+          const hue = (t * 50 + i * 30) % 360;
+          ctx.strokeStyle = "hsla(" + hue + ", 100%, 60%, 0.7)";
+          ctx.lineWidth = 1.4;
+          ctx.shadowBlur = 15;
+          ctx.shadowColor = "hsla(" + hue + ", 100%, 50%, 1)";
+          ctx.stroke();
+        }
+        ctx.shadowBlur = 0;
+
+        const lineCount = 64;
+        for (let i = 0; i < lineCount; i++) {
+          const angle = (i * (Math.PI * 2)) / lineCount + t * 0.2;
+          const inner = minDim * 0.08;
+          const outer = minDim * 0.48 + Math.sin(t * 1.7 + i * 0.2) * 12;
+
+          const x1 = cx + Math.cos(angle) * inner;
+          const y1 = cy + Math.sin(angle) * inner;
+          const x2 = cx + Math.cos(angle) * outer;
+          const y2 = cy + Math.sin(angle) * outer;
+
+          const hue = (t * 60 + i * 6) % 360;
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.strokeStyle = "hsla(" + hue + ", 100%, 65%, 0.5)";
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+
+        const coreRadius = 10 + Math.sin(t * 2.2) * 4;
+        const coreGradient = ctx.createRadialGradient(
+          cx, cy, 0, cx, cy, coreRadius * 3
+        );
+        coreGradient.addColorStop(0, "rgba(255, 255, 255, 0.9)");
+        coreGradient.addColorStop(0.4, "rgba(255, 0, 150, 0.8)");
+        coreGradient.addColorStop(1, "rgba(255, 0, 150, 0)");
+        ctx.fillStyle = coreGradient;
+        ctx.beginPath();
+        ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        requestAnimationFrame(drawFrame);
+      }
+      requestAnimationFrame(drawFrame);
+
+      /* ---- Play/Pause (just controlling the native audio) ---- */
+      const kick = document.getElementById("kickPlay");
+      if (kick && audio) {
+        kick.addEventListener("click", function () {
+          if (audio.paused) {
+            setStatus("connecting...");
+            kick.textContent = "Connecting...";
+
+            audio
+              .play()
+              .then(function () {
+                setStatus("playing");
+                kick.textContent = "Pause";
+              })
+              .catch(function (e) {
+                console.error("Audio Play Error:", e);
+                setStatus("error: " + (e && e.message ? e.message : "could not start stream"));
+                kick.textContent = "Play";
+              });
+          } else {
+            audio.pause();
+            setStatus("paused");
+            kick.textContent = "Play";
+          }
+        });
+
+        audio.addEventListener("play", function () {
+          setStatus("playing");
+          kick.textContent = "Pause";
+        });
+
+        audio.addEventListener("pause", function () {
+          setStatus("paused");
+          kick.textContent = "Play";
+        });
+
+        audio.addEventListener("error", function () {
+          setStatus("audio error (stream offline or blocked)");
+          kick.textContent = "Play";
+        });
+      }
     });
   </script>
-
 </body>
 </html>
