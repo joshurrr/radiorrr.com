@@ -134,28 +134,49 @@
     .nav-tabs {
       display: flex;
       justify-content: center;
-      gap: 1.5rem;
+      gap: 0.9rem;
       margin-top: 1.2rem;
       margin-bottom: 2rem;
-      border-bottom: 2px solid rgba(255, 0, 102, 0.3);
       padding-bottom: 0.5rem;
     }
     .nav-tabs a {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.35rem 1.2rem;
+      border-radius: 999px;
       font-weight: 700;
       font-size: 1.05rem;
       color: #c7c7ff;
       text-decoration: none;
-      padding: 0 0.5rem;
-      transition: all 0.2s;
       letter-spacing: 0.05em;
-      text-shadow: 0 0 5px rgba(67, 56, 202, 0.4);
       cursor: pointer;
+      border: 1px solid rgba(129,140,248,0.6);
+      background:
+        radial-gradient(circle at top, rgba(24, 31, 60, 0.95), rgba(6, 10, 25, 0.98));
+      box-shadow:
+        0 0 8px rgba(15,23,42,0.8);
+      text-shadow: 0 0 4px rgba(67, 56, 202, 0.6);
+      transition: transform 0.15s ease, box-shadow 0.2s ease, color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
     }
-    .nav-tabs a:hover,
+    .nav-tabs a:hover {
+      transform: translateY(-1px);
+      border-color: #ff4dab;
+      box-shadow:
+        0 0 10px rgba(255, 0, 102, 0.5),
+        0 0 14px rgba(129,140,248,0.5);
+      color: #ffe4ff;
+    }
     .nav-tabs a.active {
-      color: #ff0066;
-      text-shadow: 0 0 10px #ff0066;
       transform: translateY(-2px);
+      border-color: #ff0066;
+      background:
+        linear-gradient(135deg, rgba(34, 9, 53, 0.98), rgba(5, 24, 61, 0.98));
+      box-shadow:
+        0 0 12px rgba(255, 0, 102, 0.75),
+        0 0 18px rgba(129,140,248,0.8);
+      color: #ffffff;
     }
 
     /* CONTENT PANE STYLING */
@@ -333,7 +354,9 @@
         </div>
         <h1 class="hero-title">RADIO RRR</h1>
         <p class="hero-tagline">ELECTRO · 80s · SYNTH · MEMES · REMIXED</p>
-       
+        <p class="hero-sub">
+          Neon electro from the day before the day after yesterday
+        </p>
         <p class="hero-now-title">
           Now Playing:
           <strong id="heroNowPlaying">Loading current block…</strong>
@@ -358,7 +381,6 @@
         <span id="streamTitle" class="stream-title">RADIO RRR Live</span>
 
         <audio id="liveStream" controls>
-          <!-- change this if your main mount is different -->
           <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
           Your browser does not support the audio element.
         </audio>
@@ -405,12 +427,12 @@
       </div>
     </div>
 
-    <!-- VIDEO TAB (TikTok + YouTube) -->
+    <!-- VIDEO TAB -->
     <div id="video-section" class="content-pane hidden-pane">
 
       <div class="channel">
         <span>TikTok Clips</span><br />
-        <small>@josh.u.rrr — Live station clips, neon edits, and behind-the-scenes chaos.</small>
+        <small>Videos Music and Stuff</small>
 
         <div class="neon-embed-frame">
           <blockquote class="tiktok-embed"
@@ -454,7 +476,7 @@
 
   </main>
 
-  <!-- TikTok embed script (only once) -->
+  <!-- TikTok embed script -->
   <script async src="https://www.tiktok.com/embed.js"></script>
 
   <script>
@@ -468,7 +490,6 @@
       const canvas = document.getElementById("viz");
       const ctx = canvas && canvas.getContext ? canvas.getContext("2d") : null;
 
-      /* ---- Tabs ---- */
       function switchTab(targetId) {
         for (let pane of contentPanes) pane.classList.add("hidden-pane");
         const targetElement = document.getElementById(targetId);
@@ -488,7 +509,6 @@
 
       switchTab("stream-section"); // default tab
 
-      /* ---- Day period + labels ---- */
       function getDayPeriod(hour) {
         if (hour >= 6 && hour < 12) return "Morning";
         if (hour >= 12 && hour < 18) return "Afternoon";
@@ -525,14 +545,12 @@
       updateTitles();
       setInterval(updateTitles, 15 * 60 * 1000);
 
-      /* ---- Status ---- */
       function setStatus(msg) {
         if (!statusEl) return;
         statusEl.style.display = "block";
         statusEl.textContent = "Status: " + msg;
       }
 
-      /* ---- Visualizer (time-based only, no audio analyser) ---- */
       function resize() {
         if (!canvas || !ctx) return;
         const dpr = window.devicePixelRatio || 1;
@@ -568,7 +586,6 @@
         ctx.fillStyle = "rgba(0, 0, 0, 1)";
         ctx.fillRect(0, 0, w, h);
 
-        // Simple animated rings + lines (no audio input)
         const circleCount = 10;
         for (let i = 0; i < circleCount; i++) {
           const baseRadius = minDim * 0.05 + i * minDim * 0.05;
@@ -623,7 +640,6 @@
       }
       requestAnimationFrame(drawFrame);
 
-      /* ---- Play/Pause (just controlling the native audio) ---- */
       const kick = document.getElementById("kickPlay");
       if (kick && audio) {
         kick.addEventListener("click", function () {
