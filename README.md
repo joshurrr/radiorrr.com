@@ -1,6 +1,6 @@
-brother
-open a web browser
+Hi brother
+so open a web browser
 type in
 radiorrr.com
-press enter 
+press enter and
 listen cuzz
