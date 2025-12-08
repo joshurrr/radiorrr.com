@@ -25,8 +25,79 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 1rem;
+      padding: 4.5rem 1rem 1rem; /* extra top padding for fixed top bar */
     }
+
+    /* TOP BAR */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background: rgba(5, 7, 16, 0.96);
+      border-bottom: 1px solid rgba(129,140,248,0.4);
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.8);
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .top-bar-inner {
+      width: 100%;
+      max-width: 980px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.25rem;
+    }
+    .brand-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(248, 113, 113, 0.7);
+      background: radial-gradient(circle at top left, rgba(255,0,102,0.45), transparent 60%);
+      font-size: 0.8rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #fee2e2;
+      text-shadow: 0 0 6px rgba(248,113,113,0.9);
+    }
+    .top-nav-links {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .top-link {
+      font-size: 0.9rem;
+      text-decoration: none;
+      color: #e5e7eb;
+      opacity: 0.7;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease-out;
+      cursor: pointer;
+    }
+    .top-link:hover {
+      opacity: 1;
+      color: #fff;
+      border-color: rgba(129,140,248,0.6);
+      text-shadow: 0 0 8px rgba(129,140,248,0.9);
+    }
+    .top-link-active {
+      opacity: 1;
+      color: #ff0066;
+      border-color: rgba(255, 0, 102, 0.85);
+      box-shadow: 0 0 10px rgba(255, 0, 102, 0.7);
+      text-shadow: 0 0 10px #ff0066;
+      background: radial-gradient(circle at top, rgba(24,24,59,0.9), rgba(15,23,42,0.9));
+    }
+
     .wrapper {
       max-width: 900px;
       width: 100%;
@@ -314,11 +385,32 @@
       .hero-right {
         text-align: center;
       }
+      .top-bar-inner {
+        padding: 0 0.75rem;
+      }
+      .top-nav-links {
+        gap: 0.5rem;
+      }
+      .top-link {
+        font-size: 0.8rem;
+      }
     }
   </style>
 </head>
 
 <body>
+
+  <!-- TOP MENU: Radio RRR / VideoRRR -->
+  <header class="top-bar">
+    <div class="top-bar-inner">
+      <span class="brand-chip">RADIO • VIDEO • RRR</span>
+      <nav class="top-nav-links">
+        <a href="#" class="top-link top-link-active" data-main-target="radio">Radio RRR</a>
+        <a href="#" class="top-link" data-main-target="video">VideoRRR</a>
+      </nav>
+    </div>
+  </header>
+
   <main class="wrapper">
 
     <!-- HERO BANNER -->
@@ -348,7 +440,7 @@
     <nav class="nav-tabs">
       <a data-target="stream-section" class="active">Stream</a>
       <a data-target="events-section">Schedule</a>
-      <a data-target="follow-section">Follow</a>
+      <a data-target="follow-section">VideoRRR</a>
     </nav>
 
     <!-- STREAM TAB -->
@@ -361,7 +453,7 @@
         <span id="streamTitle" class="stream-title">RADIO RRR Live</span>
 
         <audio id="liveStream" controls>
-          <!-- change this if your main mount is different -->
+          <!-- temporary external stream -->
           <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
           Your browser does not support the audio element.
         </audio>
@@ -408,11 +500,11 @@
       </div>
     </div>
 
-    <!-- FOLLOW TAB -->
+    <!-- VIDEORRR TAB (was Follow) -->
     <div id="follow-section" class="content-pane hidden-pane">
 
       <div class="channel">
-        <span>Follow us on TikTok</span><br />
+        <span>VideoRRR – TikTok</span><br />
         <small>@josh.u.rrr — Live station clips, neon edits, and behind-the-scenes chaos.</small>
 
         <div class="neon-embed-frame">
@@ -429,8 +521,8 @@
       </div>
 
       <div class="channel">
-        <span>YouTube Likes</span><br />
-        <small>Latest videos we liked</small>
+        <span>VideoRRR – YouTube Mix</span><br />
+        <small>Best synth / electro / retro clips on loop.</small>
 
         <div class="video-container">
           <iframe
@@ -470,6 +562,8 @@
       const statusEl = document.getElementById("status");
       const canvas = document.getElementById("viz");
       const ctx = canvas && canvas.getContext ? canvas.getContext("2d") : null;
+      const topLinks = document.querySelectorAll(".top-link");
+      const wrapper = document.querySelector(".wrapper");
 
       /* ---- Tabs ---- */
       function switchTab(targetId) {
@@ -490,6 +584,29 @@
       }
 
       switchTab("stream-section"); // default tab
+
+      /* ---- Top menu -> switch between Radio / VideoRRR ---- */
+      function setTopActive(target) {
+        topLinks.forEach(l => l.classList.remove("top-link-active"));
+        const active = document.querySelector('.top-link[data-main-target="' + target + '"]');
+        if (active) active.classList.add("top-link-active");
+      }
+
+      topLinks.forEach(link => {
+        link.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = link.getAttribute("data-main-target");
+          if (target === "radio") {
+            switchTab("stream-section");
+          } else if (target === "video") {
+            switchTab("follow-section");
+          }
+          setTopActive(target);
+          if (wrapper && wrapper.scrollIntoView) {
+            wrapper.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+      });
 
       /* ---- Day period + labels ---- */
       function getDayPeriod(hour) {
@@ -535,20 +652,50 @@
         statusEl.textContent = "Status: " + msg;
       }
 
-      /* ---- Visualizer (time-based only, no audio analyser) ---- */
+      /* ---- Visualizer 2.0 – neon orbits + rings (no audio analyser) ---- */
+      let vizWidth = 0;
+      let vizHeight = 0;
+      let cx = 0;
+      let cy = 0;
+      let minDim = 0;
+      let startTime = performance.now();
+
+      const particles = [];
+      const PARTICLE_COUNT = 80;
+
+      function initParticles() {
+        particles.length = 0;
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+          particles.push({
+            angle: Math.random() * Math.PI * 2,
+            radiusFactor: 0.22 + Math.random() * 0.3,
+            speed: 0.3 + Math.random() * 0.7,
+            size: 1 + Math.random() * 2,
+            hueOffset: Math.random() * 360,
+          });
+        }
+      }
+
       function resize() {
         if (!canvas || !ctx) return;
         const dpr = window.devicePixelRatio || 1;
-        const w = canvas.clientWidth;
-        const h = canvas.clientHeight;
-        canvas.width = w * dpr;
-        canvas.height = h * dpr;
+        vizWidth = canvas.clientWidth || canvas.offsetWidth || 600;
+        vizHeight = canvas.clientHeight || canvas.offsetHeight || 260;
+        canvas.width = vizWidth * dpr;
+        canvas.height = vizHeight * dpr;
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      }
-      resize();
-      window.addEventListener("resize", resize);
 
-      let startTime = performance.now();
+        cx = vizWidth / 2;
+        cy = vizHeight / 2;
+        minDim = Math.min(vizWidth, vizHeight);
+      }
+
+      resize();
+      initParticles();
+      window.addEventListener("resize", function () {
+        resize();
+        initParticles();
+      });
 
       function drawFrame() {
         const streamPane = document.getElementById("stream-section");
@@ -562,71 +709,117 @@
         }
 
         const t = (performance.now() - startTime) / 1000;
-        const w = canvas.clientWidth;
-        const h = canvas.clientHeight;
-        const cx = w / 2;
-        const cy = h / 2;
-        const minDim = Math.min(w, h);
 
-        ctx.fillStyle = "rgba(0, 0, 0, 1)";
-        ctx.fillRect(0, 0, w, h);
+        // Background gradient
+        const bgGrad = ctx.createRadialGradient(
+          cx, cy, 0,
+          cx, cy, minDim * 0.9
+        );
+        bgGrad.addColorStop(0, "rgba(2, 6, 23, 1)");
+        bgGrad.addColorStop(0.35, "rgba(24, 24, 59, 1)");
+        bgGrad.addColorStop(0.75, "rgba(15, 23, 42, 1)");
+        bgGrad.addColorStop(1, "rgba(0, 0, 0, 1)");
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(0, 0, vizWidth, vizHeight);
 
-        // Simple animated rings + lines (no audio input)
-        const circleCount = 10;
-        for (let i = 0; i < circleCount; i++) {
-          const baseRadius = minDim * 0.05 + i * minDim * 0.05;
-          const osc = Math.sin(t * 1.2 + i * 0.6) * 0.15;
-          const currentRadius = baseRadius * (1 + osc);
+        // Pulsing rings
+        const ringCount = 7;
+        for (let i = 0; i < ringCount; i++) {
+          const base = minDim * 0.06 + i * minDim * 0.055;
+          const pulse = Math.sin(t * 1.4 + i * 0.7) * 0.12;
+          const radius = base * (1 + pulse);
+          const hue = (200 + i * 22 + t * 12) % 360;
 
           ctx.beginPath();
-          ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
-
-          const hue = (t * 50 + i * 30) % 360;
-          ctx.strokeStyle = "hsla(" + hue + ", 100%, 60%, 0.7)";
-          ctx.lineWidth = 1.4;
-          ctx.shadowBlur = 15;
-          ctx.shadowColor = "hsla(" + hue + ", 100%, 50%, 1)";
+          ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+          ctx.strokeStyle = "hsla(" + hue + ", 100%, 65%, 0.65)";
+          ctx.lineWidth = 1.5;
+          ctx.shadowBlur = 14;
+          ctx.shadowColor = "hsla(" + hue + ", 100%, 55%, 1)";
           ctx.stroke();
         }
         ctx.shadowBlur = 0;
 
-        const lineCount = 64;
-        for (let i = 0; i < lineCount; i++) {
-          const angle = (i * (Math.PI * 2)) / lineCount + t * 0.2;
-          const inner = minDim * 0.08;
-          const outer = minDim * 0.48 + Math.sin(t * 1.7 + i * 0.2) * 12;
+        // Rotating spokes
+        const spokeCount = 72;
+        for (let i = 0; i < spokeCount; i++) {
+          const angle = (i * (Math.PI * 2)) / spokeCount + t * 0.7;
+          const inner = minDim * 0.1;
+          const outer = minDim * 0.48 + Math.sin(t * 1.8 + i * 0.3) * 10;
 
           const x1 = cx + Math.cos(angle) * inner;
           const y1 = cy + Math.sin(angle) * inner;
           const x2 = cx + Math.cos(angle) * outer;
           const y2 = cy + Math.sin(angle) * outer;
 
-          const hue = (t * 60 + i * 6) % 360;
+          const hue = (t * 80 + i * 4) % 360;
           ctx.beginPath();
           ctx.moveTo(x1, y1);
           ctx.lineTo(x2, y2);
-          ctx.strokeStyle = "hsla(" + hue + ", 100%, 65%, 0.5)";
-          ctx.lineWidth = 1;
+          ctx.strokeStyle = "hsla(" + hue + ", 100%, 60%, 0.35)";
+          ctx.lineWidth = 0.9;
           ctx.stroke();
         }
 
-        const coreRadius = 10 + Math.sin(t * 2.2) * 4;
-        const coreGradient = ctx.createRadialGradient(
-          cx, cy, 0, cx, cy, coreRadius * 3
+        // Orbiting particles
+        const baseOrbitRadius = minDim * 0.3;
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          p.angle += p.speed * 0.01;
+
+          const radius =
+            baseOrbitRadius * p.radiusFactor *
+            (1 + 0.08 * Math.sin(t * 1.5 + p.hueOffset));
+
+          const x = cx + Math.cos(p.angle) * radius;
+          const y = cy + Math.sin(p.angle) * radius;
+          const hue = (t * 40 + p.hueOffset) % 360;
+
+          const grd = ctx.createRadialGradient(
+            x, y, 0,
+            x, y, p.size * 4
+          );
+          grd.addColorStop(0, "hsla(" + hue + ", 100%, 85%, 1)");
+          grd.addColorStop(0.4, "hsla(" + hue + ", 100%, 65%, 0.9)");
+          grd.addColorStop(1, "hsla(" + hue + ", 100%, 55%, 0)");
+
+          ctx.fillStyle = grd;
+          ctx.beginPath();
+          ctx.arc(x, y, p.size * 2.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Core pulse
+        const coreRadius = 9 + Math.sin(t * 2.3) * 5;
+        const coreGrad = ctx.createRadialGradient(
+          cx, cy, 0,
+          cx, cy, coreRadius * 4
         );
-        coreGradient.addColorStop(0, "rgba(255, 255, 255, 0.9)");
-        coreGradient.addColorStop(0.4, "rgba(255, 0, 150, 0.8)");
-        coreGradient.addColorStop(1, "rgba(255, 0, 150, 0)");
-        ctx.fillStyle = coreGradient;
+        coreGrad.addColorStop(0, "rgba(255, 255, 255, 0.95)");
+        coreGrad.addColorStop(0.35, "rgba(255, 0, 150, 0.95)");
+        coreGrad.addColorStop(0.8, "rgba(0, 255, 200, 0.3)");
+        coreGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+        ctx.fillStyle = coreGrad;
         ctx.beginPath();
         ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
         ctx.fill();
+
+        // Scanlines
+        ctx.save();
+        ctx.globalAlpha = 0.16;
+        ctx.fillStyle = "rgba(0, 0, 0, 1)";
+        const gap = 3;
+        const off = (t * 40) % gap;
+        for (let y = off; y < vizHeight; y += gap) {
+          ctx.fillRect(0, y, vizWidth, 1);
+        }
+        ctx.restore();
 
         requestAnimationFrame(drawFrame);
       }
       requestAnimationFrame(drawFrame);
 
-      /* ---- Play/Pause (just controlling the native audio) ---- */
+      /* ---- Play/Pause (native audio) ---- */
       const kick = document.getElementById("kickPlay");
       if (kick && audio) {
         kick.addEventListener("click", function () {
