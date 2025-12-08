@@ -641,21 +641,15 @@
           energy = (bassSum / bassCount) / 255;
         }
 
-        /* ---- pastel background waves ---- */
-        const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
-        bgGrad.addColorStop(0,   "rgba(244, 244, 255, 0.10)");
-        bgGrad.addColorStop(0.25,"rgba(214, 226, 255, 0.16)");
-        bgGrad.addColorStop(0.5, "rgba(252, 234, 255, 0.20)");
-        bgGrad.addColorStop(0.75,"rgba(222, 252, 255, 0.18)");
-        bgGrad.addColorStop(1,   "rgba(10, 10, 20, 1.00)");
-        ctx.fillStyle = bgGrad;
+        /* ---- BLACK BACKGROUND ---- */
+        ctx.fillStyle = "rgba(0, 0, 0, 1)";
         ctx.fillRect(0, 0, w, h);
 
-        // horizontal pastel “wave bands”
+        /* ---- pastel background WAVE LINES over black ---- */
         const bandCount = 6;
         for (let i = 0; i < bandCount; i++) {
           const yBase = (h / (bandCount + 1)) * (i + 1);
-          const amp = 12 + energy * 40;
+          const amp = 10 + energy * 30;
           const phase = t * (0.8 + i * 0.15);
           const hue = (190 + i * 35) % 360;
           ctx.beginPath();
@@ -664,7 +658,7 @@
             if (x === 0) ctx.moveTo(x, y);
             else ctx.lineTo(x, y);
           }
-          ctx.strokeStyle = "hsla(" + hue + ", 80%, 80%, 0.22)";
+          ctx.strokeStyle = "hsla(" + hue + ", 80%, 80%, 0.12)";
           ctx.lineWidth = 3;
           ctx.stroke();
         }
@@ -680,9 +674,9 @@
           ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
 
           const hue = (t * 35 + i * 28) % 360;
-          ctx.strokeStyle = "hsla(" + hue + ", 100%, " + (60 + energy * 20) + "%, " + (0.35 + energy * 0.45) + ")";
-          ctx.lineWidth = 1.6;
-          ctx.shadowBlur = 12 + energy * 20;
+          ctx.strokeStyle = "hsla(" + hue + ", 100%, " + (60 + energy * 20) + "%, " + (0.4 + energy * 0.5) + ")";
+          ctx.lineWidth = 1.7;
+          ctx.shadowBlur = 16 + energy * 24;
           ctx.shadowColor = "hsla(" + hue + ", 100%, 55%, 1)";
           ctx.stroke();
         }
@@ -708,7 +702,7 @@
           const y2 = cy + Math.sin(angle) * outer;
 
           const hue = (t * 60 + i * 4) % 360;
-          const alpha = 0.25 + mag * 0.7;
+          const alpha = 0.3 + mag * 0.7;
           ctx.beginPath();
           ctx.moveTo(x1, y1);
           ctx.lineTo(x2, y2);
