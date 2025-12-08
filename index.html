@@ -115,7 +115,7 @@
       margin-bottom: 0.6rem;
     }
     .hero-now-title {
-      font-size: 1.1rem;          /* bigger */
+      font-size: 1.1rem;
       font-weight: 700;
       color: #f9a8d4;
       margin-top: 0.35rem;
@@ -128,7 +128,7 @@
       font-weight: 800;
     }
 
-    /* NAV TABS (neon pill buttons with icons) */
+    /* NAV TABS */
     .nav-tabs {
       display: flex;
       justify-content: center;
@@ -350,7 +350,9 @@
         </div>
         <h1 class="hero-title">RADIO RRR</h1>
         <p class="hero-tagline">ELECTRO · 80s · SYNTH · MEMES · REMIXED</p>
-        
+        <p class="hero-sub">
+          Neon electro from the day before the day after yesterday
+        </p>
         <p class="hero-now-title">
           Now Playing:
           <strong id="heroNowPlaying">Loading current block…</strong>
@@ -380,8 +382,6 @@
         <div class="visualizer">
           <canvas id="viz"></canvas>
         </div>
-
-        <!-- Removed duplicate title line down here -->
 
         <audio id="liveStream" controls crossorigin="anonymous">
           <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
@@ -496,9 +496,8 @@
       let analyser = null;
       let dataArray = null;
       let analyserReady = false;
-      let uiAudioCtx = null; // for nav click sounds
+      let uiAudioCtx = null;
 
-      /* ---- Small UI click sound for nav tabs ---- */
       function playNavClick() {
         try {
           const AC = window.AudioContext || window.webkitAudioContext;
@@ -518,12 +517,9 @@
           gain.connect(uiAudioCtx.destination);
           osc.start(now);
           osc.stop(now + 0.1);
-        } catch (e) {
-          // if browser blocks it, just ignore
-        }
+        } catch (e) {}
       }
 
-      /* ---- Tabs ---- */
       function switchTab(targetId) {
         contentPanes.forEach(pane => pane.classList.add("hidden-pane"));
         const targetElement = document.getElementById(targetId);
@@ -544,9 +540,8 @@
         });
       });
 
-      switchTab("stream-section"); // default tab
+      switchTab("stream-section");
 
-      /* ---- Day period + labels ---- */
       function getDayPeriod(hour) {
         if (hour >= 6 && hour < 12) return "Morning";
         if (hour >= 12 && hour < 18) return "Afternoon";
@@ -580,14 +575,12 @@
       updateTitles();
       setInterval(updateTitles, 15 * 60 * 1000);
 
-      /* ---- Status ---- */
       function setStatus(msg) {
         if (!statusEl) return;
         statusEl.style.display = "block";
         statusEl.textContent = "Status: " + msg;
       }
 
-      /* ---- Audio analyser setup ---- */
       function initAudioAnalyser() {
         if (audioCtx || !audio) return;
         try {
@@ -608,7 +601,6 @@
         }
       }
 
-      /* ---- Visualizer ---- */
       function resize() {
         if (!canvas || !ctx) return;
         const dpr = window.devicePixelRatio || 1;
@@ -645,37 +637,61 @@
 
           let bassSum = 0;
           const bassCount = Math.min(40, dataArray.length);
-          for (let i = 0; i < bassCount; i++) {
-            bassSum += dataArray[i];
-          }
+          for (let i = 0; i < bassCount; i++) bassSum += dataArray[i];
           energy = (bassSum / bassCount) / 255;
         }
 
-        ctx.fillStyle = "rgba(0, 0, 0, 1)";
+        /* ---- pastel background waves ---- */
+        const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
+        bgGrad.addColorStop(0,   "rgba(244, 244, 255, 0.10)");
+        bgGrad.addColorStop(0.25,"rgba(214, 226, 255, 0.16)");
+        bgGrad.addColorStop(0.5, "rgba(252, 234, 255, 0.20)");
+        bgGrad.addColorStop(0.75,"rgba(222, 252, 255, 0.18)");
+        bgGrad.addColorStop(1,   "rgba(10, 10, 20, 1.00)");
+        ctx.fillStyle = bgGrad;
         ctx.fillRect(0, 0, w, h);
 
+        // horizontal pastel “wave bands”
+        const bandCount = 6;
+        for (let i = 0; i < bandCount; i++) {
+          const yBase = (h / (bandCount + 1)) * (i + 1);
+          const amp = 12 + energy * 40;
+          const phase = t * (0.8 + i * 0.15);
+          const hue = (190 + i * 35) % 360;
+          ctx.beginPath();
+          for (let x = 0; x <= w; x += 6) {
+            const y = yBase + Math.sin(x * 0.015 + phase) * amp;
+            if (x === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = "hsla(" + hue + ", 80%, 80%, 0.22)";
+          ctx.lineWidth = 3;
+          ctx.stroke();
+        }
+
+        /* ---- neon circular lines / spokes ---- */
         const circleCount = 10;
         for (let i = 0; i < circleCount; i++) {
-          const baseRadius = minDim * 0.05 + i * minDim * 0.05;
-          const osc = Math.sin(t * 1.2 + i * 0.6) * (0.1 + energy * 0.35);
+          const baseRadius = minDim * 0.08 + i * minDim * 0.045;
+          const osc = Math.sin(t * 1.4 + i * 0.7) * (0.08 + energy * 0.4);
           const currentRadius = baseRadius * (1 + osc);
 
           ctx.beginPath();
           ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
 
-          const hue = (t * 40 + i * 28) % 360;
-          ctx.strokeStyle = "hsla(" + hue + ", 100%, 60%, " + (0.4 + energy * 0.5) + ")";
-          ctx.lineWidth = 1.4;
-          ctx.shadowBlur = 14 + energy * 18;
-          ctx.shadowColor = "hsla(" + hue + ", 100%, 50%, 1)";
+          const hue = (t * 35 + i * 28) % 360;
+          ctx.strokeStyle = "hsla(" + hue + ", 100%, " + (60 + energy * 20) + "%, " + (0.35 + energy * 0.45) + ")";
+          ctx.lineWidth = 1.6;
+          ctx.shadowBlur = 12 + energy * 20;
+          ctx.shadowColor = "hsla(" + hue + ", 100%, 55%, 1)";
           ctx.stroke();
         }
         ctx.shadowBlur = 0;
 
-        const lineCount = 64;
+        const lineCount = 96;
         for (let i = 0; i < lineCount; i++) {
-          const angle = (i * (Math.PI * 2)) / lineCount + t * 0.2;
-          const inner = minDim * 0.08;
+          const angle = (i * (Math.PI * 2)) / lineCount + t * 0.25;
+          const inner = minDim * 0.06;
 
           let mag = 0.5;
           if (spectrum) {
@@ -683,28 +699,32 @@
             mag = (spectrum[idx] || 0) / 255;
           }
 
-          const outer = minDim * (0.35 + mag * 0.25);
+          const beatBoost = energy * 0.4;
+          const outer = minDim * (0.30 + mag * 0.45 + beatBoost);
+
           const x1 = cx + Math.cos(angle) * inner;
           const y1 = cy + Math.sin(angle) * inner;
           const x2 = cx + Math.cos(angle) * outer;
           const y2 = cy + Math.sin(angle) * outer;
 
-          const hue = (t * 60 + i * 6) % 360;
+          const hue = (t * 60 + i * 4) % 360;
+          const alpha = 0.25 + mag * 0.7;
           ctx.beginPath();
           ctx.moveTo(x1, y1);
           ctx.lineTo(x2, y2);
-          ctx.strokeStyle = "hsla(" + hue + ", 100%, " + (50 + mag * 20) + "%, " + (0.3 + mag * 0.6) + ")";
-          ctx.lineWidth = 0.8 + mag * 1.4;
+          ctx.strokeStyle = "hsla(" + hue + ", 100%, " + (55 + mag * 25) + "%, " + alpha + ")";
+          ctx.lineWidth = 0.8 + mag * 1.8;
           ctx.stroke();
         }
 
-        const coreRadius = 10 + energy * 14 + Math.sin(t * 3.0) * 3;
+        // core pulse
+        const coreRadius = 10 + energy * 16 + Math.sin(t * 3.2) * 3;
         const coreGradient = ctx.createRadialGradient(
           cx, cy, 0, cx, cy, coreRadius * 3
         );
-        coreGradient.addColorStop(0, "rgba(255, 255, 255, 0.95)");
-        coreGradient.addColorStop(0.4, "rgba(255, 0, 150, 0.9)");
-        coreGradient.addColorStop(1, "rgba(255, 0, 150, 0)");
+        coreGradient.addColorStop(0, "rgba(255, 255, 255, 0.97)");
+        coreGradient.addColorStop(0.45, "rgba(255, 0, 170, 0.95)");
+        coreGradient.addColorStop(1, "rgba(255, 0, 170, 0)");
         ctx.fillStyle = coreGradient;
         ctx.beginPath();
         ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
@@ -714,7 +734,6 @@
       }
       requestAnimationFrame(drawFrame);
 
-      /* ---- Play/Pause + AudioContext handling ---- */
       const kick = document.getElementById("kickPlay");
       if (kick && audio) {
         kick.addEventListener("click", function () {
