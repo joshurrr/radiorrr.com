@@ -109,6 +109,90 @@
       font-weight: 800;
     }
 
+    /* NAV TABS */
+    .nav-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 0.9rem;
+      margin-top: 1.2rem;
+      margin-bottom: 2rem;
+      padding-bottom: 0.5rem;
+    }
+    .nav-tabs a {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.40rem 1.35rem;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 1.02rem;
+      color: #c7c7ff;
+      text-decoration: none;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      border: 1px solid rgba(129,140,248,0.6);
+      background:
+        radial-gradient(circle at top, rgba(24, 31, 60, 0.95), rgba(6, 10, 25, 0.98));
+      box-shadow:
+        0 0 8px rgba(15,23,42,0.8);
+      text-shadow: 0 0 4px rgba(67, 56, 202, 0.6);
+      transition:
+        transform 0.15s ease,
+        box-shadow 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+      overflow: hidden;
+    }
+    .nav-tabs a::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 55%);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+    .nav-icon {
+      font-size: 0.95rem;
+      opacity: 0.85;
+      transform: translateY(0);
+      transition: transform 0.2s ease;
+    }
+    .nav-label {
+      text-transform: uppercase;
+    }
+    .nav-tabs a:hover {
+      transform: translateY(-1px);
+      border-color: #ff4dab;
+      box-shadow:
+        0 0 10px rgba(255, 0, 102, 0.5),
+        0 0 14px rgba(129,140,248,0.5);
+      color: #ffe4ff;
+    }
+    .nav-tabs a:hover::after {
+      opacity: 1;
+    }
+    .nav-tabs a.active {
+      transform: translateY(-2px) scale(1.02);
+      border-color: #ff0066;
+      background:
+        linear-gradient(135deg, rgba(34, 9, 53, 0.98), rgba(5, 24, 61, 0.98));
+      box-shadow:
+        0 0 14px rgba(255, 0, 102, 0.85),
+        0 0 18px rgba(129,140,248,0.9);
+      color: #ffffff;
+    }
+    .nav-tabs a.active .nav-icon {
+      transform: translateY(-1px);
+    }
+
+    .content-pane { width: 100%; transition: opacity 0.3s ease-in-out; }
+    .hidden-pane { display: none; }
+
     .visualizer {
       width: 100%;
       height: 360px;
@@ -138,6 +222,60 @@
       text-align: left;
     }
 
+    .events-list {
+      text-align: left;
+      margin-top: 1rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(129, 140, 248, 0.15);
+    }
+    .event-item {
+      margin: 1.25rem 0;
+      border-left: 3px solid #4338ca;
+      padding-left: 1rem;
+    }
+    .event-item h4 {
+      margin: 0;
+      font-size: 1rem;
+      color: #ffccff;
+      text-shadow: 0 0 3px rgba(255, 0, 102, 0.5);
+    }
+    .event-item p {
+      margin: 0.25rem 0 0;
+      font-size: 0.85rem;
+      color: #e0e0ff;
+    }
+
+    .video-container {
+      position: relative;
+      width: 100%; 
+      padding-bottom: 56.25%;
+      margin-top: 0.8rem;
+    }
+    .video-container iframe {
+      position: absolute; 
+      width: 100%; 
+      height: 100%; 
+      border: 0;
+      top: 0; 
+      left: 0; 
+      border-radius: 12px;
+    }
+
+    .neon-embed-frame {
+      margin-top: 1.2rem;
+      padding: 1rem 0.75rem;
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at top, rgba(15,23,42,0.9), rgba(3,7,18,0.98));
+      border: 1px solid rgba(129,140,248,0.7);
+      box-shadow:
+        0 0 12px rgba(129,140,248,0.45),
+        0 0 24px rgba(255,0,102,0.35);
+    }
+    .neon-embed-frame .tiktok-embed {
+      margin: 0 auto !important;
+    }
+
     audio { width: 100%; margin-top: 0.2rem; }
     .kick {
       margin-top:0.6rem; padding:0.45rem 0.7rem;
@@ -152,6 +290,37 @@
       color: #ff0066;
       border-color: #ff0066;
       box-shadow: 0 0 12px rgba(255, 0, 102, 0.7);
+    }
+
+    .links { 
+      margin-top: 0.75rem; 
+      font-size: 0.85rem; 
+      text-align: center; 
+    }
+    .links a {
+      color: #a5b4fc;
+      text-decoration: none;
+      margin: 0 0.4rem;
+      transition: color 0.3s, text-shadow 0.3s;
+    }
+    .links a:hover {
+      color: #ff0066;
+      text-shadow: 0 0 8px #ff0066;
+    }
+
+    .footnote { 
+      margin-top: 1.5rem; 
+      font-size: 0.7rem; 
+      opacity: 0.55; 
+      text-align: center; 
+    }
+    .genre-tagline {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+      color: #ff0066;
+      text-shadow: 0 0 5px rgba(255, 0, 102, 0.8);
     }
 
     @media (max-width: 720px) {
@@ -184,7 +353,25 @@
       </div>
     </section>
 
-    <div class="channel">
+    <!-- NAV TABS -->
+    <nav class="nav-tabs">
+      <a data-target="stream-section" class="active">
+        <span class="nav-icon">📻</span>
+        <span class="nav-label">Radio</span>
+      </a>
+      <a data-target="events-section">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">Schedule</span>
+      </a>
+      <a data-target="video-section">
+        <span class="nav-icon">🎬</span>
+        <span class="nav-label">Video</span>
+      </a>
+    </nav>
+
+    <!-- RADIO TAB -->
+    <div id="stream-section" class="content-pane">
+      <div class="channel">
       <div class="visualizer">
         <canvas id="viz"></canvas>
       </div>
@@ -195,7 +382,23 @@
 
       <button id="kickPlay" class="kick">Play</button>
     </div>
+
+    <div class="links">
+      <a href="https://www.tiktok.com/@josh.u.rrr" target="_blank">TikTok</a> ·
+      <a href="https://www.youtube.com/@RADIO_RRR" target="_blank">YouTube</a> ·
+      <a href="https://www.instagram.com/radio.rrr/" target="_blank">Instagram</a> ·
+      <a href="https://github.com/joshurrr" target="_blank">GitHub</a>
+    </div>
+
+    <p class="footnote">
+      <span class="genre-tagline">ELECTRO · 80s · SYNTH · MEMES · REMIXED</span>
+      Streaming 24/7<br>
+      Contact: <a href="mailto:admin@radiorrr.com" style="color:#a5b4fc;">admin@radiorrr.com</a>
+    </p>
   </main>
+
+  <!-- TikTok embed script -->
+  <script async src="https://www.tiktok.com/embed.js"></script>
 
   <script>
     const audio = document.getElementById("liveStream");
@@ -207,6 +410,32 @@
     let analyser = null;
     let dataArray = null;
     let analyserReady = false;
+
+    // Tab switching
+    const navLinks = document.querySelectorAll(".nav-tabs a");
+    const contentPanes = document.querySelectorAll(".content-pane");
+
+    function switchTab(targetId) {
+      contentPanes.forEach(pane => pane.classList.add("hidden-pane"));
+      const targetElement = document.getElementById(targetId);
+      if (targetElement) targetElement.classList.remove("hidden-pane");
+
+      navLinks.forEach(l => l.classList.remove("active"));
+      const activeLink = document.querySelector('.nav-tabs a[data-target="' + targetId + '"]');
+      if (activeLink) activeLink.classList.add("active");
+    }
+
+    navLinks.forEach(link => {
+      link.addEventListener("click", function (e) {
+        e.preventDefault();
+        const targetId = e.currentTarget.getAttribute("data-target");
+        if (targetId) {
+          switchTab(targetId);
+        }
+      });
+    });
+
+    switchTab("stream-section");
 
     // Particle system
     const particles = [];
