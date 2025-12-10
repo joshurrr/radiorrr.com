@@ -207,7 +207,7 @@
     /* VISUALIZER */
     .visualizer {
       width: 100%;
-      height: 260px;
+      height: 360px;
       border-radius: 14px;
       overflow: hidden;
       background: #000000;
@@ -323,6 +323,7 @@
         text-align: center;
       }
       .hero-right { text-align: center; }
+      .visualizer { height: 280px; }
     }
   </style>
 </head>
@@ -579,7 +580,8 @@
           audioCtx = new AC();
           const source = audioCtx.createMediaElementSource(audio);
           analyser = audioCtx.createAnalyser();
-          analyser.fftSize = 1024;
+          analyser.fftSize = 2048;
+          analyser.smoothingTimeConstant = 0.85;
           const bufferLength = analyser.frequencyBinCount;
           dataArray = new Uint8Array(bufferLength);
           source.connect(analyser);
@@ -603,7 +605,47 @@
       resize();
       window.addEventListener("resize", resize);
 
-      let startTime = performance.now();
+      // Particle system
+      const particles = [];
+      const maxParticles = 80;
+
+      class Particle {
+        constructor(x, y, vx, vy, hue, size) {
+          this.x = x;
+          this.y = y;
+          this.vx = vx;
+          this.vy = vy;
+          this.hue = hue;
+          this.size = size;
+          this.alpha = 1;
+          this.decay = 0.015;
+        }
+
+        update() {
+          this.x += this.vx;
+          this.y += this.vy;
+          this.vy += 0.1;
+          this.alpha -= this.decay;
+        }
+
+        draw(ctx) {
+          ctx.save();
+          ctx.globalAlpha = this.alpha;
+          const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+          gradient.addColorStop(0, `hsla(${this.hue}, 100%, 70%, 1)`);
+          gradient.addColorStop(1, `hsla(${this.hue}, 100%, 50%, 0)`);
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      let prevBass = 0;
+      let prevMid = 0;
+      let prevTreble = 0;
+      const smoothing = 0.7;
 
       function drawFrame() {
         if (!canvas || !ctx) {
@@ -611,109 +653,174 @@
           return;
         }
 
-        const t = (performance.now() - startTime) / 1000;
+        const t = performance.now() / 1000;
         const w = canvas.clientWidth;
         const h = canvas.clientHeight;
         const cx = w / 2;
         const cy = h / 2;
-        const minDim = Math.min(w, h);
 
-        let energy = 0.25;
+        let bass = 0.1;
+        let mid = 0.1;
+        let treble = 0.1;
         let spectrum = null;
 
         if (analyserReady && analyser && dataArray) {
           analyser.getByteFrequencyData(dataArray);
           spectrum = dataArray;
 
-          let bassSum = 0;
-          const bassCount = Math.min(40, dataArray.length);
-          for (let i = 0; i < bassCount; i++) bassSum += dataArray[i];
-          energy = (bassSum / bassCount) / 255;
+          const bassEnd = Math.floor(dataArray.length * 0.1);
+          const midEnd = Math.floor(dataArray.length * 0.4);
+          
+          let bassSum = 0, midSum = 0, trebleSum = 0;
+          
+          for (let i = 0; i < bassEnd; i++) bassSum += dataArray[i];
+          for (let i = bassEnd; i < midEnd; i++) midSum += dataArray[i];
+          for (let i = midEnd; i < dataArray.length * 0.8; i++) trebleSum += dataArray[i];
+
+          bass = (bassSum / bassEnd) / 255;
+          mid = (midSum / (midEnd - bassEnd)) / 255;
+          treble = (trebleSum / (dataArray.length * 0.8 - midEnd)) / 255;
+
+          bass = prevBass * smoothing + bass * (1 - smoothing);
+          mid = prevMid * smoothing + mid * (1 - smoothing);
+          treble = prevTreble * smoothing + treble * (1 - smoothing);
+
+          prevBass = bass;
+          prevMid = mid;
+          prevTreble = treble;
         }
 
-        /* ---- base: black ---- */
-        ctx.fillStyle = "rgba(0, 0, 0, 1)";
+        ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
         ctx.fillRect(0, 0, w, h);
 
-        /* ---- pastel background waves (on black) ---- */
-        const bandCount = 6;
-        for (let i = 0; i < bandCount; i++) {
-          const yBase = (h / (bandCount + 1)) * (i + 1);
-          const amp = 10 + energy * 30;
-          const phase = t * (0.8 + i * 0.15);
-          const hue = (190 + i * 35) % 360;
-          ctx.beginPath();
-          for (let x = 0; x <= w; x += 6) {
-            const y = yBase + Math.sin(x * 0.015 + phase) * amp;
-            if (x === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
-          }
-          ctx.strokeStyle = "hsla(" + hue + ", 80%, 75%, 0.18)";
-          ctx.lineWidth = 2;
-          ctx.stroke();
+        const bgGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.7);
+        bgGradient.addColorStop(0, `hsla(${(t * 20) % 360}, 70%, 15%, 0.05)`);
+        bgGradient.addColorStop(0.5, `hsla(${(t * 15 + 180) % 360}, 80%, 10%, 0.03)`);
+        bgGradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+        ctx.fillStyle = bgGradient;
+        ctx.fillRect(0, 0, w, h);
+
+        if (bass > 0.6 && Math.random() > 0.5) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 2 + bass * 4;
+          const vx = Math.cos(angle) * speed;
+          const vy = Math.sin(angle) * speed - 2;
+          const hue = (t * 50 + Math.random() * 60) % 360;
+          particles.push(new Particle(cx, cy, vx, vy, hue, 3 + bass * 8));
         }
 
-        /* ---- neon circular rings ---- */
-        const circleCount = 10;
-        for (let i = 0; i < circleCount; i++) {
-          const baseRadius = minDim * 0.08 + i * minDim * 0.045;
-          const osc = Math.sin(t * 1.4 + i * 0.7) * (0.1 + energy * 0.45);
-          const currentRadius = baseRadius * (1 + osc);
+        for (let i = particles.length - 1; i >= 0; i--) {
+          particles[i].update();
+          particles[i].draw(ctx);
+          if (particles[i].alpha <= 0) {
+            particles.splice(i, 1);
+          }
+        }
+        if (particles.length > maxParticles) {
+          particles.splice(0, particles.length - maxParticles);
+        }
 
+        const ringCount = 5;
+        for (let i = 0; i < ringCount; i++) {
+          const radius = Math.min(w, h) * (0.3 + i * 0.08) + bass * 30;
+          const rotation = t * (0.2 + i * 0.1) + i * Math.PI / 3;
+          
+          ctx.save();
+          ctx.translate(cx, cy);
+          ctx.rotate(rotation);
+          
           ctx.beginPath();
-          ctx.arc(cx, cy, currentRadius, 0, Math.PI * 2);
-
-          const hue = (t * 35 + i * 28) % 360;
-          ctx.strokeStyle = "hsla(" + hue + ", 100%, " + (60 + energy * 20) + "%, " + (0.4 + energy * 0.4) + ")";
-          ctx.lineWidth = 1.8;
-          ctx.shadowBlur = 14 + energy * 22;
-          ctx.shadowColor = "hsla(" + hue + ", 100%, 55%, 1)";
+          const segments = 60;
+          for (let j = 0; j <= segments; j++) {
+            const angle = (j / segments) * Math.PI * 2;
+            const r = radius + Math.sin(j * 0.5 + t * 2) * 10 * mid;
+            const x = Math.cos(angle) * r;
+            const y = Math.sin(angle) * r;
+            if (j === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.closePath();
+          
+          const hue = (t * 30 + i * 60) % 360;
+          ctx.strokeStyle = `hsla(${hue}, 100%, 60%, ${0.2 + bass * 0.3})`;
+          ctx.lineWidth = 2 + bass * 3;
+          ctx.shadowBlur = 15 + bass * 20;
+          ctx.shadowColor = `hsla(${hue}, 100%, 60%, 1)`;
           ctx.stroke();
+          
+          ctx.restore();
         }
         ctx.shadowBlur = 0;
 
-        /* ---- neon spokes reacting to spectrum ---- */
-        const lineCount = 96;
-        for (let i = 0; i < lineCount; i++) {
-          const angle = (i * (Math.PI * 2)) / lineCount + t * 0.25;
-          const inner = minDim * 0.06;
-
-          let mag = 0.5;
-          if (spectrum) {
-            const idx = Math.floor((i / lineCount) * spectrum.length);
-            mag = (spectrum[idx] || 0) / 255;
+        if (spectrum) {
+          const barCount = 120;
+          const barWidth = 3;
+          const innerRadius = Math.min(w, h) * 0.12;
+          
+          for (let i = 0; i < barCount; i++) {
+            const angle = (i / barCount) * Math.PI * 2 - Math.PI / 2;
+            const specIndex = Math.floor((i / barCount) * spectrum.length);
+            let value = (spectrum[specIndex] || 0) / 255;
+            
+            const nextIndex = Math.min(specIndex + 1, spectrum.length - 1);
+            const nextValue = (spectrum[nextIndex] || 0) / 255;
+            value = value * 0.7 + nextValue * 0.3;
+            
+            const barHeight = value * Math.min(w, h) * 0.35;
+            
+            const x1 = cx + Math.cos(angle) * innerRadius;
+            const y1 = cy + Math.sin(angle) * innerRadius;
+            const x2 = cx + Math.cos(angle) * (innerRadius + barHeight);
+            const y2 = cy + Math.sin(angle) * (innerRadius + barHeight);
+            
+            const hue = (i * 3 + t * 50) % 360;
+            const gradient = ctx.createLinearGradient(x1, y1, x2, y2);
+            gradient.addColorStop(0, `hsla(${hue}, 100%, 50%, 0.3)`);
+            gradient.addColorStop(1, `hsla(${hue}, 100%, 70%, ${0.7 + value * 0.3})`);
+            
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.strokeStyle = gradient;
+            ctx.lineWidth = barWidth;
+            ctx.lineCap = "round";
+            ctx.stroke();
           }
-
-          const beatBoost = energy * 0.5;
-          const outer = minDim * (0.30 + mag * 0.50 + beatBoost);
-
-          const x1 = cx + Math.cos(angle) * inner;
-          const y1 = cy + Math.sin(angle) * inner;
-          const x2 = cx + Math.cos(angle) * outer;
-          const y2 = cy + Math.sin(angle) * outer;
-
-          const hue = (t * 60 + i * 4) % 360;
-          const alpha = 0.3 + mag * 0.7;
-          ctx.beginPath();
-          ctx.moveTo(x1, y1);
-          ctx.lineTo(x2, y2);
-          ctx.strokeStyle = "hsla(" + hue + ", 100%, " + (55 + mag * 25) + "%, " + alpha + ")";
-          ctx.lineWidth = 1 + mag * 2.0;
-          ctx.stroke();
         }
 
-        /* ---- neon core pulse ---- */
-        const coreRadius = 10 + energy * 18 + Math.sin(t * 3.2) * 3;
-        const coreGradient = ctx.createRadialGradient(
-          cx, cy, 0, cx, cy, coreRadius * 3
-        );
-        coreGradient.addColorStop(0, "rgba(255, 255, 255, 0.97)");
-        coreGradient.addColorStop(0.45, "rgba(255, 0, 170, 0.95)");
-        coreGradient.addColorStop(1, "rgba(255, 0, 170, 0)");
-        ctx.fillStyle = coreGradient;
+        const orbRadius = 15 + bass * 35 + Math.sin(t * 4) * 5;
+        const orbGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, orbRadius * 2);
+        orbGradient.addColorStop(0, `hsla(${(t * 100) % 360}, 100%, 90%, 1)`);
+        orbGradient.addColorStop(0.3, `hsla(${(t * 100 + 60) % 360}, 100%, 70%, 0.8)`);
+        orbGradient.addColorStop(0.6, `hsla(${(t * 100 + 120) % 360}, 100%, 50%, 0.4)`);
+        orbGradient.addColorStop(1, "rgba(255, 0, 170, 0)");
+        
+        ctx.fillStyle = orbGradient;
         ctx.beginPath();
-        ctx.arc(cx, cy, coreRadius, 0, Math.PI * 2);
+        ctx.arc(cx, cy, orbRadius * 1.5, 0, Math.PI * 2);
         ctx.fill();
+
+        if (spectrum) {
+          ctx.beginPath();
+          const wavePoints = 150;
+          const waveAmplitude = h * 0.15;
+          for (let i = 0; i <= wavePoints; i++) {
+            const x = (i / wavePoints) * w;
+            const specIndex = Math.floor((i / wavePoints) * spectrum.length * 0.3);
+            const value = (spectrum[specIndex] || 0) / 255;
+            const y = cy + Math.sin(i * 0.1 + t * 2) * (20 + value * waveAmplitude);
+            
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          
+          ctx.strokeStyle = `hsla(${(t * 60) % 360}, 100%, 70%, 0.4)`;
+          ctx.lineWidth = 2;
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = `hsla(${(t * 60) % 360}, 100%, 70%, 1)`;
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+        }
 
         requestAnimationFrame(drawFrame);
       }
