@@ -2,8 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Radio RRR - Enhanced</title>
+  <title>Radio RRR</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="description" content="Radio RRR: The #1 neon 80s inspired synth electro neon radio station." />
+  <meta property="og:title" content="Radio RRR - 24/7 Electro, Synth, 80s, Memes Remixed" />
+  <meta property="og:description" content="Tune in to the best Retrowave, Synthwave, and Outrun music for your late-night drives." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://radiorrr.com/" />
+  <meta property="og:image" content="https://radiorrr.com/logo.png" />
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -28,8 +36,10 @@
         0 0 10px rgba(67, 56, 202, 0.5),
         0 0 30px rgba(255, 0, 102, 0.4);
       text-align: center;
+      transition: all 0.3s ease-out;
     }
 
+    /* HERO BANNER */
     .hero {
       display: flex;
       align-items: center;
@@ -89,6 +99,7 @@
         0 0 16px rgba(59,130,246,0.8);
       margin-bottom: 0.3rem;
     }
+    /* tagline removed from hero */
     .hero-sub {
       font-size: 0.9rem;
       color: #e5e7eb;
@@ -193,6 +204,7 @@
     .content-pane { width: 100%; transition: opacity 0.3s ease-in-out; }
     .hidden-pane { display: none; }
 
+    /* VISUALIZER */
     .visualizer {
       width: 100%;
       height: 360px;
@@ -202,17 +214,10 @@
       margin-bottom: 0.6rem;
       border: 2px solid #ff0066;
       box-shadow: 0 0 15px rgba(255, 0, 102, 0.5);
-      position: relative;
     }
-    #viz { 
-      width: 100%; 
-      height: 100%; 
-      display: block;
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
+    #viz { width: 100%; height: 100%; display: block; }
 
+    /* CHANNEL PANELS */
     .channel {
       padding: 1.2rem 1.4rem;
       border-radius: 16px;
@@ -220,6 +225,25 @@
       border: 1px solid rgba(129,140,248,0.5);
       margin-bottom: 1.75rem;
       text-align: left;
+    }
+    .channel span { font-weight: 600; font-size: 1rem; }
+    .channel small { font-size: 0.8rem; color: #e0e0ff; opacity: 0.9; }
+
+    audio { width: 100%; margin-top: 0.2rem; }
+    .status { display:none; font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.8; }
+    .kick {
+      margin-top:0.6rem; padding:0.45rem 0.7rem;
+      border-radius:10px; border:1px solid rgba(129,140,248,0.6);
+      background:#0b1020; color:#c7c7ff;
+      cursor:pointer; font-size:0.85rem;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .kick:hover {
+      color: #ff0066;
+      border-color: #ff0066;
+      box-shadow: 0 0 12px rgba(255, 0, 102, 0.7);
     }
 
     .events-list {
@@ -247,18 +271,12 @@
 
     .video-container {
       position: relative;
-      width: 100%; 
-      padding-bottom: 56.25%;
+      width: 100%; padding-bottom: 56.25%;
       margin-top: 0.8rem;
     }
     .video-container iframe {
-      position: absolute; 
-      width: 100%; 
-      height: 100%; 
-      border: 0;
-      top: 0; 
-      left: 0; 
-      border-radius: 12px;
+      position: absolute; width: 100%; height: 100%; border: 0;
+      top: 0; left: 0; border-radius: 12px;
     }
 
     .neon-embed-frame {
@@ -276,27 +294,7 @@
       margin: 0 auto !important;
     }
 
-    audio { width: 100%; margin-top: 0.2rem; }
-    .kick {
-      margin-top:0.6rem; padding:0.45rem 0.7rem;
-      border-radius:10px; border:1px solid rgba(129,140,248,0.6);
-      background:#0b1020; color:#c7c7ff;
-      cursor:pointer; font-size:0.85rem;
-      transition: all 0.3s;
-      text-decoration: none;
-      display: inline-block;
-    }
-    .kick:hover {
-      color: #ff0066;
-      border-color: #ff0066;
-      box-shadow: 0 0 12px rgba(255, 0, 102, 0.7);
-    }
-
-    .links { 
-      margin-top: 0.75rem; 
-      font-size: 0.85rem; 
-      text-align: center; 
-    }
+    .links { margin-top: 0.75rem; font-size: 0.85rem; text-align:center; }
     .links a {
       color: #a5b4fc;
       text-decoration: none;
@@ -308,12 +306,7 @@
       text-shadow: 0 0 8px #ff0066;
     }
 
-    .footnote { 
-      margin-top: 1.5rem; 
-      font-size: 0.7rem; 
-      opacity: 0.55; 
-      text-align: center; 
-    }
+    .footnote { margin-top: 1.5rem; font-size: 0.7rem; opacity: 0.55; text-align:center; }
     .genre-tagline {
       display: block;
       font-size: 0.85rem;
@@ -334,11 +327,14 @@
     }
   </style>
 </head>
+
 <body>
   <main class="wrapper">
+
+    <!-- HERO BANNER -->
     <section class="hero">
       <div class="hero-left">
-        <img src="logo.png" alt="Radio RRR Logo">
+        <img src="logo.png" alt="Radio RRR Logo - Neon Retrowave Text">
       </div>
       <div class="hero-right">
         <div class="live-pill">
@@ -346,9 +342,11 @@
           LIVE · BROADCASTING 24/7
         </div>
         <h1 class="hero-title">RADIO RRR</h1>
+        <!-- tagline removed from here -->
+       
         <p class="hero-now-title">
           Now Playing:
-          <strong id="heroNowPlaying">Loading...</strong>
+          <strong id="heroNowPlaying">Loading current block…</strong>
         </p>
       </div>
     </section>
@@ -372,15 +370,89 @@
     <!-- RADIO TAB -->
     <div id="stream-section" class="content-pane">
       <div class="channel">
-      <div class="visualizer">
-        <canvas id="viz"></canvas>
+        <div class="visualizer">
+          <canvas id="viz"></canvas>
+        </div>
+
+        <audio id="liveStream" controls crossorigin="anonymous">
+          <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
+          Your browser does not support the audio element.
+        </audio>
+
+        <button id="kickPlay" class="kick">Play</button>
+        <div id="status" class="status"></div>
+      </div>
+    </div>
+
+    <!-- SCHEDULE TAB -->
+    <div id="events-section" class="content-pane hidden-pane">
+      <div class="channel">
+        <span>Radio RRR Schedule</span><br />
+        <small>Daily rotation across Morning, Afternoon, and Evening blocks.</small>
+
+        <div class="events-list">
+          <div class="event-item">
+            <h4>Morning – Neon Sunrise Chill</h4>
+            <p><span class="event-date">06:00 – 12:00</span></p>
+            <p>
+              Morning playlist: chilled synthwave, soft electro, lofi textures and
+              relaxed 80s-inspired cuts for coffee, commute, and easing into the day.
+            </p>
+          </div>
+
+          <div class="event-item">
+            <h4>Afternoon – Daydrive Synthwave</h4>
+            <p><span class="event-date">12:00 – 18:00</span></p>
+            <p>
+              Afternoon playlist: mid-tempo outrun, retrowave and synth bangers
+              for work, driving, and daytime sessions.
+            </p>
+          </div>
+
+          <div class="event-item">
+            <h4>Evening & Night – Night Drive Electro</h4>
+            <p><span class="event-date">18:00 – 06:00</span></p>
+            <p>
+              Evening/night playlist: heavier electro, darker synth, and high-energy
+              remixes tuned for late-night coding, neon skylines, and insomnia.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIDEO TAB -->
+    <div id="video-section" class="content-pane hidden-pane">
+
+      <div class="channel">
+        <span>TikTok Clips</span><br />
+        <small>Videos Music and Stuff</small>
+
+        <div class="neon-embed-frame">
+          <blockquote class="tiktok-embed"
+            cite="https://www.tiktok.com/@josh.u.rrr"
+            data-unique-id="josh.u.rrr"
+            data-embed-type="creator"
+            style="max-width: 600px;">
+            <section>
+              <a target="_blank" href="https://www.tiktok.com/@josh.u.rrr">@josh.u.rrr</a>
+            </section>
+          </blockquote>
+        </div>
       </div>
 
-      <audio id="liveStream" controls crossorigin="anonymous">
-        <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
-      </audio>
+      <div class="channel">
+        <span>YouTube Likes</span><br />
+        <small>Latest videos we liked</small>
 
-      <button id="kickPlay" class="kick">Play</button>
+        <div class="video-container">
+          <iframe
+            src="https://www.youtube.com/embed/videoseries?list=PLli1uTuS0FH7xR1QBnIvY3V9btomaSpTv"
+            allowfullscreen
+            loading="lazy">
+          </iframe>
+        </div>
+      </div>
     </div>
 
     <div class="links">
@@ -395,364 +467,273 @@
       Streaming 24/7<br>
       Contact: <a href="mailto:admin@radiorrr.com" style="color:#a5b4fc;">admin@radiorrr.com</a>
     </p>
+
   </main>
 
   <!-- TikTok embed script -->
   <script async src="https://www.tiktok.com/embed.js"></script>
 
   <script>
-    const audio = document.getElementById("liveStream");
-    const canvas = document.getElementById("viz");
-    const ctx = canvas.getContext("2d");
-    const kick = document.getElementById("kickPlay");
+    document.addEventListener("DOMContentLoaded", function () {
+      const navLinks = document.querySelectorAll(".nav-tabs a");
+      const contentPanes = document.querySelectorAll(".content-pane");
+      const heroNowEl = document.getElementById("heroNowPlaying");
+      const audio = document.getElementById("liveStream");
+      const statusEl = document.getElementById("status");
+      const canvas = document.getElementById("viz");
+      const ctx = canvas && canvas.getContext ? canvas.getContext("2d") : null;
 
-    let audioCtx = null;
-    let analyser = null;
-    let dataArray = null;
-    let analyserReady = false;
+      let audioCtx = null;
+      let analyser = null;
+      let dataArray = null;
+      let analyserReady = false;
+      let uiAudioCtx = null;
 
-    // Tab switching
-    const navLinks = document.querySelectorAll(".nav-tabs a");
-    const contentPanes = document.querySelectorAll(".content-pane");
+      function playNavClick() {
+        try {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (!AC) return;
+          if (!uiAudioCtx) uiAudioCtx = new AC();
 
-    function switchTab(targetId) {
-      contentPanes.forEach(pane => pane.classList.add("hidden-pane"));
-      const targetElement = document.getElementById(targetId);
-      if (targetElement) targetElement.classList.remove("hidden-pane");
+          const now = uiAudioCtx.currentTime;
+          const osc = uiAudioCtx.createOscillator();
+          const gain = uiAudioCtx.createGain();
 
-      navLinks.forEach(l => l.classList.remove("active"));
-      const activeLink = document.querySelector('.nav-tabs a[data-target="' + targetId + '"]');
-      if (activeLink) activeLink.classList.add("active");
-    }
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(880, now);
+          gain.gain.setValueAtTime(0.05, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
 
-    navLinks.forEach(link => {
-      link.addEventListener("click", function (e) {
-        e.preventDefault();
-        const targetId = e.currentTarget.getAttribute("data-target");
-        if (targetId) {
-          switchTab(targetId);
-        }
+          osc.connect(gain);
+          gain.connect(uiAudioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.1);
+        } catch (e) {}
+      }
+
+      function switchTab(targetId) {
+        contentPanes.forEach(pane => pane.classList.add("hidden-pane"));
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) targetElement.classList.remove("hidden-pane");
+
+        navLinks.forEach(l => l.classList.remove("active"));
+        const activeLink = document.querySelector('.nav-tabs a[data-target="' + targetId + '"]');
+        if (activeLink) activeLink.classList.add("active");
+      }
+
+      navLinks.forEach(link => {
+        link.addEventListener("click", function (e) {
+          const targetId = e.currentTarget.getAttribute("data-target");
+          if (targetId) {
+            switchTab(targetId);
+            playNavClick();
+          }
+        });
       });
-    });
 
-    switchTab("stream-section");
+      switchTab("stream-section");
 
-    // Particle system
-    const particles = [];
-    const maxParticles = 80;
-
-    class Particle {
-      constructor(x, y, vx, vy, hue, size) {
-        this.x = x;
-        this.y = y;
-        this.vx = vx;
-        this.vy = vy;
-        this.hue = hue;
-        this.size = size;
-        this.alpha = 1;
-        this.decay = 0.015;
+      function getDayPeriod(hour) {
+        if (hour >= 6 && hour < 12) return "Morning";
+        if (hour >= 12 && hour < 18) return "Afternoon";
+        return "Evening";
       }
 
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-        this.vy += 0.1; // gravity
-        this.alpha -= this.decay;
+      function getBlockLabel(dayName, period) {
+        const labels = {
+          Morning: "Neon Sunrise Chill",
+          Afternoon: "Daydrive Synthwave",
+          Evening: "Night Drive Electro"
+        };
+        const base = labels[period] || "Live Mix";
+        return dayName + " " + period + " – " + base;
       }
 
-      draw(ctx) {
-        ctx.save();
-        ctx.globalAlpha = this.alpha;
-        const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
-        gradient.addColorStop(0, `hsla(${this.hue}, 100%, 70%, 1)`);
-        gradient.addColorStop(1, `hsla(${this.hue}, 100%, 50%, 0)`);
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      }
-    }
+      function updateTitles() {
+        const now = new Date();
+        const days = [
+          "Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"
+        ];
+        const dayName = days[now.getDay()];
+        const period = getDayPeriod(now.getHours());
+        const blockLabel = getBlockLabel(dayName, period);
 
-    function initAudioAnalyser() {
-      if (audioCtx || !audio) return;
-      try {
-        const AC = window.AudioContext || window.webkitAudioContext;
-        if (!AC) return;
-        audioCtx = new AC();
-        const source = audioCtx.createMediaElementSource(audio);
-        analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 2048;
-        analyser.smoothingTimeConstant = 0.85;
-        const bufferLength = analyser.frequencyBinCount;
-        dataArray = new Uint8Array(bufferLength);
-        source.connect(analyser);
-        analyser.connect(audioCtx.destination);
-        analyserReady = true;
-      } catch (e) {
-        console.warn("Analyser init failed:", e);
-        analyserReady = false;
-      }
-    }
-
-    function resize() {
-      const dpr = window.devicePixelRatio || 1;
-      const w = canvas.clientWidth;
-      const h = canvas.clientHeight;
-      canvas.width = w * dpr;
-      canvas.height = h * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    }
-    resize();
-    window.addEventListener("resize", resize);
-
-    let prevBass = 0;
-    let prevMid = 0;
-    let prevTreble = 0;
-    const smoothing = 0.7;
-
-    function drawFrame() {
-      const t = performance.now() / 1000;
-      const w = canvas.clientWidth;
-      const h = canvas.clientHeight;
-      const cx = w / 2;
-      const cy = h / 2;
-
-      let bass = 0.1;
-      let mid = 0.1;
-      let treble = 0.1;
-      let spectrum = null;
-
-      if (analyserReady && analyser && dataArray) {
-        analyser.getByteFrequencyData(dataArray);
-        spectrum = dataArray;
-
-        // Analyze frequency ranges
-        const bassEnd = Math.floor(dataArray.length * 0.1);
-        const midEnd = Math.floor(dataArray.length * 0.4);
-        
-        let bassSum = 0, midSum = 0, trebleSum = 0;
-        
-        for (let i = 0; i < bassEnd; i++) bassSum += dataArray[i];
-        for (let i = bassEnd; i < midEnd; i++) midSum += dataArray[i];
-        for (let i = midEnd; i < dataArray.length * 0.8; i++) trebleSum += dataArray[i];
-
-        bass = (bassSum / bassEnd) / 255;
-        mid = (midSum / (midEnd - bassEnd)) / 255;
-        treble = (trebleSum / (dataArray.length * 0.8 - midEnd)) / 255;
-
-        // Smooth the values
-        bass = prevBass * smoothing + bass * (1 - smoothing);
-        mid = prevMid * smoothing + mid * (1 - smoothing);
-        treble = prevTreble * smoothing + treble * (1 - smoothing);
-
-        prevBass = bass;
-        prevMid = mid;
-        prevTreble = treble;
-      }
-
-      // Dark background with trail effect
-      ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
-      ctx.fillRect(0, 0, w, h);
-
-      // Animated gradient background
-      const bgGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.7);
-      bgGradient.addColorStop(0, `hsla(${(t * 20) % 360}, 70%, 15%, 0.05)`);
-      bgGradient.addColorStop(0.5, `hsla(${(t * 15 + 180) % 360}, 80%, 10%, 0.03)`);
-      bgGradient.addColorStop(1, "rgba(0, 0, 0, 0)");
-      ctx.fillStyle = bgGradient;
-      ctx.fillRect(0, 0, w, h);
-
-      // Spawn particles on bass hits
-      if (bass > 0.6 && Math.random() > 0.5) {
-        const angle = Math.random() * Math.PI * 2;
-        const speed = 2 + bass * 4;
-        const vx = Math.cos(angle) * speed;
-        const vy = Math.sin(angle) * speed - 2;
-        const hue = (t * 50 + Math.random() * 60) % 360;
-        particles.push(new Particle(cx, cy, vx, vy, hue, 3 + bass * 8));
-      }
-
-      // Update and draw particles
-      for (let i = particles.length - 1; i >= 0; i--) {
-        particles[i].update();
-        particles[i].draw(ctx);
-        if (particles[i].alpha <= 0) {
-          particles.splice(i, 1);
+        if (heroNowEl) {
+          heroNowEl.textContent = blockLabel;
         }
       }
-      if (particles.length > maxParticles) {
-        particles.splice(0, particles.length - maxParticles);
+
+      updateTitles();
+      setInterval(updateTitles, 15 * 60 * 1000);
+
+      function setStatus(msg) {
+        if (!statusEl) return;
+        statusEl.style.display = "block";
+        statusEl.textContent = "Status: " + msg;
       }
 
-      // Outer rotating rings
-      const ringCount = 5;
-      for (let i = 0; i < ringCount; i++) {
-        const radius = Math.min(w, h) * (0.3 + i * 0.08) + bass * 30;
-        const rotation = t * (0.2 + i * 0.1) + i * Math.PI / 3;
-        
-        ctx.save();
-        ctx.translate(cx, cy);
-        ctx.rotate(rotation);
-        
-        ctx.beginPath();
-        const segments = 60;
-        for (let j = 0; j <= segments; j++) {
-          const angle = (j / segments) * Math.PI * 2;
-          const r = radius + Math.sin(j * 0.5 + t * 2) * 10 * mid;
-          const x = Math.cos(angle) * r;
-          const y = Math.sin(angle) * r;
-          if (j === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
+      function initAudioAnalyser() {
+        if (audioCtx || !audio) return;
+        try {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (!AC) return;
+          audioCtx = new AC();
+          const source = audioCtx.createMediaElementSource(audio);
+          analyser = audioCtx.createAnalyser();
+          analyser.fftSize = 2048;
+          analyser.smoothingTimeConstant = 0.85;
+          const bufferLength = analyser.frequencyBinCount;
+          dataArray = new Uint8Array(bufferLength);
+          source.connect(analyser);
+          analyser.connect(audioCtx.destination);
+          analyserReady = true;
+        } catch (e) {
+          console.warn("Analyser init failed:", e);
+          analyserReady = false;
         }
-        ctx.closePath();
-        
-        const hue = (t * 30 + i * 60) % 360;
-        ctx.strokeStyle = `hsla(${hue}, 100%, 60%, ${0.2 + bass * 0.3})`;
-        ctx.lineWidth = 2 + bass * 3;
-        ctx.shadowBlur = 15 + bass * 20;
-        ctx.shadowColor = `hsla(${hue}, 100%, 60%, 1)`;
-        ctx.stroke();
-        
-        ctx.restore();
       }
-      ctx.shadowBlur = 0;
 
-      // Circular frequency bars
-      if (spectrum) {
-        const barCount = 120;
-        const barWidth = 3;
-        const innerRadius = Math.min(w, h) * 0.12;
-        
-        for (let i = 0; i < barCount; i++) {
-          const angle = (i / barCount) * Math.PI * 2 - Math.PI / 2;
-          const specIndex = Math.floor((i / barCount) * spectrum.length);
-          let value = (spectrum[specIndex] || 0) / 255;
+      function resize() {
+        if (!canvas || !ctx) return;
+        const dpr = window.devicePixelRatio || 1;
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight;
+        canvas.width = w * dpr;
+        canvas.height = h * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      resize();
+      window.addEventListener("resize", resize);
+
+      // Particle system
+      const particles = [];
+      const maxParticles = 80;
+
+      class Particle {
+        constructor(x, y, vx, vy, hue, size) {
+          this.x = x;
+          this.y = y;
+          this.vx = vx;
+          this.vy = vy;
+          this.hue = hue;
+          this.size = size;
+          this.alpha = 1;
+          this.decay = 0.015;
+        }
+
+        update() {
+          this.x += this.vx;
+          this.y += this.vy;
+          this.vy += 0.1;
+          this.alpha -= this.decay;
+        }
+
+        draw(ctx) {
+          ctx.save();
+          ctx.globalAlpha = this.alpha;
+          const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+          gradient.addColorStop(0, `hsla(${this.hue}, 100%, 70%, 1)`);
+          gradient.addColorStop(1, `hsla(${this.hue}, 100%, 50%, 0)`);
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      let prevBass = 0;
+      let prevMid = 0;
+      let prevTreble = 0;
+      const smoothing = 0.7;
+
+      function drawFrame() {
+        if (!canvas || !ctx) {
+          requestAnimationFrame(drawFrame);
+          return;
+        }
+
+        const t = performance.now() / 1000;
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+
+        let bass = 0.1;
+        let mid = 0.1;
+        let treble = 0.1;
+        let spectrum = null;
+
+        if (analyserReady && analyser && dataArray) {
+          analyser.getByteFrequencyData(dataArray);
+          spectrum = dataArray;
+
+          const bassEnd = Math.floor(dataArray.length * 0.1);
+          const midEnd = Math.floor(dataArray.length * 0.4);
           
-          // Interpolate for smoother bars
-          const nextIndex = Math.min(specIndex + 1, spectrum.length - 1);
-          const nextValue = (spectrum[nextIndex] || 0) / 255;
-          value = value * 0.7 + nextValue * 0.3;
+          let bassSum = 0, midSum = 0, trebleSum = 0;
           
-          const barHeight = value * Math.min(w, h) * 0.35;
+          for (let i = 0; i < bassEnd; i++) bassSum += dataArray[i];
+          for (let i = bassEnd; i < midEnd; i++) midSum += dataArray[i];
+          for (let i = midEnd; i < dataArray.length * 0.8; i++) trebleSum += dataArray[i];
+
+          bass = (bassSum / bassEnd) / 255;
+          mid = (midSum / (midEnd - bassEnd)) / 255;
+          treble = (trebleSum / (dataArray.length * 0.8 - midEnd)) / 255;
+
+          bass = prevBass * smoothing + bass * (1 - smoothing);
+          mid = prevMid * smoothing + mid * (1 - smoothing);
+          treble = prevTreble * smoothing + treble * (1 - smoothing);
+
+          prevBass = bass;
+          prevMid = mid;
+          prevTreble = treble;
+        }
+
+        ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
+        ctx.fillRect(0, 0, w, h);
+
+        const bgGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.7);
+        bgGradient.addColorStop(0, `hsla(${(t * 20) % 360}, 70%, 15%, 0.05)`);
+        bgGradient.addColorStop(0.5, `hsla(${(t * 15 + 180) % 360}, 80%, 10%, 0.03)`);
+        bgGradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+        ctx.fillStyle = bgGradient;
+        ctx.fillRect(0, 0, w, h);
+
+        if (bass > 0.6 && Math.random() > 0.5) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 2 + bass * 4;
+          const vx = Math.cos(angle) * speed;
+          const vy = Math.sin(angle) * speed - 2;
+          const hue = (t * 50 + Math.random() * 60) % 360;
+          particles.push(new Particle(cx, cy, vx, vy, hue, 3 + bass * 8));
+        }
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+          particles[i].update();
+          particles[i].draw(ctx);
+          if (particles[i].alpha <= 0) {
+            particles.splice(i, 1);
+          }
+        }
+        if (particles.length > maxParticles) {
+          particles.splice(0, particles.length - maxParticles);
+        }
+
+        const ringCount = 5;
+        for (let i = 0; i < ringCount; i++) {
+          const radius = Math.min(w, h) * (0.3 + i * 0.08) + bass * 30;
+          const rotation = t * (0.2 + i * 0.1) + i * Math.PI / 3;
           
-          const x1 = cx + Math.cos(angle) * innerRadius;
-          const y1 = cy + Math.sin(angle) * innerRadius;
-          const x2 = cx + Math.cos(angle) * (innerRadius + barHeight);
-          const y2 = cy + Math.sin(angle) * (innerRadius + barHeight);
-          
-          const hue = (i * 3 + t * 50) % 360;
-          const gradient = ctx.createLinearGradient(x1, y1, x2, y2);
-          gradient.addColorStop(0, `hsla(${hue}, 100%, 50%, 0.3)`);
-          gradient.addColorStop(1, `hsla(${hue}, 100%, 70%, ${0.7 + value * 0.3})`);
+          ctx.save();
+          ctx.translate(cx, cy);
+          ctx.rotate(rotation);
           
           ctx.beginPath();
-          ctx.moveTo(x1, y1);
-          ctx.lineTo(x2, y2);
-          ctx.strokeStyle = gradient;
-          ctx.lineWidth = barWidth;
-          ctx.lineCap = "round";
-          ctx.stroke();
-        }
-      }
-
-      // Center pulsing orb
-      const orbRadius = 15 + bass * 35 + Math.sin(t * 4) * 5;
-      const orbGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, orbRadius * 2);
-      orbGradient.addColorStop(0, `hsla(${(t * 100) % 360}, 100%, 90%, 1)`);
-      orbGradient.addColorStop(0.3, `hsla(${(t * 100 + 60) % 360}, 100%, 70%, 0.8)`);
-      orbGradient.addColorStop(0.6, `hsla(${(t * 100 + 120) % 360}, 100%, 50%, 0.4)`);
-      orbGradient.addColorStop(1, "rgba(255, 0, 170, 0)");
-      
-      ctx.fillStyle = orbGradient;
-      ctx.beginPath();
-      ctx.arc(cx, cy, orbRadius * 1.5, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Waveform overlay
-      if (spectrum) {
-        ctx.beginPath();
-        const wavePoints = 150;
-        const waveAmplitude = h * 0.15;
-        for (let i = 0; i <= wavePoints; i++) {
-          const x = (i / wavePoints) * w;
-          const specIndex = Math.floor((i / wavePoints) * spectrum.length * 0.3);
-          const value = (spectrum[specIndex] || 0) / 255;
-          const y = cy + Math.sin(i * 0.1 + t * 2) * (20 + value * waveAmplitude);
-          
-          if (i === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-        
-        ctx.strokeStyle = `hsla(${(t * 60) % 360}, 100%, 70%, 0.4)`;
-        ctx.lineWidth = 2;
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = `hsla(${(t * 60) % 360}, 100%, 70%, 1)`;
-        ctx.stroke();
-        ctx.shadowBlur = 0;
-      }
-
-      requestAnimationFrame(drawFrame);
-    }
-
-    requestAnimationFrame(drawFrame);
-
-    if (kick && audio) {
-      kick.addEventListener("click", function () {
-        if (audio.paused) {
-          kick.textContent = "Connecting...";
-          if (!audioCtx) {
-            initAudioAnalyser();
-          } else if (audioCtx.state === "suspended") {
-            audioCtx.resume();
-          }
-          audio.play().then(() => {
-            kick.textContent = "Pause";
-          }).catch((e) => {
-            console.error("Play error:", e);
-            kick.textContent = "Play";
-          });
-        } else {
-          audio.pause();
-          kick.textContent = "Play";
-        }
-      });
-
-      audio.addEventListener("play", () => {
-        if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
-        if (!audioCtx) initAudioAnalyser();
-        kick.textContent = "Pause";
-      });
-
-      audio.addEventListener("pause", () => {
-        kick.textContent = "Play";
-      });
-    }
-
-    function updateNowPlaying() {
-      const now = new Date();
-      const hour = now.getHours();
-      const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-      const dayName = days[now.getDay()];
-      
-      let period, label;
-      if (hour >= 6 && hour < 12) {
-        period = "Morning";
-        label = "Neon Sunrise Chill";
-      } else if (hour >= 12 && hour < 18) {
-        period = "Afternoon";
-        label = "Daydrive Synthwave";
-      } else {
-        period = "Evening";
-        label = "Night Drive Electro";
-      }
-      
-      document.getElementById("heroNowPlaying").textContent = 
-        `${dayName} ${period} – ${label}`;
-    }
-
-    updateNowPlaying();
-    setInterval(updateNowPlaying, 15 * 60 * 1000);
-  </script>
-</body>
-</html>
+          const segments = 60;
+          for (let j = 0; j <= segments; j++) {
+            const angle = (j / segments) * Math.PI * 2;
+            const r = radius + Math.sin(j * 0.5 + t * 2) * 10 * mid;
+            const x = Math.cos(angle) * r;
+            const y = Math.sin(angle) * r;
+            if (j === 0) ctx.mov
