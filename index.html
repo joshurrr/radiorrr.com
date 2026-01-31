@@ -25,6 +25,7 @@
       justify-content: center;
       padding: 1rem;
     }
+
     .wrapper {
       max-width: 900px;
       width: 100%;
@@ -57,16 +58,19 @@
       margin-bottom: 1.75rem;
       text-align: left;
     }
+
     .hero-left img {
       width: 180px;
       max-width: 100%;
       border-radius: 10px;
       display: block;
     }
+
     .hero-right {
       flex: 1;
       min-width: 0;
     }
+
     .live-pill {
       display: inline-flex;
       align-items: center;
@@ -81,6 +85,7 @@
       color: #fecaca;
       margin-bottom: 0.55rem;
     }
+
     .live-dot {
       width: 8px;
       height: 8px;
@@ -88,6 +93,7 @@
       background: #f87171;
       box-shadow: 0 0 8px rgba(248,113,113,0.95);
     }
+
     .hero-title {
       font-size: 1.7rem;
       font-weight: 800;
@@ -99,13 +105,14 @@
         0 0 16px rgba(59,130,246,0.8);
       margin-bottom: 0.3rem;
     }
-    /* tagline removed from hero */
+
     .hero-sub {
       font-size: 0.9rem;
       color: #e5e7eb;
       opacity: 0.9;
       margin-bottom: 0.6rem;
     }
+
     .hero-now-title {
       font-size: 1.1rem;
       font-weight: 700;
@@ -115,6 +122,7 @@
         0 0 6px rgba(129,140,248,0.9),
         0 0 10px rgba(59,130,246,0.9);
     }
+
     .hero-now-title strong {
       color: #ffffff;
       font-weight: 800;
@@ -129,6 +137,7 @@
       margin-bottom: 2rem;
       padding-bottom: 0.5rem;
     }
+
     .nav-tabs a {
       position: relative;
       display: inline-flex;
@@ -157,6 +166,7 @@
         background 0.2s ease;
       overflow: hidden;
     }
+
     .nav-tabs a::after {
       content: "";
       position: absolute;
@@ -167,15 +177,16 @@
       transition: opacity 0.2s ease;
       pointer-events: none;
     }
+
     .nav-icon {
       font-size: 0.95rem;
       opacity: 0.85;
       transform: translateY(0);
       transition: transform 0.2s ease;
     }
-    .nav-label {
-      text-transform: uppercase;
-    }
+
+    .nav-label { text-transform: uppercase; }
+
     .nav-tabs a:hover {
       transform: translateY(-1px);
       border-color: #ff4dab;
@@ -184,9 +195,9 @@
         0 0 14px rgba(129,140,248,0.5);
       color: #ffe4ff;
     }
-    .nav-tabs a:hover::after {
-      opacity: 1;
-    }
+
+    .nav-tabs a:hover::after { opacity: 1; }
+
     .nav-tabs a.active {
       transform: translateY(-2px) scale(1.02);
       border-color: #ff0066;
@@ -197,9 +208,8 @@
         0 0 18px rgba(129,140,248,0.9);
       color: #ffffff;
     }
-    .nav-tabs a.active .nav-icon {
-      transform: translateY(-1px);
-    }
+
+    .nav-tabs a.active .nav-icon { transform: translateY(-1px); }
 
     .content-pane { width: 100%; transition: opacity 0.3s ease-in-out; }
     .hidden-pane { display: none; }
@@ -226,11 +236,13 @@
       margin-bottom: 1.75rem;
       text-align: left;
     }
+
     .channel span { font-weight: 600; font-size: 1rem; }
     .channel small { font-size: 0.8rem; color: #e0e0ff; opacity: 0.9; }
 
     audio { width: 100%; margin-top: 0.2rem; }
     .status { display:none; font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.8; }
+
     .kick {
       margin-top:0.6rem; padding:0.45rem 0.7rem;
       border-radius:10px; border:1px solid rgba(129,140,248,0.6);
@@ -252,17 +264,20 @@
       padding-top: 0.5rem;
       border-top: 1px solid rgba(129, 140, 248, 0.15);
     }
+
     .event-item {
       margin: 1.25rem 0;
       border-left: 3px solid #4338ca;
       padding-left: 1rem;
     }
+
     .event-item h4 {
       margin: 0;
       font-size: 1rem;
       color: #ffccff;
       text-shadow: 0 0 3px rgba(255, 0, 102, 0.5);
     }
+
     .event-item p {
       margin: 0.25rem 0 0;
       font-size: 0.85rem;
@@ -271,9 +286,11 @@
 
     .video-container {
       position: relative;
-      width: 100%; padding-bottom: 56.25%;
+      width: 100%;
+      padding-bottom: 56.25%;
       margin-top: 0.8rem;
     }
+
     .video-container iframe {
       position: absolute; width: 100%; height: 100%; border: 0;
       top: 0; left: 0; border-radius: 12px;
@@ -290,23 +307,115 @@
         0 0 12px rgba(129,140,248,0.45),
         0 0 24px rgba(255,0,102,0.35);
     }
-    .neon-embed-frame .tiktok-embed {
-      margin: 0 auto !important;
+    .neon-embed-frame .tiktok-embed { margin: 0 auto !important; }
+
+    /* NEW: COLLAB AD (near bottom) */
+    .promo {
+      text-align: left;
+      padding: 1.2rem 1.4rem;
+      border-radius: 16px;
+      margin-top: 0.25rem;
+      margin-bottom: 1.25rem;
+      border: 1px solid rgba(129,140,248,0.7);
+      background:
+        radial-gradient(circle at top left, rgba(255,0,102,0.26), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(56,189,248,0.22), transparent 55%),
+        rgba(10,10,30,0.75);
+      box-shadow:
+        0 0 12px rgba(255, 0, 102, 0.35),
+        0 0 20px rgba(129,140,248,0.35);
+    }
+    .promo .promo-top {
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .promo .promo-badge {
+      display:inline-flex;
+      align-items:center;
+      gap:0.5rem;
+      padding:0.18rem 0.75rem;
+      border-radius:999px;
+      border:1px solid rgba(255,0,102,0.55);
+      background: rgba(255,0,102,0.12);
+      color:#ffd1ea;
+      font-size:0.75rem;
+      font-weight:800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+    .promo h3 {
+      margin: 0.55rem 0 0.35rem;
+      font-size: 1.15rem;
+      color: #e0e7ff;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-shadow: 0 0 8px rgba(129,140,248,0.55);
+    }
+    .promo p {
+      margin: 0.2rem 0 0;
+      color: #e0e0ff;
+      opacity: 0.92;
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+    .promo .promo-actions {
+      display:flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-top: 0.9rem;
+    }
+    .promo a.promo-btn {
+      display:inline-flex;
+      align-items:center;
+      gap:0.5rem;
+      padding:0.50rem 0.85rem;
+      border-radius: 12px;
+      border:1px solid rgba(129,140,248,0.6);
+      background: rgba(11,16,32,0.75);
+      color:#c7c7ff;
+      text-decoration:none;
+      font-weight:800;
+      font-size:0.88rem;
+      transition: all 0.25s;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .promo a.promo-btn:hover {
+      color:#ffffff;
+      border-color:#ff0066;
+      box-shadow: 0 0 14px rgba(255, 0, 102, 0.55);
+      transform: translateY(-1px);
+    }
+    .promo .promo-note {
+      margin-top: 0.65rem;
+      font-size: 0.8rem;
+      color: #a5b4fc;
+      opacity: 0.9;
     }
 
-    .links { margin-top: 0.75rem; font-size: 0.85rem; text-align:center; }
+    .links {
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      text-align:center;
+    }
+
     .links a {
       color: #a5b4fc;
       text-decoration: none;
       margin: 0 0.4rem;
       transition: color 0.3s, text-shadow 0.3s;
     }
+
     .links a:hover {
       color: #ff0066;
       text-shadow: 0 0 8px #ff0066;
     }
 
     .footnote { margin-top: 1.5rem; font-size: 0.7rem; opacity: 0.55; text-align:center; }
+
     .genre-tagline {
       display: block;
       font-size: 0.85rem;
@@ -324,6 +433,7 @@
       }
       .hero-right { text-align: center; }
       .visualizer { height: 280px; }
+      .promo .promo-top { flex-direction: column; }
     }
   </style>
 </head>
@@ -342,8 +452,6 @@
           LIVE · BROADCASTING 24/7
         </div>
         <h1 class="hero-title">RADIO RRR</h1>
-        <!-- tagline removed from here -->
-       
         <p class="hero-now-title">
           Now Playing:
           <strong id="heroNowPlaying">Loading current block…</strong>
@@ -454,6 +562,25 @@
         </div>
       </div>
     </div>
+
+    <!-- NEW: COLLAB AD near bottom -->
+    <section class="promo" aria-label="Radio RRR Creator Collaboration">
+      <div class="promo-top">
+        <div>
+          <div class="promo-badge">⚡ Creator Collab</div>
+          <h3>Want your videos on Radio RRR?</h3>
+          <p>
+            I’m inviting creators with similar music taste to publish under the Radio RRR YouTube banner.
+            Transparent revenue share (based on watch time) once the channel is earning.
+          </p>
+          <div class="promo-note">Visualizers • mixes (clean rights) • live sets • synth/gear clips</div>
+        </div>
+        <div class="promo-actions">
+          <a class="promo-btn" href="https://radiorrr.com/collab.html" target="_blank" rel="noopener">Check the Collab Page →</a>
+          <a class="promo-btn" href="mailto:admin@radiorrr.com?subject=Radio%20RRR%20Collab" rel="noopener">Email →</a>
+        </div>
+      </div>
+    </section>
 
     <div class="links">
       <a href="https://www.tiktok.com/@josh.u.rrr" target="_blank">TikTok</a> ·
@@ -670,9 +797,9 @@
 
           const bassEnd = Math.floor(dataArray.length * 0.1);
           const midEnd = Math.floor(dataArray.length * 0.4);
-          
+
           let bassSum = 0, midSum = 0, trebleSum = 0;
-          
+
           for (let i = 0; i < bassEnd; i++) bassSum += dataArray[i];
           for (let i = bassEnd; i < midEnd; i++) midSum += dataArray[i];
           for (let i = midEnd; i < dataArray.length * 0.8; i++) trebleSum += dataArray[i];
@@ -724,11 +851,11 @@
         for (let i = 0; i < ringCount; i++) {
           const radius = Math.min(w, h) * (0.3 + i * 0.08) + bass * 30;
           const rotation = t * (0.2 + i * 0.1) + i * Math.PI / 3;
-          
+
           ctx.save();
           ctx.translate(cx, cy);
           ctx.rotate(rotation);
-          
+
           ctx.beginPath();
           const segments = 60;
           for (let j = 0; j <= segments; j++) {
@@ -740,14 +867,14 @@
             else ctx.lineTo(x, y);
           }
           ctx.closePath();
-          
+
           const hue = (t * 30 + i * 60) % 360;
           ctx.strokeStyle = `hsla(${hue}, 100%, 60%, ${0.2 + bass * 0.3})`;
           ctx.lineWidth = 2 + bass * 3;
           ctx.shadowBlur = 15 + bass * 20;
           ctx.shadowColor = `hsla(${hue}, 100%, 60%, 1)`;
           ctx.stroke();
-          
+
           ctx.restore();
         }
         ctx.shadowBlur = 0;
@@ -756,28 +883,28 @@
           const barCount = 120;
           const barWidth = 3;
           const innerRadius = Math.min(w, h) * 0.12;
-          
+
           for (let i = 0; i < barCount; i++) {
             const angle = (i / barCount) * Math.PI * 2 - Math.PI / 2;
             const specIndex = Math.floor((i / barCount) * spectrum.length);
             let value = (spectrum[specIndex] || 0) / 255;
-            
+
             const nextIndex = Math.min(specIndex + 1, spectrum.length - 1);
             const nextValue = (spectrum[nextIndex] || 0) / 255;
             value = value * 0.7 + nextValue * 0.3;
-            
+
             const barHeight = value * Math.min(w, h) * 0.35;
-            
+
             const x1 = cx + Math.cos(angle) * innerRadius;
             const y1 = cy + Math.sin(angle) * innerRadius;
             const x2 = cx + Math.cos(angle) * (innerRadius + barHeight);
             const y2 = cy + Math.sin(angle) * (innerRadius + barHeight);
-            
+
             const hue = (i * 3 + t * 50) % 360;
             const gradient = ctx.createLinearGradient(x1, y1, x2, y2);
             gradient.addColorStop(0, `hsla(${hue}, 100%, 50%, 0.3)`);
             gradient.addColorStop(1, `hsla(${hue}, 100%, 70%, ${0.7 + value * 0.3})`);
-            
+
             ctx.beginPath();
             ctx.moveTo(x1, y1);
             ctx.lineTo(x2, y2);
@@ -794,7 +921,7 @@
         orbGradient.addColorStop(0.3, `hsla(${(t * 100 + 60) % 360}, 100%, 70%, 0.8)`);
         orbGradient.addColorStop(0.6, `hsla(${(t * 100 + 120) % 360}, 100%, 50%, 0.4)`);
         orbGradient.addColorStop(1, "rgba(255, 0, 170, 0)");
-        
+
         ctx.fillStyle = orbGradient;
         ctx.beginPath();
         ctx.arc(cx, cy, orbRadius * 1.5, 0, Math.PI * 2);
@@ -809,11 +936,11 @@
             const specIndex = Math.floor((i / wavePoints) * spectrum.length * 0.3);
             const value = (spectrum[specIndex] || 0) / 255;
             const y = cy + Math.sin(i * 0.1 + t * 2) * (20 + value * waveAmplitude);
-            
+
             if (i === 0) ctx.moveTo(x, y);
             else ctx.lineTo(x, y);
           }
-          
+
           ctx.strokeStyle = `hsla(${(t * 60) % 360}, 100%, 70%, 0.4)`;
           ctx.lineWidth = 2;
           ctx.shadowBlur = 10;
@@ -841,44 +968,4 @@
 
             audio
               .play()
-              .then(function () {
-                setStatus("playing");
-                kick.textContent = "Pause";
-              })
-              .catch(function (e) {
-                console.error("Audio Play Error:", e);
-                setStatus("error: " + (e && e.message ? e.message : "could not start stream"));
-                kick.textContent = "Play";
-              });
-          } else {
-            audio.pause();
-            setStatus("paused");
-            kick.textContent = "Play";
-          }
-        });
-
-        audio.addEventListener("play", function () {
-          if (audioCtx && audioCtx.state === "suspended") {
-            audioCtx.resume();
-          }
-          if (!audioCtx) {
-            initAudioAnalyser();
-          }
-          setStatus("playing");
-          kick.textContent = "Pause";
-        });
-
-        audio.addEventListener("pause", function () {
-          setStatus("paused");
-          kick.textContent = "Play";
-        });
-
-        audio.addEventListener("error", function () {
-          setStatus("audio error (stream offline or blocked)");
-          kick.textContent = "Play";
-        });
-      }
-    });
-  </script>
-</body>
-</html>
+              .then(func
