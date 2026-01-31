@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Radio RRR — Creator Invites</title>
+  <meta name="description" content="Radio RRR is inviting creators to publish music-forward video content on our YouTube channel. Transparent revenue share based on watch time." />
+  <style>
+    :root{
+      --bg:#06060a;
+      --panel:rgba(255,255,255,.06);
+      --stroke:rgba(255,255,255,.12);
+      --text:rgba(255,255,255,.90);
+      --muted:rgba(255,255,255,.70);
+      --accent:#7c4dff;
+      --accent2:#00e5ff;
+      --good:#00ff9a;
+      --warn:#ffcc00;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 800px at 20% 10%, rgba(124,77,255,.25), transparent 60%),
+        radial-gradient(900px 700px at 85% 30%, rgba(0,229,255,.18), transparent 55%),
+        radial-gradient(900px 700px at 50% 85%, rgba(0,255,154,.10), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      line-height:1.5;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 18px 64px}
+    header{
+      display:flex; gap:16px; align-items:flex-start; justify-content:space-between;
+      padding:18px; border:1px solid var(--stroke); border-radius:18px;
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      backdrop-filter: blur(8px);
+    }
+    .brand h1{
+      margin:0 0 6px;
+      font-size:28px; letter-spacing:.5px;
+    }
+    .brand p{margin:0;color:var(--muted);max-width:70ch}
+    .ctaRow{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end}
+    .btn{
+      display:inline-flex; align-items:center; gap:10px;
+      text-decoration:none;
+      padding:10px 14px;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.06);
+      transition:transform .06s ease, background .2s ease, border-color .2s ease;
+      font-weight:650;
+      white-space:nowrap;
+    }
+    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.18)}
+    .btn.primary{
+      border-color: rgba(124,77,255,.65);
+      background: linear-gradient(180deg, rgba(124,77,255,.35), rgba(124,77,255,.18));
+      box-shadow: 0 10px 30px rgba(124,77,255,.14);
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:16px;
+      margin-top:16px;
+    }
+    @media (max-width:900px){
+      header{flex-direction:column; align-items:stretch}
+      .ctaRow{justify-content:flex-start}
+      .grid{grid-template-columns:1fr}
+    }
+    .card{
+      border:1px solid var(--stroke);
+      border-radius:18px;
+      background:var(--panel);
+      padding:18px;
+    }
+    h2{margin:0 0 10px;font-size:18px}
+    ul{margin:10px 0 0 18px}
+    li{margin:6px 0;color:var(--muted)}
+    .tag{
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.05);
+      color:var(--muted);
+      font-size:12px;
+      margin-right:8px;
+      margin-top:6px;
+    }
+    .rule{
+      border-left:3px solid rgba(0,229,255,.55);
+      padding-left:12px;
+      color:var(--muted);
+      margin:10px 0;
+    }
+    .notice{
+      border:1px solid rgba(255,204,0,.35);
+      background:rgba(255,204,0,.08);
+      border-radius:14px;
+      padding:12px 14px;
+      color:rgba(255,255,255,.82);
+    }
+    .ok{
+      border:1px solid rgba(0,255,154,.35);
+      background:rgba(0,255,154,.08);
+      border-radius:14px;
+      padding:12px 14px;
+      color:rgba(255,255,255,.82);
+    }
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 13px;
+      color: rgba(255,255,255,.75);
+      background: rgba(0,0,0,.25);
+      border: 1px solid var(--stroke);
+      border-radius: 12px;
+      padding: 12px;
+      overflow:auto;
+    }
+    footer{
+      margin-top:16px;
+      color:rgba(255,255,255,.55);
+      font-size:13px;
+      display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <h1>Radio RRR — Creator Invites</h1>
+        <p>
+          I’m building <strong>Radio RRR</strong> into a proper music-first YouTube channel.
+          If you make great music-forward video content (visualizers, mixes, edits, live sets, synth stuff),
+          I’m inviting a small crew of creators to publish under the Radio RRR banner — with transparent revenue sharing.
+        </p>
+        <div style="margin-top:10px">
+          <span class="tag">Electro</span>
+          <span class="tag">80s / Synthwave</span>
+          <span class="tag">Chill</span>
+          <span class="tag">Live sets</span>
+          <span class="tag">Visualizers</span>
+        </div>
+      </div>
+
+      <div class="ctaRow">
+        <!-- TODO: Replace with your actual application link -->
+        <a class="btn primary" href="https://YOUR-APPLICATION-LINK-HERE" target="_blank" rel="noopener">Apply / Pitch Your Idea →</a>
+        <!-- TODO: Replace with your YouTube channel URL -->
+        <a class="btn" href="https://YOUR-YOUTUBE-CHANNEL-LINK-HERE" target="_blank" rel="noopener">Radio RRR on YouTube</a>
+        <a class="btn" href="https://www.instagram.com/radio.rrr/" target="_blank" rel="noopener">Instagram</a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>How this collab works</h2>
+        <p class="rule">
+          <strong>One channel, one home:</strong> content is published on the Radio RRR YouTube channel.
+          No mirrored uploads of the same video elsewhere (algorithm hates that).
+        </p>
+
+        <div class="ok">
+          <strong>Revenue share:</strong> split is based on <strong>watch time</strong> (the fair way).
+          If/when the channel is monetized and earning revenue, contributors are paid monthly based on their % of total watch time.
+        </div>
+
+        <h2 style="margin-top:16px">What I’m looking for</h2>
+        <ul>
+          <li><strong>Original mixes / sets</strong> (with clean rights — more on that below)</li>
+          <li><strong>Visualizer videos</strong> for original tracks</li>
+          <li><strong>Genre-focused shows</strong> (electro / synthwave / chill / retro)</li>
+          <li><strong>Live-stream segments</strong> (if you’ve got the setup)</li>
+          <li><strong>Gear / synth / production mini content</strong> (fast + punchy, not boring)</li>
+        </ul>
+
+        <h2 style="margin-top:16px">The simple rules (so nobody loses their mind)</h2>
+        <ul>
+          <li><strong>Transparency:</strong> monthly stats shared (watch time + revenue screenshot).</li>
+          <li><strong>Payments:</strong> monthly (PayID/PayPal) once there’s real revenue.</li>
+          <li><strong>Quality bar:</strong> I curate what goes up. This isn’t a free-for-all.</li>
+          <li><strong>Exit clause:</strong> either side can end future uploads with notice. No drama.</li>
+        </ul>
+      </section>
+
+      <aside class="card">
+        <h2>Non-negotiable: music rights</h2>
+        <div class="notice">
+          If your content uses copyrighted tracks without permission, it will likely get claimed or demonetized.
+          That’s not “maybe” — that’s YouTube life.
+        </div>
+
+        <p style="color:var(--muted);margin-top:12px">
+          Best options:
+        </p>
+        <ul>
+          <li><strong>Original music</strong> (yours or licensed from the artist)</li>
+          <li><strong>Royalty-free / licensed libraries</strong></li>
+          <li><strong>Explicit written permission</strong> from rights holders</li>
+        </ul>
+
+        <h2 style="margin-top:16px">What to include in your pitch</h2>
+        <div class="mono">
+          1) Your creator name + links (TikTok/YouTube/IG)<br/>
+          2) What you want to make (2–3 formats)<br/>
+          3) Music sources + rights (original / licensed / permission?)<br/>
+          4) Upload frequency you can actually sustain<br/>
+          5) Any samples (even rough drafts)
+        </div>
+
+        <p style="margin-top:14px;color:var(--muted)">
+          Apply here:
+          <a href="https://YOUR-APPLICATION-LINK-HERE" target="_blank" rel="noopener" style="color:var(--accent2);font-weight:700">
+            YOUR-APPLICATION-LINK-HERE
+          </a>
+        </p>
+
+        <h2 style="margin-top:16px">Radio RRR streams</h2>
+        <p style="margin:0;color:var(--muted)">If you’re already listening:</p>
+        <ul style="margin-top:8px">
+          <li><a href="https://stream.radiorrr.com/electro.mp3">Electro</a></li>
+          <li><a href="https://stream.radiorrr.com/80s.mp3">80s</a></li>
+          <li><a href="https://stream.radiorrr.com/chill.mp3">Chill</a></li>
+        </ul>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:16px">
+      <h2>FAQ</h2>
+      <p class="rule">
+        <strong>“Can I still post the same video on my own channel?”</strong><br/>
+        Ideally no — duplicate uploads split attention and usually underperform.
+        If you want to post a teaser, do a shorter cutdown that points to the Radio RRR full version.
+      </p>
+
+      <p class="rule">
+        <strong>“When does revenue sharing start?”</strong><br/>
+        When the channel is actually earning. Until then: we build the library, the audience, and the vibe.
+      </p>
+
+      <p class="rule">
+        <strong>“What if my video gets claimed?”</strong><br/>
+        Then it may earn $0. If it’s constantly happening, we stop publishing that format. Simple.
+      </p>
+    </section>
+
+    <footer>
+      <div>© <span id="y"></span> Radio RRR</div>
+      <div>
+        Contact: <a href="https://www.tiktok.com/@joshurrr" target="_blank" rel="noopener">TikTok @Josh U RRR</a>
+        &nbsp;•&nbsp;
+        GitHub: <a href="https://github.com/joshurrr" target="_blank" rel="noopener">joshurrr</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
