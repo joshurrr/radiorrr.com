@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Radio RRR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="description" content="Radio RRR: The #1 neon 80s inspired synth electro neon radio station." />
+  <meta property="og:title" content="Radio RRR - 24/7 Electro, Synth, 80s, Remixed" />
+  <meta property="og:description" content="Tune in to the best Retrowave, Synthwave, and Outrun music for your late-night drives." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://radiorrr.com/" />
+  <meta property="og:image" content="https://radiorrr.com/logo.png" />
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #050710;
+      color: #f5f5f5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .wrapper {
+      max-width: 900px;
+      width: 100%;
+      padding: 2.5rem 1.75rem 2rem;
+      border-radius: 18px;
+      background: #0d0e1f;
+      border: 1px solid rgba(129,140,248,0.3);
+      box-shadow:
+        0 0 10px rgba(67, 56, 202, 0.5),
+        0 0 30px rgba(255, 0, 102, 0.4);
+      text-align: center;
+      transition: all 0.3s ease-out;
+    }
+
+    /* HERO BANNER */
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.75rem;
+      padding: 1.4rem 1.6rem;
+      border-radius: 16px;
+      background: radial-gradient(circle at top left, rgba(255,0,102,0.4), transparent 55%),
+                  radial-gradient(circle at bottom right, rgba(56,189,248,0.35), transparent 55%),
+                  #050716;
+      border: 1px solid rgba(129,140,248,0.6);
+      box-shadow:
+        0 0 12px rgba(255, 0, 102, 0.45),
+        0 0 26px rgba(56,189,248,0.35);
+      margin-bottom: 1.75rem;
+      text-align: left;
+    }
+    .hero-left img {
+      width: 180px;
+      max-width: 100%;
+      border-radius: 10px;
+      display: block;
+    }
+    .hero-right {
+      flex: 1;
+      min-width: 0;
+    }
+    .live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.12rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      background: rgba(239, 68, 68, 0.18);
+      border: 1px solid rgba(248, 113, 113, 0.6);
+      color: #fecaca;
+      margin-bottom: 0.55rem;
+    }
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #f87171;
+      box-shadow: 0 0 8px rgba(248,113,113,0.95);
+    }
+    .hero-title {
+      font-size: 1.7rem;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #e0e7ff;
+      text-shadow:
+        0 0 8px rgba(129,140,248,0.75),
+        0 0 16px rgba(59,130,246,0.8);
+      margin-bottom: 0.3rem;
+    }
+    .hero-now-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #f9a8d4;
+      margin-top: 0.35rem;
+      text-shadow:
+        0 0 6px rgba(129,140,248,0.9),
+        0 0 10px rgba(59,130,246,0.9);
+    }
+    .hero-now-title strong {
+      color: #ffffff;
+      font-weight: 800;
+    }
+
+    /* NAV TABS */
+    .nav-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 0.9rem;
+      margin-top: 1.2rem;
+      margin-bottom: 2rem;
+      padding-bottom: 0.5rem;
+    }
+    .nav-tabs a {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.40rem 1.35rem;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 1.02rem;
+      color: #c7c7ff;
+      text-decoration: none;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      border: 1px solid rgba(129,140,248,0.6);
+      background: radial-gradient(circle at top, rgba(24, 31, 60, 0.95), rgba(6, 10, 25, 0.98));
+      box-shadow: 0 0 8px rgba(15,23,42,0.8);
+      text-shadow: 0 0 4px rgba(67, 56, 202, 0.6);
+      transition: transform 0.15s ease, box-shadow 0.2s ease, color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+      overflow: hidden;
+    }
+    .nav-tabs a::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 55%);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+    .nav-icon {
+      font-size: 0.95rem;
+      opacity: 0.85;
+      transform: translateY(0);
+      transition: transform 0.2s ease;
+    }
+    .nav-label { text-transform: uppercase; }
+    .nav-tabs a:hover {
+      transform: translateY(-1px);
+      border-color: #ff4dab;
+      box-shadow: 0 0 10px rgba(255, 0, 102, 0.5), 0 0 14px rgba(129,140,248,0.5);
+      color: #ffe4ff;
+    }
+    .nav-tabs a:hover::after { opacity: 1; }
+    .nav-tabs a.active {
+      transform: translateY(-2px) scale(1.02);
+      border-color: #ff0066;
+      background: linear-gradient(135deg, rgba(34, 9, 53, 0.98), rgba(5, 24, 61, 0.98));
+      box-shadow: 0 0 14px rgba(255, 0, 102, 0.85), 0 0 18px rgba(129,140,248,0.9);
+      color: #ffffff;
+    }
+    .nav-tabs a.active .nav-icon { transform: translateY(-1px); }
+
+    .content-pane { width: 100%; transition: opacity 0.3s ease-in-out; }
+    .hidden-pane { display: none; }
+
+    /* VISUALIZER */
+    .visualizer {
+      width: 100%;
+      height: 360px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #000000;
+      margin-bottom: 0.6rem;
+      border: 2px solid #ff0066;
+      box-shadow: 0 0 15px rgba(255, 0, 102, 0.5);
+    }
+    #viz { width: 100%; height: 100%; display: block; }
+
+    /* CHANNEL PANELS */
+    .channel {
+      padding: 1.2rem 1.4rem;
+      border-radius: 16px;
+      background: rgba(10,10,30,0.85);
+      border: 1px solid rgba(129,140,248,0.5);
+      margin-bottom: 1.75rem;
+      text-align: left;
+    }
+
+    .channel span { font-weight: 600; font-size: 1rem; }
+    .channel small { font-size: 0.8rem; color: #e0e0ff; opacity: 0.9; }
+
+    audio { width: 100%; margin-top: 0.2rem; }
+    .status { display:none; font-size: 0.8rem; margin-top: 0.4rem; opacity: 0.9; color:#e0e0ff; }
+
+    .kick {
+      margin-top:0.6rem; padding:0.45rem 0.7rem;
+      border-radius:10px; border:1px solid rgba(129,140,248,0.6);
+      background:#0b1020; color:#c7c7ff;
+      cursor:pointer; font-size:0.85rem;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .kick:hover {
+      color: #ff0066;
+      border-color: #ff0066;
+      box-shadow: 0 0 12px rgba(255, 0, 102, 0.7);
+    }
+
+    .events-list {
+      text-align: left;
+      margin-top: 1rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(129, 140, 248, 0.15);
+    }
+    .event-item {
+      margin: 1.25rem 0;
+      border-left: 3px solid #4338ca;
+      padding-left: 1rem;
+    }
+    .event-item h4 {
+      margin: 0;
+      font-size: 1rem;
+      color: #ffccff;
+      text-shadow: 0 0 3px rgba(255, 0, 102, 0.5);
+    }
+    .event-item p {
+      margin: 0.25rem 0 0;
+      font-size: 0.85rem;
+      color: #e0e0ff;
+    }
+
+    .video-container {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      margin-top: 0.8rem;
+    }
+    .video-container iframe {
+      position: absolute; width: 100%; height: 100%; border: 0;
+      top: 0; left: 0; border-radius: 12px;
+    }
+
+    .neon-embed-frame {
+      margin-top: 1.2rem;
+      padding: 1rem 0.75rem;
+      border-radius: 16px;
+      background: radial-gradient(circle at top, rgba(15,23,42,0.9), rgba(3,7,18,0.98));
+      border: 1px solid rgba(129,140,248,0.7);
+      box-shadow: 0 0 12px rgba(129,140,248,0.45), 0 0 24px rgba(255,0,102,0.35);
+    }
+    .neon-embed-frame .tiktok-embed { margin: 0 auto !important; }
+
+    /* COLLAB AD */
+    .promo {
+      text-align: left;
+      padding: 1.2rem 1.4rem;
+      border-radius: 16px;
+      margin-top: 0.25rem;
+      margin-bottom: 1.25rem;
+      border: 1px solid rgba(129,140,248,0.7);
+      background:
+        radial-gradient(circle at top left, rgba(255,0,102,0.26), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(56,189,248,0.22), transparent 55%),
+        rgba(10,10,30,0.75);
+      box-shadow: 0 0 12px rgba(255, 0, 102, 0.35), 0 0 20px rgba(129,140,248,0.35);
+    }
+    .promo .promo-top {
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .promo .promo-badge {
+      display:inline-flex;
+      align-items:center;
+      gap:0.5rem;
+      padding:0.18rem 0.75rem;
+      border-radius:999px;
+      border:1px solid rgba(255,0,102,0.55);
+      background: rgba(255,0,102,0.12);
+      color:#ffd1ea;
+      font-size:0.75rem;
+      font-weight:800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+    .promo h3 {
+      margin: 0.55rem 0 0.35rem;
+      font-size: 1.15rem;
+      color: #e0e7ff;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-shadow: 0 0 8px rgba(129,140,248,0.55);
+    }
+    .promo p {
+      margin: 0.2rem 0 0;
+      color: #e0e0ff;
+      opacity: 0.92;
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+    .promo .promo-actions {
+      display:flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-top: 0.9rem;
+    }
+    .promo a.promo-btn {
+      display:inline-flex;
+      align-items:center;
+      gap:0.5rem;
+      padding:0.50rem 0.85rem;
+      border-radius: 12px;
+      border:1px solid rgba(129,140,248,0.6);
+      background: rgba(11,16,32,0.75);
+      color:#c7c7ff;
+      text-decoration:none;
+      font-weight:800;
+      font-size:0.88rem;
+      transition: all 0.25s;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .promo a.promo-btn:hover {
+      color:#ffffff;
+      border-color:#ff0066;
+      box-shadow: 0 0 14px rgba(255, 0, 102, 0.55);
+      transform: translateY(-1px);
+    }
+    .promo .promo-note {
+      margin-top: 0.65rem;
+      font-size: 0.8rem;
+      color: #a5b4fc;
+      opacity: 0.9;
+    }
+
+    .links { margin-top: 0.75rem; font-size: 0.85rem; text-align:center; }
+    .links a {
+      color: #a5b4fc;
+      text-decoration: none;
+      margin: 0 0.4rem;
+      transition: color 0.3s, text-shadow 0.3s;
+    }
+    .links a:hover {
+      color: #ff0066;
+      text-shadow: 0 0 8px #ff0066;
+    }
+
+    .footnote { margin-top: 1.5rem; font-size: 0.7rem; opacity: 0.55; text-align:center; }
+    .genre-tagline {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+      color: #ff0066;
+      text-shadow: 0 0 5px rgba(255, 0, 102, 0.8);
+    }
+
+    @media (max-width: 720px) {
+      .hero { flex-direction: column; align-items: center; text-align: center; }
+      .hero-right { text-align: center; }
+      .visualizer { height: 280px; }
+      .promo .promo-top { flex-direction: column; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="wrapper">
+
+    <!-- HERO BANNER -->
+    <section class="hero">
+      <div class="hero-left">
+        <img src="logo.png" alt="Radio RRR Logo - Neon Retrowave Text">
+      </div>
+      <div class="hero-right">
+        <div class="live-pill">
+          <span class="live-dot"></span>
+          LIVE · BROADCASTING 24/7
+        </div>
+        <h1 class="hero-title">RADIO RRR</h1>
+        <p class="hero-now-title">
+          Now Playing:
+          <strong id="heroNowPlaying">Loading current block…</strong>
+        </p>
+      </div>
+    </section>
+
+    <!-- NAV TABS -->
+    <nav class="nav-tabs">
+      <a data-target="stream-section" class="active">
+        <span class="nav-icon">📻</span>
+        <span class="nav-label">Radio</span>
+      </a>
+      <a data-target="events-section">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">Schedule</span>
+      </a>
+      <a data-target="video-section">
+        <span class="nav-icon">🎬</span>
+        <span class="nav-label">Video</span>
+      </a>
+    </nav>
+
+    <!-- RADIO TAB -->
+    <div id="stream-section" class="content-pane">
+      <div class="channel">
+        <div class="visualizer">
+          <canvas id="viz"></canvas>
+        </div>
+
+        <audio id="liveStream" controls crossorigin="anonymous">
+          <source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg" />
+          Your browser does not support the audio element.
+        </audio>
+
+        <button id="kickPlay" class="kick">Play</button>
+        <div id="status" class="status"></div>
+      </div>
+    </div>
+
+    <!-- SCHEDULE TAB -->
+    <div id="events-section" class="content-pane hidden-pane">
+      <div class="channel">
+        <span>Radio RRR Schedule</span><br />
+        <small>Daily rotation across Morning, Afternoon, and Evening blocks.</small>
+
+        <div class="events-list">
+          <div class="event-item">
+            <h4>Morning – Neon Sunrise Chill</h4>
+            <p><span class="event-date">06:00 – 12:00</span></p>
+            <p>
+              Morning playlist: chilled synthwave, soft electro, lofi textures and
+              relaxed 80s-inspired cuts for coffee, commute, and easing into the day.
+            </p>
+          </div>
+
+          <div class="event-item">
+            <h4>Afternoon – Daydrive Synthwave</h4>
+            <p><span class="event-date">12:00 – 18:00</span></p>
+            <p>
+              Afternoon playlist: mid-tempo outrun, retrowave and synth bangers
+              for work, driving, and daytime sessions.
+            </p>
+          </div>
+
+          <div class="event-item">
+            <h4>Evening & Night – Night Drive Electro</h4>
+            <p><span class="event-date">18:00 – 06:00</span></p>
+            <p>
+              Evening/night playlist: heavier electro, darker synth, and high-energy
+              remixes tuned for late-night coding, neon skylines, and insomnia.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIDEO TAB -->
+    <div id="video-section" class="content-pane hidden-pane">
+
+      <div class="channel">
+        <span>TikTok Clips</span><br />
+        <small>Videos Music and Stuff</small>
+
+        <div class="neon-embed-frame">
+          <blockquote class="tiktok-embed"
+            cite="https://www.tiktok.com/@josh.u.rrr"
+            data-unique-id="josh.u.rrr"
+            data-embed-type="creator"
+            style="max-width: 600px;">
+            <section>
+              <a target="_blank" href="https://www.tiktok.com/@josh.u.rrr">@josh.u.rrr</a>
+            </section>
+          </blockquote>
+        </div>
+      </div>
+
+      <div class="channel">
+        <span>YouTube Likes</span><br />
+        <small>Latest videos we liked</small>
+
+        <div class="video-container">
+          <iframe
+            src="https://www.youtube.com/embed/videoseries?list=PLli1uTuS0FH7xR1QBnIvY3V9btomaSpTv"
+            allowfullscreen
+            loading="lazy">
+          </iframe>
+        </div>
+      </div>
+    </div>
+
+    <div class="links">
+      <a href="https://www.tiktok.com/@josh.u.rrr" target="_blank" rel="noopener">TikTok</a> ·
+      <a href="https://www.youtube.com/@RADIO_RRR" target="_blank" rel="noopener">YouTube</a> ·
+      <a href="https://www.instagram.com/radio.rrr/" target="_blank" rel="noopener">Instagram</a> ·
+      <a href="https://github.com/joshurrr" target="_blank" rel="noopener">GitHub</a>
+    </div>
+
+    <p class="footnote">
+      <span class="genre-tagline">ELECTRO · 80s · SYNTH · MEMES · REMIXED</span>
+      Streaming 24/7<br>
+      Contact: <a href="mailto:admin@radiorrr.com" style="color:#a5b4fc;">admin@radiorrr.com</a>
+    </p>
+
+  </main>
+
+  <!-- TikTok embed script (may be blocked by adblockers; harmless if it fails) -->
+  <script async src="https://www.tiktok.com/embed.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const navLinks = document.querySelectorAll(".nav-tabs a");
+      const contentPanes = document.querySelectorAll(".content-pane");
+      const heroNowEl = document.getElementById("heroNowPlaying");
+      const audio = document.getElementById("liveStream");
+      const statusEl = document.getElementById("status");
+      const canvas = document.getElementById("viz");
+      const ctx = canvas && canvas.getContext ? canvas.getContext("2d") : null;
+
+      let audioCtx = null;
+      let analyser = null;
+      let dataArray = null;
+      let analyserReady = false;
+      let uiAudioCtx = null;
+
+      // Important for analyser with cross-origin streams (only works if the stream server allows it)
+      if (audio) audio.crossOrigin = "anonymous";
+
+      function playNavClick() {
+        try {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (!AC) return;
+          if (!uiAudioCtx) uiAudioCtx = new AC();
+
+          const now = uiAudioCtx.currentTime;
+          const osc = uiAudioCtx.createOscillator();
+          const gain = uiAudioCtx.createGain();
+
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(880, now);
+          gain.gain.setValueAtTime(0.05, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+
+          osc.connect(gain);
+          gain.connect(uiAudioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.1);
+        } catch (e) {}
+      }
+
+      function switchTab(targetId) {
+        contentPanes.forEach(pane => pane.classList.add("hidden-pane"));
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) targetElement.classList.remove("hidden-pane");
+
+        navLinks.forEach(l => l.classList.remove("active"));
+        const activeLink = document.querySelector('.nav-tabs a[data-target="' + targetId + '"]');
+        if (activeLink) activeLink.classList.add("active");
+      }
+
+      navLinks.forEach(link => {
+        link.addEventListener("click", function (e) {
+          const targetId = e.currentTarget.getAttribute("data-target");
+          if (targetId) {
+            switchTab(targetId);
+            playNavClick();
+          }
+        });
+      });
+
+      switchTab("stream-section");
+
+      function getDayPeriod(hour) {
+        if (hour >= 6 && hour < 12) return "Morning";
+        if (hour >= 12 && hour < 18) return "Afternoon";
+        return "Evening";
+      }
+
+      function getBlockLabel(dayName, period) {
+        const labels = {
+          Morning: "Neon Sunrise Chill",
+          Afternoon: "Daydrive Synthwave",
+          Evening: "Night Drive Electro"
+        };
+        const base = labels[period] || "Live Mix";
+        return dayName + " " + period + " – " + base;
+      }
+
+      function updateTitles() {
+        const now = new Date();
+        const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+        const dayName = days[now.getDay()];
+        const period = getDayPeriod(now.getHours());
+        const blockLabel = getBlockLabel(dayName, period);
+        if (heroNowEl) heroNowEl.textContent = blockLabel;
+      }
+
+      updateTitles();
+      setInterval(updateTitles, 15 * 60 * 1000);
+
+      function setStatus(msg) {
+        if (!statusEl) return;
+        statusEl.style.display = "block";
+        statusEl.textContent = "Status: " + msg;
+      }
+
+      function initAudioAnalyser() {
+        if (audioCtx || !audio) return;
+        try {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (!AC) return;
+
+          audioCtx = new AC();
+          const source = audioCtx.createMediaElementSource(audio);
+
+          analyser = audioCtx.createAnalyser();
+          analyser.fftSize = 2048;
+          analyser.smoothingTimeConstant = 0.85;
+
+          dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+          source.connect(analyser);
+          analyser.connect(audioCtx.destination);
+
+          analyserReady = true;
+          setStatus("visualizer connected");
+        } catch (e) {
+          analyserReady = false;
+          console.warn("Analyser init failed (often CORS):", e);
+          setStatus("visualizer blocked (likely stream CORS). Animation will still run.");
+        }
+      }
+
+      function resize() {
+        if (!canvas || !ctx) return;
+        const dpr = window.devicePixelRatio || 1;
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight;
+        canvas.width = w * dpr;
+        canvas.height = h * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+      resize();
+      window.addEventListener("resize", resize);
+
+      // Particle system
+      const particles = [];
+      const maxParticles = 90;
+
+      class Particle {
+        constructor(x, y, vx, vy, hue, size) {
+          this.x = x; this.y = y;
+          this.vx = vx; this.vy = vy;
+          this.hue = hue;
+          this.size = size;
+          this.alpha = 1;
+          this.decay = 0.012;
+        }
+        update() {
+          this.x += this.vx;
+          this.y += this.vy;
+          this.vy += 0.08;
+          this.alpha -= this.decay;
+        }
+        draw(ctx) {
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, this.alpha);
+          const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+          g.addColorStop(0, `hsla(${this.hue}, 100%, 70%, 1)`);
+          g.addColorStop(1, `hsla(${this.hue}, 100%, 50%, 0)`);
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      let prevBass = 0, prevMid = 0, prevTreble = 0;
+      const smoothing = 0.7;
+
+      function drawFrame() {
+        if (!canvas || !ctx) { requestAnimationFrame(drawFrame); return; }
+
+        const t = performance.now() / 1000;
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+
+        // Default values so it ALWAYS animates even with no analyser
+        let bass = 0.25 + 0.15 * Math.sin(t * 1.7);
+        let mid  = 0.20 + 0.10 * Math.sin(t * 2.1 + 1.0);
+        let treble = 0.18 + 0.08 * Math.sin(t * 2.6 + 2.2);
+        let spectrum = null;
+
+        if (analyserReady && analyser && dataArray) {
+          analyser.getByteFrequencyData(dataArray);
+          spectrum = dataArray;
+
+          const bassEnd = Math.floor(dataArray.length * 0.10);
+          const midEnd  = Math.floor(dataArray.length * 0.40);
+
+          let bassSum = 0, midSum = 0, trebleSum = 0;
+          for (let i = 0; i < bassEnd; i++) bassSum += dataArray[i];
+          for (let i = bassEnd; i < midEnd; i++) midSum += dataArray[i];
+          for (let i = midEnd; i < dataArray.length * 0.80; i++) trebleSum += dataArray[i];
+
+          bass = (bassSum / Math.max(1,bassEnd)) / 255;
+          mid = (midSum / Math.max(1,(midEnd - bassEnd))) / 255;
+          treble = (trebleSum / Math.max(1,(dataArray.length * 0.80 - midEnd))) / 255;
+
+          bass = prevBass * smoothing + bass * (1 - smoothing);
+          mid = prevMid * smoothing + mid * (1 - smoothing);
+          treble = prevTreble * smoothing + treble * (1 - smoothing);
+
+          prevBass = bass; prevMid = mid; prevTreble = treble;
+        }
+
+        // Stronger fade so you can actually see it (your original was very faint)
+        ctx.fillStyle = "rgba(0, 0, 0, 0.30)";
+        ctx.fillRect(0, 0, w, h);
+
+        const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.7);
+        bg.addColorStop(0, `hsla(${(t * 20) % 360}, 75%, 18%, 0.14)`);
+        bg.addColorStop(0.5, `hsla(${(t * 15 + 180) % 360}, 85%, 12%, 0.10)`);
+        bg.addColorStop(1, "rgba(0, 0, 0, 0)");
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, w, h);
+
+        // Particles (driven by bass)
+        if (bass > 0.35 && Math.random() > 0.55) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 1.8 + bass * 4.5;
+          const vx = Math.cos(angle) * speed;
+          const vy = Math.sin(angle) * speed - 1.8;
+          const hue = (t * 55 + Math.random() * 70) % 360;
+          particles.push(new Particle(cx, cy, vx, vy, hue, 3 + bass * 9));
+        }
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+          particles[i].update();
+          particles[i].draw(ctx);
+          if (particles[i].alpha <= 0) particles.splice(i, 1);
+        }
+        if (particles.length > maxParticles) particles.splice(0, particles.length - maxParticles);
+
+        // Rings
+        const ringCount = 5;
+        for (let i = 0; i < ringCount; i++) {
+          const radius = Math.min(w, h) * (0.28 + i * 0.085) + bass * 38;
+          const rotation = t * (0.18 + i * 0.11) + i * Math.PI / 3;
+
+          ctx.save();
+          ctx.translate(cx, cy);
+          ctx.rotate(rotation);
+
+          ctx.beginPath();
+          const segments = 64;
+          for (let j = 0; j <= segments; j++) {
+            const ang = (j / segments) * Math.PI * 2;
+            const r = radius + Math.sin(j * 0.45 + t * 2.0) * 12 * mid;
+            const x = Math.cos(ang) * r;
+            const y = Math.sin(ang) * r;
+            if (j === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.closePath();
+
+          const hue = (t * 30 + i * 60) % 360;
+          ctx.strokeStyle = `hsla(${hue}, 100%, 62%, ${0.28 + bass * 0.35})`;
+          ctx.lineWidth = 2 + bass * 3.2;
+          ctx.shadowBlur = 18 + bass * 22;
+          ctx.shadowColor = `hsla(${hue}, 100%, 60%, 1)`;
+          ctx.stroke();
+          ctx.restore();
+        }
+        ctx.shadowBlur = 0;
+
+        // Spectrum bars (only if analyser is available)
+        if (spectrum) {
+          const barCount = 120;
+          const barWidth = 3;
+          const innerRadius = Math.min(w, h) * 0.12;
+
+          for (let i = 0; i < barCount; i++) {
+            const angle = (i / barCount) * Math.PI * 2 - Math.PI / 2;
+            const specIndex = Math.floor((i / barCount) * spectrum.length);
+            let value = (spectrum[specIndex] || 0) / 255;
+
+            const nextIndex = Math.min(specIndex + 1, spectrum.length - 1);
+            const nextValue = (spectrum[nextIndex] || 0) / 255;
+            value = value * 0.7 + nextValue * 0.3;
+
+            const barHeight = value * Math.min(w, h) * 0.35;
+
+            const x1 = cx + Math.cos(angle) * innerRadius;
+            const y1 = cy + Math.sin(angle) * innerRadius;
+            const x2 = cx + Math.cos(angle) * (innerRadius + barHeight);
+            const y2 = cy + Math.sin(angle) * (innerRadius + barHeight);
+
+            const hue = (i * 3 + t * 55) % 360;
+            const grad = ctx.createLinearGradient(x1, y1, x2, y2);
+            grad.addColorStop(0, `hsla(${hue}, 100%, 50%, 0.35)`);
+            grad.addColorStop(1, `hsla(${hue}, 100%, 70%, ${0.75 + value * 0.25})`);
+
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = barWidth;
+            ctx.lineCap = "round";
+            ctx.stroke();
+          }
+        }
+
+        // Center orb
+        const orbRadius = 18 + bass * 40 + Math.sin(t * 4) * 6;
+        const orb = ctx.createRadialGradient(cx, cy, 0, cx, cy, orbRadius * 2);
+        orb.addColorStop(0, `hsla(${(t * 100) % 360}, 100%, 92%, 1)`);
+        orb.addColorStop(0.3, `hsla(${(t * 100 + 60) % 360}, 100%, 70%, 0.85)`);
+        orb.addColorStop(0.6, `hsla(${(t * 100 + 120) % 360}, 100%, 52%, 0.45)`);
+        orb.addColorStop(1, "rgba(255, 0, 170, 0)");
+        ctx.fillStyle = orb;
+        ctx.beginPath();
+        ctx.arc(cx, cy, orbRadius * 1.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        requestAnimationFrame(drawFrame);
+      }
+      requestAnimationFrame(drawFrame);
+
+      const kick = document.getElementById("kickPlay");
+      if (kick && audio) {
+        kick.addEventListener("click", function () {
+          if (audio.paused) {
+            setStatus("connecting...");
+            kick.textContent = "Connecting...";
+
+            if (!audioCtx) initAudioAnalyser();
+            else if (audioCtx.state === "suspended") audioCtx.resume();
+
+            audio.play().then(function () {
+              setStatus("playing");
+              kick.textContent = "Pause";
+            }).catch(function (e) {
+              console.error("Audio Play Error:", e);
+              setStatus("error: " + (e && e.message ? e.message : "could not start stream"));
+              kick.textContent = "Play";
+            });
+
+          } else {
+            audio.pause();
+            setStatus("paused");
+            kick.textContent = "Play";
+          }
+        });
+
+        audio.addEventListener("play", function () {
+          if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+          if (!audioCtx) initAudioAnalyser();
+          setStatus("playing");
+          kick.textContent = "Pause";
+        });
+
+        audio.addEventListener("pause", function () {
+          setStatus("paused");
+          kick.textContent = "Play";
+        });
+
+        audio.addEventListener("error", function () {
+          setStatus("audio error (stream offline or blocked)");
+          kick.textContent = "Play";
+        });
+      }
+    });
+  </script>
+</body>
+</html>
