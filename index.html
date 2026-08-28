@@ -1026,169 +1026,160 @@
       /* LIVE DJs API */
 
       async function loadLiveDJs() {
-
         if (!liveDjsList) return;
 
         liveDjsList.innerHTML =
           '<div class="live-empty">Checking who\'s live…</div>';
 
         try {
-
-          const response =
-            await fetch(
-              "https://api.radiorrr.com/api/live",
-              {
-                cache: "no-store"
-              }
-            );
+          const response = await fetch(
+            "https://api.radiorrr.com/api/live",
+            { cache: "no-store" }
+          );
 
           if (!response.ok) {
-            throw new Error(
-              "API returned " + response.status
-            );
+            throw new Error("API returned " + response.status);
           }
 
-          const data =
-            await response.json();
+          const data = await response.json();
 
-          const live =
-            Array.isArray(data)
-              ? data
-              : (Array.isArray(data.live) ? data.live : []);
-
-          if (!live.length) {
-
-            liveDjsList.innerHTML =
-              '<div class="live-empty">' +
-              'No DJs are live right now.<br>' +
-              '<small>Check back soon — this page updates automatically.</small>' +
-              '</div>';
-
-            return;
-          }
+          const live = Array.isArray(data.live) ? data.live : [];
+          const favourites = Array.isArray(data.favourites) ? data.favourites : [];
 
           liveDjsList.innerHTML = "";
 
-          live.forEach(function (dj) {
+          const liveHeader = document.createElement("div");
+          liveHeader.style.gridColumn = "1 / -1";
+          liveHeader.innerHTML =
+            '<div style="font-size:1.05rem;font-weight:800;color:#fff;margin:0.2rem 0 0.1rem;text-shadow:0 0 8px rgba(255,0,102,0.65);">🔴 LIVE NOW</div>';
+          liveDjsList.appendChild(liveHeader);
 
-            const card =
-              document.createElement("div");
+          if (live.length) {
+            live.forEach(dj => appendDjCard(dj, true));
+          } else {
+            const emptyLive = document.createElement("div");
+            emptyLive.className = "live-empty";
+            emptyLive.style.gridColumn = "1 / -1";
+            emptyLive.innerHTML =
+              'Nobody from the RRR DJ list is live right now.<br><small>We\'ll keep checking automatically.</small>';
+            liveDjsList.appendChild(emptyLive);
+          }
 
-            card.className = "dj-card";
+          const favHeader = document.createElement("div");
+          favHeader.style.gridColumn = "1 / -1";
+          favHeader.style.marginTop = "0.8rem";
+          favHeader.innerHTML =
+            '<div style="font-size:1.05rem;font-weight:800;color:#fff;margin:0.2rem 0 0.1rem;text-shadow:0 0 8px rgba(129,140,248,0.65);">⭐ RRR FAVOURITES</div><small style="color:#c7c7ff;">Favourite DJs we\'re watching for.</small>';
+          liveDjsList.appendChild(favHeader);
 
-            const name =
-              dj.name ||
-              dj.username ||
-              dj.display_name ||
-              "Live DJ";
-
-            const username =
-              dj.username ||
-              dj.unique_id ||
-              dj.handle ||
-              "";
-
-            const viewers =
-              dj.viewers ??
-              dj.viewer_count ??
-              dj.viewerCount;
-
-            const title =
-              dj.title ||
-              dj.room_title ||
-              dj.description ||
-              "Live on TikTok";
-
-            const url =
-              dj.url ||
-              dj.live_url ||
-              dj.tiktok_url ||
-              (username
-                ? "https://www.tiktok.com/@" + String(username).replace(/^@/, "")
-                : "#");
-
-            const viewerText =
-              viewers !== undefined && viewers !== null
-                ? " · " + viewers + " watching"
-                : "";
-
-            card.innerHTML =
-              '<div class="dj-live">' +
-                '<span class="dj-live-dot"></span>' +
-                'LIVE NOW' +
-              '</div>' +
-              '<div class="dj-name">' +
-                escapeHtml(String(name)) +
-              '</div>' +
-              '<div class="dj-meta">' +
-                escapeHtml(String(title)) +
-                escapeHtml(viewerText) +
-              '</div>' +
-              '<a class="dj-watch" href="' +
-                escapeAttr(String(url)) +
-                '" target="_blank" rel="noopener">' +
-                '▶ WATCH LIVE' +
-              '</a>';
-
-            liveDjsList.appendChild(card);
-
-          });
+          if (favourites.length) {
+            favourites.forEach(dj => appendDjCard(dj, false));
+          } else {
+            const emptyFav = document.createElement("div");
+            emptyFav.className = "live-empty";
+            emptyFav.style.gridColumn = "1 / -1";
+            emptyFav.textContent = "No favourite DJs have been added yet.";
+            liveDjsList.appendChild(emptyFav);
+          }
 
         } catch (error) {
-
-          console.error(
-            "Live DJ API error:",
-            error
-          );
-
+          console.error("Live DJ API error:", error);
           liveDjsList.innerHTML =
-            '<div class="live-error">' +
-            'Could not load the Live DJ list right now.<br>' +
-            '<small>Please try Refresh in a moment.</small>' +
-            '</div>';
+            '<div class="live-error" style="grid-column:1 / -1;">Could not load the Live DJ list right now.<br><small>The API may be temporarily unavailable, or browser access may need CORS enabled.</small></div>';
+        }
+      }
 
+      function appendDjCard(dj, isLive) {
+        const card = document.createElement("div");
+        card.className = "dj-card";
+
+        const name =
+          dj.name || dj.username || dj.display_name || "DJ";
+
+        const username =
+          dj.username || dj.unique_id || dj.handle || "";
+
+        const viewers =
+          dj.viewers ?? dj.viewer_count ?? dj.viewerCount;
+
+        const title =
+          dj.title || dj.room_title || dj.description || "";
+
+        const profileUrl =
+          dj.profile_url ||
+          (username
+            ? "https://www.tiktok.com/@" + String(username).replace(/^@/, "")
+            : "#");
+
+        const liveUrl =
+          dj.live_url ||
+          dj.url ||
+          (username
+            ? "https://www.tiktok.com/@" + String(username).replace(/^@/, "") + "/live"
+            : profileUrl);
+
+        const isActuallyLive = isLive || dj.live === true;
+
+        const viewerText =
+          viewers !== undefined && viewers !== null && Number(viewers) > 0
+            ? " · " + viewers + " watching"
+            : "";
+
+        const statusText = isActuallyLive ? "LIVE NOW" : "OFFLINE";
+        const actionText = isActuallyLive ? "▶ WATCH LIVE" : "VIEW TIKTOK";
+        const actionUrl = isActuallyLive ? liveUrl : profileUrl;
+
+        if (isActuallyLive) {
+          card.style.borderColor = "rgba(248,113,113,0.9)";
+          card.style.boxShadow = "0 0 18px rgba(255,0,102,0.4)";
+        } else {
+          card.style.borderColor = "rgba(129,140,248,0.45)";
         }
 
+        card.innerHTML =
+          '<div class="dj-live" style="' +
+          (isActuallyLive ? "" : "color:#a5b4fc;") +
+          '">' +
+          (isActuallyLive
+            ? '<span class="dj-live-dot"></span>'
+            : '<span style="width:7px;height:7px;border-radius:50%;background:#64748b;display:inline-block;"></span>') +
+          escapeHtml(statusText) +
+          '</div>' +
+          '<div class="dj-name">' + escapeHtml(String(name)) + '</div>' +
+          '<div class="dj-meta">' +
+          escapeHtml(String(title || (isActuallyLive ? "Live on TikTok" : "Favourite DJ"))) +
+          escapeHtml(viewerText) +
+          '</div>' +
+          '<a class="dj-watch" href="' + escapeAttr(String(actionUrl)) +
+          '" target="_blank" rel="noopener">' + actionText + '</a>';
+
+        liveDjsList.appendChild(card);
       }
 
       function escapeHtml(value) {
-
         return value
           .replace(/&/g, "&amp;")
           .replace(/</g, "&lt;")
           .replace(/>/g, "&gt;")
           .replace(/"/g, "&quot;")
           .replace(/'/g, "&#039;");
-
       }
 
       function escapeAttr(value) {
-
         return value
           .replace(/&/g, "&amp;")
           .replace(/"/g, "&quot;")
           .replace(/</g, "&lt;")
           .replace(/>/g, "&gt;");
-
       }
 
       if (liveRefresh) {
-
-        liveRefresh.addEventListener(
-          "click",
-          function () {
-            loadLiveDJs();
-          }
-        );
-
+        liveRefresh.addEventListener("click", loadLiveDJs);
       }
 
       loadLiveDJs();
 
-      setInterval(
-        loadLiveDJs,
-        30 * 1000
-      );
+      setInterval(loadLiveDJs, 30 * 1000);
 
       function getDayPeriod(hour) {
 
