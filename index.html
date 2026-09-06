@@ -29,7 +29,7 @@
       display: flex;
       align-items: flex-start;
       justify-content: center;
-      padding: 1.5rem 1rem 2rem;
+      padding: 1rem 0.75rem 1.5rem;
       position: relative;
     }
 
@@ -55,7 +55,7 @@
     .wrapper {
       max-width: 900px;
       width: 100%;
-      padding: 2.5rem 1.75rem 2rem;
+      padding: 1.25rem 1.25rem 1.5rem;
       border-radius: 18px;
       background: rgba(7, 8, 24, 0.94);
       backdrop-filter: blur(3px);
@@ -76,7 +76,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 1.75rem;
-      padding: 1.4rem 1.6rem;
+      padding: 1rem 1.2rem;
       border-radius: 16px;
       background:
         radial-gradient(circle at top left, rgba(255,0,102,0.30), transparent 55%),
@@ -87,12 +87,12 @@
       box-shadow:
         0 0 12px rgba(255, 0, 102, 0.45),
         0 0 26px rgba(56,189,248,0.35);
-      margin-bottom: 1.75rem;
+      margin-bottom: 1rem;
       text-align: left;
     }
 
     .hero-left img {
-      width: 180px;
+      width: 155px;
       max-width: 100%;
       border-radius: 10px;
       display: block;
@@ -158,9 +158,9 @@
       display: flex;
       justify-content: center;
       gap: 0.9rem;
-      margin-top: 1.2rem;
-      margin-bottom: 2rem;
-      padding-bottom: 0.5rem;
+      margin-top: 0.7rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0;
       flex-wrap: wrap;
     }
 
@@ -315,11 +315,11 @@
 
     /* CHANNEL PANELS */
     .channel {
-      padding: 1.2rem 1.4rem;
+      padding: 0.9rem 1rem;
       border-radius: 16px;
       background: rgba(10,10,30,0.85);
       border: 1px solid rgba(129,140,248,0.5);
-      margin-bottom: 1.75rem;
+      margin-bottom: 1rem;
       text-align: left;
     }
 
@@ -371,8 +371,8 @@
     /* RANDOM LIVE DJ */
     .random-live-dj {
       display: none;
-      margin-bottom: 1.75rem;
-      padding: 1.2rem;
+      margin-bottom: 1rem;
+      padding: 0.85rem;
       border-radius: 16px;
       background:
         radial-gradient(circle at top left, rgba(255,0,102,0.22), transparent 55%),
@@ -393,7 +393,7 @@
     }
 
     .random-live-title {
-      font-size: 1.15rem;
+      font-size: 1.05rem;
       font-weight: 800;
       color: #fff;
       text-shadow: 0 0 8px rgba(255,0,102,0.7);
@@ -407,16 +407,24 @@
 
     .random-live-dj-name {
       color: #ffffff;
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       font-weight: 800;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.35rem;
     }
 
-    /* Live DJ controls sit above the video for easier access. */
-    .random-live-dj > .random-live-actions {
-      margin-top: -0.2rem;
-      margin-bottom: 0.8rem;
+    /* Compact live DJ header: DJ name and controls share one row. */
+    .random-live-control-row {
+      display: flex;
       align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.65rem;
+    }
+
+    .random-live-dj > .random-live-actions {
+      margin: 0;
+      align-items: center;
+      flex-shrink: 0;
     }
 
     .random-live-frame {
@@ -468,7 +476,7 @@
       align-items: center;
       gap: 0.7rem;
       flex-wrap: wrap;
-      margin-top: 0.9rem;
+      margin-top: 0;
     }
 
     .random-live-button {
@@ -499,6 +507,12 @@
         height: 430px;
       }
 
+      .random-live-control-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.45rem;
+      }
+
       .random-live-dj > .random-live-actions {
         justify-content: flex-start;
       }
@@ -509,7 +523,7 @@
       position: relative;
       width: 100%;
       aspect-ratio: 4 / 3;
-      min-height: 360px;
+      min-height: 320px;
       border-radius: 12px;
       overflow: hidden;
       background: #000;
@@ -652,7 +666,7 @@
     }
 
     .dj-name {
-      font-size: 1.15rem;
+      font-size: 1.05rem;
       font-weight: 800;
       color: #ffffff;
       margin-bottom: 0.25rem;
@@ -1136,22 +1150,24 @@
             <div class="random-live-title">🔴 LIVE DJ ROUTER</div>
           </div>
 
-          <div id="randomLiveDjName" class="random-live-dj-name">Checking LIVE DJs…</div>
+          <div class="random-live-control-row">
+            <div id="randomLiveDjName" class="random-live-dj-name">Checking LIVE DJs…</div>
 
-          <div class="random-live-actions">
-            <button id="liveDjUnmute"
-                    class="random-live-button"
-                    type="button">
-              🔊 UNMUTE LIVE DJ
-            </button>
+            <div class="random-live-actions">
+              <button id="liveDjUnmute"
+                      class="random-live-button"
+                      type="button">
+                🔊 UNMUTE LIVE DJ
+              </button>
 
-            <a id="randomLiveDjWatch"
-               class="random-live-button secondary"
-               href="#"
-               target="_blank"
-               rel="noopener">
-              ▶ OPEN ON TIKTOK
-            </a>
+              <a id="randomLiveDjWatch"
+                 class="random-live-button secondary"
+                 href="#"
+                 target="_blank"
+                 rel="noopener">
+                ▶ OPEN ON TIKTOK
+              </a>
+            </div>
           </div>
 
           <div class="radio-router-player">
