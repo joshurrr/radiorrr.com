@@ -2255,49 +2255,44 @@
 
           const live = Array.isArray(data.live) ? data.live : [];
           const favourites = Array.isArray(data.favourites) ? data.favourites : [];
+          const relayDj = data.relay || null;
 
           currentLiveDJs = live;
 
-          if (live.length) {
-            // The API list is the list of DJs who are live, while the
-            // router has its own active DJ. Keep the player/name locked
-            // to the DJ currently being relayed instead of falling back
-            // to live[0] on every 30-second refresh.
-            const routerDj =
-              live.find(dj => getDJUsername(dj) === activeLiveUsername) ||
-              (activeLiveUsername
-                ? null
-                : live[0]);
+          /*
+           * The backend relay deliberately chooses the first ACCESSIBLE
+           * live DJ. That can be different from live[0] when a TikTok
+           * account is age-restricted or otherwise unavailable.
+           *
+           * Always use data.relay for the router display so the name,
+           * TikTok button and actual video stay in sync across the
+           * 30-second API refresh.
+           */
+          if (relayDj) {
+            const routerUsername = getDJUsername(relayDj);
 
-            if (!routerDj) {
-              // The previously routed DJ is no longer in the live list.
-              // Leave the existing player alone until the next refresh
-              // establishes the new router DJ.
-              return;
-            }
+            if (routerUsername) {
+              if (
+                !window.radioRrrHls ||
+                activeLiveUsername !== routerUsername
+              ) {
+                showLiveDjPlayer(relayDj);
+              } else {
+                // Refresh the displayed metadata only. Do NOT recreate
+                // the HLS player or disturb its existing buffer.
+                randomLiveDjName.textContent =
+                  "🎧 " + String(
+                    relayDj.name ||
+                    relayDj.username ||
+                    relayDj.display_name ||
+                    "LIVE DJ"
+                  );
 
-            // Only rebuild the HLS player when the active DJ changes.
-            // Recreating it every 30 seconds would throw away its buffer.
-            const routerUsername = getDJUsername(routerDj);
-
-            if (
-              !window.radioRrrHls ||
-              activeLiveUsername !== routerUsername
-            ) {
-              showLiveDjPlayer(routerDj);
+                randomLiveDjWatch.href = getDJLiveUrl(relayDj);
+                randomLiveDj.style.display = "block";
+              }
             } else {
-              // Keep the displayed DJ information fresh without touching
-              // the existing HLS connection/buffer.
-              activeLiveUsername = routerUsername;
-              randomLiveDjName.textContent =
-                "🎧 " + String(
-                  routerDj.name ||
-                  routerDj.username ||
-                  routerDj.display_name ||
-                  "LIVE DJ"
-                );
-              randomLiveDjWatch.href = getDJLiveUrl(routerDj);
-              randomLiveDj.style.display = "block";
+              showRadioFallback();
             }
           } else {
             showRadioFallback();
