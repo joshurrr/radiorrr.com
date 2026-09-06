@@ -1160,13 +1160,6 @@
                 🔊 UNMUTE LIVE DJ
               </button>
 
-              <a id="randomLiveDjWatch"
-                 class="random-live-button secondary"
-                 href="#"
-                 target="_blank"
-                 rel="noopener">
-                ▶ OPEN ON TIKTOK
-              </a>
             </div>
           </div>
 
@@ -1819,9 +1812,6 @@
       const randomLiveDjFrame =
         document.getElementById("randomLiveDjFrame");
 
-      const randomLiveDjWatch =
-        document.getElementById("randomLiveDjWatch");
-
       const randomLiveDjNext =
         document.getElementById("randomLiveDjNext");
 
@@ -1986,7 +1976,6 @@
 
         activeLiveUsername = username;
         randomLiveDjName.textContent = "🎧 " + String(name);
-        randomLiveDjWatch.href = liveUrl;
         randomLiveDj.style.display = "block";
 
         liveDjVideo.muted = true;
@@ -2302,7 +2291,6 @@
                     relayDj.display_name ||
                     "LIVE DJ"
                   );
-                randomLiveDjWatch.href = getDJLiveUrl(relayDj);
                 randomLiveDj.style.display = "block";
               }
             }
