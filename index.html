@@ -409,19 +409,11 @@
       color: #ffffff;
       font-size: 1.1rem;
       font-weight: 800;
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.55rem;
     }
 
-    /* Compact live DJ header: DJ name and controls share one row. */
-    .random-live-control-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.75rem;
-      margin-bottom: 0.65rem;
-    }
-
-    .random-live-dj > .random-live-actions {
+    /* Live DJ controls sit in the top-right of the router header. */
+    .random-live-header .random-live-actions {
       margin: 0;
       align-items: center;
       flex-shrink: 0;
@@ -507,13 +499,11 @@
         height: 430px;
       }
 
-      .random-live-control-row {
+      .random-live-header {
         align-items: flex-start;
-        flex-direction: column;
-        gap: 0.45rem;
       }
 
-      .random-live-dj > .random-live-actions {
+      .random-live-header .random-live-actions {
         justify-content: flex-start;
       }
     }
@@ -1148,10 +1138,6 @@
 
           <div class="random-live-header">
             <div class="random-live-title">🔴 LIVE DJ ROUTER</div>
-          </div>
-
-          <div class="random-live-control-row">
-            <div id="randomLiveDjName" class="random-live-dj-name">Checking LIVE DJs…</div>
 
             <div class="random-live-actions">
               <button id="liveDjUnmute"
@@ -1159,9 +1145,10 @@
                       type="button">
                 🔊 UNMUTE LIVE DJ
               </button>
-
             </div>
           </div>
+
+          <div id="randomLiveDjName" class="random-live-dj-name">Checking LIVE DJs…</div>
 
           <div class="radio-router-player">
             <video id="liveDjBackground"
