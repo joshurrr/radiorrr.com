@@ -412,6 +412,13 @@
       margin-bottom: 0.75rem;
     }
 
+    /* Live DJ controls sit above the video for easier access. */
+    .random-live-dj > .random-live-actions {
+      margin-top: -0.2rem;
+      margin-bottom: 0.8rem;
+      align-items: center;
+    }
+
     .random-live-frame {
       width: 100%;
       height: 520px;
@@ -457,6 +464,8 @@
 
     .random-live-actions {
       display: flex;
+      justify-content: flex-end;
+      align-items: center;
       gap: 0.7rem;
       flex-wrap: wrap;
       margin-top: 0.9rem;
@@ -488,6 +497,10 @@
     @media (max-width: 720px) {
       .random-live-frame {
         height: 430px;
+      }
+
+      .random-live-dj > .random-live-actions {
+        justify-content: flex-start;
       }
     }
 
@@ -1121,12 +1134,25 @@
 
           <div class="random-live-header">
             <div class="random-live-title">🔴 LIVE DJ ROUTER</div>
-            <div class="random-live-subtitle">
-              The current live DJ will appear here automatically.
-            </div>
           </div>
 
           <div id="randomLiveDjName" class="random-live-dj-name">Checking LIVE DJs…</div>
+
+          <div class="random-live-actions">
+            <button id="liveDjUnmute"
+                    class="random-live-button"
+                    type="button">
+              🔊 UNMUTE LIVE DJ
+            </button>
+
+            <a id="randomLiveDjWatch"
+               class="random-live-button secondary"
+               href="#"
+               target="_blank"
+               rel="noopener">
+              ▶ OPEN ON TIKTOK
+            </a>
+          </div>
 
           <div class="radio-router-player">
             <video id="liveDjBackground"
@@ -1153,22 +1179,6 @@
               <strong>📻 RADIO RRR</strong>
               <span>Checking for a live DJ…</span>
             </div>
-          </div>
-
-          <div class="random-live-actions">
-            <button id="liveDjUnmute"
-                    class="random-live-button"
-                    type="button">
-              🔊 UNMUTE LIVE DJ
-            </button>
-
-            <a id="randomLiveDjWatch"
-               class="random-live-button secondary"
-               href="#"
-               target="_blank"
-               rel="noopener">
-              ▶ OPEN ON TIKTOK
-            </a>
           </div>
 
         </div>
