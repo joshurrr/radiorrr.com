@@ -1960,9 +1960,16 @@
 
           const hls = new Hls({
             enableWorker: true,
-            lowLatencyMode: true,
-            liveSyncDurationCount: 3,
-            maxLiveSyncPlaybackRate: 1.5,
+
+            // Stability-first settings for the TikTok → FFmpeg → HLS relay.
+            // Running too close to the live edge was causing bufferStalledError.
+            lowLatencyMode: false,
+            liveSyncDurationCount: 5,
+            maxLiveSyncPlaybackRate: 1.1,
+            maxBufferLength: 30,
+            maxMaxBufferLength: 60,
+            backBufferLength: 30,
+
             manifestLoadingTimeOut: 10000,
             manifestLoadingMaxRetry: 3,
             manifestLoadingRetryDelay: 1000
@@ -1978,6 +1985,15 @@
 
           hls.on(Hls.Events.ERROR, function (event, data) {
             console.warn("Radio RRR HLS error:", data);
+
+            // A temporary buffer stall is recoverable. Keep the player alive
+            // and let hls.js load more media instead of treating it as a stop.
+            if (data.details === Hls.ErrorDetails.BUFFER_STALLED_ERROR) {
+              try {
+                hls.startLoad();
+              } catch (e) {}
+              return;
+            }
 
             if (data.fatal) {
               if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
@@ -2150,7 +2166,29 @@
               live.find(dj => getDJUsername(dj) === activeLiveUsername) ||
               live[0];
 
-            showLiveDjPlayer(routerDj);
+            // Only rebuild the HLS player when the active DJ changes.
+            // Recreating it every 30 seconds would throw away its buffer.
+            const routerUsername = getDJUsername(routerDj);
+
+            if (
+              !window.radioRrrHls ||
+              activeLiveUsername !== routerUsername
+            ) {
+              showLiveDjPlayer(routerDj);
+            } else {
+              // Keep the displayed DJ information fresh without touching
+              // the existing HLS connection/buffer.
+              activeLiveUsername = routerUsername;
+              randomLiveDjName.textContent =
+                "🎧 " + String(
+                  routerDj.name ||
+                  routerDj.username ||
+                  routerDj.display_name ||
+                  "LIVE DJ"
+                );
+              randomLiveDjWatch.href = getDJLiveUrl(routerDj);
+              randomLiveDj.style.display = "block";
+            }
           } else {
             showRadioFallback();
           }
