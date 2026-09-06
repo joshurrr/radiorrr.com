@@ -1,0 +1,3056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Radio RRR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="description" content="Radio RRR: The #1 neon 80s inspired synth electro neon radio station." />
+  <meta property="og:title" content="Radio RRR - 24/7 Electro, Synth, 80s, Remixed" />
+  <meta property="og:description" content="Tune in to the best Retrowave, Synthwave, and Outrun music for your late-night drives." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://radiorrr.com/" />
+  <meta property="og:image" content="https://radiorrr.com/logo.png" />
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #050710;
+      color: #f5f5f5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .wrapper {
+      max-width: 900px;
+      width: 100%;
+      padding: 2.5rem 1.75rem 2rem;
+      border-radius: 18px;
+      background: #0d0e1f;
+      border: 1px solid rgba(129,140,248,0.3);
+      box-shadow:
+        0 0 10px rgba(67, 56, 202, 0.5),
+        0 0 30px rgba(255, 0, 102, 0.4);
+      text-align: center;
+      transition: all 0.3s ease-out;
+    }
+
+    /* HERO BANNER */
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.75rem;
+      padding: 1.4rem 1.6rem;
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at top left, rgba(255,0,102,0.30), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(56,189,248,0.20), transparent 55%),
+        linear-gradient(90deg, rgba(5,7,22,0.82), rgba(5,7,22,0.28)),
+        url('radiorrr_background.png') center / cover no-repeat;
+      border: 1px solid rgba(129,140,248,0.6);
+      box-shadow:
+        0 0 12px rgba(255, 0, 102, 0.45),
+        0 0 26px rgba(56,189,248,0.35);
+      margin-bottom: 1.75rem;
+      text-align: left;
+    }
+
+    .hero-left img {
+      width: 180px;
+      max-width: 100%;
+      border-radius: 10px;
+      display: block;
+    }
+
+    .hero-right {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.12rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      background: rgba(239, 68, 68, 0.18);
+      border: 1px solid rgba(248, 113, 113, 0.6);
+      color: #fecaca;
+      margin-bottom: 0.55rem;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #f87171;
+      box-shadow: 0 0 8px rgba(248,113,113,0.95);
+    }
+
+    .hero-title {
+      font-size: 1.7rem;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #e0e7ff;
+      text-shadow:
+        0 0 8px rgba(129,140,248,0.75),
+        0 0 16px rgba(59,130,246,0.8);
+      margin-bottom: 0.3rem;
+    }
+
+    .hero-now-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #f9a8d4;
+      margin-top: 0.35rem;
+      text-shadow:
+        0 0 6px rgba(129,140,248,0.9),
+        0 0 10px rgba(59,130,246,0.9);
+    }
+
+    .hero-now-title strong {
+      color: #ffffff;
+      font-weight: 800;
+    }
+
+    /* NAV TABS */
+    .nav-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 0.9rem;
+      margin-top: 1.2rem;
+      margin-bottom: 2rem;
+      padding-bottom: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-tabs a {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.40rem 1.35rem;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 1.02rem;
+      color: #c7c7ff;
+      text-decoration: none;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      border: 1px solid rgba(129,140,248,0.6);
+      background: radial-gradient(circle at top, rgba(24, 31, 60, 0.95), rgba(6, 10, 25, 0.98));
+      box-shadow: 0 0 8px rgba(15,23,42,0.8);
+      text-shadow: 0 0 4px rgba(67, 56, 202, 0.6);
+      transition:
+        transform 0.15s ease,
+        box-shadow 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+      overflow: hidden;
+    }
+
+    .nav-tabs a::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 55%);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+
+    .nav-icon {
+      font-size: 0.95rem;
+      opacity: 0.85;
+      transform: translateY(0);
+      transition: transform 0.2s ease;
+    }
+
+    .nav-label {
+      text-transform: uppercase;
+    }
+
+    .nav-tabs a:hover {
+      transform: translateY(-1px);
+      border-color: #ff4dab;
+      box-shadow:
+        0 0 10px rgba(255, 0, 102, 0.5),
+        0 0 14px rgba(129,140,248,0.5);
+      color: #ffe4ff;
+    }
+
+    .nav-tabs a:hover::after {
+      opacity: 1;
+    }
+
+    .nav-tabs a.active {
+      transform: translateY(-2px) scale(1.02);
+      border-color: #ff0066;
+      background: linear-gradient(
+        135deg,
+        rgba(34, 9, 53, 0.98),
+        rgba(5, 24, 61, 0.98)
+      );
+      box-shadow:
+        0 0 14px rgba(255, 0, 102, 0.85),
+        0 0 18px rgba(129,140,248,0.9);
+      color: #ffffff;
+    }
+
+    .nav-tabs a.active .nav-icon {
+      transform: translateY(-1px);
+    }
+
+    /* LIVE NAV BUTTON */
+    .nav-tabs a.live-nav {
+      border-color: rgba(248,113,113,0.7);
+      color: #fecaca;
+      background:
+        radial-gradient(
+          circle at top,
+          rgba(80,20,35,0.95),
+          rgba(20,8,20,0.98)
+        );
+      box-shadow:
+        0 0 8px rgba(239,68,68,0.25);
+    }
+
+    .nav-tabs a.live-nav:hover {
+      border-color: #ff0066;
+      color: #ffffff;
+      box-shadow:
+        0 0 12px rgba(255,0,102,0.7),
+        0 0 18px rgba(248,113,113,0.45);
+    }
+
+    .nav-tabs a.live-nav .live-nav-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #f87171;
+      box-shadow: 0 0 8px rgba(248,113,113,1);
+      animation: livePulse 1.4s infinite;
+    }
+
+    @keyframes livePulse {
+      0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.45;
+        transform: scale(0.75);
+      }
+    }
+
+    .content-pane {
+      width: 100%;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .hidden-pane {
+      display: none;
+    }
+
+    /* VISUALIZER */
+    .visualizer {
+      width: 100%;
+      height: 360px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #000000;
+      margin-bottom: 0.6rem;
+      border: 2px solid #ff0066;
+      box-shadow: 0 0 15px rgba(255, 0, 102, 0.5);
+    }
+
+    #viz {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* CHANNEL PANELS */
+    .channel {
+      padding: 1.2rem 1.4rem;
+      border-radius: 16px;
+      background: rgba(10,10,30,0.85);
+      border: 1px solid rgba(129,140,248,0.5);
+      margin-bottom: 1.75rem;
+      text-align: left;
+    }
+
+    .channel span {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .channel small {
+      font-size: 0.8rem;
+      color: #e0e0ff;
+      opacity: 0.9;
+    }
+
+    audio {
+      width: 100%;
+      margin-top: 0.2rem;
+    }
+
+    .status {
+      display:none;
+      font-size: 0.8rem;
+      margin-top: 0.4rem;
+      opacity: 0.9;
+      color:#e0e0ff;
+    }
+
+    .kick {
+      margin-top:0.6rem;
+      padding:0.45rem 0.7rem;
+      border-radius:10px;
+      border:1px solid rgba(129,140,248,0.6);
+      background:#0b1020;
+      color:#c7c7ff;
+      cursor:pointer;
+      font-size:0.85rem;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .kick:hover {
+      color: #ff0066;
+      border-color: #ff0066;
+      box-shadow: 0 0 12px rgba(255, 0, 102, 0.7);
+    }
+
+
+    /* RANDOM LIVE DJ */
+    .random-live-dj {
+      display: none;
+      margin-bottom: 1.75rem;
+      padding: 1.2rem;
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at top left, rgba(255,0,102,0.22), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(56,189,248,0.14), transparent 55%),
+        rgba(7,10,25,0.96);
+      border: 1px solid rgba(248,113,113,0.75);
+      box-shadow: 0 0 18px rgba(255,0,102,0.35), 0 0 28px rgba(129,140,248,0.18);
+      text-align: left;
+    }
+
+    .random-live-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.9rem;
+    }
+
+    .random-live-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #fff;
+      text-shadow: 0 0 8px rgba(255,0,102,0.7);
+    }
+
+    .random-live-subtitle {
+      color: #c7c7ff;
+      font-size: 0.82rem;
+      margin-top: 0.15rem;
+    }
+
+    .random-live-dj-name {
+      color: #ffffff;
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+
+    .random-live-frame {
+      width: 100%;
+      height: 520px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+      border: 1px solid rgba(129,140,248,0.6);
+      box-shadow: 0 0 15px rgba(255,0,102,0.25);
+      position: relative;
+    }
+
+    .random-live-frame iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: #000;
+    }
+
+    .random-live-fallback {
+      display: none;
+      position: absolute;
+      inset: 0;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 0.8rem;
+      padding: 2rem;
+      text-align: center;
+      background: radial-gradient(circle at center, rgba(255,0,102,0.12), transparent 60%), #050710;
+    }
+
+    .random-live-fallback strong {
+      font-size: 1.1rem;
+      color: #fff;
+    }
+
+    .random-live-fallback span {
+      color: #c7c7ff;
+      font-size: 0.85rem;
+      max-width: 520px;
+    }
+
+    .random-live-actions {
+      display: flex;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+      margin-top: 0.9rem;
+    }
+
+    .random-live-button {
+      display: inline-block;
+      padding: 0.5rem 0.9rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ff0066, #4338ca);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(255,0,102,0.45);
+    }
+
+    .random-live-button.secondary {
+      background: #0b1020;
+      border-color: rgba(129,140,248,0.6);
+    }
+
+    .random-live-button:hover {
+      box-shadow: 0 0 14px rgba(255,0,102,0.8), 0 0 20px rgba(129,140,248,0.6);
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 720px) {
+      .random-live-frame {
+        height: 430px;
+      }
+    }
+
+    /* LIVE DJs */
+    .live-djs-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .live-djs-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #ffffff;
+      text-shadow: 0 0 8px rgba(255, 0, 102, 0.65);
+    }
+
+    .live-refresh {
+      padding: 0.4rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(129,140,248,0.6);
+      background: #0b1020;
+      color: #c7c7ff;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .live-refresh:hover {
+      border-color: #ff0066;
+      color: #ffffff;
+      box-shadow: 0 0 10px rgba(255,0,102,0.55);
+    }
+
+    .live-djs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .dj-card {
+      padding: 1.1rem;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at top left, rgba(255,0,102,0.18), transparent 55%),
+        rgba(7,10,25,0.95);
+      border: 1px solid rgba(248,113,113,0.5);
+      box-shadow: 0 0 12px rgba(255,0,102,0.2);
+      text-align: left;
+    }
+
+    .dj-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: #fecaca;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.65rem;
+    }
+
+    .dj-live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #f87171;
+      box-shadow: 0 0 8px rgba(248,113,113,1);
+      animation: livePulse 1.4s infinite;
+    }
+
+    .dj-name {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 0.25rem;
+    }
+
+    .dj-meta {
+      font-size: 0.85rem;
+      color: #c7c7ff;
+      margin-bottom: 0.9rem;
+      min-height: 2.4em;
+    }
+
+    .dj-watch {
+      display: inline-block;
+      padding: 0.5rem 0.9rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ff0066, #4338ca);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 800;
+      box-shadow: 0 0 10px rgba(255,0,102,0.45);
+    }
+
+    .dj-watch:hover {
+      box-shadow:
+        0 0 14px rgba(255,0,102,0.8),
+        0 0 20px rgba(129,140,248,0.6);
+      transform: translateY(-1px);
+    }
+
+    .live-empty,
+    .live-error {
+      padding: 1.5rem;
+      border-radius: 14px;
+      border: 1px solid rgba(129,140,248,0.35);
+      background: rgba(5,7,20,0.8);
+      color: #c7c7ff;
+      text-align: center;
+    }
+
+    .live-error {
+      color: #fecaca;
+      border-color: rgba(248,113,113,0.4);
+    }
+
+    /* SCHEDULE */
+    .events-list {
+      text-align: left;
+      margin-top: 1rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(129, 140, 248, 0.15);
+    }
+
+    .event-item {
+      margin: 1.25rem 0;
+      border-left: 3px solid #4338ca;
+      padding-left: 1rem;
+    }
+
+    .event-item h4 {
+      margin: 0;
+      font-size: 1rem;
+      color: #ffccff;
+      text-shadow: 0 0 3px rgba(255, 0, 102, 0.5);
+    }
+
+    .event-item p {
+      margin: 0.25rem 0 0;
+      font-size: 0.85rem;
+      color: #e0e0ff;
+    }
+
+    /* VIDEO */
+    .video-container {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      margin-top: 0.8rem;
+    }
+
+    .video-container iframe {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      top: 0;
+      left: 0;
+      border-radius: 12px;
+    }
+
+    .neon-embed-frame {
+      margin-top: 1.2rem;
+      padding: 1rem 0.75rem;
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at top, rgba(15,23,42,0.9), rgba(3,7,18,0.98));
+      border: 1px solid rgba(129,140,248,0.7);
+      box-shadow:
+        0 0 12px rgba(129,140,248,0.45),
+        0 0 24px rgba(255,0,102,0.35);
+    }
+
+    .neon-embed-frame .tiktok-embed {
+      margin: 0 auto !important;
+    }
+
+
+    /* TOOLS */
+    .tools-card {
+      text-align: left;
+    }
+
+    .tools-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .tools-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #ffffff;
+      text-shadow: 0 0 8px rgba(255, 0, 102, 0.65);
+    }
+
+    .tools-subtitle {
+      margin-top: 0.25rem;
+      color: #c7c7ff;
+      font-size: 0.85rem;
+    }
+
+    .tools-actions {
+      display: flex;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+
+    .tool-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.55rem 0.95rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ff0066, #4338ca);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #ffffff;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(255,0,102,0.35);
+    }
+
+    .tool-button.secondary {
+      background: #0b1020;
+      border-color: rgba(129,140,248,0.6);
+    }
+
+    .tool-button:hover {
+      box-shadow: 0 0 14px rgba(255,0,102,0.75), 0 0 18px rgba(129,140,248,0.45);
+      transform: translateY(-1px);
+    }
+
+    .tool-input-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.7rem;
+      align-items: end;
+      margin-top: 1rem;
+    }
+
+    .tool-input-row input {
+      width: 100%;
+      padding: 0.65rem 0.8rem;
+      border-radius: 10px;
+      border: 1px solid rgba(129,140,248,0.5);
+      background: #080b18;
+      color: #fff;
+      outline: none;
+    }
+
+    .tool-input-row input:focus {
+      border-color: #ff0066;
+      box-shadow: 0 0 10px rgba(255,0,102,0.25);
+    }
+
+    .scanner-note {
+      padding: 0.85rem 1rem;
+      border-radius: 12px;
+      background: rgba(56,189,248,0.06);
+      border: 1px solid rgba(56,189,248,0.25);
+      color: #c7c7ff;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      margin-top: 1rem;
+    }
+
+    .scanner-results {
+      margin-top: 1.2rem;
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .scanner-result {
+      padding: 1rem;
+      border-radius: 14px;
+      background: rgba(7,10,25,0.95);
+      border: 1px solid rgba(129,140,248,0.4);
+      text-align: left;
+    }
+
+    .scanner-result.high {
+      border-color: rgba(248,113,113,0.85);
+      box-shadow: 0 0 14px rgba(255,0,102,0.18);
+    }
+
+    .scanner-result.medium {
+      border-color: rgba(255,209,102,0.65);
+    }
+
+    .scanner-result.low {
+      border-color: rgba(87,227,137,0.45);
+    }
+
+    .scanner-result-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .scanner-account {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .scanner-score {
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 0.3rem 0.65rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .scanner-score.high { color: #fecaca; background: rgba(248,113,113,0.12); }
+    .scanner-score.medium { color: #fde68a; background: rgba(255,209,102,0.10); }
+    .scanner-score.low { color: #bbf7d0; background: rgba(87,227,137,0.10); }
+
+    .scanner-verdict {
+      margin-top: 0.45rem;
+      font-size: 0.84rem;
+      color: #c7c7ff;
+    }
+
+    .scanner-reasons {
+      margin: 0.65rem 0 0;
+      padding-left: 1.1rem;
+      color: #e0e0ff;
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .scanner-reasons li {
+      margin: 0.25rem 0;
+    }
+
+    .scanner-actions {
+      display: flex;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+      margin-top: 0.8rem;
+    }
+
+    .scanner-actions a,
+    .scanner-actions button {
+      padding: 0.42rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(129,140,248,0.55);
+      background: #0b1020;
+      color: #c7c7ff;
+      text-decoration: none;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.78rem;
+    }
+
+    .scanner-actions .remove-suggest {
+      border-color: rgba(248,113,113,0.65);
+      color: #fecaca;
+    }
+
+    .scanner-actions .remove-suggest:hover {
+      border-color: #ff0066;
+      color: #fff;
+      box-shadow: 0 0 10px rgba(255,0,102,0.55);
+    }
+
+    .scanner-summary {
+      display: flex;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+      margin-top: 0.8rem;
+    }
+
+    .scanner-summary .pill {
+      color: #e0e0ff;
+    }
+
+    .scanner-empty {
+      padding: 1.2rem;
+      border-radius: 14px;
+      border: 1px solid rgba(129,140,248,0.35);
+      background: rgba(5,7,20,0.8);
+      color: #c7c7ff;
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      .tool-input-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* FOOTER LINKS */
+    .links {
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      text-align:center;
+    }
+
+    .links a {
+      color: #a5b4fc;
+      text-decoration: none;
+      margin: 0 0.4rem;
+      transition: color 0.3s, text-shadow 0.3s;
+    }
+
+    .links a:hover {
+      color: #ff0066;
+      text-shadow: 0 0 8px #ff0066;
+    }
+
+    .footnote {
+      margin-top: 1.5rem;
+      font-size: 0.7rem;
+      opacity: 0.55;
+      text-align:center;
+    }
+
+    .genre-tagline {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+      color: #ff0066;
+      text-shadow: 0 0 5px rgba(255, 0, 102, 0.8);
+    }
+
+    @media (max-width: 720px) {
+      .hero {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .hero-right {
+        text-align: center;
+      }
+
+      .visualizer {
+        height: 280px;
+      }
+
+      .nav-tabs {
+        gap: 0.5rem;
+      }
+
+      .nav-tabs a {
+        padding: 0.4rem 0.9rem;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="wrapper">
+
+    <!-- HERO BANNER -->
+    <section class="hero">
+      <div class="hero-left">
+        <img
+          src="logo.png"
+          alt="Radio RRR Logo - Neon Retrowave Text"
+        >
+      </div>
+
+      <div class="hero-right">
+        <div class="live-pill">
+          <span class="live-dot"></span>
+          LIVE · BROADCASTING 24/7
+        </div>
+
+        <h1 class="hero-title">RADIO RRR</h1>
+
+        <p class="hero-now-title">
+          Now Playing:
+          <strong id="heroNowPlaying">Loading current block…</strong>
+        </p>
+      </div>
+    </section>
+
+    <!-- NAV TABS -->
+    <nav class="nav-tabs">
+
+      <!-- LIVE DJs -->
+      <a data-target="live-section" class="live-nav active">
+        <span class="live-nav-dot"></span>
+        <span class="nav-label">Live DJs</span>
+      </a>
+
+      <a data-target="stream-section">
+        <span class="nav-icon">📻</span>
+        <span class="nav-label">Radio</span>
+      </a>
+
+      <a data-target="events-section">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">Schedule</span>
+      </a>
+
+      <a data-target="video-section">
+        <span class="nav-icon">🎬</span>
+        <span class="nav-label">Video</span>
+      </a>
+
+      <!-- TOOLS -->
+      <a data-target="tools-section">
+        <span class="nav-icon">🛠️</span>
+        <span class="nav-label">Tools</span>
+      </a>
+
+    </nav>
+
+    <!-- RADIO TAB -->
+    <div id="stream-section" class="content-pane">
+
+      <div class="channel">
+
+        <div class="visualizer">
+          <canvas id="viz"></canvas>
+        </div>
+
+        <audio id="liveStream" controls crossorigin="anonymous">
+          <source
+            src="https://stream.nightride.fm/nightride.mp3"
+            type="audio/mpeg"
+          />
+          Your browser does not support the audio element.
+        </audio>
+
+        <button id="kickPlay" class="kick">Play</button>
+
+        <div id="status" class="status"></div>
+
+      </div>
+
+    </div>
+
+    <!-- LIVE DJs TAB -->
+    <div id="live-section" class="content-pane hidden-pane">
+
+      <div class="channel">
+
+        <div class="live-djs-header">
+          <div>
+            <span class="live-djs-title">Live DJs</span><br />
+            <small>Live DJs streaming right now.</small>
+          </div>
+
+          <button id="liveRefresh" class="live-refresh">
+            ↻ Refresh
+          </button>
+        </div>
+
+
+        <!-- RANDOM LIVE DJ -->
+        <div id="randomLiveDj" class="random-live-dj">
+
+          <div class="random-live-header">
+            <div class="random-live-title">🔴 RANDOM LIVE DJ</div>
+            <div class="random-live-subtitle">
+              Randomly selected from the DJs who are live right now.
+            </div>
+          </div>
+
+          <div id="randomLiveDjName" class="random-live-dj-name">Loading…</div>
+
+          <div class="random-live-status">● LIVE ON TIKTOK</div>
+
+          <div class="random-live-stage">
+            <div class="random-live-mic">🎙️</div>
+            <div class="random-live-message">
+              <strong>This DJ is live right now.</strong>
+              <br><br>
+              TikTok does not currently provide a supported public
+              embed player for creator LIVE streams. Watch the selected
+              DJ directly on TikTok using the button below.
+            </div>
+          </div>
+
+          <div class="random-live-actions">
+            <a id="randomLiveDjWatch"
+               class="random-live-button"
+               href="#"
+               target="_blank"
+               rel="noopener">
+              ▶ WATCH LIVE ON TIKTOK
+            </a>
+
+            <button id="randomLiveDjNext"
+                    class="random-live-button secondary"
+                    type="button">
+              🔄 NEXT LIVE DJ
+            </button>
+          </div>
+
+        </div>
+
+        <div id="liveDjsList" class="live-djs-grid">
+          <div class="live-empty">Checking who's live…</div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- SCHEDULE TAB -->
+    <div id="events-section" class="content-pane hidden-pane">
+
+      <div class="channel">
+
+        <span>Radio RRR Schedule</span><br />
+
+        <small>
+          Daily rotation across Morning, Afternoon, and Evening blocks.
+        </small>
+
+        <div class="events-list">
+
+          <div class="event-item">
+            <h4>Morning – Neon Sunrise Chill</h4>
+
+            <p>
+              <span class="event-date">06:00 – 12:00</span>
+            </p>
+
+            <p>
+              Morning playlist: chilled synthwave, soft electro, lofi textures
+              and relaxed 80s-inspired cuts for coffee, commute, and easing
+              into the day.
+            </p>
+          </div>
+
+          <div class="event-item">
+
+            <h4>Afternoon – Daydrive Synthwave</h4>
+
+            <p>
+              <span class="event-date">12:00 – 18:00</span>
+            </p>
+
+            <p>
+              Afternoon playlist: mid-tempo outrun, retrowave and synth
+              bangers for work, driving, and daytime sessions.
+            </p>
+
+          </div>
+
+          <div class="event-item">
+
+            <h4>Evening & Night – Night Drive Electro</h4>
+
+            <p>
+              <span class="event-date">18:00 – 06:00</span>
+            </p>
+
+            <p>
+              Evening/night playlist: heavier electro, darker synth, and
+              high-energy remixes tuned for late-night coding, neon skylines,
+              and insomnia.
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- VIDEO TAB -->
+    <div id="video-section" class="content-pane hidden-pane">
+
+      <div class="channel">
+
+        <span>TikTok Clips</span><br />
+
+        <small>
+          Videos Music and Stuff
+        </small>
+
+        <div class="neon-embed-frame">
+
+          <blockquote
+            class="tiktok-embed"
+            cite="https://www.tiktok.com/@josh.u.rrr"
+            data-unique-id="josh.u.rrr"
+            data-embed-type="creator"
+            style="max-width: 600px;"
+          >
+
+            <section>
+              <a
+                target="_blank"
+                href="https://www.tiktok.com/@josh.u.rrr"
+              >
+                @josh.u.rrr
+              </a>
+            </section>
+
+          </blockquote>
+
+        </div>
+
+      </div>
+
+      <div class="channel">
+
+        <span>YouTube Likes</span><br />
+
+        <small>
+          Latest videos we liked
+        </small>
+
+        <div class="video-container">
+
+          <iframe
+            src="https://www.youtube.com/embed/videoseries?list=PLli1uTuS0FH7xR1QBnIvY3V9btomaSpTv"
+            allowfullscreen
+            loading="lazy">
+          </iframe>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- TOOLS TAB -->
+    <div id="tools-section" class="content-pane hidden-pane">
+
+      <div class="channel tools-card">
+
+        <div class="tools-header">
+          <div>
+            <span class="tools-title">🛠️ Radio RRR Tools</span><br />
+            <div class="tools-subtitle">
+              TikTok account scanner for suspicious, fake and bot-like DJ accounts.
+            </div>
+          </div>
+        </div>
+
+        <div class="scanner-note">
+          <strong>How this works:</strong> the scanner checks the RRR favourite DJ list and
+          scores accounts using publicly observable signals available to the website.
+          A high score is a <strong>removal suggestion</strong>, not proof that an account is fake.
+          Always open the TikTok profile and review it before removing a DJ.
+        </div>
+
+        <div class="tools-actions">
+          <button id="scanRrrDjs" class="tool-button" type="button">
+            🔍 Scan RRR DJ List
+          </button>
+          <button id="clearScanner" class="tool-button secondary" type="button">
+            Clear Results
+          </button>
+        </div>
+
+        <div class="tool-input-row">
+          <div>
+            <label for="scannerHandle">Scan one TikTok account</label>
+            <input id="scannerHandle" type="text"
+                   placeholder="@username or https://www.tiktok.com/@username" />
+          </div>
+          <button id="scanOneDj" class="tool-button" type="button">
+            Scan Account
+          </button>
+        </div>
+
+        <div id="scannerSummary" class="scanner-summary"></div>
+        <div id="scannerResults" class="scanner-results">
+          <div class="scanner-empty">
+            Click <strong>Scan RRR DJ List</strong> to analyse the DJs currently in the RRR favourites list.
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- FOOTER LINKS -->
+    <div class="links">
+
+      <a
+        href="https://www.tiktok.com/@josh.u.rrr"
+        target="_blank"
+        rel="noopener"
+      >
+        TikTok
+      </a>
+
+      ·
+
+      <a
+        href="https://www.youtube.com/@RADIO_RRR"
+        target="_blank"
+        rel="noopener"
+      >
+        YouTube
+      </a>
+
+      ·
+
+      <a
+        href="https://www.instagram.com/radio.rrr/"
+        target="_blank"
+        rel="noopener"
+      >
+        Instagram
+      </a>
+
+      ·
+
+      <a
+        href="https://github.com/joshurrr"
+        target="_blank"
+        rel="noopener"
+      >
+        GitHub
+      </a>
+
+    </div>
+
+    <p class="footnote">
+
+      <span class="genre-tagline">
+        ELECTRO · 80s · SYNTH · MEMES · REMIXED
+      </span>
+
+      Streaming 24/7<br>
+
+      Contact:
+      <a
+        href="mailto:admin@radiorrr.com"
+        style="color:#a5b4fc;"
+      >
+        admin@radiorrr.com
+      </a>
+
+    </p>
+
+  </main>
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+
+      /* RRR TOOLS — TIKTOK ACCOUNT SCANNER */
+
+      const scanRrrDjs =
+        document.getElementById("scanRrrDjs");
+
+      const scanOneDj =
+        document.getElementById("scanOneDj");
+
+      const clearScanner =
+        document.getElementById("clearScanner");
+
+      const scannerHandle =
+        document.getElementById("scannerHandle");
+
+      const scannerResults =
+        document.getElementById("scannerResults");
+
+      const scannerSummary =
+        document.getElementById("scannerSummary");
+
+      function normalizeTikTokHandle(input) {
+        const s = String(input || "").trim();
+        if (!s) return "";
+
+        let m = s.match(/tiktok\.com\/@([A-Za-z0-9._]+)/i);
+        if (m && m[1]) return m[1];
+
+        m = s.match(/^@?([A-Za-z0-9._]{2,24})$/);
+        return m && m[1] ? m[1] : "";
+      }
+
+      function scanAccountSignals(account) {
+        const handle = normalizeTikTokHandle(
+          account.username ||
+          account.unique_id ||
+          account.handle ||
+          account
+        );
+
+        let score = 8;
+        const reasons = [];
+
+        if (!handle) {
+          return {
+            handle: "",
+            score: 30,
+            verdict: "Medium",
+            level: "medium",
+            reasons: ["Could not extract a TikTok username."]
+          };
+        }
+
+        if (/\d{5,}$/.test(handle)) {
+          score += 28;
+          reasons.push("Username ends with a large block of digits.");
+        } else if (/\d{4}$/.test(handle)) {
+          score += 18;
+          reasons.push("Username ends with four digits.");
+        }
+
+        const separators = (handle.match(/[._]/g) || []).length;
+        if (separators >= 3) {
+          score += 10;
+          reasons.push("Username contains many separators.");
+        }
+
+        if (handle.length <= 4) {
+          score += 10;
+          reasons.push("Very short username.");
+        }
+
+        if (/^(user|account|official|real|dj)\d+/i.test(handle)) {
+          score += 12;
+          reasons.push("Generic/generated-looking username pattern.");
+        }
+
+        if (/(free|promo|airdrop|crypto|giveaway|cash|adult|sex|dm|whatsapp|telegram)/i.test(handle)) {
+          score += 25;
+          reasons.push("Username contains a common spam/scam keyword.");
+        }
+
+        // Use API data when it is available.
+        const followers = Number(
+          account.followers ??
+          account.follower_count ??
+          account.followerCount
+        );
+
+        const following = Number(
+          account.following ??
+          account.following_count ??
+          account.followingCount
+        );
+
+        const likes = Number(
+          account.likes ??
+          account.like_count ??
+          account.likeCount
+        );
+
+        const videos = Number(
+          account.videos ??
+          account.video_count ??
+          account.videoCount
+        );
+
+        if (Number.isFinite(followers) && Number.isFinite(following)) {
+          if (following >= 5000 && followers <= 200) {
+            score += 22;
+            reasons.push("Very high following count with very few followers.");
+          } else if (following >= 2000 && followers <= 50) {
+            score += 25;
+            reasons.push("Extreme following/follower imbalance.");
+          }
+
+          if (following > 500 && followers > 0 && followers / following < 0.02) {
+            score += 12;
+            reasons.push("Extremely low follower/following ratio.");
+          }
+        }
+
+        if (Number.isFinite(videos)) {
+          if (videos === 0) {
+            score += 16;
+            reasons.push("No public videos.");
+          } else if (videos <= 2) {
+            score += 8;
+            reasons.push("Very small public content footprint.");
+          }
+        }
+
+        if (Number.isFinite(likes) && likes === 0) {
+          score += 6;
+          reasons.push("No visible likes/activity reported.");
+        }
+
+        // A lack of API stats is deliberately NOT treated as proof of a bot.
+        if (reasons.length === 0) {
+          reasons.push("No strong bot-like signals found from the available data.");
+        }
+
+        score = Math.max(0, Math.min(100, score));
+
+        let verdict = "Low";
+        let level = "low";
+
+        if (score >= 65) {
+          verdict = "High";
+          level = "high";
+        } else if (score >= 35) {
+          verdict = "Medium";
+          level = "medium";
+        }
+
+        return {
+          handle,
+          score,
+          verdict,
+          level,
+          reasons
+        };
+      }
+
+      function renderScannerSummary(results) {
+        if (!scannerSummary) return;
+
+        const high = results.filter(r => r.level === "high").length;
+        const medium = results.filter(r => r.level === "medium").length;
+        const low = results.filter(r => r.level === "low").length;
+
+        scannerSummary.innerHTML =
+          '<span class="pill">Scanned: ' + results.length + '</span>' +
+          '<span class="pill">🔴 High risk: ' + high + '</span>' +
+          '<span class="pill">🟠 Review: ' + medium + '</span>' +
+          '<span class="pill">🟢 Low risk: ' + low + '</span>';
+      }
+
+      function renderScannerResults(results) {
+        if (!scannerResults) return;
+
+        if (!results.length) {
+          scannerResults.innerHTML =
+            '<div class="scanner-empty">No accounts to scan.</div>';
+          if (scannerSummary) scannerSummary.innerHTML = "";
+          return;
+        }
+
+        results.sort((a, b) => b.score - a.score);
+        renderScannerSummary(results);
+
+        scannerResults.innerHTML = "";
+
+        results.forEach(result => {
+          const card = document.createElement("div");
+          card.className = "scanner-result " + result.level;
+
+          const reasonItems = result.reasons
+            .map(reason => "<li>" + escapeHtml(reason) + "</li>")
+            .join("");
+
+          const profileUrl =
+            "https://www.tiktok.com/@" +
+            encodeURIComponent(result.handle);
+
+          const removalText =
+            result.level === "high"
+              ? "🔴 Suggest Removal"
+              : "⚠️ Review Account";
+
+          card.innerHTML =
+            '<div class="scanner-result-head">' +
+              '<div class="scanner-account">@' +
+                escapeHtml(result.handle) +
+              '</div>' +
+              '<div class="scanner-score ' + result.level + '">' +
+                escapeHtml(result.score + "/100 · " + result.verdict + " RISK") +
+              '</div>' +
+            '</div>' +
+            '<div class="scanner-verdict">' +
+              (result.level === "high"
+                ? "Strong enough signals to suggest manual removal review."
+                : result.level === "medium"
+                  ? "Some suspicious signals — inspect the profile before deciding."
+                  : "No strong bot-like signals detected from the available data.") +
+            '</div>' +
+            '<ul class="scanner-reasons">' +
+              reasonItems +
+            '</ul>' +
+            '<div class="scanner-actions">' +
+              '<a href="' + escapeAttr(profileUrl) +
+                '" target="_blank" rel="noopener">Open TikTok</a>' +
+              '<button type="button" class="remove-suggest" ' +
+                'data-handle="' + escapeAttr(result.handle) + '">' +
+                escapeHtml(removalText) +
+              '</button>' +
+            '</div>';
+
+          scannerResults.appendChild(card);
+        });
+
+        scannerResults
+          .querySelectorAll(".remove-suggest")
+          .forEach(button => {
+            button.addEventListener("click", function () {
+              const handle = this.getAttribute("data-handle") || "";
+              const confirmed = window.confirm(
+                "Suggest removal of @" + handle +
+                " from the RRR favourite DJ list?\n\n" +
+                "This does NOT remove the account automatically. " +
+                "It is only a manual review reminder."
+              );
+
+              if (confirmed) {
+                showToast(
+                  "Removal suggested for @" + handle +
+                  ". Review the TikTok profile and remove it from the RRR list manually if appropriate."
+                );
+              }
+            });
+          });
+      }
+
+      async function scanRrrFavouriteDjs() {
+        if (!scannerResults) return;
+
+        scannerResults.innerHTML =
+          '<div class="scanner-empty">Loading the RRR favourite DJ list…</div>';
+
+        try {
+          const response = await fetch(
+            "https://api.radiorrr.com/api/live",
+            { cache: "no-store" }
+          );
+
+          if (!response.ok) {
+            throw new Error("API returned " + response.status);
+          }
+
+          const data = await response.json();
+          const favourites =
+            Array.isArray(data.favourites) ? data.favourites : [];
+
+          const results = favourites
+            .map(dj => scanAccountSignals(dj))
+            .filter(r => r.handle);
+
+          renderScannerResults(results);
+
+          if (!results.length) {
+            scannerResults.innerHTML =
+              '<div class="scanner-empty">' +
+              'The API returned no favourite DJs. Add DJs to the RRR favourite list first.' +
+              '</div>';
+          }
+
+        } catch (error) {
+          console.error("RRR scanner error:", error);
+
+          scannerResults.innerHTML =
+            '<div class="live-error">' +
+            'Could not load the RRR DJ list for scanning.<br>' +
+            '<small>Check that the RRR API is online and allows browser access.</small>' +
+            '</div>';
+        }
+      }
+
+      function scanOneAccount() {
+        const handle = normalizeTikTokHandle(
+          scannerHandle ? scannerHandle.value : ""
+        );
+
+        if (!handle) {
+          showToast("Enter a TikTok @handle or profile URL first.");
+          return;
+        }
+
+        const result = scanAccountSignals({ username: handle });
+        renderScannerResults([result]);
+      }
+
+      if (scanRrrDjs) {
+        scanRrrDjs.addEventListener("click", scanRrrFavouriteDjs);
+      }
+
+      if (scanOneDj) {
+        scanOneDj.addEventListener("click", scanOneAccount);
+      }
+
+      if (scannerHandle) {
+        scannerHandle.addEventListener("keydown", function (e) {
+          if (e.key === "Enter") scanOneAccount();
+        });
+      }
+
+      if (clearScanner) {
+        clearScanner.addEventListener("click", function () {
+          if (scannerSummary) scannerSummary.innerHTML = "";
+          if (scannerResults) {
+            scannerResults.innerHTML =
+              '<div class="scanner-empty">' +
+              'Scanner cleared. Click <strong>Scan RRR DJ List</strong> to scan again.' +
+              '</div>';
+          }
+        });
+      }
+
+            const navLinks =
+        document.querySelectorAll(".nav-tabs a[data-target]");
+
+      const contentPanes =
+        document.querySelectorAll(".content-pane");
+
+      const heroNowEl =
+        document.getElementById("heroNowPlaying");
+
+      const liveDjsList =
+        document.getElementById("liveDjsList");
+
+      const liveRefresh =
+        document.getElementById("liveRefresh");
+
+      const randomLiveDj =
+        document.getElementById("randomLiveDj");
+
+      const randomLiveDjName =
+        document.getElementById("randomLiveDjName");
+
+      const randomLiveDjFrame =
+        document.getElementById("randomLiveDjFrame");
+
+      const randomLiveDjWatch =
+        document.getElementById("randomLiveDjWatch");
+
+      const randomLiveDjNext =
+        document.getElementById("randomLiveDjNext");
+
+      const audio =
+        document.getElementById("liveStream");
+
+      const statusEl =
+        document.getElementById("status");
+
+      const canvas =
+        document.getElementById("viz");
+
+      const ctx =
+        canvas && canvas.getContext
+          ? canvas.getContext("2d")
+          : null;
+
+      let audioCtx = null;
+      let analyser = null;
+      let dataArray = null;
+      let analyserReady = false;
+      let uiAudioCtx = null;
+
+      if (audio) {
+        audio.crossOrigin = "anonymous";
+      }
+
+      function playNavClick() {
+
+        try {
+
+          const AC =
+            window.AudioContext ||
+            window.webkitAudioContext;
+
+          if (!AC) return;
+
+          if (!uiAudioCtx) {
+            uiAudioCtx = new AC();
+          }
+
+          const now =
+            uiAudioCtx.currentTime;
+
+          const osc =
+            uiAudioCtx.createOscillator();
+
+          const gain =
+            uiAudioCtx.createGain();
+
+          osc.type = "triangle";
+
+          osc.frequency.setValueAtTime(
+            880,
+            now
+          );
+
+          gain.gain.setValueAtTime(
+            0.05,
+            now
+          );
+
+          gain.gain.exponentialRampToValueAtTime(
+            0.001,
+            now + 0.09
+          );
+
+          osc.connect(gain);
+
+          gain.connect(
+            uiAudioCtx.destination
+          );
+
+          osc.start(now);
+
+          osc.stop(now + 0.1);
+
+        } catch (e) {}
+
+      }
+
+      function switchTab(targetId) {
+
+        contentPanes.forEach(
+          pane => pane.classList.add("hidden-pane")
+        );
+
+        const targetElement =
+          document.getElementById(targetId);
+
+        if (targetElement) {
+          targetElement.classList.remove("hidden-pane");
+        }
+
+        navLinks.forEach(
+          link => link.classList.remove("active")
+        );
+
+        const activeLink =
+          document.querySelector(
+            '.nav-tabs a[data-target="' +
+            targetId +
+            '"]'
+          );
+
+        if (activeLink) {
+          activeLink.classList.add("active");
+        }
+
+      }
+
+      navLinks.forEach(link => {
+
+        link.addEventListener(
+          "click",
+          function (e) {
+
+            const targetId =
+              e.currentTarget.getAttribute(
+                "data-target"
+              );
+
+            if (targetId) {
+
+              switchTab(targetId);
+
+              playNavClick();
+
+            }
+
+          }
+        );
+
+      });
+
+      switchTab("live-section");
+
+      /* RANDOM LIVE DJ */
+
+      let currentLiveDJs = [];
+      let currentRandomDJ = null;
+
+      function getDJUsername(dj) {
+        return String(
+          dj.username ||
+          dj.unique_id ||
+          dj.handle ||
+          ""
+        ).replace(/^@/, "").trim();
+      }
+
+      function getDJLiveUrl(dj) {
+        const username = getDJUsername(dj);
+
+        return (
+          dj.live_url ||
+          dj.url ||
+          (username
+            ? "https://www.tiktok.com/@" + username + "/live"
+            : "#")
+        );
+      }
+
+      function pickRandomLiveDJ(forceDifferent) {
+        if (!randomLiveDj) return;
+
+        if (!currentLiveDJs.length) {
+          randomLiveDj.style.display = "none";
+          currentRandomDJ = null;
+          return;
+        }
+
+        let candidates = currentLiveDJs;
+
+        if (forceDifferent && currentLiveDJs.length > 1 && currentRandomDJ) {
+          const currentUsername = getDJUsername(currentRandomDJ);
+          candidates = currentLiveDJs.filter(
+            dj => getDJUsername(dj) !== currentUsername
+          );
+        }
+
+        const selected =
+          candidates[Math.floor(Math.random() * candidates.length)];
+
+        currentRandomDJ = selected;
+
+        const name =
+          selected.name ||
+          selected.username ||
+          selected.display_name ||
+          "DJ";
+
+        randomLiveDjName.textContent = "🎧 " + String(name);
+        randomLiveDjWatch.href = getDJLiveUrl(selected);
+        randomLiveDj.style.display = "block";
+      }
+
+      if (randomLiveDjNext) {
+        randomLiveDjNext.addEventListener("click", function () {
+          pickRandomLiveDJ(true);
+        });
+      }
+
+      /* LIVE DJs API */
+
+      async function loadLiveDJs() {
+        if (!liveDjsList) return;
+
+        liveDjsList.innerHTML =
+          '<div class="live-empty">Checking who\'s live…</div>';
+
+        try {
+          const response = await fetch(
+            "https://api.radiorrr.com/api/live",
+            { cache: "no-store" }
+          );
+
+          if (!response.ok) {
+            throw new Error("API returned " + response.status);
+          }
+
+          const data = await response.json();
+
+          const live = Array.isArray(data.live) ? data.live : [];
+          const favourites = Array.isArray(data.favourites) ? data.favourites : [];
+
+          currentLiveDJs = live;
+
+          const currentUsername = currentRandomDJ
+            ? getDJUsername(currentRandomDJ)
+            : "";
+
+          const stillLive = live.some(
+            dj => getDJUsername(dj) === currentUsername
+          );
+
+          if (!stillLive) {
+            pickRandomLiveDJ(false);
+          }
+
+          liveDjsList.innerHTML = "";
+
+          const liveHeader = document.createElement("div");
+          liveHeader.style.gridColumn = "1 / -1";
+          liveHeader.innerHTML =
+            '<div style="font-size:1.05rem;font-weight:800;color:#fff;margin:0.2rem 0 0.1rem;text-shadow:0 0 8px rgba(255,0,102,0.65);">🔴 LIVE NOW</div>';
+          liveDjsList.appendChild(liveHeader);
+
+          if (live.length) {
+            live.forEach(dj => appendDjCard(dj, true));
+          } else {
+            const emptyLive = document.createElement("div");
+            emptyLive.className = "live-empty";
+            emptyLive.style.gridColumn = "1 / -1";
+            emptyLive.innerHTML =
+              'Nobody from the RRR DJ list is live right now.<br><small>We\'ll keep checking automatically.</small>';
+            liveDjsList.appendChild(emptyLive);
+          }
+
+          const favHeader = document.createElement("div");
+          favHeader.style.gridColumn = "1 / -1";
+          favHeader.style.marginTop = "0.8rem";
+          favHeader.innerHTML =
+            '<div style="font-size:1.05rem;font-weight:800;color:#fff;margin:0.2rem 0 0.1rem;text-shadow:0 0 8px rgba(129,140,248,0.65);">⭐ RRR FAVOURITES</div><small style="color:#c7c7ff;">Favourite DJs we\'re watching for.</small>';
+          liveDjsList.appendChild(favHeader);
+
+          if (favourites.length) {
+            favourites.forEach(dj => appendDjCard(dj, false));
+          } else {
+            const emptyFav = document.createElement("div");
+            emptyFav.className = "live-empty";
+            emptyFav.style.gridColumn = "1 / -1";
+            emptyFav.textContent = "No favourite DJs have been added yet.";
+            liveDjsList.appendChild(emptyFav);
+          }
+
+        } catch (error) {
+          console.error("Live DJ API error:", error);
+          liveDjsList.innerHTML =
+            '<div class="live-error" style="grid-column:1 / -1;">Could not load the Live DJ list right now.<br><small>The API may be temporarily unavailable, or browser access may need CORS enabled.</small></div>';
+        }
+      }
+
+      function appendDjCard(dj, isLive) {
+        const card = document.createElement("div");
+        card.className = "dj-card";
+
+        const name =
+          dj.name || dj.username || dj.display_name || "DJ";
+
+        const username =
+          dj.username || dj.unique_id || dj.handle || "";
+
+        const viewers =
+          dj.viewers ?? dj.viewer_count ?? dj.viewerCount;
+
+        const title =
+          dj.title || dj.room_title || dj.description || "";
+
+        const profileUrl =
+          dj.profile_url ||
+          (username
+            ? "https://www.tiktok.com/@" + String(username).replace(/^@/, "")
+            : "#");
+
+        const liveUrl =
+          dj.live_url ||
+          dj.url ||
+          (username
+            ? "https://www.tiktok.com/@" + String(username).replace(/^@/, "") + "/live"
+            : profileUrl);
+
+        const isActuallyLive = isLive || dj.live === true;
+
+        const viewerText =
+          viewers !== undefined && viewers !== null && Number(viewers) > 0
+            ? " · " + viewers + " watching"
+            : "";
+
+        const statusText = isActuallyLive ? "LIVE NOW" : "OFFLINE";
+        const actionText = isActuallyLive ? "▶ WATCH LIVE" : "VIEW TIKTOK";
+        const actionUrl = isActuallyLive ? liveUrl : profileUrl;
+
+        if (isActuallyLive) {
+          card.style.borderColor = "rgba(248,113,113,0.9)";
+          card.style.boxShadow = "0 0 18px rgba(255,0,102,0.4)";
+        } else {
+          card.style.borderColor = "rgba(129,140,248,0.45)";
+        }
+
+        card.innerHTML =
+          '<div class="dj-live" style="' +
+          (isActuallyLive ? "" : "color:#a5b4fc;") +
+          '">' +
+          (isActuallyLive
+            ? '<span class="dj-live-dot"></span>'
+            : '<span style="width:7px;height:7px;border-radius:50%;background:#64748b;display:inline-block;"></span>') +
+          escapeHtml(statusText) +
+          '</div>' +
+          '<div class="dj-name">' + escapeHtml(String(name)) + '</div>' +
+          '<div class="dj-meta">' +
+          escapeHtml(String(title || (isActuallyLive ? "Live on TikTok" : "Favourite DJ"))) +
+          escapeHtml(viewerText) +
+          '</div>' +
+          '<a class="dj-watch" href="' + escapeAttr(String(actionUrl)) +
+          '" target="_blank" rel="noopener">' + actionText + '</a>';
+
+        liveDjsList.appendChild(card);
+      }
+
+      function escapeHtml(value) {
+        return value
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function escapeAttr(value) {
+        return value
+          .replace(/&/g, "&amp;")
+          .replace(/"/g, "&quot;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      if (liveRefresh) {
+        liveRefresh.addEventListener("click", loadLiveDJs);
+      }
+
+      loadLiveDJs();
+
+      setInterval(loadLiveDJs, 30 * 1000);
+
+      function getDayPeriod(hour) {
+
+        if (hour >= 6 && hour < 12)
+          return "Morning";
+
+        if (hour >= 12 && hour < 18)
+          return "Afternoon";
+
+        return "Evening";
+
+      }
+
+      function getBlockLabel(dayName, period) {
+
+        const labels = {
+
+          Morning:
+            "Neon Sunrise Chill",
+
+          Afternoon:
+            "Daydrive Synthwave",
+
+          Evening:
+            "Night Drive Electro"
+
+        };
+
+        const base =
+          labels[period] || "Live Mix";
+
+        return (
+          dayName +
+          " " +
+          period +
+          " – " +
+          base
+        );
+
+      }
+
+      function updateTitles() {
+
+        const now =
+          new Date();
+
+        const days = [
+          "Sunday",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday"
+        ];
+
+        const dayName =
+          days[now.getDay()];
+
+        const period =
+          getDayPeriod(
+            now.getHours()
+          );
+
+        const blockLabel =
+          getBlockLabel(
+            dayName,
+            period
+          );
+
+        if (heroNowEl) {
+          heroNowEl.textContent =
+            blockLabel;
+        }
+
+      }
+
+      updateTitles();
+
+      setInterval(
+        updateTitles,
+        15 * 60 * 1000
+      );
+
+      function setStatus(msg) {
+
+        if (!statusEl) return;
+
+        statusEl.style.display =
+          "block";
+
+        statusEl.textContent =
+          "Status: " + msg;
+
+      }
+
+      function initAudioAnalyser() {
+
+        if (audioCtx || !audio)
+          return;
+
+        try {
+
+          const AC =
+            window.AudioContext ||
+            window.webkitAudioContext;
+
+          if (!AC) return;
+
+          audioCtx = new AC();
+
+          const source =
+            audioCtx.createMediaElementSource(
+              audio
+            );
+
+          analyser =
+            audioCtx.createAnalyser();
+
+          analyser.fftSize =
+            2048;
+
+          analyser.smoothingTimeConstant =
+            0.85;
+
+          dataArray =
+            new Uint8Array(
+              analyser.frequencyBinCount
+            );
+
+          source.connect(
+            analyser
+          );
+
+          analyser.connect(
+            audioCtx.destination
+          );
+
+          analyserReady = true;
+
+          setStatus(
+            "visualizer connected"
+          );
+
+        } catch (e) {
+
+          analyserReady = false;
+
+          console.warn(
+            "Analyser init failed:",
+            e
+          );
+
+          setStatus(
+            "visualizer blocked. Animation will still run."
+          );
+
+        }
+
+      }
+
+      function resize() {
+
+        if (!canvas || !ctx)
+          return;
+
+        const dpr =
+          window.devicePixelRatio || 1;
+
+        const w =
+          canvas.clientWidth;
+
+        const h =
+          canvas.clientHeight;
+
+        canvas.width =
+          w * dpr;
+
+        canvas.height =
+          h * dpr;
+
+        ctx.setTransform(
+          dpr,
+          0,
+          0,
+          dpr,
+          0,
+          0
+        );
+
+      }
+
+      resize();
+
+      window.addEventListener(
+        "resize",
+        resize
+      );
+
+      const particles = [];
+
+      const maxParticles = 90;
+
+      class Particle {
+
+        constructor(
+          x,
+          y,
+          vx,
+          vy,
+          hue,
+          size
+        ) {
+
+          this.x = x;
+          this.y = y;
+          this.vx = vx;
+          this.vy = vy;
+          this.hue = hue;
+          this.size = size;
+          this.alpha = 1;
+          this.decay = 0.012;
+
+        }
+
+        update() {
+
+          this.x += this.vx;
+          this.y += this.vy;
+
+          this.vy += 0.08;
+
+          this.alpha -=
+            this.decay;
+
+        }
+
+        draw(ctx) {
+
+          ctx.save();
+
+          ctx.globalAlpha =
+            Math.max(
+              0,
+              this.alpha
+            );
+
+          const g =
+            ctx.createRadialGradient(
+              this.x,
+              this.y,
+              0,
+              this.x,
+              this.y,
+              this.size
+            );
+
+          g.addColorStop(
+            0,
+            `hsla(${this.hue}, 100%, 70%, 1)`
+          );
+
+          g.addColorStop(
+            1,
+            `hsla(${this.hue}, 100%, 50%, 0)`
+          );
+
+          ctx.fillStyle = g;
+
+          ctx.beginPath();
+
+          ctx.arc(
+            this.x,
+            this.y,
+            this.size,
+            0,
+            Math.PI * 2
+          );
+
+          ctx.fill();
+
+          ctx.restore();
+
+        }
+
+      }
+
+      let prevBass = 0;
+      let prevMid = 0;
+      let prevTreble = 0;
+
+      const smoothing = 0.7;
+
+      function drawFrame() {
+
+        if (!canvas || !ctx) {
+
+          requestAnimationFrame(
+            drawFrame
+          );
+
+          return;
+
+        }
+
+        const t =
+          performance.now() / 1000;
+
+        const w =
+          canvas.clientWidth;
+
+        const h =
+          canvas.clientHeight;
+
+        const cx =
+          w / 2;
+
+        const cy =
+          h / 2;
+
+        let bass =
+          0.25 +
+          0.15 *
+          Math.sin(t * 1.7);
+
+        let mid =
+          0.20 +
+          0.10 *
+          Math.sin(t * 2.1 + 1.0);
+
+        let treble =
+          0.18 +
+          0.08 *
+          Math.sin(t * 2.6 + 2.2);
+
+        let spectrum = null;
+
+        if (
+          analyserReady &&
+          analyser &&
+          dataArray
+        ) {
+
+          analyser.getByteFrequencyData(
+            dataArray
+          );
+
+          spectrum =
+            dataArray;
+
+          const bassEnd =
+            Math.floor(
+              dataArray.length * 0.10
+            );
+
+          const midEnd =
+            Math.floor(
+              dataArray.length * 0.40
+            );
+
+          let bassSum = 0;
+          let midSum = 0;
+          let trebleSum = 0;
+
+          for (
+            let i = 0;
+            i < bassEnd;
+            i++
+          ) {
+            bassSum +=
+              dataArray[i];
+          }
+
+          for (
+            let i = bassEnd;
+            i < midEnd;
+            i++
+          ) {
+            midSum +=
+              dataArray[i];
+          }
+
+          for (
+            let i = midEnd;
+            i < dataArray.length * 0.80;
+            i++
+          ) {
+            trebleSum +=
+              dataArray[i];
+          }
+
+          bass =
+            (bassSum /
+              Math.max(
+                1,
+                bassEnd
+              )) / 255;
+
+          mid =
+            (midSum /
+              Math.max(
+                1,
+                midEnd - bassEnd
+              )) / 255;
+
+          treble =
+            (trebleSum /
+              Math.max(
+                1,
+                dataArray.length * 0.80 - midEnd
+              )) / 255;
+
+          bass =
+            prevBass *
+              smoothing +
+            bass *
+              (1 - smoothing);
+
+          mid =
+            prevMid *
+              smoothing +
+            mid *
+              (1 - smoothing);
+
+          treble =
+            prevTreble *
+              smoothing +
+            treble *
+              (1 - smoothing);
+
+          prevBass =
+            bass;
+
+          prevMid =
+            mid;
+
+          prevTreble =
+            treble;
+
+        }
+
+        ctx.fillStyle =
+          "rgba(0, 0, 0, 0.30)";
+
+        ctx.fillRect(
+          0,
+          0,
+          w,
+          h
+        );
+
+        const bg =
+          ctx.createRadialGradient(
+            cx,
+            cy,
+            0,
+            cx,
+            cy,
+            Math.max(w, h) * 0.7
+          );
+
+        bg.addColorStop(
+          0,
+          `hsla(${(t * 20) % 360}, 75%, 18%, 0.14)`
+        );
+
+        bg.addColorStop(
+          0.5,
+          `hsla(${(t * 15 + 180) % 360}, 85%, 12%, 0.10)`
+        );
+
+        bg.addColorStop(
+          1,
+          "rgba(0, 0, 0, 0)"
+        );
+
+        ctx.fillStyle = bg;
+
+        ctx.fillRect(
+          0,
+          0,
+          w,
+          h
+        );
+
+        if (
+          bass > 0.35 &&
+          Math.random() > 0.55
+        ) {
+
+          const angle =
+            Math.random() *
+            Math.PI *
+            2;
+
+          const speed =
+            1.8 +
+            bass * 4.5;
+
+          const vx =
+            Math.cos(angle) *
+            speed;
+
+          const vy =
+            Math.sin(angle) *
+            speed -
+            1.8;
+
+          const hue =
+            (
+              t * 55 +
+              Math.random() * 70
+            ) % 360;
+
+          particles.push(
+            new Particle(
+              cx,
+              cy,
+              vx,
+              vy,
+              hue,
+              3 + bass * 9
+            )
+          );
+
+        }
+
+        for (
+          let i = particles.length - 1;
+          i >= 0;
+          i--
+        ) {
+
+          particles[i].update();
+
+          particles[i].draw(ctx);
+
+          if (
+            particles[i].alpha <= 0
+          ) {
+            particles.splice(
+              i,
+              1
+            );
+          }
+
+        }
+
+        if (
+          particles.length >
+          maxParticles
+        ) {
+
+          particles.splice(
+            0,
+            particles.length -
+              maxParticles
+          );
+
+        }
+
+        const ringCount = 5;
+
+        for (
+          let i = 0;
+          i < ringCount;
+          i++
+        ) {
+
+          const radius =
+            Math.min(w, h) *
+              (0.28 + i * 0.085) +
+            bass * 38;
+
+          const rotation =
+            t *
+              (0.18 + i * 0.11) +
+            i *
+              Math.PI /
+              3;
+
+          ctx.save();
+
+          ctx.translate(
+            cx,
+            cy
+          );
+
+          ctx.rotate(
+            rotation
+          );
+
+          ctx.beginPath();
+
+          const segments = 64;
+
+          for (
+            let j = 0;
+            j <= segments;
+            j++
+          ) {
+
+            const ang =
+              (j / segments) *
+              Math.PI *
+              2;
+
+            const r =
+              radius +
+              Math.sin(
+                j * 0.45 +
+                t * 2.0
+              ) *
+              12 *
+              mid;
+
+            const x =
+              Math.cos(ang) *
+              r;
+
+            const y =
+              Math.sin(ang) *
+              r;
+
+            if (j === 0)
+              ctx.moveTo(x, y);
+            else
+              ctx.lineTo(x, y);
+
+          }
+
+          ctx.closePath();
+
+          const hue =
+            (
+              t * 30 +
+              i * 60
+            ) % 360;
+
+          ctx.strokeStyle =
+            `hsla(${hue}, 100%, 62%, ${0.28 + bass * 0.35})`;
+
+          ctx.lineWidth =
+            2 +
+            bass * 3.2;
+
+          ctx.shadowBlur =
+            18 +
+            bass * 22;
+
+          ctx.shadowColor =
+            `hsla(${hue}, 100%, 60%, 1)`;
+
+          ctx.stroke();
+
+          ctx.restore();
+
+        }
+
+        ctx.shadowBlur = 0;
+
+        if (spectrum) {
+
+          const barCount = 120;
+
+          const barWidth = 3;
+
+          const innerRadius =
+            Math.min(w, h) *
+            0.12;
+
+          for (
+            let i = 0;
+            i < barCount;
+            i++
+          ) {
+
+            const angle =
+              (i / barCount) *
+              Math.PI *
+              2 -
+              Math.PI / 2;
+
+            const specIndex =
+              Math.floor(
+                (i / barCount) *
+                spectrum.length
+              );
+
+            let value =
+              (spectrum[specIndex] || 0) /
+              255;
+
+            const nextIndex =
+              Math.min(
+                specIndex + 1,
+                spectrum.length - 1
+              );
+
+            const nextValue =
+              (spectrum[nextIndex] || 0) /
+              255;
+
+            value =
+              value * 0.7 +
+              nextValue * 0.3;
+
+            const barHeight =
+              value *
+              Math.min(w, h) *
+              0.35;
+
+            const x1 =
+              cx +
+              Math.cos(angle) *
+              innerRadius;
+
+            const y1 =
+              cy +
+              Math.sin(angle) *
+              innerRadius;
+
+            const x2 =
+              cx +
+              Math.cos(angle) *
+              (
+                innerRadius +
+                barHeight
+              );
+
+            const y2 =
+              cy +
+              Math.sin(angle) *
+              (
+                innerRadius +
+                barHeight
+              );
+
+            const hue =
+              (
+                i * 3 +
+                t * 55
+              ) % 360;
+
+            const grad =
+              ctx.createLinearGradient(
+                x1,
+                y1,
+                x2,
+                y2
+              );
+
+            grad.addColorStop(
+              0,
+              `hsla(${hue}, 100%, 50%, 0.35)`
+            );
+
+            grad.addColorStop(
+              1,
+              `hsla(${hue}, 100%, 70%, ${0.75 + value * 0.25})`
+            );
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+              x1,
+              y1
+            );
+
+            ctx.lineTo(
+              x2,
+              y2
+            );
+
+            ctx.strokeStyle =
+              grad;
+
+            ctx.lineWidth =
+              barWidth;
+
+            ctx.lineCap =
+              "round";
+
+            ctx.stroke();
+
+          }
+
+        }
+
+        const orbRadius =
+          18 +
+          bass * 40 +
+          Math.sin(t * 4) * 6;
+
+        const orb =
+          ctx.createRadialGradient(
+            cx,
+            cy,
+            0,
+            cx,
+            cy,
+            orbRadius * 2
+          );
+
+        orb.addColorStop(
+          0,
+          `hsla(${(t * 100) % 360}, 100%, 92%, 1)`
+        );
+
+        orb.addColorStop(
+          0.3,
+          `hsla(${(t * 100 + 60) % 360}, 100%, 70%, 0.85)`
+        );
+
+        orb.addColorStop(
+          0.6,
+          `hsla(${(t * 100 + 120) % 360}, 100%, 52%, 0.45)`
+        );
+
+        orb.addColorStop(
+          1,
+          "rgba(255, 0, 170, 0)"
+        );
+
+        ctx.fillStyle =
+          orb;
+
+        ctx.beginPath();
+
+        ctx.arc(
+          cx,
+          cy,
+          orbRadius * 1.5,
+          0,
+          Math.PI * 2
+        );
+
+        ctx.fill();
+
+        requestAnimationFrame(
+          drawFrame
+        );
+
+      }
+
+      requestAnimationFrame(
+        drawFrame
+      );
+
+      const kick =
+        document.getElementById(
+          "kickPlay"
+        );
+
+      if (kick && audio) {
+
+        kick.addEventListener(
+          "click",
+          function () {
+
+            if (audio.paused) {
+
+              setStatus(
+                "connecting..."
+              );
+
+              kick.textContent =
+                "Connecting...";
+
+              if (!audioCtx)
+                initAudioAnalyser();
+              else if (
+                audioCtx.state ===
+                "suspended"
+              )
+                audioCtx.resume();
+
+              audio.play()
+                .then(function () {
+
+                  setStatus(
+                    "playing"
+                  );
+
+                  kick.textContent =
+                    "Pause";
+
+                })
+                .catch(function (e) {
+
+                  console.error(
+                    "Audio Play Error:",
+                    e
+                  );
+
+                  setStatus(
+                    "error: " +
+                    (
+                      e &&
+                      e.message
+                        ? e.message
+                        : "could not start stream"
+                    )
+                  );
+
+                  kick.textContent =
+                    "Play";
+
+                });
+
+            } else {
+
+              audio.pause();
+
+              setStatus(
+                "paused"
+              );
+
+              kick.textContent =
+                "Play";
+
+            }
+
+          }
+        );
+
+        audio.addEventListener(
+          "play",
+          function () {
+
+            if (
+              audioCtx &&
+              audioCtx.state ===
+              "suspended"
+            ) {
+              audioCtx.resume();
+            }
+
+            if (!audioCtx) {
+              initAudioAnalyser();
+            }
+
+            setStatus(
+              "playing"
+            );
+
+            kick.textContent =
+              "Pause";
+
+          }
+        );
+
+        audio.addEventListener(
+          "pause",
+          function () {
+
+            setStatus(
+              "paused"
+            );
+
+            kick.textContent =
+              "Play";
+
+          }
+        );
+
+        audio.addEventListener(
+          "error",
+          function () {
+
+            setStatus(
+              "audio error (stream offline or blocked)"
+            );
+
+            kick.textContent =
+              "Play";
+
+          }
+        );
+
+      }
+
+    });
+
+  </script>
+
+</body>
+</html>
