@@ -1405,6 +1405,184 @@
         font-size: 0.78rem;
       }
     }
+
+    /* Phone layout: preserve the desktop composition while removing fixed
+       dimensions that do not fit narrow Safari viewports. */
+    @media (max-width: 720px) {
+      body {
+        width: 100%;
+        min-width: 0;
+        padding: 0.5rem 0.4rem 1rem;
+        overflow-x: hidden;
+      }
+
+      .wrapper {
+        width: 100%;
+        min-width: 0;
+        padding: 0.75rem 0.65rem 1rem;
+        border-radius: 12px;
+      }
+
+      .hero {
+        width: 100%;
+        min-width: 0;
+        gap: 0.8rem;
+        padding: 0.85rem 0.7rem;
+        border-radius: 12px;
+      }
+
+      .hero-left,
+      .hero-right,
+      .content-pane,
+      .channel,
+      .random-live-dj,
+      .random-live-dj-row,
+      .radio-router-player {
+        min-width: 0;
+        max-width: 100%;
+      }
+
+      .hero-left img {
+        width: min(128px, 45vw);
+      }
+
+      .hero-title {
+        font-size: clamp(1.2rem, 7vw, 1.7rem);
+        letter-spacing: 0.1em;
+        overflow-wrap: anywhere;
+      }
+
+      .hero-brand-title {
+        font-size: 0.78rem;
+        letter-spacing: 0.1em;
+        overflow-wrap: anywhere;
+      }
+
+      .nav-tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.4rem;
+      }
+
+      .nav-tabs a,
+      .nav-tabs .recommend-dj-button,
+      .random-live-button,
+      .live-refresh,
+      .tool-button,
+      .dj-watch,
+      .kick {
+        min-height: 44px;
+      }
+
+      .nav-tabs a,
+      .nav-tabs .recommend-dj-button {
+        padding: 0.5rem 0.35rem;
+        font-size: 0.7rem;
+        letter-spacing: 0.03em;
+        line-height: 1.15;
+      }
+
+      .channel {
+        padding: 0.75rem 0.7rem;
+        border-radius: 12px;
+      }
+
+      .random-live-header,
+      .random-live-dj-row {
+        gap: 0.55rem;
+      }
+
+      .random-live-title,
+      .random-live-dj-name {
+        max-width: 100%;
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+
+      .random-live-actions,
+      .random-live-actions .random-live-button {
+        width: 100%;
+      }
+
+      .random-live-actions .random-live-button {
+        padding: 0.65rem 0.75rem;
+      }
+
+      .radio-router-player {
+        aspect-ratio: 4 / 3;
+        height: auto;
+        min-height: 0;
+      }
+
+      .radio-router-player #liveDjVideo {
+        max-width: 100%;
+      }
+
+      .live-djs-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .dj-card,
+      .live-empty,
+      .live-error,
+      .event-item,
+      .scanner-result,
+      .tools-card {
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .tools-actions,
+      .scanner-actions,
+      .tool-input-row {
+        grid-template-columns: minmax(0, 1fr);
+        width: 100%;
+      }
+
+      .tools-actions > *,
+      .scanner-actions > *,
+      .tool-input-row > * {
+        width: 100%;
+      }
+
+      .video-container {
+        padding-bottom: 56.25%;
+        max-width: 100%;
+      }
+
+      .neon-embed-frame,
+      .tiktok-embed,
+      .video-container iframe {
+        max-width: 100% !important;
+      }
+
+      .links,
+      .footer-description,
+      .footnote {
+        overflow-wrap: anywhere;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .wrapper {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+      }
+
+      .nav-tabs {
+        gap: 0.3rem;
+      }
+
+      .nav-tabs a,
+      .nav-tabs .recommend-dj-button {
+        font-size: 0.65rem;
+        padding-left: 0.2rem;
+        padding-right: 0.2rem;
+      }
+
+      .hero-title {
+        font-size: 1.15rem;
+      }
+    }
   </style>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -2475,6 +2653,59 @@
       const RADIO_ROUTER_STREAM_URL = "https://api.radiorrr.com/api/live-stream";
 
       let activeLiveUsername = "";
+      let activeLiveStreamKey = "";
+      let liveDjRequestId = 0;
+      let liveDjRequestController = null;
+      let nativePlaybackRecoveryTimer = null;
+
+      function getFreshUrl(url) {
+        const separator = url.indexOf("?") === -1 ? "?" : "&";
+        return url + separator + "_rrr=" + Date.now();
+      }
+
+      function tryResumeLivePlayback() {
+        if (!liveDjVideo || document.hidden) return;
+
+        liveDjVideo.muted = true;
+        liveDjVideo.play().catch(() => {});
+
+        if (liveDjBackground) {
+          liveDjBackground.muted = true;
+          liveDjBackground.play().catch(() => {});
+        }
+      }
+
+      function scheduleNativePlaybackRecovery() {
+        if (nativePlaybackRecoveryTimer) {
+          window.clearTimeout(nativePlaybackRecoveryTimer);
+        }
+
+        nativePlaybackRecoveryTimer = window.setTimeout(function () {
+          nativePlaybackRecoveryTimer = null;
+
+          if (
+            !liveDjVideo ||
+            document.hidden ||
+            activeLiveStreamKey === "" ||
+            (
+              liveDjVideo.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA &&
+              !liveDjVideo.paused
+            )
+          ) {
+            tryResumeLivePlayback();
+            return;
+          }
+
+          // Safari's native HLS player can remain in a waiting state after a
+          // playlist refresh. Recreate only that source, never the DJ label.
+          const streamUrl = getFreshUrl(RADIO_ROUTER_STREAM_URL);
+          liveDjVideo.pause();
+          liveDjVideo.src = streamUrl;
+          liveDjVideo.load();
+          liveDjVideo.addEventListener("loadedmetadata", tryResumeLivePlayback, { once: true });
+          tryResumeLivePlayback();
+        }, 8000);
+      }
 
       function getDJGenres(dj) {
         const values = [];
@@ -2529,6 +2760,15 @@
         const liveUrl = getDJLiveUrl(dj);
 
         activeLiveUsername = username;
+        activeLiveStreamKey = username || String(name);
+        liveDjVideo.autoplay = true;
+        liveDjVideo.playsInline = true;
+        liveDjVideo.muted = true;
+        if (liveDjBackground) {
+          liveDjBackground.autoplay = true;
+          liveDjBackground.playsInline = true;
+          liveDjBackground.muted = true;
+        }
         randomLiveDjName.textContent = "🎧 " + String(name);
         updateLiveDjGenres(dj);
         randomLiveDj.style.display = "block";
@@ -2566,7 +2806,7 @@
           });
 
           window.radioRrrHls = hls;
-          hls.loadSource(RADIO_ROUTER_STREAM_URL);
+          hls.loadSource(getFreshUrl(RADIO_ROUTER_STREAM_URL));
           hls.attachMedia(liveDjVideo);
 
           hls.on(Hls.Events.MANIFEST_PARSED, function () {
@@ -2590,7 +2830,7 @@
             });
 
             window.radioRrrHlsBackground = bgHls;
-            bgHls.loadSource(RADIO_ROUTER_STREAM_URL);
+            bgHls.loadSource(getFreshUrl(RADIO_ROUTER_STREAM_URL));
             bgHls.attachMedia(liveDjBackground);
 
             bgHls.on(Hls.Events.MANIFEST_PARSED, function () {
@@ -2639,11 +2879,16 @@
           });
 
         } else if (liveDjVideo.canPlayType("application/vnd.apple.mpegurl")) {
-          liveDjVideo.src = RADIO_ROUTER_STREAM_URL;
-          liveDjVideo.play().catch(() => {});
+          liveDjVideo.src = getFreshUrl(RADIO_ROUTER_STREAM_URL);
+          liveDjVideo.addEventListener("loadedmetadata", tryResumeLivePlayback, { once: true });
+          liveDjVideo.addEventListener("canplay", tryResumeLivePlayback, { once: true });
+          tryResumeLivePlayback();
 
           if (liveDjBackground) {
-            liveDjBackground.src = RADIO_ROUTER_STREAM_URL;
+            liveDjBackground.src = getFreshUrl(RADIO_ROUTER_STREAM_URL);
+            liveDjBackground.addEventListener("loadedmetadata", function () {
+              liveDjBackground.play().catch(() => {});
+            }, { once: true });
             liveDjBackground.play().catch(() => {});
           }
         } else {
@@ -2664,6 +2909,12 @@
 
       function showRadioFallback() {
         activeLiveUsername = "";
+        activeLiveStreamKey = "";
+
+        if (nativePlaybackRecoveryTimer) {
+          window.clearTimeout(nativePlaybackRecoveryTimer);
+          nativePlaybackRecoveryTimer = null;
+        }
 
         if (window.radioRrrHls) {
           window.radioRrrHls.destroy();
@@ -2715,6 +2966,11 @@
             liveDjPlaceholder.querySelector("span").textContent =
               "LIVE DJ stream is buffering…";
           }
+          scheduleNativePlaybackRecovery();
+        });
+
+        liveDjVideo.addEventListener("stalled", function () {
+          scheduleNativePlaybackRecovery();
         });
 
         liveDjVideo.addEventListener("error", function () {
@@ -2796,13 +3052,25 @@
       async function loadLiveDJs() {
         if (!liveDjsList) return;
 
-        liveDjsList.innerHTML =
-          '<div class="live-empty">Checking who\'s live…</div>';
+        const requestId = ++liveDjRequestId;
+
+        if (liveDjRequestController) {
+          liveDjRequestController.abort();
+        }
+
+        liveDjRequestController = new AbortController();
 
         try {
           const response = await fetch(
-            "https://api.radiorrr.com/api/live",
-            { cache: "no-store" }
+            getFreshUrl("https://api.radiorrr.com/api/live"),
+            {
+              cache: "no-store",
+              headers: {
+                "Cache-Control": "no-cache",
+                "Pragma": "no-cache"
+              },
+              signal: liveDjRequestController.signal
+            }
           );
 
           if (!response.ok) {
@@ -2810,6 +3078,10 @@
           }
 
           const data = await response.json();
+
+          if (requestId !== liveDjRequestId || !data || typeof data !== "object") {
+            return;
+          }
 
           const live = Array.isArray(data.live) ? data.live : [];
           const favourites = Array.isArray(data.favourites) ? data.favourites : [];
@@ -2825,14 +3097,20 @@
            * stream.
            *
            * The router therefore follows data.relay, never live[0].
-           */
+          */
           if (relayDj) {
             const routerUsername = getDJUsername(relayDj);
+            const routerKey =
+              routerUsername ||
+              String(
+                relayDj.name ||
+                relayDj.display_name ||
+                "LIVE DJ"
+              );
 
             if (routerUsername) {
               if (
-                !window.radioRrrHls ||
-                activeLiveUsername !== routerUsername
+                activeLiveStreamKey !== routerKey
               ) {
                 showLiveDjPlayer(relayDj);
               } else {
@@ -2849,10 +3127,12 @@
                 updateLiveDjGenres(relayDj);
                 randomLiveDj.style.display = "block";
               }
+            } else {
+              showRadioFallback();
             }
-          } else if (!activeLiveUsername) {
-            // Only show the fallback when there is genuinely no relay and
-            // we do not already have an active router stream.
+          } else {
+            // A successful no-relay response is authoritative. Do not keep
+            // displaying the previous DJ while the router is offline.
             showRadioFallback();
           }
 
@@ -2897,9 +3177,12 @@
           }
 
         } catch (error) {
+          if (error && error.name === "AbortError") return;
           console.error("Live DJ API error:", error);
-          liveDjsList.innerHTML =
-            '<div class="live-error" style="grid-column:1 / -1;">Could not load the Live DJ list right now.<br><small>The API may be temporarily unavailable, or browser access may need CORS enabled.</small></div>';
+          if (!currentLiveDJs.length && !activeLiveUsername) {
+            liveDjsList.innerHTML =
+              '<div class="live-error" style="grid-column:1 / -1;">Could not load the Live DJ list right now.<br><small>The API may be temporarily unavailable, or browser access may need CORS enabled.</small></div>';
+          }
         }
       }
 
@@ -3012,6 +3295,18 @@
       loadLiveDJs();
 
       setInterval(loadLiveDJs, 30 * 1000);
+
+      document.addEventListener("visibilitychange", function () {
+        if (!document.hidden) {
+          loadLiveDJs();
+          tryResumeLivePlayback();
+        }
+      });
+
+      window.addEventListener("pageshow", function () {
+        loadLiveDJs();
+        tryResumeLivePlayback();
+      });
 
       function getDayPeriod(hour) {
 
