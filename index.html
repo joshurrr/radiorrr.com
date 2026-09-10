@@ -2654,6 +2654,7 @@
 
       let activeLiveUsername = "";
       let activeLiveStreamKey = "";
+      let userRequestedAudio = false;
       let liveDjRequestId = 0;
       let liveDjRequestController = null;
       let nativePlaybackRecoveryTimer = null;
@@ -2663,10 +2664,9 @@
         return url + separator + "_rrr=" + Date.now();
       }
 
-      function tryResumeLivePlayback() {
+      function resumeLivePlayback() {
         if (!liveDjVideo || document.hidden) return;
 
-        liveDjVideo.muted = true;
         liveDjVideo.play().catch(() => {});
 
         if (liveDjBackground) {
@@ -2692,7 +2692,7 @@
               !liveDjVideo.paused
             )
           ) {
-            tryResumeLivePlayback();
+            resumeLivePlayback();
             return;
           }
 
@@ -2702,8 +2702,8 @@
           liveDjVideo.pause();
           liveDjVideo.src = streamUrl;
           liveDjVideo.load();
-          liveDjVideo.addEventListener("loadedmetadata", tryResumeLivePlayback, { once: true });
-          tryResumeLivePlayback();
+          liveDjVideo.addEventListener("loadedmetadata", resumeLivePlayback, { once: true });
+          resumeLivePlayback();
         }, 8000);
       }
 
@@ -2763,7 +2763,7 @@
         activeLiveStreamKey = username || String(name);
         liveDjVideo.autoplay = true;
         liveDjVideo.playsInline = true;
-        liveDjVideo.muted = true;
+        liveDjVideo.muted = !userRequestedAudio;
         if (liveDjBackground) {
           liveDjBackground.autoplay = true;
           liveDjBackground.playsInline = true;
@@ -2772,8 +2772,6 @@
         randomLiveDjName.textContent = "🎧 " + String(name);
         updateLiveDjGenres(dj);
         randomLiveDj.style.display = "block";
-
-        liveDjVideo.muted = true;
 
         // Chrome/Edge/Firefox need hls.js for HLS (.m3u8).
         // Safari can use native HLS directly.
@@ -2810,7 +2808,7 @@
           hls.attachMedia(liveDjVideo);
 
           hls.on(Hls.Events.MANIFEST_PARSED, function () {
-            liveDjVideo.play().catch(() => {});
+            resumeLivePlayback();
           });
 
           // A second, muted copy supplies the blurred background fill.
@@ -2880,9 +2878,9 @@
 
         } else if (liveDjVideo.canPlayType("application/vnd.apple.mpegurl")) {
           liveDjVideo.src = getFreshUrl(RADIO_ROUTER_STREAM_URL);
-          liveDjVideo.addEventListener("loadedmetadata", tryResumeLivePlayback, { once: true });
-          liveDjVideo.addEventListener("canplay", tryResumeLivePlayback, { once: true });
-          tryResumeLivePlayback();
+          liveDjVideo.addEventListener("loadedmetadata", resumeLivePlayback, { once: true });
+          liveDjVideo.addEventListener("canplay", resumeLivePlayback, { once: true });
+          resumeLivePlayback();
 
           if (liveDjBackground) {
             liveDjBackground.src = getFreshUrl(RADIO_ROUTER_STREAM_URL);
@@ -2945,6 +2943,7 @@
 
       if (liveDjUnmute && liveDjVideo) {
         liveDjUnmute.addEventListener("click", function () {
+          userRequestedAudio = true;
           liveDjVideo.muted = false;
           liveDjVideo.play().catch(() => {});
 
@@ -3086,6 +3085,15 @@
           const live = Array.isArray(data.live) ? data.live : [];
           const favourites = Array.isArray(data.favourites) ? data.favourites : [];
           const relayDj = data.relay || null;
+          const routerUsername = relayDj ? getDJUsername(relayDj) : "";
+          const routerKey = relayDj
+            ? routerUsername ||
+              String(
+                relayDj.name ||
+                relayDj.display_name ||
+                "LIVE DJ"
+              )
+            : "";
 
           currentLiveDJs = live;
 
@@ -3099,15 +3107,6 @@
            * The router therefore follows data.relay, never live[0].
           */
           if (relayDj) {
-            const routerUsername = getDJUsername(relayDj);
-            const routerKey =
-              routerUsername ||
-              String(
-                relayDj.name ||
-                relayDj.display_name ||
-                "LIVE DJ"
-              );
-
             if (routerUsername) {
               if (
                 activeLiveStreamKey !== routerKey
@@ -3142,15 +3141,34 @@
            */
           liveDjsList.innerHTML = "";
 
-          const liveHeader = document.createElement("div");
-          liveHeader.style.gridColumn = "1 / -1";
-          liveHeader.innerHTML =
-            '<div style="font-size:1.05rem;font-weight:800;color:#fff;margin:0.2rem 0 0.1rem;text-shadow:0 0 8px rgba(255,0,102,0.65);">🔴 LIVE NOW</div>';
-          liveDjsList.appendChild(liveHeader);
+          const routedLiveDj = routerUsername
+            ? live.find(dj => getDJUsername(dj) === routerUsername)
+            : null;
 
-          if (live.length) {
-            live.forEach(dj => appendDjCard(dj, true));
-          } else {
+          if (relayDj && routerUsername) {
+            const routedHeader = document.createElement("div");
+            routedHeader.style.gridColumn = "1 / -1";
+            routedHeader.innerHTML =
+              '<div style="font-size:1.05rem;font-weight:800;color:#fff;margin:0.2rem 0 0.1rem;text-shadow:0 0 8px rgba(255,0,102,0.65);">🔴 ROUTING NOW</div>';
+            liveDjsList.appendChild(routedHeader);
+            appendDjCard(routedLiveDj || relayDj, true, routerUsername);
+          }
+
+          const otherLiveDJs = routedLiveDj
+            ? live.filter(dj => getDJUsername(dj) !== routerUsername)
+            : live;
+
+          if (otherLiveDJs.length) {
+            const otherLiveHeader = document.createElement("div");
+            otherLiveHeader.style.gridColumn = "1 / -1";
+            otherLiveHeader.style.marginTop = routedLiveDj || relayDj ? "0.8rem" : "0";
+            otherLiveHeader.innerHTML =
+              '<div style="font-size:1.05rem;font-weight:800;color:#fff;margin:0.2rem 0 0.1rem;text-shadow:0 0 8px rgba(255,0,102,0.65);">🔴 ' +
+              (relayDj ? "OTHER LIVE DJS" : "LIVE NOW") +
+              '</div>';
+            liveDjsList.appendChild(otherLiveHeader);
+            otherLiveDJs.forEach(dj => appendDjCard(dj, true, routerUsername));
+          } else if (!routedLiveDj && !relayDj) {
             const emptyLive = document.createElement("div");
             emptyLive.className = "live-empty";
             emptyLive.style.gridColumn = "1 / -1";
@@ -3186,7 +3204,7 @@
         }
       }
 
-      function appendDjCard(dj, isLive) {
+      function appendDjCard(dj, isLive, routerUsername) {
         const card = document.createElement("div");
         card.className = "dj-card";
 
@@ -3215,6 +3233,11 @@
             ? "https://www.tiktok.com/@" + String(username).replace(/^@/, "") + "/live"
             : profileUrl);
 
+        const isRouted =
+          isLive &&
+          routerUsername &&
+          getDJUsername(dj) === routerUsername;
+
         const isActuallyLive = isLive || dj.live === true;
 
         const viewerText =
@@ -3222,7 +3245,11 @@
             ? " · " + viewers + " watching"
             : "";
 
-        const statusText = isActuallyLive ? "LIVE NOW" : "OFFLINE";
+        const statusText = isRouted
+          ? "ROUTING NOW"
+          : isActuallyLive
+            ? "LIVE NOW"
+            : "OFFLINE";
         const actionText = isActuallyLive ? "▶ WATCH LIVE" : "VIEW TIKTOK";
         const actionUrl = isActuallyLive ? liveUrl : profileUrl;
 
@@ -3299,13 +3326,13 @@
       document.addEventListener("visibilitychange", function () {
         if (!document.hidden) {
           loadLiveDJs();
-          tryResumeLivePlayback();
+          resumeLivePlayback();
         }
       });
 
       window.addEventListener("pageshow", function () {
         loadLiveDJs();
-        tryResumeLivePlayback();
+        resumeLivePlayback();
       });
 
       function getDayPeriod(hour) {
