@@ -1379,6 +1379,129 @@
       text-shadow: 0 0 5px rgba(255, 0, 102, 0.8);
     }
 
+    /* Desktop radio dashboard: keep the existing tab content and router DOM,
+       but give the live experience a wider station-console composition. */
+    @media (min-width: 1200px) {
+      body {
+        padding: 1.5rem 1.5rem 2rem;
+      }
+
+      .wrapper {
+        max-width: 1500px;
+        padding: 1.5rem 1.75rem 2rem;
+      }
+
+      .hero {
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .hero-left img {
+        width: 180px;
+      }
+
+      .hero-title {
+        font-size: 2rem;
+      }
+
+      .nav-tabs {
+        gap: 0.7rem;
+        margin-bottom: 1rem;
+      }
+
+      .nav-tabs a,
+      .nav-tabs .recommend-dj-button {
+        padding: 0.5rem 0.65rem;
+        font-size: 0.82rem;
+      }
+
+      #live-section > .channel {
+        padding: 1.35rem;
+        margin-bottom: 0;
+      }
+
+      #randomLiveDj {
+        grid-template-columns: minmax(0, 1.65fr) minmax(300px, 0.75fr);
+        grid-template-areas:
+          "player header"
+          "player info";
+        gap: 1.25rem;
+        align-items: start;
+        padding: 0.85rem;
+      }
+
+      #randomLiveDj[style*="display: block"] {
+        display: grid !important;
+      }
+
+      #randomLiveDj[style*="display: none"] {
+        display: none !important;
+      }
+
+      #randomLiveDj .random-live-header {
+        grid-area: header;
+        display: block;
+        margin: 0;
+        padding: 0.35rem 0.2rem 0;
+      }
+
+      #randomLiveDj .random-live-title {
+        white-space: normal;
+      }
+
+      #randomLiveDj .random-live-now-playing {
+        min-width: 0;
+        margin-top: 0.65rem;
+        text-align: left;
+        white-space: normal;
+      }
+
+      #randomLiveDj .random-live-dj-row {
+        grid-area: info;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.9rem;
+        margin: 0;
+        padding: 1rem;
+        border: 1px solid rgba(129, 140, 248, 0.35);
+        border-radius: 12px;
+        background: rgba(7, 10, 25, 0.58);
+      }
+
+      #randomLiveDj .random-live-dj-name {
+        white-space: normal;
+        font-size: 1.25rem;
+      }
+
+      #randomLiveDj .random-live-genres {
+        flex-wrap: wrap;
+        overflow: visible;
+        white-space: normal;
+      }
+
+      #randomLiveDj .random-live-actions,
+      #randomLiveDj .random-live-actions .random-live-button {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      #randomLiveDj .radio-router-player {
+        grid-area: player;
+        aspect-ratio: 16 / 10;
+        min-height: 0;
+      }
+
+      #liveDjsList {
+        margin-top: 1.25rem;
+      }
+
+      .live-djs-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1.25rem;
+      }
+    }
+
     @media (max-width: 720px) {
       .hero {
         flex-direction: column;
