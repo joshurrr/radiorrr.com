@@ -2076,7 +2076,7 @@
               </div>
 
               <div id="randomLiveDjGenresField" class="random-live-dj-profile-field random-live-dj-genres-field" hidden>
-                <div class="random-live-dj-profile-label">🎵 Genre</div>
+                <div class="random-live-dj-profile-label">Genres</div>
                 <div id="randomLiveDjGenres" class="random-live-genres" aria-label="DJ genres"></div>
               </div>
 
@@ -3088,15 +3088,15 @@
         randomLiveDjGenres.innerHTML = "";
 
         if (randomLiveDjGenresField) {
-          randomLiveDjGenresField.hidden = false;
+          randomLiveDjGenresField.hidden = !genres.length;
         }
 
-        const tag = document.createElement("span");
-        tag.className = "random-live-genre";
-        tag.textContent = genres.length
-          ? "🎵 " + genres.slice(0, 5).join(" • ")
-          : "🎵 Genre: Detecting...";
-        randomLiveDjGenres.appendChild(tag);
+        genres.slice(0, 5).forEach(genre => {
+          const tag = document.createElement("span");
+          tag.className = "random-live-genre";
+          tag.textContent = genre;
+          randomLiveDjGenres.appendChild(tag);
+        });
       }
 
       function updateLiveDjProfile(dj) {
@@ -3682,7 +3682,7 @@
           );
 
           if (availableFavouriteDJs.length) {
-            availableFavouriteDJs.forEach(dj => appendDjCard(dj, false));
+            availableFavouriteDJs.forEach(dj => appendDjCard(dj, false, "", true));
           } else {
             const emptyFav = document.createElement("div");
             emptyFav.className = "live-empty";
@@ -3703,7 +3703,7 @@
         }
       }
 
-      function appendDjCard(dj, isLive, routerIdentity, hideLiveFallback) {
+      function appendDjCard(dj, isLive, routerIdentity, hideFallback) {
         const card = document.createElement("div");
         card.className = "dj-card";
 
@@ -3796,8 +3796,8 @@
           escapeHtml(String(
             title ||
             (isActuallyLive
-              ? (hideLiveFallback ? "" : "Live on TikTok")
-              : "Favourite DJ")
+              ? (hideFallback ? "" : "Live on TikTok")
+              : (hideFallback ? "" : "Favourite DJ"))
           )) +
           escapeHtml(viewerText) +
           '</div>' +
