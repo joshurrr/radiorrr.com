@@ -1500,6 +1500,11 @@
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 1.25rem;
       }
+
+      #liveDjsList .routed-dj-header,
+      #liveDjsList .routed-dj-card {
+        display: none;
+      }
     }
 
     @media (max-width: 720px) {
@@ -3334,11 +3339,13 @@
 
           if (hasRelay) {
             const routedHeader = document.createElement("div");
+            routedHeader.className = "routed-dj-header";
             routedHeader.style.gridColumn = "1 / -1";
             routedHeader.innerHTML =
               '<div style="font-size:1.05rem;font-weight:800;color:#fff;margin:0.2rem 0 0.1rem;text-shadow:0 0 8px rgba(255,0,102,0.65);">🔴 ROUTING NOW</div>';
             liveDjsList.appendChild(routedHeader);
             appendDjCard(routedDj, true, routerIdentity);
+            liveDjsList.lastElementChild.classList.add("routed-dj-card");
           }
 
           const otherLiveDJs = uniqueLiveDJs.filter(
