@@ -1010,13 +1010,6 @@
       margin-bottom: 0.25rem;
     }
 
-    .dj-genre {
-      color: #c7c7ff;
-      font-size: 0.72rem;
-      line-height: 1.3;
-      overflow-wrap: anywhere;
-    }
-
     .dj-meta {
       font-size: 0.85rem;
       color: #c7c7ff;
@@ -3638,15 +3631,9 @@
             liveDjsList.lastElementChild.classList.add("routed-dj-card");
           }
 
-          const otherLiveDJs = uniqueLiveDJs
-            .filter(dj => getDJIdentity(dj) !== routerIdentity)
-            .map(dj => {
-              const favouriteMatch = uniqueFavouriteDJs.find(
-                favourite => getDJIdentity(favourite) === getDJIdentity(dj)
-              );
-
-              return mergeDJRecords(dj, favouriteMatch);
-            });
+          const otherLiveDJs = uniqueLiveDJs.filter(
+            dj => getDJIdentity(dj) !== routerIdentity
+          );
 
           if (otherLiveDJs.length) {
             const otherLiveHeader = document.createElement("div");
@@ -3657,7 +3644,7 @@
               (hasRelay ? "OTHER LIVE DJS" : "LIVE NOW") +
               '</div>';
             liveDjsList.appendChild(otherLiveHeader);
-            otherLiveDJs.forEach(dj => appendDjCard(dj, true, routerIdentity, true));
+            otherLiveDJs.forEach(dj => appendDjCard(dj, true, routerIdentity));
           } else if (!hasRelay) {
             const emptyLive = document.createElement("div");
             emptyLive.className = "live-empty";
@@ -3682,7 +3669,7 @@
           );
 
           if (availableFavouriteDJs.length) {
-            availableFavouriteDJs.forEach(dj => appendDjCard(dj, false, "", true));
+            availableFavouriteDJs.forEach(dj => appendDjCard(dj, false));
           } else {
             const emptyFav = document.createElement("div");
             emptyFav.className = "live-empty";
@@ -3703,7 +3690,7 @@
         }
       }
 
-      function appendDjCard(dj, isLive, routerIdentity, hideFallback) {
+      function appendDjCard(dj, isLive, routerIdentity) {
         const card = document.createElement("div");
         card.className = "dj-card";
 
@@ -3751,10 +3738,6 @@
             : "OFFLINE";
         const actionText = isActuallyLive ? "▶ WATCH LIVE" : "VIEW TIKTOK";
         const actionUrl = isActuallyLive ? liveUrl : profileUrl;
-        const genres = getDJGenres(dj);
-        const genreText = genres.length
-          ? genres.slice(0, 5).join(" • ")
-          : "Genre: Detecting...";
 
         if (isActuallyLive) {
           card.style.borderColor = "rgba(248,113,113,0.9)";
@@ -3789,16 +3772,10 @@
               escapeHtml(statusText) +
               '</div>' +
               '<div class="dj-name">' + escapeHtml(String(name)) + '</div>' +
-              '<div class="dj-genre">🎵 ' + escapeHtml(genreText) + '</div>' +
             '</div>' +
           '</div>' +
           '<div class="dj-meta">' +
-          escapeHtml(String(
-            title ||
-            (isActuallyLive
-              ? (hideFallback ? "" : "Live on TikTok")
-              : (hideFallback ? "" : "Favourite DJ"))
-          )) +
+          escapeHtml(String(title || (isActuallyLive ? "Live on TikTok" : "Favourite DJ"))) +
           escapeHtml(viewerText) +
           '</div>' +
           '<a class="dj-watch" href="' + escapeAttr(String(actionUrl)) +
