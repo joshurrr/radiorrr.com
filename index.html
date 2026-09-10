@@ -1379,6 +1379,25 @@
       text-shadow: 0 0 5px rgba(255, 0, 102, 0.8);
     }
 
+    /* Keep the original compact row outside the desktop dashboard layout. */
+    .random-live-dj-profile,
+    .random-live-dj-identity {
+      display: contents;
+    }
+
+    .random-live-dj-avatar,
+    .random-live-dj-profile-field:not(.random-live-dj-genres-field) {
+      display: none;
+    }
+
+    .random-live-dj-genres-field:not([hidden]) {
+      display: contents;
+    }
+
+    .random-live-dj-genres-field .random-live-dj-profile-label {
+      display: none;
+    }
+
     /* Desktop radio dashboard: keep the existing tab content and router DOM,
        but give the live experience a wider station-console composition. */
     @media (min-width: 1200px) {
@@ -1425,8 +1444,10 @@
         grid-template-areas:
           "player header"
           "player info";
+        grid-template-rows: auto 1fr;
         gap: 1.25rem;
         align-items: start;
+        align-content: start;
         padding: 0.85rem;
       }
 
@@ -1461,7 +1482,7 @@
         display: flex;
         flex-direction: column;
         align-items: stretch;
-        gap: 0.9rem;
+        gap: 0.75rem;
         margin: 0;
         padding: 1rem;
         border: 1px solid rgba(129, 140, 248, 0.35);
@@ -1469,9 +1490,86 @@
         background: rgba(7, 10, 25, 0.58);
       }
 
+      #randomLiveDj .random-live-dj-profile {
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+      }
+
+      #randomLiveDj .random-live-dj-identity {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        min-width: 0;
+      }
+
+      #randomLiveDj .random-live-dj-avatar {
+        width: 3.1rem;
+        height: 3.1rem;
+        flex: 0 0 3.1rem;
+        overflow: hidden;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 0, 102, 0.65);
+        background: rgba(24, 31, 60, 0.82);
+        box-shadow: 0 0 12px rgba(255, 0, 102, 0.32);
+      }
+
+      #randomLiveDj .random-live-dj-avatar:not([hidden]) {
+        display: block;
+      }
+
+      #randomLiveDj .random-live-dj-avatar img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      #randomLiveDj .random-live-dj-profile-field {
+        min-width: 0;
+      }
+
+      #randomLiveDj .random-live-dj-profile-field:not([hidden]) {
+        display: block;
+      }
+
+      #randomLiveDj .random-live-dj-profile-field[hidden],
+      #randomLiveDj .random-live-dj-avatar[hidden] {
+        display: none;
+      }
+
+      #randomLiveDj .random-live-dj-profile-label {
+        display: block;
+        margin-bottom: 0.28rem;
+        color: #f9a8d4;
+        font-size: 0.68rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      #randomLiveDj .random-live-dj-bio {
+        margin: 0;
+        color: #e0e0ff;
+        font-size: 0.78rem;
+        line-height: 1.45;
+      }
+
+      #randomLiveDj .random-live-dj-meta {
+        margin: 0;
+        color: #a5b4fc;
+        font-size: 0.72rem;
+        line-height: 1.35;
+      }
+
       #randomLiveDj .random-live-dj-name {
         white-space: normal;
         font-size: 1.25rem;
+      }
+
+      #randomLiveDj .random-live-dj-genres-field {
+        display: flex;
+        flex-direction: column;
       }
 
       #randomLiveDj .random-live-genres {
@@ -1484,6 +1582,10 @@
       #randomLiveDj .random-live-actions .random-live-button {
         width: 100%;
         justify-content: flex-start;
+      }
+
+      #randomLiveDj .random-live-actions {
+        margin-top: 0.1rem;
       }
 
       #randomLiveDj .radio-router-player {
@@ -1617,6 +1719,27 @@
       .random-live-header,
       .random-live-dj-row {
         gap: 0.55rem;
+      }
+
+      #randomLiveDj .random-live-dj-profile {
+        display: contents;
+      }
+
+      #randomLiveDj .random-live-dj-identity {
+        display: contents;
+      }
+
+      #randomLiveDj .random-live-dj-avatar,
+      #randomLiveDj .random-live-dj-profile-field:not(.random-live-dj-genres-field) {
+        display: none;
+      }
+
+      #randomLiveDj .random-live-dj-genres-field:not([hidden]) {
+        display: contents;
+      }
+
+      #randomLiveDj .random-live-dj-genres-field .random-live-dj-profile-label {
+        display: none;
       }
 
       .random-live-title,
@@ -1876,9 +1999,26 @@
           </div>
 
           <div class="random-live-dj-row">
-            <div id="randomLiveDjName" class="random-live-dj-name">Checking LIVE DJs…</div>
+            <div class="random-live-dj-profile">
+              <div class="random-live-dj-identity">
+                <div id="randomLiveDjAvatar" class="random-live-dj-avatar" hidden></div>
+                <div id="randomLiveDjName" class="random-live-dj-name">Checking LIVE DJs…</div>
+              </div>
 
-            <div id="randomLiveDjGenres" class="random-live-genres" aria-label="DJ genres"></div>
+              <div id="randomLiveDjGenresField" class="random-live-dj-profile-field random-live-dj-genres-field" hidden>
+                <div class="random-live-dj-profile-label">Genres</div>
+                <div id="randomLiveDjGenres" class="random-live-genres" aria-label="DJ genres"></div>
+              </div>
+
+              <div id="randomLiveDjBioField" class="random-live-dj-profile-field" hidden>
+                <div class="random-live-dj-profile-label">Bio</div>
+                <p id="randomLiveDjBio" class="random-live-dj-bio"></p>
+              </div>
+
+              <div id="randomLiveDjMetaField" class="random-live-dj-profile-field" hidden>
+                <p id="randomLiveDjMeta" class="random-live-dj-meta"></p>
+              </div>
+            </div>
 
             <div class="random-live-actions">
               <button id="liveDjUnmute"
@@ -2624,6 +2764,24 @@
       const randomLiveDjGenres =
         document.getElementById("randomLiveDjGenres");
 
+      const randomLiveDjGenresField =
+        document.getElementById("randomLiveDjGenresField");
+
+      const randomLiveDjAvatar =
+        document.getElementById("randomLiveDjAvatar");
+
+      const randomLiveDjBioField =
+        document.getElementById("randomLiveDjBioField");
+
+      const randomLiveDjBio =
+        document.getElementById("randomLiveDjBio");
+
+      const randomLiveDjMetaField =
+        document.getElementById("randomLiveDjMetaField");
+
+      const randomLiveDjMeta =
+        document.getElementById("randomLiveDjMeta");
+
       const randomLiveDjFrame =
         document.getElementById("randomLiveDjFrame");
 
@@ -2872,12 +3030,78 @@
         const genres = getDJGenres(dj);
         randomLiveDjGenres.innerHTML = "";
 
+        if (randomLiveDjGenresField) {
+          randomLiveDjGenresField.hidden = !genres.length;
+        }
+
         genres.slice(0, 5).forEach(genre => {
           const tag = document.createElement("span");
           tag.className = "random-live-genre";
           tag.textContent = genre;
           randomLiveDjGenres.appendChild(tag);
         });
+      }
+
+      function updateLiveDjProfile(dj) {
+        if (!dj) {
+          if (randomLiveDjAvatar) {
+            randomLiveDjAvatar.hidden = true;
+            randomLiveDjAvatar.innerHTML = "";
+          }
+          if (randomLiveDjBioField) randomLiveDjBioField.hidden = true;
+          if (randomLiveDjMetaField) randomLiveDjMetaField.hidden = true;
+          if (randomLiveDjBio) randomLiveDjBio.textContent = "";
+          if (randomLiveDjMeta) randomLiveDjMeta.textContent = "";
+          return;
+        }
+
+        const profilePic =
+          dj.profile_pic ||
+          dj.profile_picture ||
+          dj.avatar ||
+          dj.photo ||
+          "";
+
+        if (randomLiveDjAvatar) {
+          randomLiveDjAvatar.innerHTML = "";
+          randomLiveDjAvatar.hidden = !profilePic;
+
+          if (profilePic) {
+            const image = document.createElement("img");
+            image.src = String(profilePic);
+            image.alt = "";
+            image.loading = "lazy";
+            image.addEventListener("error", function () {
+              randomLiveDjAvatar.hidden = true;
+            });
+            randomLiveDjAvatar.appendChild(image);
+          }
+        }
+
+        const bio = String(
+          dj.bio ||
+          dj.biography ||
+          dj.profile_bio ||
+          dj.about ||
+          ""
+        ).trim();
+
+        if (randomLiveDjBio) randomLiveDjBio.textContent = bio;
+        if (randomLiveDjBioField) randomLiveDjBioField.hidden = !bio;
+
+        const username = getDJUsername(dj);
+        const title = dj.title || dj.room_title || dj.description || "";
+        const viewers = dj.viewers ?? dj.viewer_count ?? dj.viewerCount;
+        const metadata = [
+          username ? "@" + username : "",
+          title ? String(title).trim() : "",
+          viewers !== undefined && viewers !== null && Number(viewers) > 0
+            ? String(viewers) + " watching"
+            : ""
+        ].filter(Boolean).join(" · ");
+
+        if (randomLiveDjMeta) randomLiveDjMeta.textContent = metadata;
+        if (randomLiveDjMetaField) randomLiveDjMetaField.hidden = !metadata;
       }
 
       function showLiveDjPlayer(dj) {
@@ -2899,6 +3123,7 @@
         }
         randomLiveDjName.textContent = "🎧 " + String(name);
         updateLiveDjGenres(dj);
+        updateLiveDjProfile(dj);
         randomLiveDj.style.display = "block";
 
         // Chrome/Edge/Firefox need hls.js for HLS (.m3u8).
@@ -3067,6 +3292,8 @@
         if (randomLiveDj) {
           randomLiveDj.style.display = "none";
         }
+
+        updateLiveDjProfile(null);
       }
 
       if (liveDjUnmute && liveDjVideo) {
@@ -3309,6 +3536,7 @@
                     "LIVE DJ"
                   );
                 updateLiveDjGenres(relayDj);
+                updateLiveDjProfile(relayDj);
                 randomLiveDj.style.display = "block";
               }
             } else {
@@ -3336,6 +3564,11 @@
             ? mergeDJRecords(relayDj, matchingLiveDj, matchingFavouriteDj)
             : null;
           const hasRelay = Boolean(routedDj && routerIdentity);
+
+          if (hasRelay) {
+            updateLiveDjGenres(routedDj);
+            updateLiveDjProfile(routedDj);
+          }
 
           if (hasRelay) {
             const routedHeader = document.createElement("div");
