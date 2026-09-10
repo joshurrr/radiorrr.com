@@ -2376,6 +2376,7 @@
     </p>
 
   </main>
+<script src="genre-detection.js"></script>
 <script>
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -3059,34 +3060,18 @@
       }
 
       function getDJGenres(dj) {
-        const values = [];
+        if (!window.RadioRRRGenreDetection) return [];
 
-        const addValue = value => {
-          if (value === undefined || value === null) return;
+        const bio = String(
+          dj && (dj.bio || dj.biography || dj.profile_bio || dj.about || "")
+        );
 
-          if (Array.isArray(value)) {
-            value.forEach(addValue);
-            return;
-          }
-
-          String(value)
-            .split(/[|,]/)
-            .map(item => item.trim())
-            .filter(Boolean)
-            .forEach(item => {
-              if (!values.some(existing => existing.toLowerCase() === item.toLowerCase())) {
-                values.push(item);
-              }
-            });
-        };
-
-        // genre is the curated RRR primary genre; genre_keywords may contain
-        // the additional genres detected for the DJ.
-        addValue(dj && dj.genre);
-        addValue(dj && dj.genre_keywords);
-        addValue(dj && dj.genres);
-
-        return values;
+        // The API's curated genre can be broad; profile text supplies the
+        // more specific taxonomy match when one is present.
+        return window.RadioRRRGenreDetection.normalizeGenres(
+          [dj && dj.genre, dj && dj.genre_keywords, dj && dj.genres],
+          bio
+        );
       }
 
       function updateLiveDjGenres(dj) {
