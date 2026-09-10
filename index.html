@@ -1834,6 +1834,69 @@
         font-size: 1.15rem;
       }
     }
+
+    /* Phone-only router refinements. Keep the live feed inline and bounded
+       while leaving the desktop console composition unchanged. */
+    @media (max-width: 767px) {
+      .random-live-header {
+        align-items: flex-start;
+        gap: 0.45rem;
+      }
+
+      .random-live-title,
+      .random-live-now-playing,
+      .random-live-now-playing strong,
+      .random-live-dj-name,
+      .random-live-meta,
+      .random-live-bio {
+        min-width: 0;
+        max-width: 100%;
+        overflow-wrap: anywhere;
+      }
+
+      .random-live-dj-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.65rem;
+      }
+
+      .random-live-actions,
+      .random-live-actions .random-live-button {
+        width: 100%;
+        margin-left: 0;
+      }
+
+      .random-live-actions .random-live-button {
+        line-height: 1.2;
+      }
+
+      .radio-router-player {
+        aspect-ratio: 3 / 4;
+        height: auto;
+        min-height: 0;
+        max-height: 420px;
+      }
+
+      .radio-router-player #liveDjVideo {
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+
+      /* Hide only the mobile native fullscreen affordance; playback and
+         the existing page-level UNMUTE control remain unchanged. */
+      .radio-router-player #liveDjVideo::-webkit-media-controls-fullscreen-button {
+        display: none;
+      }
+
+      .nav-tabs a,
+      .nav-tabs .recommend-dj-button {
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+    }
   </style>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -2033,6 +2096,7 @@
             <video id="liveDjBackground"
                    class="live-dj-background"
                    playsinline
+                   webkit-playsinline
                    autoplay
                    muted
                    preload="none"
@@ -2042,6 +2106,7 @@
 
             <video id="liveDjVideo"
                    playsinline
+                   webkit-playsinline
                    autoplay
                    muted
                    controls
