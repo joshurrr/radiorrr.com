@@ -2994,6 +2994,59 @@
         ).replace(/^@/, "").trim();
       }
 
+      function getDJIdentity(dj) {
+        const username = getDJUsername(dj).toLowerCase();
+
+        if (username) return "username:" + username;
+
+        const name = String(
+          dj && (dj.name || dj.display_name || "")
+        ).trim().toLowerCase().replace(/\s+/g, " ");
+
+        return name ? "name:" + name : "";
+      }
+
+      function mergeDJRecords() {
+        const merged = {};
+
+        Array.from(arguments).filter(Boolean).forEach(record => {
+          Object.keys(record).forEach(key => {
+            const value = record[key];
+            const isEmpty =
+              value === undefined ||
+              value === null ||
+              value === "" ||
+              Array.isArray(value) && value.length === 0;
+
+            if (!isEmpty && (merged[key] === undefined || merged[key] === null || merged[key] === "")) {
+              merged[key] = value;
+            }
+          });
+        });
+
+        return merged;
+      }
+
+      function mergeUniqueDJs(djs) {
+        const unique = [];
+        const indexes = new Map();
+
+        djs.forEach(dj => {
+          const identity = getDJIdentity(dj);
+
+          if (!identity || !indexes.has(identity)) {
+            if (identity) indexes.set(identity, unique.length);
+            unique.push(dj);
+            return;
+          }
+
+          const index = indexes.get(identity);
+          unique[index] = mergeDJRecords(unique[index], dj);
+        });
+
+        return unique;
+      }
+
       function getDJLiveUrl(dj) {
         const username = getDJUsername(dj);
 
@@ -3086,6 +3139,7 @@
           const favourites = Array.isArray(data.favourites) ? data.favourites : [];
           const relayDj = data.relay || null;
           const routerUsername = relayDj ? getDJUsername(relayDj) : "";
+          const routerIdentity = relayDj ? getDJIdentity(relayDj) : "";
           const routerKey = relayDj
             ? routerUsername ||
               String(
@@ -3096,6 +3150,9 @@
             : "";
 
           currentLiveDJs = live;
+
+          const uniqueLiveDJs = mergeUniqueDJs(live);
+          const uniqueFavouriteDJs = mergeUniqueDJs(favourites);
 
           /*
            * IMPORTANT: the backend relay may deliberately choose a DJ that
@@ -3141,34 +3198,41 @@
            */
           liveDjsList.innerHTML = "";
 
-          const routedLiveDj = routerUsername
-            ? live.find(dj => getDJUsername(dj) === routerUsername)
+          const matchingLiveDj = routerIdentity
+            ? uniqueLiveDJs.find(dj => getDJIdentity(dj) === routerIdentity)
             : null;
+          const matchingFavouriteDj = routerIdentity
+            ? uniqueFavouriteDJs.find(dj => getDJIdentity(dj) === routerIdentity)
+            : null;
+          const routedDj = relayDj
+            ? mergeDJRecords(relayDj, matchingLiveDj, matchingFavouriteDj)
+            : null;
+          const hasRelay = Boolean(routedDj && routerIdentity);
 
-          if (relayDj && routerUsername) {
+          if (hasRelay) {
             const routedHeader = document.createElement("div");
             routedHeader.style.gridColumn = "1 / -1";
             routedHeader.innerHTML =
               '<div style="font-size:1.05rem;font-weight:800;color:#fff;margin:0.2rem 0 0.1rem;text-shadow:0 0 8px rgba(255,0,102,0.65);">🔴 ROUTING NOW</div>';
             liveDjsList.appendChild(routedHeader);
-            appendDjCard(routedLiveDj || relayDj, true, routerUsername);
+            appendDjCard(routedDj, true, routerIdentity);
           }
 
-          const otherLiveDJs = routedLiveDj
-            ? live.filter(dj => getDJUsername(dj) !== routerUsername)
-            : live;
+          const otherLiveDJs = uniqueLiveDJs.filter(
+            dj => getDJIdentity(dj) !== routerIdentity
+          );
 
           if (otherLiveDJs.length) {
             const otherLiveHeader = document.createElement("div");
             otherLiveHeader.style.gridColumn = "1 / -1";
-            otherLiveHeader.style.marginTop = routedLiveDj || relayDj ? "0.8rem" : "0";
+            otherLiveHeader.style.marginTop = hasRelay ? "0.8rem" : "0";
             otherLiveHeader.innerHTML =
               '<div style="font-size:1.05rem;font-weight:800;color:#fff;margin:0.2rem 0 0.1rem;text-shadow:0 0 8px rgba(255,0,102,0.65);">🔴 ' +
-              (relayDj ? "OTHER LIVE DJS" : "LIVE NOW") +
+              (hasRelay ? "OTHER LIVE DJS" : "LIVE NOW") +
               '</div>';
             liveDjsList.appendChild(otherLiveHeader);
-            otherLiveDJs.forEach(dj => appendDjCard(dj, true, routerUsername));
-          } else if (!routedLiveDj && !relayDj) {
+            otherLiveDJs.forEach(dj => appendDjCard(dj, true, routerIdentity));
+          } else if (!hasRelay) {
             const emptyLive = document.createElement("div");
             emptyLive.className = "live-empty";
             emptyLive.style.gridColumn = "1 / -1";
@@ -3184,13 +3248,22 @@
             '<div style="font-size:1.05rem;font-weight:800;color:#fff;margin:0.2rem 0 0.1rem;text-shadow:0 0 8px rgba(129,140,248,0.65);">⭐ RRR FAVOURITES</div><small style="color:#c7c7ff;">Favourite DJs we\'re watching for.</small>';
           liveDjsList.appendChild(favHeader);
 
-          if (favourites.length) {
-            favourites.forEach(dj => appendDjCard(dj, false));
+          const allocatedIdentities = new Set(
+            [routedDj].concat(otherLiveDJs).filter(Boolean).map(getDJIdentity)
+          );
+          const availableFavouriteDJs = uniqueFavouriteDJs.filter(
+            dj => !allocatedIdentities.has(getDJIdentity(dj))
+          );
+
+          if (availableFavouriteDJs.length) {
+            availableFavouriteDJs.forEach(dj => appendDjCard(dj, false));
           } else {
             const emptyFav = document.createElement("div");
             emptyFav.className = "live-empty";
             emptyFav.style.gridColumn = "1 / -1";
-            emptyFav.textContent = "No favourite DJs have been added yet.";
+            emptyFav.textContent = favourites.length
+              ? "All current favourites are already shown above."
+              : "No favourite DJs have been added yet.";
             liveDjsList.appendChild(emptyFav);
           }
 
@@ -3204,7 +3277,7 @@
         }
       }
 
-      function appendDjCard(dj, isLive, routerUsername) {
+      function appendDjCard(dj, isLive, routerIdentity) {
         const card = document.createElement("div");
         card.className = "dj-card";
 
@@ -3235,8 +3308,8 @@
 
         const isRouted =
           isLive &&
-          routerUsername &&
-          getDJUsername(dj) === routerUsername;
+          routerIdentity &&
+          getDJIdentity(dj) === routerIdentity;
 
         const isActuallyLive = isLive || dj.live === true;
 
