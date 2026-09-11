@@ -951,6 +951,21 @@
       text-align: left;
     }
 
+    .dj-card.dj-favourite-card {
+      display: block;
+      color: inherit;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+
+    .dj-card.dj-favourite-card:hover,
+    .dj-card.dj-favourite-card:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 0 0 18px rgba(129,140,248,0.55);
+      outline: none;
+    }
+
     .dj-card-top {
       display: flex;
       align-items: center;
@@ -3710,9 +3725,6 @@
       }
 
       function appendDjCard(dj, isLive, routerIdentity, moveWatchButton) {
-        const card = document.createElement("div");
-        card.className = "dj-card";
-
         const name =
           dj.name || dj.username || dj.display_name || "DJ";
 
@@ -3730,6 +3742,16 @@
           (username
             ? "https://www.tiktok.com/@" + String(username).replace(/^@/, "")
             : "#");
+
+        const isFavourite = !isLive;
+        const card = document.createElement(isFavourite ? "a" : "div");
+        card.className = "dj-card" +
+          (isFavourite ? " dj-favourite-card" : "");
+        if (isFavourite) {
+          card.href = profileUrl;
+          card.target = "_blank";
+          card.rel = "noopener";
+        }
 
         const liveUrl =
           dj.live_url ||
@@ -3769,6 +3791,13 @@
         const watchHtml =
           '<a class="dj-watch" href="' + escapeAttr(String(actionUrl)) +
           '" target="_blank" rel="noopener">' + actionText + '</a>';
+        const metaText = title;
+        const metaHtml = metaText || viewerText
+          ? '<div class="dj-meta">' +
+            escapeHtml(String(metaText)) +
+            escapeHtml(String(viewerText)) +
+            '</div>'
+          : "";
 
         if (isActuallyLive) {
           card.style.borderColor = "rgba(248,113,113,0.9)";
@@ -3800,11 +3829,8 @@
               '<div class="dj-name">' + escapeHtml(String(name)) + '</div>' +
             '</div>' +
           '</div>' +
-          '<div class="dj-meta">' +
-          escapeHtml(String(title || (isActuallyLive ? "Live on TikTok" : "Favourite DJ"))) +
-          escapeHtml(viewerText) +
-          '</div>' +
-          (moveWatchButton ? "" : watchHtml);
+          metaHtml +
+          (isFavourite || moveWatchButton ? "" : watchHtml);
 
         liveDjsList.appendChild(card);
       }
