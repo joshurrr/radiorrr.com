@@ -1044,6 +1044,13 @@
       margin-bottom: 0.25rem;
     }
 
+    .dj-genre {
+      color: #c7c7ff;
+      font-size: 0.72rem;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+
     .dj-meta {
       font-size: 0.85rem;
       color: #c7c7ff;
@@ -3108,6 +3115,15 @@
         );
       }
 
+      function getStoredDJGenres(dj) {
+        if (!window.RadioRRRGenreDetection) return [];
+
+        return window.RadioRRRGenreDetection.normalizeGenres(
+          [dj && dj.genre, dj && dj.genre_keywords, dj && dj.genres],
+          ""
+        );
+      }
+
       function updateLiveDjGenres(dj) {
         if (!randomLiveDjGenres) return;
 
@@ -3678,7 +3694,17 @@
               (hasRelay ? "OTHER LIVE DJS" : "LIVE NOW") +
               '</div>';
             liveDjsList.appendChild(otherLiveHeader);
-            otherLiveDJs.forEach(dj => appendDjCard(dj, true, routerIdentity, true));
+            otherLiveDJs.forEach(dj => {
+              const matchingFavourite = uniqueFavouriteDJs.find(
+                favourite => getDJIdentity(favourite) === getDJIdentity(dj)
+              );
+              appendDjCard(
+                mergeDJRecords(dj, matchingFavourite),
+                true,
+                routerIdentity,
+                true
+              );
+            });
           } else if (!hasRelay) {
             const emptyLive = document.createElement("div");
             emptyLive.className = "live-empty";
@@ -3779,6 +3805,10 @@
             : "OFFLINE";
         const actionText = isActuallyLive ? "▶ WATCH LIVE" : "VIEW TIKTOK";
         const actionUrl = isActuallyLive ? liveUrl : profileUrl;
+        const genres = getStoredDJGenres(dj);
+        const genreText = genres.length
+          ? genres.slice(0, 5).join(" • ")
+          : "Genre: Detecting...";
         const liveStatusHtml =
           '<div class="dj-live" style="' +
           (isActuallyLive ? "" : "color:#a5b4fc;") +
@@ -3827,6 +3857,7 @@
                 ? '<div class="dj-status-row">' + liveStatusHtml + watchHtml + '</div>'
                 : liveStatusHtml) +
               '<div class="dj-name">' + escapeHtml(String(name)) + '</div>' +
+              '<div class="dj-genre">🎵 ' + escapeHtml(genreText) + '</div>' +
             '</div>' +
           '</div>' +
           metaHtml +
