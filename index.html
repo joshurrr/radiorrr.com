@@ -994,6 +994,25 @@
       margin-bottom: 0.65rem;
     }
 
+    .dj-status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      min-width: 0;
+      margin-bottom: 0.35rem;
+    }
+
+    .dj-status-row .dj-live {
+      min-width: 0;
+      margin-bottom: 0;
+    }
+
+    .dj-status-row .dj-watch {
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+
     .dj-live-dot {
       width: 7px;
       height: 7px;
@@ -3644,7 +3663,7 @@
               (hasRelay ? "OTHER LIVE DJS" : "LIVE NOW") +
               '</div>';
             liveDjsList.appendChild(otherLiveHeader);
-            otherLiveDJs.forEach(dj => appendDjCard(dj, true, routerIdentity));
+            otherLiveDJs.forEach(dj => appendDjCard(dj, true, routerIdentity, true));
           } else if (!hasRelay) {
             const emptyLive = document.createElement("div");
             emptyLive.className = "live-empty";
@@ -3690,7 +3709,7 @@
         }
       }
 
-      function appendDjCard(dj, isLive, routerIdentity) {
+      function appendDjCard(dj, isLive, routerIdentity, moveWatchButton) {
         const card = document.createElement("div");
         card.className = "dj-card";
 
@@ -3738,6 +3757,18 @@
             : "OFFLINE";
         const actionText = isActuallyLive ? "▶ WATCH LIVE" : "VIEW TIKTOK";
         const actionUrl = isActuallyLive ? liveUrl : profileUrl;
+        const liveStatusHtml =
+          '<div class="dj-live" style="' +
+          (isActuallyLive ? "" : "color:#a5b4fc;") +
+          '">' +
+          (isActuallyLive
+            ? '<span class="dj-live-dot"></span>'
+            : '<span style="width:7px;height:7px;border-radius:50%;background:#64748b;display:inline-block;"></span>') +
+          escapeHtml(statusText) +
+          '</div>';
+        const watchHtml =
+          '<a class="dj-watch" href="' + escapeAttr(String(actionUrl)) +
+          '" target="_blank" rel="noopener">' + actionText + '</a>';
 
         if (isActuallyLive) {
           card.style.borderColor = "rgba(248,113,113,0.9)";
@@ -3763,14 +3794,9 @@
           '<div class="dj-card-top">' +
             photoHtml +
             '<div>' +
-              '<div class="dj-live" style="' +
-              (isActuallyLive ? "" : "color:#a5b4fc;") +
-              '">' +
-              (isActuallyLive
-                ? '<span class="dj-live-dot"></span>'
-                : '<span style="width:7px;height:7px;border-radius:50%;background:#64748b;display:inline-block;"></span>') +
-              escapeHtml(statusText) +
-              '</div>' +
+              (moveWatchButton
+                ? '<div class="dj-status-row">' + liveStatusHtml + watchHtml + '</div>'
+                : liveStatusHtml) +
               '<div class="dj-name">' + escapeHtml(String(name)) + '</div>' +
             '</div>' +
           '</div>' +
@@ -3778,8 +3804,7 @@
           escapeHtml(String(title || (isActuallyLive ? "Live on TikTok" : "Favourite DJ"))) +
           escapeHtml(viewerText) +
           '</div>' +
-          '<a class="dj-watch" href="' + escapeAttr(String(actionUrl)) +
-          '" target="_blank" rel="noopener">' + actionText + '</a>';
+          (moveWatchButton ? "" : watchHtml);
 
         liveDjsList.appendChild(card);
       }
