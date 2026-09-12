@@ -1206,6 +1206,105 @@
       border-color: rgba(248,113,113,0.4);
     }
 
+    /* LIVE GENRES DETECTED */
+    .live-genres-detected {
+      display: none;
+      margin: 0 0 0.9rem;
+      padding: 0.85rem 1rem;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at top left, rgba(34,211,238,0.10), transparent 55%),
+        rgba(7,10,25,0.92);
+      border: 1px solid rgba(34,211,238,0.38);
+      box-shadow: 0 0 12px rgba(34,211,238,0.12);
+      text-align: left;
+    }
+
+    .live-genres-detected-title {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.55rem;
+    }
+
+    .live-genres-detected-title strong {
+      color: #ffffff;
+      font-size: 0.92rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-shadow: 0 0 7px rgba(34,211,238,0.55);
+    }
+
+    .live-genres-detected-status {
+      color: #a5b4fc;
+      font-size: 0.7rem;
+      white-space: nowrap;
+    }
+
+    .live-genres-detected-list {
+      display: grid;
+      gap: 0.34rem;
+    }
+
+    .live-genre-detected-row {
+      display: grid;
+      grid-template-columns: minmax(110px, 1fr) minmax(80px, 2fr) 42px;
+      align-items: center;
+      gap: 0.55rem;
+      min-width: 0;
+    }
+
+    .live-genre-detected-name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #e0e0ff;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .live-genre-detected-bar {
+      height: 6px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(129,140,248,0.14);
+      border: 1px solid rgba(129,140,248,0.14);
+    }
+
+    .live-genre-detected-bar > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #22d3ee, #7c3aed, #ff0066);
+      box-shadow: 0 0 7px rgba(34,211,238,0.45);
+    }
+
+    .live-genre-detected-confidence {
+      color: #ffffff;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-align: right;
+    }
+
+    @media (max-width: 520px) {
+      .live-genres-detected {
+        padding: 0.75rem 0.8rem;
+      }
+
+      .live-genres-detected-title {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.15rem;
+      }
+
+      .live-genre-detected-row {
+        grid-template-columns: minmax(95px, 1fr) minmax(60px, 1.4fr) 40px;
+        gap: 0.4rem;
+      }
+    }
+
     /* SCHEDULE */
     .events-list {
       text-align: left;
@@ -1552,88 +1651,6 @@
     .random-live-dj-genres-field .random-live-dj-profile-label {
       display: none;
     }
-
-    .random-live-ai-genre-field {
-      display: none;
-      margin-top: 0.7rem;
-      padding-top: 0.65rem;
-      border-top: 1px solid rgba(129,140,248,0.2);
-    }
-
-    .random-live-ai-genre-field:not([hidden]) {
-      display: block;
-    }
-
-    .random-live-ai-genre-title {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.6rem;
-      margin-bottom: 0.5rem;
-      color: #67e8f9;
-      font-size: 0.72rem;
-      font-weight: 900;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      text-shadow: 0 0 7px rgba(34,211,238,0.55);
-    }
-
-    .random-live-ai-genre-status {
-      color: #a5b4fc;
-      font-size: 0.62rem;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-      text-transform: none;
-      white-space: nowrap;
-    }
-
-    .random-live-ai-genre-list {
-      display: grid;
-      gap: 0.32rem;
-    }
-
-    .random-live-ai-genre-row {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 44px;
-      gap: 0.5rem;
-      align-items: center;
-      min-width: 0;
-    }
-
-    .random-live-ai-genre-label {
-      min-width: 0;
-      color: #e0e0ff;
-      font-size: 0.68rem;
-      font-weight: 700;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .random-live-ai-genre-bar-wrap {
-      grid-column: 1 / -1;
-      height: 4px;
-      margin-top: -0.22rem;
-      border-radius: 999px;
-      overflow: hidden;
-      background: rgba(129,140,248,0.12);
-    }
-
-    .random-live-ai-genre-bar {
-      height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, #22d3ee, #a855f7, #ff0066);
-      box-shadow: 0 0 8px rgba(34,211,238,0.45);
-      transition: width 0.4s ease;
-    }
-
-    .random-live-ai-genre-confidence {
-      color: #fde68a;
-      font-size: 0.66rem;
-      font-weight: 900;
-      text-align: right;
-    }
-
 
     /* Desktop radio dashboard: keep the existing tab content and router DOM,
        but give the live experience a wider station-console composition. */
@@ -1983,10 +2000,6 @@
         display: none;
       }
 
-      #randomLiveDj .random-live-ai-genre-field {
-        display: block;
-      }
-
       .random-live-title,
       .random-live-dj-name {
         max-width: 100%;
@@ -2328,14 +2341,6 @@
                 <div id="randomLiveDjGenres" class="random-live-genres" aria-label="DJ genres"></div>
               </div>
 
-              <div id="randomLiveDjAiGenreField" class="random-live-ai-genre-field" hidden>
-                <div class="random-live-ai-genre-title">
-                  <span>LIVE AI DETECTED GENRE</span>
-                  <span id="randomLiveDjAiGenreStatus" class="random-live-ai-genre-status">Analysing live audio…</span>
-                </div>
-                <div id="randomLiveDjAiGenreList" class="random-live-ai-genre-list" aria-label="Live AI detected genre mix"></div>
-              </div>
-
               <div id="randomLiveDjBioField" class="random-live-dj-profile-field" hidden>
                 <div class="random-live-dj-profile-label">Bio</div>
                 <p id="randomLiveDjBio" class="random-live-dj-bio"></p>
@@ -2378,6 +2383,15 @@
           </div>
 
         </div>
+
+        <!-- LIVE GENRES DETECTED -->
+        <section id="liveGenresDetected" class="live-genres-detected" aria-live="polite">
+          <div class="live-genres-detected-title">
+            <strong>LIVE GENRES DETECTED</strong>
+            <span id="liveGenresDetectedStatus" class="live-genres-detected-status">Analysing live audio…</span>
+          </div>
+          <div id="liveGenresDetectedList" class="live-genres-detected-list"></div>
+        </section>
 
         <div id="liveDjsList" class="live-djs-grid">
           <div class="live-empty">Checking who's live…</div>
@@ -3089,15 +3103,6 @@
       const randomLiveDjGenresField =
         document.getElementById("randomLiveDjGenresField");
 
-      const randomLiveDjAiGenreField =
-        document.getElementById("randomLiveDjAiGenreField");
-
-      const randomLiveDjAiGenreList =
-        document.getElementById("randomLiveDjAiGenreList");
-
-      const randomLiveDjAiGenreStatus =
-        document.getElementById("randomLiveDjAiGenreStatus");
-
       const randomLiveDjAvatar =
         document.getElementById("randomLiveDjAvatar");
 
@@ -3112,6 +3117,15 @@
 
       const randomLiveDjMeta =
         document.getElementById("randomLiveDjMeta");
+
+      const liveGenresDetected =
+        document.getElementById("liveGenresDetected");
+
+      const liveGenresDetectedStatus =
+        document.getElementById("liveGenresDetectedStatus");
+
+      const liveGenresDetectedList =
+        document.getElementById("liveGenresDetectedList");
 
       const randomLiveDjFrame =
         document.getElementById("randomLiveDjFrame");
@@ -3265,8 +3279,6 @@
 
       switchTab("live-section");
 
-      updateLiveAiGenre(null);
-
       /* RADIO ROUTER LIVE DJ PLAYER */
 
       const RADIO_ROUTER_STREAM_URL = "https://api.radiorrr.com/api/live-stream";
@@ -3377,6 +3389,71 @@
         return true;
       }
 
+      function updateLiveGenresDetected(aiGenre, featuredIdentity, relayIdentity) {
+        if (!liveGenresDetected || !liveGenresDetectedList) return;
+
+        // The backend AI result describes the DJ currently feeding the router.
+        // If the visitor has manually selected another live DJ, do not show a
+        // mismatched genre result.
+        if (!aiGenre || !Array.isArray(aiGenre.genres) ||
+            !relayIdentity || featuredIdentity !== relayIdentity) {
+          liveGenresDetected.style.display = "none";
+          liveGenresDetectedList.innerHTML = "";
+          return;
+        }
+
+        const genres = aiGenre.genres
+          .map(item => ({
+            genre: String(item && item.genre || "").trim(),
+            confidence: Number(item && item.confidence)
+          }))
+          .filter(item =>
+            item.genre &&
+            Number.isFinite(item.confidence) &&
+            item.confidence > 0
+          )
+          .sort((a, b) => b.confidence - a.confidence)
+          .slice(0, 5);
+
+        if (!genres.length) {
+          liveGenresDetected.style.display = "none";
+          liveGenresDetectedList.innerHTML = "";
+          return;
+        }
+
+        const maxConfidence = Math.max(...genres.map(item => item.confidence), 0.01);
+        liveGenresDetectedList.innerHTML = "";
+
+        genres.forEach(item => {
+          const row = document.createElement("div");
+          row.className = "live-genre-detected-row";
+
+          const name = item.genre.replace(/^.*---/, "");
+          const percent = Math.round(item.confidence * 100);
+          const barWidth = Math.max(4, Math.min(100, (item.confidence / maxConfidence) * 100));
+
+          row.innerHTML =
+            '<span class="live-genre-detected-name" title="' +
+              escapeAttr(name) + '">' +
+              escapeHtml(name) +
+            '</span>' +
+            '<span class="live-genre-detected-bar" aria-hidden="true">' +
+              '<span style="width:' + barWidth.toFixed(1) + '%;"></span>' +
+            '</span>' +
+            '<span class="live-genre-detected-confidence">' +
+              percent + '%' +
+            '</span>';
+
+          liveGenresDetectedList.appendChild(row);
+        });
+
+        if (liveGenresDetectedStatus) {
+          liveGenresDetectedStatus.textContent = "Current live audio";
+        }
+
+        liveGenresDetected.style.display = "block";
+      }
+
       function getDJGenres(dj) {
         if (!window.RadioRRRGenreDetection) return [];
 
@@ -3449,78 +3526,6 @@
         });
       }
 
-      function updateLiveAiGenre(aiGenre) {
-        if (!randomLiveDjAiGenreField || !randomLiveDjAiGenreList) return;
-
-        randomLiveDjAiGenreList.innerHTML = "";
-
-        const genres = aiGenre && Array.isArray(aiGenre.genres)
-          ? aiGenre.genres
-              .filter(item =>
-                item &&
-                typeof item.genre === "string" &&
-                Number.isFinite(Number(item.confidence))
-              )
-              .slice(0, 7)
-          : [];
-
-        if (!genres.length) {
-          randomLiveDjAiGenreField.hidden = true;
-          if (randomLiveDjAiGenreStatus) {
-            randomLiveDjAiGenreStatus.textContent = "Analysing live audio…";
-          }
-          return;
-        }
-
-        randomLiveDjAiGenreField.hidden = false;
-
-        if (randomLiveDjAiGenreStatus) {
-          randomLiveDjAiGenreStatus.textContent = "Live audio analysis";
-        }
-
-        const maxConfidence = Math.max(
-          0.01,
-          ...genres.map(item => Number(item.confidence))
-        );
-
-        genres.forEach(item => {
-          const genre = String(item.genre)
-            .replace(/^Electronic---/i, "")
-            .replace(/^.+?---/i, "");
-
-          const confidence = Math.max(
-            0,
-            Math.min(1, Number(item.confidence))
-          );
-
-          const row = document.createElement("div");
-          row.className = "random-live-ai-genre-row";
-
-          const label = document.createElement("div");
-          label.className = "random-live-ai-genre-label";
-          label.title = genre;
-          label.textContent = genre;
-
-          const percentage = document.createElement("div");
-          percentage.className = "random-live-ai-genre-confidence";
-          percentage.textContent = Math.round(confidence * 100) + "%";
-
-          const barWrap = document.createElement("div");
-          barWrap.className = "random-live-ai-genre-bar-wrap";
-
-          const bar = document.createElement("div");
-          bar.className = "random-live-ai-genre-bar";
-          bar.style.width =
-            Math.max(3, (confidence / maxConfidence) * 100) + "%";
-
-          barWrap.appendChild(bar);
-          row.appendChild(label);
-          row.appendChild(percentage);
-          row.appendChild(barWrap);
-          randomLiveDjAiGenreList.appendChild(row);
-        });
-      }
-
       function updateLiveDjProfile(dj) {
         if (!dj) {
           if (randomLiveDjAvatar) {
@@ -3529,8 +3534,6 @@
           }
           if (randomLiveDjBioField) randomLiveDjBioField.hidden = true;
           if (randomLiveDjMetaField) randomLiveDjMetaField.hidden = true;
-          if (randomLiveDjAiGenreField) randomLiveDjAiGenreField.hidden = true;
-          if (randomLiveDjAiGenreList) randomLiveDjAiGenreList.innerHTML = "";
           if (randomLiveDjBio) randomLiveDjBio.textContent = "";
           if (randomLiveDjMeta) randomLiveDjMeta.textContent = "";
           return;
@@ -3993,9 +3996,6 @@
           const favourites = Array.isArray(data.favourites) ? data.favourites : [];
           const relayDj = data.relay || null;
           const routerUsername = relayDj ? getDJUsername(relayDj) : "";
-          const aiGenre = data.ai_genre || null;
-          updateLiveAiGenre(aiGenre);
-
           const routerIdentity = relayDj ? getDJIdentity(relayDj) : "";
           const routerKey = relayDj
             ? routerUsername ||
@@ -4005,6 +4005,7 @@
                 "LIVE DJ"
               )
             : "";
+          const aiGenre = data.ai_genre || null;
 
           currentLiveDJs = live;
 
@@ -4100,6 +4101,12 @@
             ? getDJIdentity(selectedFeaturedDj)
             : "";
           const hasRelay = Boolean(selectedFeaturedDj && featuredIdentity);
+
+          updateLiveGenresDetected(
+            aiGenre,
+            featuredIdentity,
+            routerIdentity
+          );
 
           if (hasRelay) {
             updateLiveDjGenres(selectedFeaturedDj);
