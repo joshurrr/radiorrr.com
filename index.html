@@ -3772,8 +3772,11 @@
 
           currentLiveDJs = live;
 
-          const uniqueLiveDJs = mergeUniqueDJs(live);
-          const uniqueFavouriteDJs = mergeUniqueDJs(favourites);
+           const uniqueLiveDJs = mergeUniqueDJs(live);
+           const uniqueFavouriteDJs = mergeUniqueDJs(favourites);
+           const liveFeaturedOverride = currentFeaturedDJ
+             ? uniqueLiveDJs.find(dj => getDJIdentity(dj) === getDJIdentity(currentFeaturedDJ))
+             : null;
 
           /*
            * IMPORTANT: the backend relay may deliberately choose a DJ that
@@ -3783,12 +3786,14 @@
            * stream.
            *
            * The router therefore follows data.relay, never live[0].
-          */
-          if (relayDj) {
-            if (routerUsername) {
-              if (
-                activeLiveStreamKey !== routerKey
-              ) {
+           */
+           if (relayDj) {
+             if (liveFeaturedOverride) {
+               showLiveDjPlayer(liveFeaturedOverride);
+             } else if (routerUsername) {
+               if (
+                 activeLiveStreamKey !== routerKey
+               ) {
                 showLiveDjPlayer(relayDj);
               } else {
                 // Refresh the label/link only. Keep the existing HLS
