@@ -3430,6 +3430,67 @@
         return true;
       }
 
+      function renderLiveGenresDetected(aiGenre) {
+        if (!liveGenresDetected || !liveGenresDetectedList) return;
+
+        if (!aiGenre || !Array.isArray(aiGenre.genres)) {
+          liveGenresDetected.style.display = "none";
+          liveGenresDetectedList.innerHTML = "";
+          return;
+        }
+
+        const genres = aiGenre.genres
+          .map(item => ({
+            genre: String(item && item.genre || "").trim(),
+            confidence: Number(item && item.confidence)
+          }))
+          .filter(item =>
+            item.genre &&
+            Number.isFinite(item.confidence) &&
+            item.confidence > 0
+          )
+          .sort((a, b) => b.confidence - a.confidence)
+          .slice(0, 5);
+
+        if (!genres.length) {
+          liveGenresDetected.style.display = "none";
+          liveGenresDetectedList.innerHTML = "";
+          return;
+        }
+
+        const maxConfidence = Math.max(...genres.map(item => item.confidence), 0.01);
+        liveGenresDetectedList.innerHTML = "";
+
+        genres.forEach(item => {
+          const row = document.createElement("div");
+          row.className = "live-genre-detected-row";
+
+          const name = item.genre.replace(/^.*---/, "");
+          const percent = Math.round(item.confidence * 100);
+          const barWidth = Math.max(4, Math.min(100, (item.confidence / maxConfidence) * 100));
+
+          row.innerHTML =
+            '<span class="live-genre-detected-name" title="' +
+              escapeAttr(name) + '">' +
+              escapeHtml(name) +
+            '</span>' +
+            '<span class="live-genre-detected-bar" aria-hidden="true">' +
+              '<span style="width:' + barWidth.toFixed(1) + '%;"></span>' +
+            '</span>' +
+            '<span class="live-genre-detected-confidence">' +
+              percent + '%' +
+            '</span>';
+
+          liveGenresDetectedList.appendChild(row);
+        });
+
+        if (liveGenresDetectedStatus) {
+          liveGenresDetectedStatus.textContent = "Current live audio";
+        }
+
+        liveGenresDetected.style.display = "block";
+      }
+
       function updateLiveGenresDetected(aiGenre, featuredIdentity, relayIdentity) {
         if (!liveGenresDetected || !liveGenresDetectedList) return;
 
