@@ -1553,6 +1553,88 @@
       display: none;
     }
 
+    .random-live-ai-genre-field {
+      display: none;
+      margin-top: 0.7rem;
+      padding-top: 0.65rem;
+      border-top: 1px solid rgba(129,140,248,0.2);
+    }
+
+    .random-live-ai-genre-field:not([hidden]) {
+      display: block;
+    }
+
+    .random-live-ai-genre-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      margin-bottom: 0.5rem;
+      color: #67e8f9;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      text-shadow: 0 0 7px rgba(34,211,238,0.55);
+    }
+
+    .random-live-ai-genre-status {
+      color: #a5b4fc;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: none;
+      white-space: nowrap;
+    }
+
+    .random-live-ai-genre-list {
+      display: grid;
+      gap: 0.32rem;
+    }
+
+    .random-live-ai-genre-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 44px;
+      gap: 0.5rem;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .random-live-ai-genre-label {
+      min-width: 0;
+      color: #e0e0ff;
+      font-size: 0.68rem;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .random-live-ai-genre-bar-wrap {
+      grid-column: 1 / -1;
+      height: 4px;
+      margin-top: -0.22rem;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(129,140,248,0.12);
+    }
+
+    .random-live-ai-genre-bar {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #22d3ee, #a855f7, #ff0066);
+      box-shadow: 0 0 8px rgba(34,211,238,0.45);
+      transition: width 0.4s ease;
+    }
+
+    .random-live-ai-genre-confidence {
+      color: #fde68a;
+      font-size: 0.66rem;
+      font-weight: 900;
+      text-align: right;
+    }
+
+
     /* Desktop radio dashboard: keep the existing tab content and router DOM,
        but give the live experience a wider station-console composition. */
     @media (min-width: 1200px) {
@@ -1901,6 +1983,10 @@
         display: none;
       }
 
+      #randomLiveDj .random-live-ai-genre-field {
+        display: block;
+      }
+
       .random-live-title,
       .random-live-dj-name {
         max-width: 100%;
@@ -2240,6 +2326,14 @@
               <div id="randomLiveDjGenresField" class="random-live-dj-profile-field random-live-dj-genres-field" hidden>
                 <div class="random-live-dj-profile-label">Genres</div>
                 <div id="randomLiveDjGenres" class="random-live-genres" aria-label="DJ genres"></div>
+              </div>
+
+              <div id="randomLiveDjAiGenreField" class="random-live-ai-genre-field" hidden>
+                <div class="random-live-ai-genre-title">
+                  <span>LIVE AI DETECTED GENRE</span>
+                  <span id="randomLiveDjAiGenreStatus" class="random-live-ai-genre-status">Analysing live audio…</span>
+                </div>
+                <div id="randomLiveDjAiGenreList" class="random-live-ai-genre-list" aria-label="Live AI detected genre mix"></div>
               </div>
 
               <div id="randomLiveDjBioField" class="random-live-dj-profile-field" hidden>
@@ -2995,6 +3089,15 @@
       const randomLiveDjGenresField =
         document.getElementById("randomLiveDjGenresField");
 
+      const randomLiveDjAiGenreField =
+        document.getElementById("randomLiveDjAiGenreField");
+
+      const randomLiveDjAiGenreList =
+        document.getElementById("randomLiveDjAiGenreList");
+
+      const randomLiveDjAiGenreStatus =
+        document.getElementById("randomLiveDjAiGenreStatus");
+
       const randomLiveDjAvatar =
         document.getElementById("randomLiveDjAvatar");
 
@@ -3161,6 +3264,8 @@
       });
 
       switchTab("live-section");
+
+      updateLiveAiGenre(null);
 
       /* RADIO ROUTER LIVE DJ PLAYER */
 
@@ -3344,6 +3449,78 @@
         });
       }
 
+      function updateLiveAiGenre(aiGenre) {
+        if (!randomLiveDjAiGenreField || !randomLiveDjAiGenreList) return;
+
+        randomLiveDjAiGenreList.innerHTML = "";
+
+        const genres = aiGenre && Array.isArray(aiGenre.genres)
+          ? aiGenre.genres
+              .filter(item =>
+                item &&
+                typeof item.genre === "string" &&
+                Number.isFinite(Number(item.confidence))
+              )
+              .slice(0, 7)
+          : [];
+
+        if (!genres.length) {
+          randomLiveDjAiGenreField.hidden = true;
+          if (randomLiveDjAiGenreStatus) {
+            randomLiveDjAiGenreStatus.textContent = "Analysing live audio…";
+          }
+          return;
+        }
+
+        randomLiveDjAiGenreField.hidden = false;
+
+        if (randomLiveDjAiGenreStatus) {
+          randomLiveDjAiGenreStatus.textContent = "Live audio analysis";
+        }
+
+        const maxConfidence = Math.max(
+          0.01,
+          ...genres.map(item => Number(item.confidence))
+        );
+
+        genres.forEach(item => {
+          const genre = String(item.genre)
+            .replace(/^Electronic---/i, "")
+            .replace(/^.+?---/i, "");
+
+          const confidence = Math.max(
+            0,
+            Math.min(1, Number(item.confidence))
+          );
+
+          const row = document.createElement("div");
+          row.className = "random-live-ai-genre-row";
+
+          const label = document.createElement("div");
+          label.className = "random-live-ai-genre-label";
+          label.title = genre;
+          label.textContent = genre;
+
+          const percentage = document.createElement("div");
+          percentage.className = "random-live-ai-genre-confidence";
+          percentage.textContent = Math.round(confidence * 100) + "%";
+
+          const barWrap = document.createElement("div");
+          barWrap.className = "random-live-ai-genre-bar-wrap";
+
+          const bar = document.createElement("div");
+          bar.className = "random-live-ai-genre-bar";
+          bar.style.width =
+            Math.max(3, (confidence / maxConfidence) * 100) + "%";
+
+          barWrap.appendChild(bar);
+          row.appendChild(label);
+          row.appendChild(percentage);
+          row.appendChild(barWrap);
+          randomLiveDjAiGenreList.appendChild(row);
+        });
+      }
+
       function updateLiveDjProfile(dj) {
         if (!dj) {
           if (randomLiveDjAvatar) {
@@ -3352,6 +3529,8 @@
           }
           if (randomLiveDjBioField) randomLiveDjBioField.hidden = true;
           if (randomLiveDjMetaField) randomLiveDjMetaField.hidden = true;
+          if (randomLiveDjAiGenreField) randomLiveDjAiGenreField.hidden = true;
+          if (randomLiveDjAiGenreList) randomLiveDjAiGenreList.innerHTML = "";
           if (randomLiveDjBio) randomLiveDjBio.textContent = "";
           if (randomLiveDjMeta) randomLiveDjMeta.textContent = "";
           return;
@@ -3814,6 +3993,9 @@
           const favourites = Array.isArray(data.favourites) ? data.favourites : [];
           const relayDj = data.relay || null;
           const routerUsername = relayDj ? getDJUsername(relayDj) : "";
+          const aiGenre = data.ai_genre || null;
+          updateLiveAiGenre(aiGenre);
+
           const routerIdentity = relayDj ? getDJIdentity(relayDj) : "";
           const routerKey = relayDj
             ? routerUsername ||
