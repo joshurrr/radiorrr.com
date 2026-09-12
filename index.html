@@ -3604,6 +3604,7 @@
 
       let currentLiveDJs = [];
       let currentRandomDJ = null;
+      let currentFeaturedDJ = null;
 
       function getDJUsername(dj) {
         return String(
@@ -3828,11 +3829,24 @@
           const routedDj = relayDj
             ? mergeDJRecords(relayDj, matchingLiveDj, matchingFavouriteDj)
             : null;
-          const hasRelay = Boolean(routedDj && routerIdentity);
+          const selectedLiveDj = currentFeaturedDJ
+            ? uniqueLiveDJs.find(dj => getDJIdentity(dj) === getDJIdentity(currentFeaturedDJ))
+            : null;
+          const selectedFavouriteDj = currentFeaturedDJ
+            ? uniqueFavouriteDJs.find(dj => getDJIdentity(dj) === getDJIdentity(currentFeaturedDJ))
+            : null;
+          const selectedFeaturedDj = relayDj && selectedLiveDj
+            ? mergeDJRecords(currentFeaturedDJ, selectedLiveDj, selectedFavouriteDj)
+            : routedDj;
+          currentFeaturedDJ = selectedFeaturedDj;
+          const featuredIdentity = selectedFeaturedDj
+            ? getDJIdentity(selectedFeaturedDj)
+            : "";
+          const hasRelay = Boolean(selectedFeaturedDj && featuredIdentity);
 
           if (hasRelay) {
-            updateLiveDjGenres(routedDj);
-            updateLiveDjProfile(routedDj);
+            updateLiveDjGenres(selectedFeaturedDj);
+            updateLiveDjProfile(selectedFeaturedDj);
           }
 
           if (hasRelay) {
@@ -3842,13 +3856,19 @@
             routedHeader.innerHTML =
               '<div style="font-size:1.05rem;font-weight:800;color:#fff;margin:0.2rem 0 0.1rem;text-shadow:0 0 8px rgba(255,0,102,0.65);">🔴 ROUTING NOW</div>';
             liveDjsList.appendChild(routedHeader);
-            appendDjCard(routedDj, true, routerIdentity);
+            appendDjCard(selectedFeaturedDj, true, featuredIdentity);
             liveDjsList.lastElementChild.classList.add("routed-dj-card");
           }
 
           const otherLiveDJs = uniqueLiveDJs.filter(
-            dj => getDJIdentity(dj) !== routerIdentity
+            dj => getDJIdentity(dj) !== featuredIdentity
           );
+
+          if (routedDj && featuredIdentity &&
+            getDJIdentity(routedDj) !== featuredIdentity &&
+            !otherLiveDJs.some(dj => getDJIdentity(dj) === getDJIdentity(routedDj))) {
+            otherLiveDJs.unshift(routedDj);
+          }
 
           if (otherLiveDJs.length) {
             const otherLiveHeader = document.createElement("div");
@@ -3866,7 +3886,7 @@
               appendDjCard(
                 mergeDJRecords(dj, matchingFavourite),
                 true,
-                routerIdentity,
+                featuredIdentity,
                 true
               );
             });
@@ -4027,6 +4047,17 @@
           '</div>' +
           metaHtml +
           (isFavourite || moveWatchButton ? "" : watchHtml);
+
+        if (moveWatchButton && isActuallyLive) {
+          card.style.cursor = "pointer";
+          card.addEventListener("click", function (event) {
+            if (event.target.closest(".dj-watch")) return;
+
+            currentFeaturedDJ = dj;
+            showLiveDjPlayer(dj);
+            loadLiveDJs();
+          });
+        }
 
         liveDjsList.appendChild(card);
       }
