@@ -797,8 +797,8 @@
     }
 
     .random-live-audio-toggle {
-      width: 160px;
-      min-height: 44px;
+      width: 140px;
+      min-height: 40px;
       padding: 0.55rem 0.8rem;
       font-size: 0.9rem;
       font-weight: 900;
@@ -2214,7 +2214,7 @@
               <button id="liveDjUnmute"
                       class="random-live-button random-live-audio-toggle"
                       type="button">
-                🔊 UNMUTE LIVE DJ
+                🔊 UNMUTE LIVE
               </button>
             </div>
 
@@ -3186,7 +3186,7 @@
         if (!liveDjUnmute || !liveDjVideo) return;
 
         const isMuted = liveDjVideo.muted;
-        liveDjUnmute.textContent = isMuted ? "🔊 UNMUTE LIVE DJ" : "🔇 MUTE LIVE DJ";
+        liveDjUnmute.textContent = isMuted ? "🔊 UNMUTE LIVE" : "🔇 MUTE";
         liveDjUnmute.setAttribute("aria-label", isMuted ? "Unmute live DJ" : "Mute live DJ");
         liveDjUnmute.setAttribute("aria-pressed", String(!isMuted));
       }
