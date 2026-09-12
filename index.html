@@ -3495,6 +3495,75 @@
         liveGenresDetected.style.display = "block";
       }
 
+      async function loadLiveGenresForDJ(
+        featuredIdentity,
+        relayIdentity,
+        routerAiGenre,
+        username
+      ) {
+        if (!liveGenresDetected || !liveGenresDetectedList) return;
+
+        const requestId = ++liveGenresRequestId;
+
+        // If the selected DJ is the router DJ, use the live result already
+        // returned by /api/live.
+        if (
+          featuredIdentity &&
+          relayIdentity &&
+          featuredIdentity === relayIdentity
+        ) {
+          renderLiveGenresDetected(routerAiGenre);
+          return;
+        }
+
+        // A manually selected DJ needs its latest stored AI result.
+        if (!username) {
+          renderLiveGenresDetected(null);
+          return;
+        }
+
+        try {
+          liveGenresDetected.style.display = "block";
+          if (liveGenresDetectedStatus) {
+            liveGenresDetectedStatus.textContent = "Loading latest detection…";
+          }
+          liveGenresDetectedList.innerHTML = "";
+
+          const response = await fetch(
+            getFreshUrl(
+              "https://api.radiorrr.com/api/ai-genre?username=" +
+              encodeURIComponent(username)
+            ),
+            {
+              cache: "no-store",
+              headers: {
+                "Cache-Control": "no-cache",
+                "Pragma": "no-cache"
+              }
+            }
+          );
+
+          if (requestId !== liveGenresRequestId) return;
+
+          if (!response.ok) {
+            throw new Error("AI genre API returned " + response.status);
+          }
+
+          const data = await response.json();
+          renderLiveGenresDetected(data || null);
+
+          if (data && Array.isArray(data.genres) && data.genres.length) {
+            if (liveGenresDetectedStatus) {
+              liveGenresDetectedStatus.textContent = "Latest detected audio";
+            }
+          }
+        } catch (error) {
+          if (requestId !== liveGenresRequestId) return;
+          console.warn("Radio RRR genre detection lookup failed:", error);
+          renderLiveGenresDetected(null);
+        }
+      }
+
       function getDJGenres(dj) {
         if (!window.RadioRRRGenreDetection) return [];
 
@@ -4143,10 +4212,11 @@
             : "";
           const hasRelay = Boolean(selectedFeaturedDj && featuredIdentity);
 
-          updateLiveGenresDetected(
-            aiGenre,
+          loadLiveGenresForDJ(
             featuredIdentity,
-            routerIdentity
+            routerIdentity,
+            aiGenre,
+            selectedFeaturedDj ? getDJUsername(selectedFeaturedDj) : ""
           );
 
           if (hasRelay) {
