@@ -792,7 +792,7 @@
     .random-live-audio-actions {
       display: flex;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: flex-end;
       flex-shrink: 0;
     }
 
@@ -2208,16 +2208,14 @@
         <div id="randomLiveDj" class="random-live-dj">
 
           <div class="random-live-header">
-            <div class="random-live-title-group">
-              <div class="random-live-title">🔴 LIVE DJ ROUTER</div>
+            <div class="random-live-title">🔴 LIVE DJ ROUTER</div>
 
-              <div class="random-live-audio-actions">
-                <button id="liveDjUnmute"
-                        class="random-live-button random-live-audio-toggle"
-                        type="button">
-                  🔇 UNMUTE
-                </button>
-              </div>
+            <div class="random-live-audio-actions">
+              <button id="liveDjUnmute"
+                      class="random-live-button random-live-audio-toggle"
+                      type="button">
+                🔊 UNMUTE LIVE DJ
+              </button>
             </div>
 
             <div class="random-live-now-playing">
@@ -3188,7 +3186,7 @@
         if (!liveDjUnmute || !liveDjVideo) return;
 
         const isMuted = liveDjVideo.muted;
-        liveDjUnmute.textContent = isMuted ? "🔇 UNMUTE" : "🔊 MUTE";
+        liveDjUnmute.textContent = isMuted ? "🔊 UNMUTE LIVE DJ" : "🔇 MUTE LIVE DJ";
         liveDjUnmute.setAttribute("aria-label", isMuted ? "Unmute live DJ" : "Mute live DJ");
         liveDjUnmute.setAttribute("aria-pressed", String(!isMuted));
       }
