@@ -3461,7 +3461,7 @@
           // A manually selected live DJ may not be the DJ currently feeding
           // the router. Fetch that DJ's latest stored AI result.
           try {
-            const username = selectedIdentity.replace(/^@/, "");
+            const username = selectedIdentity.replace(/^username:/i, "").replace(/^@/, "");
             const response = await fetch(
               getFreshUrl(
                 "https://api.radiorrr.com/api/ai-genre?username=" +
