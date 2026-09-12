@@ -2276,6 +2276,12 @@
         object-fit: contain;
       }
 
+      /* The blurred background is a second video decoder on desktop.
+         Mobile uses the main video only for reliable HLS playback. */
+      .radio-router-player .live-dj-background {
+        display: none;
+      }
+
       /* Hide only the mobile native fullscreen affordance; playback and
          the existing page-level UNMUTE control remain unchanged. */
       .radio-router-player #liveDjVideo::-webkit-media-controls-fullscreen-button {
@@ -3434,6 +3440,12 @@
       let nativePlaybackRecoveryTimer = null;
       let manualDJStreamFailureHandled = false;
 
+      // Mobile browsers (especially iOS/Safari) are much less tolerant of
+      // maintaining two simultaneous HLS decoders for the same live stream.
+      // The real player is always the only HLS connection on mobile.
+      const isMobileLivePlayer =
+        window.matchMedia("(max-width: 767px)").matches;
+
       function getFreshUrl(url) {
         const separator = url.indexOf("?") === -1 ? "?" : "&";
         return url + separator + "_rrr=" + Date.now();
@@ -3472,7 +3484,10 @@
 
         liveDjVideo.play().catch(() => {});
 
-        if (liveDjBackground) {
+        // On mobile the background video is deliberately disabled. This
+        // prevents a second HLS/native-HLS connection competing with the
+        // actual player for the same live relay.
+        if (liveDjBackground && !isMobileLivePlayer) {
           liveDjBackground.muted = true;
           liveDjBackground.play().catch(() => {});
         }
@@ -3886,9 +3901,9 @@
             resumeLivePlayback();
           });
 
-          // A second, muted copy supplies the blurred background fill.
-          // It uses the same relay URL but never shows controls or receives focus.
-          if (liveDjBackground) {
+          // Desktop keeps the blurred background copy for the existing
+          // visual treatment. Mobile deliberately uses ONE HLS connection.
+          if (liveDjBackground && !isMobileLivePlayer) {
             const bgHls = new Hls({
               enableWorker: true,
               lowLatencyMode: false,
@@ -3961,7 +3976,9 @@
           liveDjVideo.addEventListener("canplay", resumeLivePlayback, { once: true });
           resumeLivePlayback();
 
-          if (liveDjBackground) {
+          // Native HLS is common on Safari/iOS. Do not create a second
+          // native HLS stream on mobile; the main video is the only decoder.
+          if (liveDjBackground && !isMobileLivePlayer) {
             liveDjBackground.src = getFreshUrl(streamUrl);
             liveDjBackground.addEventListener("loadedmetadata", function () {
               liveDjBackground.play().catch(() => {});
@@ -4030,7 +4047,7 @@
           updateLiveDjMuteButton();
           liveDjVideo.play().catch(() => {});
 
-          if (liveDjBackground) {
+          if (liveDjBackground && !isMobileLivePlayer) {
             liveDjBackground.muted = true;
             liveDjBackground.play().catch(() => {});
           }
