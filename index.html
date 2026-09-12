@@ -3605,6 +3605,7 @@
       let currentLiveDJs = [];
       let currentRandomDJ = null;
       let currentFeaturedDJ = null;
+      let manualFeaturedDJIdentity = "";
 
       function getDJUsername(dj) {
         return String(
@@ -3774,8 +3775,8 @@
 
            const uniqueLiveDJs = mergeUniqueDJs(live);
            const uniqueFavouriteDJs = mergeUniqueDJs(favourites);
-           const liveFeaturedOverride = currentFeaturedDJ
-             ? uniqueLiveDJs.find(dj => getDJIdentity(dj) === getDJIdentity(currentFeaturedDJ))
+           const liveFeaturedOverride = manualFeaturedDJIdentity
+             ? uniqueLiveDJs.find(dj => getDJIdentity(dj) === manualFeaturedDJIdentity)
              : null;
 
           /*
@@ -3834,15 +3835,15 @@
           const routedDj = relayDj
             ? mergeDJRecords(relayDj, matchingLiveDj, matchingFavouriteDj)
             : null;
-          const selectedLiveDj = currentFeaturedDJ
-            ? uniqueLiveDJs.find(dj => getDJIdentity(dj) === getDJIdentity(currentFeaturedDJ))
-            : null;
-          const selectedFavouriteDj = currentFeaturedDJ
-            ? uniqueFavouriteDJs.find(dj => getDJIdentity(dj) === getDJIdentity(currentFeaturedDJ))
-            : null;
-          const selectedFeaturedDj = relayDj && selectedLiveDj
-            ? mergeDJRecords(currentFeaturedDJ, selectedLiveDj, selectedFavouriteDj)
-            : routedDj;
+           const selectedLiveDj = manualFeaturedDJIdentity
+             ? uniqueLiveDJs.find(dj => getDJIdentity(dj) === manualFeaturedDJIdentity)
+             : null;
+           const selectedFavouriteDj = manualFeaturedDJIdentity
+             ? uniqueFavouriteDJs.find(dj => getDJIdentity(dj) === manualFeaturedDJIdentity)
+             : null;
+           const selectedFeaturedDj = relayDj && selectedLiveDj
+             ? mergeDJRecords(selectedLiveDj, selectedFavouriteDj)
+             : routedDj;
           currentFeaturedDJ = selectedFeaturedDj;
           const featuredIdentity = selectedFeaturedDj
             ? getDJIdentity(selectedFeaturedDj)
@@ -4058,6 +4059,7 @@
           card.addEventListener("click", function (event) {
             if (event.target.closest(".dj-watch")) return;
 
+            manualFeaturedDJIdentity = getDJIdentity(dj);
             currentFeaturedDJ = dj;
             showLiveDjPlayer(dj);
             loadLiveDJs();
