@@ -701,34 +701,78 @@
       box-shadow: 0 0 9px rgba(var(--genre-neon-rgb, 34,211,238),0.36);
     }
 
-    .genre-neon-blue {
-      --genre-neon-rgb: 56,189,248;
-      --genre-text: #e0f2fe;
+    .genre-neon-hot-pink {
+      --genre-neon-rgb: 255,45,149;
+      --genre-text: #ffd6ec;
+    }
+
+    .genre-neon-electric-purple {
+      --genre-neon-rgb: 183,95,255;
+      --genre-text: #f2d9ff;
+    }
+
+    .genre-neon-electric-blue {
+      --genre-neon-rgb: 0,132,255;
+      --genre-text: #d7ecff;
     }
 
     .genre-neon-cyan {
-      --genre-neon-rgb: 34,211,238;
-      --genre-text: #cffafe;
+      --genre-neon-rgb: 34,255,255;
+      --genre-text: #d7ffff;
     }
 
-    .genre-neon-purple {
-      --genre-neon-rgb: 168,85,247;
-      --genre-text: #f3e8ff;
+    .genre-neon-acid-green {
+      --genre-neon-rgb: 178,255,0;
+      --genre-text: #efffbd;
     }
 
     .genre-neon-orange {
-      --genre-neon-rgb: 251,146,60;
-      --genre-text: #ffedd5;
+      --genre-neon-rgb: 255,125,24;
+      --genre-text: #ffe2c7;
     }
 
-    .genre-neon-green {
-      --genre-neon-rgb: 74,222,128;
-      --genre-text: #dcfce7;
+    .genre-neon-blue {
+      --genre-neon-rgb: 41,182,255;
+      --genre-text: #d9f2ff;
+    }
+
+    .genre-neon-red {
+      --genre-neon-rgb: 255,45,85;
+      --genre-text: #ffd6de;
+    }
+
+    .genre-neon-violet {
+      --genre-neon-rgb: 139,92,246;
+      --genre-text: #ede4ff;
     }
 
     .genre-neon-yellow {
-      --genre-neon-rgb: 250,204,21;
-      --genre-text: #fef9c3;
+      --genre-neon-rgb: 255,239,0;
+      --genre-text: #fffbd1;
+    }
+
+    .genre-neon-aqua {
+      --genre-neon-rgb: 0,255,195;
+      --genre-text: #d3fff4;
+    }
+
+    .genre-neon-lime {
+      --genre-neon-rgb: 50,255,90;
+      --genre-text: #dcffe4;
+    }
+
+    .genre-neon-blue-purple {
+      --genre-neon-rgb: 106,90,255;
+      --genre-text: #e5e0ff;
+      border-color: rgba(34,211,238,0.72);
+      box-shadow:
+        0 0 8px rgba(34,211,238,0.3),
+        0 0 12px rgba(168,85,247,0.24);
+    }
+
+    .genre-neon-magenta {
+      --genre-neon-rgb: 255,0,255;
+      --genre-text: #ffd6ff;
     }
 
     .random-live-actions {
@@ -3171,12 +3215,21 @@
       }
 
       const GENRE_NEON_CLASS_MAP = [
-        { match: /house|garage|dance|club|techno|trance|edm|electro|disco/i, className: "genre-neon-blue" },
-        { match: /jungle|drum|bass|break|dub|reggae|dancehall/i, className: "genre-neon-green" },
-        { match: /hip|hop|rap|r.?n.?b|soul|funk|groove/i, className: "genre-neon-orange" },
-        { match: /pop|hyper|indie|rock|punk|new wave/i, className: "genre-neon-yellow" },
-        { match: /ambient|experimental|leftfield|psych|wave|synth/i, className: "genre-neon-purple" },
-        { match: /latin|afro|world|jazz|blues|folk/i, className: "genre-neon-cyan" }
+        { match: /\bdeep\s+house\b/i, className: "genre-neon-electric-purple" },
+        { match: /\bhouse\b/i, className: "genre-neon-hot-pink" },
+        { match: /\btechno\b/i, className: "genre-neon-electric-blue" },
+        { match: /\bpsy\s*trance\b|\bpsytrance\b/i, className: "genre-neon-acid-green" },
+        { match: /\btrance\b/i, className: "genre-neon-cyan" },
+        { match: /\bdrum\s*(?:&|and|\+)?\s*bass\b|\bdnb\b|\bd&b\b/i, className: "genre-neon-orange" },
+        { match: /\bdubstep\b/i, className: "genre-neon-blue" },
+        { match: /\bhardstyle\b/i, className: "genre-neon-red" },
+        { match: /\bdisco\b/i, className: "genre-neon-violet" },
+        { match: /\bfunk\b/i, className: "genre-neon-yellow" },
+        { match: /\bchill\b|\bdowntempo\b/i, className: "genre-neon-aqua" },
+        { match: /\bbreaks?\b|\bbreakbeat\b/i, className: "genre-neon-orange" },
+        { match: /\buk\s+garage\b|\bgarage\b/i, className: "genre-neon-lime" },
+        { match: /\bedm\b/i, className: "genre-neon-blue-purple" },
+        { match: /\bpop\b/i, className: "genre-neon-magenta" }
       ];
 
       function getGenreNeonClass(genre) {
