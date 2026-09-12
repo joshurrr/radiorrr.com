@@ -616,12 +616,16 @@
     }
 
     .random-live-header {
+      display: block;
+      margin-bottom: 0.45rem;
+    }
+
+    .random-live-heading-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 0.65rem 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 0.45rem;
+      min-width: 0;
     }
 
     .random-live-title {
@@ -803,6 +807,7 @@
       font-size: 0.9rem;
       font-weight: 900;
       line-height: 1;
+      white-space: nowrap;
       border-color: rgba(34,211,238,0.95);
       background: linear-gradient(135deg, rgba(34,211,238,0.28), rgba(168,85,247,0.3));
       box-shadow: 0 0 12px rgba(34,211,238,0.62), 0 0 22px rgba(168,85,247,0.42);
@@ -2208,14 +2213,16 @@
         <div id="randomLiveDj" class="random-live-dj">
 
           <div class="random-live-header">
-            <div class="random-live-title">🔴 LIVE DJ ROUTER</div>
+            <div class="random-live-heading-row">
+              <div class="random-live-title">🔴 LIVE DJ ROUTER</div>
 
-            <div class="random-live-audio-actions">
-              <button id="liveDjUnmute"
-                      class="random-live-button random-live-audio-toggle"
-                      type="button">
-                🔊 UNMUTE LIVE
-              </button>
+              <div class="random-live-audio-actions">
+                <button id="liveDjUnmute"
+                        class="random-live-button random-live-audio-toggle"
+                        type="button">
+                  🔊 UNMUTE LIVE
+                </button>
+              </div>
             </div>
 
             <div class="random-live-now-playing">
