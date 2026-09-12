@@ -607,11 +607,11 @@
       padding: 0.65rem;
       border-radius: 16px;
       background:
-        radial-gradient(circle at top left, rgba(255,0,102,0.22), transparent 55%),
-        radial-gradient(circle at bottom right, rgba(56,189,248,0.14), transparent 55%),
+        radial-gradient(circle at top left, rgba(34,211,238,0.18), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(250,204,21,0.12), transparent 55%),
         rgba(7,10,25,0.96);
-      border: 1px solid rgba(248,113,113,0.75);
-      box-shadow: 0 0 18px rgba(255,0,102,0.35), 0 0 28px rgba(129,140,248,0.18);
+      border: 1px solid rgba(34,211,238,0.68);
+      box-shadow: 0 0 18px rgba(34,211,238,0.28), 0 0 28px rgba(168,85,247,0.2);
       text-align: left;
     }
 
@@ -628,7 +628,7 @@
       font-size: 1.05rem;
       font-weight: 800;
       color: #fff;
-      text-shadow: 0 0 8px rgba(255,0,102,0.7);
+      text-shadow: 0 0 8px rgba(34,211,238,0.72);
       white-space: nowrap;
     }
 
@@ -638,8 +638,8 @@
       text-align: right;
       font-size: 0.78rem;
       font-weight: 700;
-      color: #f9a8d4;
-      text-shadow: 0 0 6px rgba(129,140,248,0.55);
+      color: #fde68a;
+      text-shadow: 0 0 6px rgba(34,211,238,0.5);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -684,18 +684,51 @@
       white-space: nowrap;
     }
 
-    .random-live-genre {
+    .random-live-genre,
+    .dj-genre-pill {
       display: inline-block;
       padding: 0.18rem 0.48rem;
       border-radius: 999px;
-      border: 1px solid rgba(129,140,248,0.48);
-      background: rgba(24,31,60,0.72);
-      color: #c7c7ff;
+      border: 1px solid rgba(var(--genre-neon-rgb, 34,211,238),0.7);
+      background:
+        linear-gradient(135deg, rgba(var(--genre-neon-rgb, 34,211,238),0.22), rgba(7,10,25,0.78));
+      color: var(--genre-text, #e0f2fe);
       font-size: 0.68rem;
       font-weight: 800;
       letter-spacing: 0.04em;
       text-transform: uppercase;
       flex: 0 0 auto;
+      box-shadow: 0 0 9px rgba(var(--genre-neon-rgb, 34,211,238),0.36);
+    }
+
+    .genre-neon-blue {
+      --genre-neon-rgb: 56,189,248;
+      --genre-text: #e0f2fe;
+    }
+
+    .genre-neon-cyan {
+      --genre-neon-rgb: 34,211,238;
+      --genre-text: #cffafe;
+    }
+
+    .genre-neon-purple {
+      --genre-neon-rgb: 168,85,247;
+      --genre-text: #f3e8ff;
+    }
+
+    .genre-neon-orange {
+      --genre-neon-rgb: 251,146,60;
+      --genre-text: #ffedd5;
+    }
+
+    .genre-neon-green {
+      --genre-neon-rgb: 74,222,128;
+      --genre-text: #dcfce7;
+    }
+
+    .genre-neon-yellow {
+      --genre-neon-rgb: 250,204,21;
+      --genre-text: #fef9c3;
     }
 
     .random-live-actions {
@@ -915,7 +948,7 @@
       font-size: 1.25rem;
       font-weight: 800;
       color: #ffffff;
-      text-shadow: 0 0 8px rgba(255, 0, 102, 0.65);
+      text-shadow: 0 0 8px rgba(34,211,238,0.65);
     }
 
     .live-refresh {
@@ -929,9 +962,9 @@
     }
 
     .live-refresh:hover {
-      border-color: #ff0066;
+      border-color: #22d3ee;
       color: #ffffff;
-      box-shadow: 0 0 10px rgba(255,0,102,0.55);
+      box-shadow: 0 0 10px rgba(34,211,238,0.55);
     }
 
     .live-djs-grid {
@@ -944,10 +977,11 @@
       padding: 1.1rem;
       border-radius: 14px;
       background:
-        radial-gradient(circle at top left, rgba(255,0,102,0.18), transparent 55%),
+        radial-gradient(circle at top left, rgba(56,189,248,0.14), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(251,146,60,0.1), transparent 58%),
         rgba(7,10,25,0.95);
-      border: 1px solid rgba(248,113,113,0.5);
-      box-shadow: 0 0 12px rgba(255,0,102,0.2);
+      border: 1px solid rgba(34,211,238,0.42);
+      box-shadow: 0 0 12px rgba(34,211,238,0.18);
       text-align: left;
     }
 
@@ -1026,6 +1060,10 @@
     .dj-status-row .dj-watch {
       flex: 0 0 auto;
       white-space: nowrap;
+      padding: 0.38rem 0.68rem;
+      min-height: 30px;
+      font-size: 0.7rem;
+      line-height: 1.1;
     }
 
     .dj-live-dot {
@@ -1045,6 +1083,10 @@
     }
 
     .dj-genre {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.3rem;
       color: #c7c7ff;
       font-size: 0.72rem;
       line-height: 1.3;
@@ -1062,18 +1104,18 @@
       display: inline-block;
       padding: 0.5rem 0.9rem;
       border-radius: 999px;
-      background: linear-gradient(135deg, #ff0066, #4338ca);
+      background: linear-gradient(135deg, #22d3ee, #7c3aed 52%, #fb923c);
       border: 1px solid rgba(255,255,255,0.25);
       color: #ffffff;
       text-decoration: none;
       font-weight: 800;
-      box-shadow: 0 0 10px rgba(255,0,102,0.45);
+      box-shadow: 0 0 10px rgba(34,211,238,0.4);
     }
 
     .dj-watch:hover {
       box-shadow:
-        0 0 14px rgba(255,0,102,0.8),
-        0 0 20px rgba(129,140,248,0.6);
+        0 0 14px rgba(34,211,238,0.68),
+        0 0 20px rgba(251,146,60,0.42);
       transform: translateY(-1px);
     }
 
@@ -1582,7 +1624,7 @@
       #randomLiveDj .random-live-dj-profile-label {
         display: block;
         margin-bottom: 0.28rem;
-        color: #f9a8d4;
+        color: #fde68a;
         font-size: 0.68rem;
         font-weight: 800;
         letter-spacing: 0.08em;
@@ -1742,6 +1784,10 @@
       .dj-watch,
       .kick {
         min-height: 44px;
+      }
+
+      .dj-status-row .dj-watch {
+        min-height: 34px;
       }
 
       .nav-tabs a,
@@ -3124,6 +3170,27 @@
         );
       }
 
+      const GENRE_NEON_CLASS_MAP = [
+        { match: /house|garage|dance|club|techno|trance|edm|electro|disco/i, className: "genre-neon-blue" },
+        { match: /jungle|drum|bass|break|dub|reggae|dancehall/i, className: "genre-neon-green" },
+        { match: /hip|hop|rap|r.?n.?b|soul|funk|groove/i, className: "genre-neon-orange" },
+        { match: /pop|hyper|indie|rock|punk|new wave/i, className: "genre-neon-yellow" },
+        { match: /ambient|experimental|leftfield|psych|wave|synth/i, className: "genre-neon-purple" },
+        { match: /latin|afro|world|jazz|blues|folk/i, className: "genre-neon-cyan" }
+      ];
+
+      function getGenreNeonClass(genre) {
+        const text = String(genre || "");
+        const mapped = GENRE_NEON_CLASS_MAP.find(item => item.match.test(text));
+        return mapped ? mapped.className : "genre-neon-cyan";
+      }
+
+      function getGenrePillHtml(genre) {
+        return '<span class="dj-genre-pill ' + getGenreNeonClass(genre) + '">' +
+          escapeHtml(String(genre)) +
+          '</span>';
+      }
+
       function updateLiveDjGenres(dj) {
         if (!randomLiveDjGenres) return;
 
@@ -3136,7 +3203,7 @@
 
         genres.slice(0, 5).forEach(genre => {
           const tag = document.createElement("span");
-          tag.className = "random-live-genre";
+          tag.className = "random-live-genre " + getGenreNeonClass(genre);
           tag.textContent = genre;
           randomLiveDjGenres.appendChild(tag);
         });
@@ -3806,8 +3873,8 @@
         const actionText = isActuallyLive ? "▶ WATCH LIVE" : "VIEW TIKTOK";
         const actionUrl = isActuallyLive ? liveUrl : profileUrl;
         const genres = getStoredDJGenres(dj);
-        const genreText = genres.length
-          ? genres.slice(0, 5).join(" • ")
+        const genreHtml = genres.length
+          ? genres.slice(0, 5).map(getGenrePillHtml).join("")
           : "Genre: Detecting...";
         const liveStatusHtml =
           '<div class="dj-live" style="' +
@@ -3830,10 +3897,10 @@
           : "";
 
         if (isActuallyLive) {
-          card.style.borderColor = "rgba(248,113,113,0.9)";
-          card.style.boxShadow = "0 0 18px rgba(255,0,102,0.4)";
+          card.style.borderColor = "rgba(34,211,238,0.82)";
+          card.style.boxShadow = "0 0 18px rgba(34,211,238,0.36)";
         } else {
-          card.style.borderColor = "rgba(129,140,248,0.45)";
+          card.style.borderColor = "rgba(168,85,247,0.45)";
         }
 
         const profilePic =
@@ -3857,7 +3924,7 @@
                 ? '<div class="dj-status-row">' + liveStatusHtml + watchHtml + '</div>'
                 : liveStatusHtml) +
               '<div class="dj-name">' + escapeHtml(String(name)) + '</div>' +
-              '<div class="dj-genre">🎵 ' + escapeHtml(genreText) + '</div>' +
+              '<div class="dj-genre">🎵 ' + genreHtml + '</div>' +
             '</div>' +
           '</div>' +
           metaHtml +
