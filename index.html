@@ -3802,7 +3802,7 @@
                   String(activeLiveUsername).toLowerCase()
               ) {
                 showLiveDjPlayer(liveFeaturedOverride);
-             } else if (routerUsername) {
+              } else if (!manualFeaturedDJIdentity && routerUsername) {
                if (
                  activeLiveStreamKey !== routerKey
                ) {
@@ -3822,10 +3822,10 @@
                 updateLiveDjProfile(relayDj);
                 randomLiveDj.style.display = "block";
               }
-            } else {
+            } else if (!manualFeaturedDJIdentity) {
               showRadioFallback();
             }
-          } else {
+          } else if (!manualFeaturedDJIdentity) {
             // A successful no-relay response is authoritative. Do not keep
             // displaying the previous DJ while the router is offline.
             showRadioFallback();
