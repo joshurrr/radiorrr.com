@@ -1306,7 +1306,53 @@
     }
 
     /* SCHEDULE */
+    .schedule-table {
+      margin-top: 1rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(129, 140, 248, 0.15);
+    }
+
+    .schedule-row {
+      display: grid;
+      grid-template-columns: 1.05fr 1.15fr 2fr;
+      gap: 1rem;
+      align-items: center;
+      padding: 0.78rem 0;
+      border-bottom: 1px solid rgba(129, 140, 248, 0.12);
+      color: #f5f5f5;
+      font-size: 0.84rem;
+    }
+
+    .schedule-row > div:first-child {
+      color: #ffffff;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .schedule-row > div:nth-child(2) {
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    .schedule-row > div:nth-child(3) {
+      color: #e0e0ff;
+    }
+
+    .schedule-header {
+      padding-top: 0.2rem;
+      padding-bottom: 0.55rem;
+      border-bottom: 1px solid rgba(129, 140, 248, 0.25);
+      color: #ffffff;
+      font-weight: 800;
+    }
+
+    .schedule-header > div {
+      color: #ffffff !important;
+      font-weight: 800 !important;
+    }
+
     .events-list {
+
       text-align: left;
       margin-top: 1rem;
       padding-top: 0.5rem;
@@ -1881,6 +1927,22 @@
     }
 
     @media (max-width: 720px) {
+      .schedule-row {
+        grid-template-columns: 0.9fr 1.1fr 1.7fr;
+        gap: 0.55rem;
+        font-size: 0.72rem;
+        line-height: 1.35;
+      }
+
+      .schedule-row > div {
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .schedule-header {
+        font-size: 0.7rem;
+      }
+
       .hero {
         flex-direction: column;
         align-items: center;
@@ -2444,54 +2506,51 @@
         <span>Radio RRR Schedule</span><br />
 
         <small>
-          Daily rotation across Morning, Afternoon, and Evening blocks.
+          Daily 24-hour programming built around music genres and listening moods.
         </small>
 
-        <div class="events-list">
+        <div class="events-list schedule-table">
 
-          <div class="event-item">
-            <h4>Morning – Neon Sunrise Chill</h4>
-
-            <p>
-              <span class="event-date">06:00 – 12:00</span>
-            </p>
-
-            <p>
-              Morning playlist: chilled synthwave, soft electro, lofi textures
-              and relaxed 80s-inspired cuts for coffee, commute, and easing
-              into the day.
-            </p>
+          <div class="schedule-row schedule-header">
+            <div>Time</div>
+            <div>RRR programming</div>
+            <div>Target genres</div>
           </div>
 
-          <div class="event-item">
-
-            <h4>Afternoon – Daydrive Synthwave</h4>
-
-            <p>
-              <span class="event-date">12:00 – 18:00</span>
-            </p>
-
-            <p>
-              Afternoon playlist: mid-tempo outrun, retrowave and synth
-              bangers for work, driving, and daytime sessions.
-            </p>
-
+          <div class="schedule-row">
+            <div>00:00–04:00</div>
+            <div>🌙 Night Drive</div>
+            <div>Electro · Techno · Dark Synth · D&amp;B</div>
           </div>
 
-          <div class="event-item">
+          <div class="schedule-row">
+            <div>04:00–08:00</div>
+            <div>🌅 Sunrise</div>
+            <div>Chill · Downtempo · Synthwave · Ambient</div>
+          </div>
 
-            <h4>Evening & Night – Night Drive Electro</h4>
+          <div class="schedule-row">
+            <div>08:00–12:00</div>
+            <div>☀️ Morning</div>
+            <div>80s · Synthwave · Chill Electro</div>
+          </div>
 
-            <p>
-              <span class="event-date">18:00 – 06:00</span>
-            </p>
+          <div class="schedule-row">
+            <div>12:00–16:00</div>
+            <div>🚗 Day Drive</div>
+            <div>House · Deep House · Progressive</div>
+          </div>
 
-            <p>
-              Evening/night playlist: heavier electro, darker synth, and
-              high-energy remixes tuned for late-night coding, neon skylines,
-              and insomnia.
-            </p>
+          <div class="schedule-row">
+            <div>16:00–20:00</div>
+            <div>⚡ Afternoon</div>
+            <div>Electro · House · Tech House · Trance</div>
+          </div>
 
+          <div class="schedule-row">
+            <div>20:00–00:00</div>
+            <div>🔥 Prime Time</div>
+            <div>Electro · Techno · Progressive · Trance</div>
           </div>
 
         </div>
