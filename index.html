@@ -3173,6 +3173,7 @@
       let liveDjRequestId = 0;
       let liveDjRequestController = null;
       let nativePlaybackRecoveryTimer = null;
+      let manualDJStreamFailureHandled = false;
 
       function getFreshUrl(url) {
         const separator = url.indexOf("?") === -1 ? "?" : "&";
@@ -3229,6 +3230,46 @@
           liveDjVideo.addEventListener("loadedmetadata", resumeLivePlayback, { once: true });
           resumeLivePlayback();
         }, 8000);
+      }
+
+      function handleManualDJStreamFailure(data) {
+        const isManualStream =
+          manualFeaturedDJIdentity &&
+          activeLiveStreamUrl.indexOf("/api/live-stream?dj=") !== -1;
+        const isManifestFailure = data && (
+          data.response && data.response.code === 503 ||
+          data.details === Hls.ErrorDetails.MANIFEST_LOAD_ERROR ||
+          data.details === Hls.ErrorDetails.MANIFEST_LOAD_TIMEOUT
+        );
+
+        if (!isManualStream || !isManifestFailure || manualDJStreamFailureHandled) {
+          return false;
+        }
+
+        manualDJStreamFailureHandled = true;
+
+        if (nativePlaybackRecoveryTimer) {
+          window.clearTimeout(nativePlaybackRecoveryTimer);
+          nativePlaybackRecoveryTimer = null;
+        }
+
+        if (window.radioRrrHls) {
+          window.radioRrrHls.destroy();
+          window.radioRrrHls = null;
+        }
+
+        if (window.radioRrrHlsBackground) {
+          window.radioRrrHlsBackground.destroy();
+          window.radioRrrHlsBackground = null;
+        }
+
+        manualFeaturedDJIdentity = "";
+        manualFeaturedDJMissingCount = 0;
+        activeLiveUsername = "";
+        activeLiveStreamKey = "";
+        activeLiveStreamUrl = "";
+        loadLiveDJs();
+        return true;
       }
 
       function getDJGenres(dj) {
@@ -3458,19 +3499,7 @@
             bgHls.on(Hls.Events.ERROR, function (event, data) {
               console.warn("Radio RRR background HLS error:", data);
 
-              if (
-                data.fatal &&
-                data.response &&
-                data.response.code === 503 &&
-                manualFeaturedDJIdentity &&
-                activeLiveStreamUrl.indexOf("/api/live-stream?dj=") !== -1
-              ) {
-                bgHls.destroy();
-                if (window.radioRrrHlsBackground === bgHls) {
-                  window.radioRrrHlsBackground = null;
-                }
-                return;
-              }
+              if (handleManualDJStreamFailure(data)) return;
 
               if (data.details === Hls.ErrorDetails.BUFFER_STALLED_ERROR) {
                 try {
@@ -3492,26 +3521,7 @@
           hls.on(Hls.Events.ERROR, function (event, data) {
             console.warn("Radio RRR HLS error:", data);
 
-            if (
-              data.fatal &&
-              data.response &&
-              data.response.code === 503 &&
-              manualFeaturedDJIdentity &&
-              activeLiveStreamUrl.indexOf("/api/live-stream?dj=") !== -1
-            ) {
-              hls.destroy();
-              if (window.radioRrrHls === hls) {
-                window.radioRrrHls = null;
-              }
-              if (window.radioRrrHlsBackground) {
-                window.radioRrrHlsBackground.destroy();
-                window.radioRrrHlsBackground = null;
-              }
-              manualFeaturedDJIdentity = "";
-              manualFeaturedDJMissingCount = 0;
-              loadLiveDJs();
-              return;
-            }
+            if (handleManualDJStreamFailure(data)) return;
 
             // A temporary buffer stall is recoverable. Keep the player alive
             // and let hls.js load more media instead of treating it as a stop.
@@ -4120,6 +4130,7 @@
 
             manualFeaturedDJIdentity = getDJIdentity(dj);
             manualFeaturedDJMissingCount = 0;
+            manualDJStreamFailureHandled = false;
             currentFeaturedDJ = dj;
             showLiveDjPlayer(dj);
             loadLiveDJs();
