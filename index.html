@@ -4596,42 +4596,51 @@
         resumeLivePlayback();
       });
 
-      function getDayPeriod(hour) {
+      function getCurrentScheduleBlock(hour) {
 
-        if (hour >= 6 && hour < 12)
-          return "Morning";
-
-        if (hour >= 12 && hour < 18)
-          return "Afternoon";
-
-        return "Evening";
-
-      }
-
-      function getBlockLabel(dayName, period) {
-
-        const labels = {
-
-          Morning:
-            "Neon Sunrise Chill",
-
-          Afternoon:
-            "Daydrive Synthwave",
-
-          Evening:
-            "Night Drive Electro"
-
-        };
-
-        const base =
-          labels[period] || "Live Mix";
+        const blocks = [
+          {
+            start: 0,
+            end: 4,
+            name: "Night Drive",
+            genres: "Electro · Techno · Dark Synth · D&B"
+          },
+          {
+            start: 4,
+            end: 8,
+            name: "Sunrise",
+            genres: "Chill · Downtempo · Synthwave · Ambient"
+          },
+          {
+            start: 8,
+            end: 12,
+            name: "Morning",
+            genres: "80s · Synthwave · Chill Electro"
+          },
+          {
+            start: 12,
+            end: 16,
+            name: "Day Drive",
+            genres: "House · Deep House · Progressive"
+          },
+          {
+            start: 16,
+            end: 20,
+            name: "Afternoon",
+            genres: "Electro · House · Tech House · Trance"
+          },
+          {
+            start: 20,
+            end: 24,
+            name: "Prime Time",
+            genres: "Electro · Techno · Progressive · Trance"
+          }
+        ];
 
         return (
-          dayName +
-          " " +
-          period +
-          " – " +
-          base
+          blocks.find(function (block) {
+            return hour >= block.start && hour < block.end;
+          }) || blocks[0]
         );
 
       }
@@ -4654,16 +4663,15 @@
         const dayName =
           days[now.getDay()];
 
-        const period =
-          getDayPeriod(
+        const block =
+          getCurrentScheduleBlock(
             now.getHours()
           );
 
         const blockLabel =
-          getBlockLabel(
-            dayName,
-            period
-          );
+          dayName +
+          " – " +
+          block.name;
 
         if (heroNowEl) {
           heroNowEl.textContent =
@@ -4676,7 +4684,7 @@
 
       setInterval(
         updateTitles,
-        15 * 60 * 1000
+        60 * 1000
       );
 
       function setStatus(msg) {
