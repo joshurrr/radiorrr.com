@@ -1697,8 +1697,9 @@
         grid-template-columns: minmax(0, 1.65fr) minmax(300px, 0.75fr);
         grid-template-areas:
           "player header"
-          "player info";
-        grid-template-rows: auto 1fr;
+          "player info"
+          "player ai";
+        grid-template-rows: auto auto auto;
         gap: 1.25rem;
         align-items: start;
         align-content: start;
@@ -1842,10 +1843,26 @@
         margin-top: 0.1rem;
       }
 
+      /* On phones the live experience stacks naturally:
+         video first, DJ card second, detected genres last. */
+      #randomLiveDj .live-genres-detected {
+        grid-area: auto;
+        width: 100%;
+        margin: 0;
+        align-self: stretch;
+        box-sizing: border-box;
+      }
+
       #randomLiveDj .radio-router-player {
         grid-area: player;
         aspect-ratio: 16 / 10;
         min-height: 0;
+      }
+
+      #randomLiveDj .live-genres-detected {
+        grid-area: ai;
+        margin: 0;
+        align-self: start;
       }
 
       #liveDjsList {
@@ -1977,6 +1994,30 @@
       .random-live-header,
       .random-live-dj-row {
         gap: 0.55rem;
+      }
+
+      /* Keep detected genres compact and readable on a phone. */
+      #randomLiveDj .live-genres-detected {
+        padding: 0.75rem 0.8rem;
+        border-radius: 12px;
+      }
+
+      #randomLiveDj .live-genres-detected-title {
+        margin-bottom: 0.5rem;
+      }
+
+      #randomLiveDj .live-genre-detected-row {
+        grid-template-columns: minmax(78px, 0.9fr) minmax(70px, 2fr) 38px;
+        gap: 0.45rem;
+      }
+
+      #randomLiveDj .live-genre-detected-name,
+      #randomLiveDj .live-genre-detected-confidence {
+        font-size: 0.68rem;
+      }
+
+      #randomLiveDj .live-genres-detected-status {
+        font-size: 0.65rem;
       }
 
       #randomLiveDj .random-live-dj-profile {
@@ -2382,9 +2423,7 @@
             </div>
           </div>
 
-        </div>
-
-        <!-- LIVE GENRES DETECTED -->
+                    <!-- LIVE GENRES DETECTED -->
         <section id="liveGenresDetected" class="live-genres-detected" aria-live="polite">
           <div class="live-genres-detected-title">
             <strong>LIVE GENRES DETECTED</strong>
@@ -2392,6 +2431,8 @@
           </div>
           <div id="liveGenresDetectedList" class="live-genres-detected-list"></div>
         </section>
+
+        </div>
 
         <div id="liveDjsList" class="live-djs-grid">
           <div class="live-empty">Checking who's live…</div>
