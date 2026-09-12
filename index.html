@@ -2427,7 +2427,7 @@
         <section id="liveGenresDetected" class="live-genres-detected" aria-live="polite">
           <div class="live-genres-detected-title">
             <strong>LIVE GENRES DETECTED</strong>
-            <span id="liveGenresDetectedStatus" class="live-genres-detected-status">Analysing live audio…</span>
+            <span id="liveGenresDetectedStatus" class="live-genres-detected-status">Live Genre Refresh in 30 sec</span>
           </div>
           <div id="liveGenresDetectedList" class="live-genres-detected-list"></div>
         </section>
@@ -3330,6 +3330,9 @@
       let userRequestedAudio = false;
       let liveDjRequestId = 0;
       let liveGenreRequestId = 0;
+      const LIVE_GENRE_REFRESH_SECONDS = 30;
+      let liveGenreRefreshDeadline = Date.now() + (LIVE_GENRE_REFRESH_SECONDS * 1000);
+      let liveGenreCountdownTimer = null;
       let liveDjRequestController = null;
       let nativePlaybackRecoveryTimer = null;
       let manualDJStreamFailureHandled = false;
@@ -3338,6 +3341,34 @@
         const separator = url.indexOf("?") === -1 ? "?" : "&";
         return url + separator + "_rrr=" + Date.now();
       }
+
+      function updateLiveGenreRefreshCountdown() {
+        if (!liveGenresDetectedStatus) return;
+
+        const remaining = Math.max(
+          0,
+          Math.ceil((liveGenreRefreshDeadline - Date.now()) / 1000)
+        );
+
+        liveGenresDetectedStatus.textContent =
+          "Live Genre Refresh in " + remaining + " sec";
+      }
+
+      function resetLiveGenreRefreshCountdown() {
+        liveGenreRefreshDeadline =
+          Date.now() + (LIVE_GENRE_REFRESH_SECONDS * 1000);
+
+        updateLiveGenreRefreshCountdown();
+
+        if (!liveGenreCountdownTimer) {
+          liveGenreCountdownTimer = window.setInterval(
+            updateLiveGenreRefreshCountdown,
+            1000
+          );
+        }
+      }
+
+      updateLiveGenreRefreshCountdown();
 
       function resumeLivePlayback() {
         if (!liveDjVideo || document.hidden) return;
@@ -3553,16 +3584,9 @@
           liveGenresDetectedList.appendChild(row);
         });
 
-        if (liveGenresDetectedStatus) {
-          const detectedAt = genreData.detected_at
-            ? new Date(genreData.detected_at)
-            : null;
-
-          liveGenresDetectedStatus.textContent =
-            detectedAt && !Number.isNaN(detectedAt.getTime())
-              ? "Current live audio"
-              : "Current live audio";
-        }
+        // Genre data has successfully refreshed. Restart the visible
+        // countdown from 30 seconds at the moment the new result is rendered.
+        resetLiveGenreRefreshCountdown();
       }
 
       function getDJGenres(dj) {
