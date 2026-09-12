@@ -3613,6 +3613,7 @@
       let currentRandomDJ = null;
       let currentFeaturedDJ = null;
       let manualFeaturedDJIdentity = "";
+      let manualFeaturedDJMissingCount = 0;
 
       function getDJUsername(dj) {
         return String(
@@ -3785,6 +3786,18 @@
            const liveFeaturedOverride = manualFeaturedDJIdentity
              ? uniqueLiveDJs.find(dj => getDJIdentity(dj) === manualFeaturedDJIdentity)
              : null;
+
+           if (manualFeaturedDJIdentity) {
+             if (liveFeaturedOverride) {
+               manualFeaturedDJMissingCount = 0;
+             } else {
+               manualFeaturedDJMissingCount += 1;
+               if (manualFeaturedDJMissingCount >= 2) {
+                 manualFeaturedDJIdentity = "";
+                 manualFeaturedDJMissingCount = 0;
+               }
+             }
+           }
 
           /*
            * IMPORTANT: the backend relay may deliberately choose a DJ that
@@ -4071,6 +4084,7 @@
             if (event.target.closest(".dj-watch")) return;
 
             manualFeaturedDJIdentity = getDJIdentity(dj);
+            manualFeaturedDJMissingCount = 0;
             currentFeaturedDJ = dj;
             showLiveDjPlayer(dj);
             loadLiveDJs();
