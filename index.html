@@ -3168,6 +3168,7 @@
 
       let activeLiveUsername = "";
       let activeLiveStreamKey = "";
+      let activeLiveStreamUrl = "";
       let userRequestedAudio = false;
       let liveDjRequestId = 0;
       let liveDjRequestController = null;
@@ -3221,7 +3222,7 @@
 
           // Safari's native HLS player can remain in a waiting state after a
           // playlist refresh. Recreate only that source, never the DJ label.
-          const streamUrl = getFreshUrl(RADIO_ROUTER_STREAM_URL);
+          const streamUrl = getFreshUrl(activeLiveStreamUrl || RADIO_ROUTER_STREAM_URL);
           liveDjVideo.pause();
           liveDjVideo.src = streamUrl;
           liveDjVideo.load();
@@ -3370,9 +3371,14 @@
         const username = getDJUsername(dj);
         const name = dj.name || dj.username || dj.display_name || "LIVE DJ";
         const liveUrl = getDJLiveUrl(dj);
+        const streamUrl = manualFeaturedDJIdentity &&
+          getDJIdentity(dj) === manualFeaturedDJIdentity
+          ? RADIO_ROUTER_STREAM_URL + "?dj=" + encodeURIComponent(username)
+          : RADIO_ROUTER_STREAM_URL;
 
         activeLiveUsername = username;
         activeLiveStreamKey = username || String(name);
+        activeLiveStreamUrl = streamUrl;
         liveDjVideo.autoplay = true;
         liveDjVideo.playsInline = true;
         liveDjVideo.muted = !userRequestedAudio;
@@ -3418,7 +3424,7 @@
           });
 
           window.radioRrrHls = hls;
-          hls.loadSource(getFreshUrl(RADIO_ROUTER_STREAM_URL));
+          hls.loadSource(getFreshUrl(streamUrl));
           hls.attachMedia(liveDjVideo);
 
           hls.on(Hls.Events.MANIFEST_PARSED, function () {
@@ -3442,7 +3448,7 @@
             });
 
             window.radioRrrHlsBackground = bgHls;
-            bgHls.loadSource(getFreshUrl(RADIO_ROUTER_STREAM_URL));
+            bgHls.loadSource(getFreshUrl(streamUrl));
             bgHls.attachMedia(liveDjBackground);
 
             bgHls.on(Hls.Events.MANIFEST_PARSED, function () {
@@ -3491,13 +3497,13 @@
           });
 
         } else if (liveDjVideo.canPlayType("application/vnd.apple.mpegurl")) {
-          liveDjVideo.src = getFreshUrl(RADIO_ROUTER_STREAM_URL);
+          liveDjVideo.src = getFreshUrl(streamUrl);
           liveDjVideo.addEventListener("loadedmetadata", resumeLivePlayback, { once: true });
           liveDjVideo.addEventListener("canplay", resumeLivePlayback, { once: true });
           resumeLivePlayback();
 
           if (liveDjBackground) {
-            liveDjBackground.src = getFreshUrl(RADIO_ROUTER_STREAM_URL);
+            liveDjBackground.src = getFreshUrl(streamUrl);
             liveDjBackground.addEventListener("loadedmetadata", function () {
               liveDjBackground.play().catch(() => {});
             }, { once: true });
@@ -3522,6 +3528,7 @@
       function showRadioFallback() {
         activeLiveUsername = "";
         activeLiveStreamKey = "";
+        activeLiveStreamUrl = "";
 
         if (nativePlaybackRecoveryTimer) {
           window.clearTimeout(nativePlaybackRecoveryTimer);
