@@ -3458,6 +3458,20 @@
             bgHls.on(Hls.Events.ERROR, function (event, data) {
               console.warn("Radio RRR background HLS error:", data);
 
+              if (
+                data.fatal &&
+                data.response &&
+                data.response.code === 503 &&
+                manualFeaturedDJIdentity &&
+                activeLiveStreamUrl.indexOf("/api/live-stream?dj=") !== -1
+              ) {
+                bgHls.destroy();
+                if (window.radioRrrHlsBackground === bgHls) {
+                  window.radioRrrHlsBackground = null;
+                }
+                return;
+              }
+
               if (data.details === Hls.ErrorDetails.BUFFER_STALLED_ERROR) {
                 try {
                   bgHls.startLoad();
@@ -3477,6 +3491,27 @@
 
           hls.on(Hls.Events.ERROR, function (event, data) {
             console.warn("Radio RRR HLS error:", data);
+
+            if (
+              data.fatal &&
+              data.response &&
+              data.response.code === 503 &&
+              manualFeaturedDJIdentity &&
+              activeLiveStreamUrl.indexOf("/api/live-stream?dj=") !== -1
+            ) {
+              hls.destroy();
+              if (window.radioRrrHls === hls) {
+                window.radioRrrHls = null;
+              }
+              if (window.radioRrrHlsBackground) {
+                window.radioRrrHlsBackground.destroy();
+                window.radioRrrHlsBackground = null;
+              }
+              manualFeaturedDJIdentity = "";
+              manualFeaturedDJMissingCount = 0;
+              loadLiveDJs();
+              return;
+            }
 
             // A temporary buffer stall is recoverable. Keep the player alive
             // and let hls.js load more media instead of treating it as a stop.
