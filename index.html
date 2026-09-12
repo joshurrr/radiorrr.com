@@ -3329,6 +3329,7 @@
       let activeLiveStreamUrl = "";
       let userRequestedAudio = false;
       let liveDjRequestId = 0;
+      let liveGenreRequestId = 0;
       let liveDjRequestController = null;
       let nativePlaybackRecoveryTimer = null;
       let manualDJStreamFailureHandled = false;
@@ -3430,42 +3431,73 @@
         return true;
       }
 
-      function updateLiveGenresDetected(aiGenre, featuredIdentity, relayIdentity) {
+      async function updateLiveGenresDetected(aiGenre, featuredIdentity, relayIdentity) {
         if (!liveGenresDetected || !liveGenresDetectedList) return;
 
-        // AI genre data belongs to the DJ currently feeding the Radio RRR
-        // router. Never display it against a manually selected DJ.
-        const isRouterDJ = Boolean(
-          relayIdentity &&
-          featuredIdentity &&
-          featuredIdentity === relayIdentity
-        );
+        const requestId = ++liveGenreRequestId;
+        const selectedIdentity = String(featuredIdentity || "").trim();
+        const routerIdentityValue = String(relayIdentity || "").trim();
 
-        if (!isRouterDJ) {
+        // Nothing is live/selected: hide the panel.
+        if (!selectedIdentity) {
           liveGenresDetected.style.display = "none";
           liveGenresDetectedList.innerHTML = "";
           return;
         }
 
-        // The panel stays visible while the detector is between updates.
-        // This makes the state obvious instead of making the whole panel
-        // disappear.
         liveGenresDetected.style.display = "block";
         liveGenresDetectedList.innerHTML = "";
 
-        if (!aiGenre || !Array.isArray(aiGenre.genres)) {
+        let genreData = null;
+
+        // The current router DJ already comes with its latest AI result
+        // from /api/live, so use that directly.
+        if (
+          routerIdentityValue &&
+          selectedIdentity === routerIdentityValue
+        ) {
+          genreData = aiGenre || null;
+        } else {
+          // A manually selected live DJ may not be the DJ currently feeding
+          // the router. Fetch that DJ's latest stored AI result.
+          try {
+            const username = selectedIdentity.replace(/^@/, "");
+            const response = await fetch(
+              getFreshUrl(
+                "https://api.radiorrr.com/api/ai-genre?username=" +
+                encodeURIComponent(username)
+              ),
+              {
+                cache: "no-store",
+                headers: {
+                  "Cache-Control": "no-cache",
+                  "Pragma": "no-cache"
+                }
+              }
+            );
+
+            if (response.ok) {
+              genreData = await response.json();
+            }
+          } catch (error) {
+            console.warn("Could not load stored AI genre data:", error);
+          }
+        }
+
+        // Ignore a result belonging to an older DJ selection.
+        if (requestId !== liveGenreRequestId) return;
+
+        if (!genreData || !Array.isArray(genreData.genres)) {
           if (liveGenresDetectedStatus) {
             liveGenresDetectedStatus.textContent = "Analysing live audio…";
           }
           return;
         }
 
-        const genres = aiGenre.genres
+        const genres = genreData.genres
           .map(item => {
             let confidence = Number(item && item.confidence);
 
-            // Detector normally sends 0–1 confidence. Be defensive if an
-            // upstream result ever arrives as 0–100.
             if (confidence > 1 && confidence <= 100) {
               confidence = confidence / 100;
             }
@@ -3522,7 +3554,14 @@
         });
 
         if (liveGenresDetectedStatus) {
-          liveGenresDetectedStatus.textContent = "Current live audio";
+          const detectedAt = genreData.detected_at
+            ? new Date(genreData.detected_at)
+            : null;
+
+          liveGenresDetectedStatus.textContent =
+            detectedAt && !Number.isNaN(detectedAt.getTime())
+              ? "Current live audio"
+              : "Current live audio";
         }
       }
 
@@ -4174,7 +4213,7 @@
             : "";
           const hasRelay = Boolean(selectedFeaturedDj && featuredIdentity);
 
-          updateLiveGenresDetected(
+          await updateLiveGenresDetected(
             aiGenre,
             featuredIdentity,
             routerIdentity
