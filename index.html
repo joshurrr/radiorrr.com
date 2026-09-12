@@ -3168,9 +3168,6 @@
       const liveGenresDetectedList =
         document.getElementById("liveGenresDetectedList");
 
-      // Prevent stale async genre lookups from overwriting a newer DJ selection.
-      let liveGenresRequestId = 0;
-
       const randomLiveDjFrame =
         document.getElementById("randomLiveDjFrame");
 
@@ -3433,85 +3430,51 @@
         return true;
       }
 
-      function renderLiveGenresDetected(aiGenre) {
-        if (!liveGenresDetected || !liveGenresDetectedList) return;
-
-        if (!aiGenre || !Array.isArray(aiGenre.genres)) {
-          liveGenresDetected.style.display = "none";
-          liveGenresDetectedList.innerHTML = "";
-          return;
-        }
-
-        const genres = aiGenre.genres
-          .map(item => ({
-            genre: String(item && item.genre || "").trim(),
-            confidence: Number(item && item.confidence)
-          }))
-          .filter(item =>
-            item.genre &&
-            Number.isFinite(item.confidence) &&
-            item.confidence > 0
-          )
-          .sort((a, b) => b.confidence - a.confidence)
-          .slice(0, 5);
-
-        if (!genres.length) {
-          liveGenresDetected.style.display = "none";
-          liveGenresDetectedList.innerHTML = "";
-          return;
-        }
-
-        const maxConfidence = Math.max(...genres.map(item => item.confidence), 0.01);
-        liveGenresDetectedList.innerHTML = "";
-
-        genres.forEach(item => {
-          const row = document.createElement("div");
-          row.className = "live-genre-detected-row";
-
-          const name = item.genre.replace(/^.*---/, "");
-          const percent = Math.round(item.confidence * 100);
-          const barWidth = Math.max(4, Math.min(100, (item.confidence / maxConfidence) * 100));
-
-          row.innerHTML =
-            '<span class="live-genre-detected-name" title="' +
-              escapeAttr(name) + '">' +
-              escapeHtml(name) +
-            '</span>' +
-            '<span class="live-genre-detected-bar" aria-hidden="true">' +
-              '<span style="width:' + barWidth.toFixed(1) + '%;"></span>' +
-            '</span>' +
-            '<span class="live-genre-detected-confidence">' +
-              percent + '%' +
-            '</span>';
-
-          liveGenresDetectedList.appendChild(row);
-        });
-
-        if (liveGenresDetectedStatus) {
-          liveGenresDetectedStatus.textContent = "Current live audio";
-        }
-
-        liveGenresDetected.style.display = "block";
-      }
-
       function updateLiveGenresDetected(aiGenre, featuredIdentity, relayIdentity) {
         if (!liveGenresDetected || !liveGenresDetectedList) return;
 
-        // The backend AI result describes the DJ currently feeding the router.
-        // If the visitor has manually selected another live DJ, do not show a
-        // mismatched genre result.
-        if (!aiGenre || !Array.isArray(aiGenre.genres) ||
-            !relayIdentity || featuredIdentity !== relayIdentity) {
+        // AI genre data belongs to the DJ currently feeding the Radio RRR
+        // router. Never display it against a manually selected DJ.
+        const isRouterDJ = Boolean(
+          relayIdentity &&
+          featuredIdentity &&
+          featuredIdentity === relayIdentity
+        );
+
+        if (!isRouterDJ) {
           liveGenresDetected.style.display = "none";
           liveGenresDetectedList.innerHTML = "";
           return;
         }
 
+        // The panel stays visible while the detector is between updates.
+        // This makes the state obvious instead of making the whole panel
+        // disappear.
+        liveGenresDetected.style.display = "block";
+        liveGenresDetectedList.innerHTML = "";
+
+        if (!aiGenre || !Array.isArray(aiGenre.genres)) {
+          if (liveGenresDetectedStatus) {
+            liveGenresDetectedStatus.textContent = "Analysing live audio…";
+          }
+          return;
+        }
+
         const genres = aiGenre.genres
-          .map(item => ({
-            genre: String(item && item.genre || "").trim(),
-            confidence: Number(item && item.confidence)
-          }))
+          .map(item => {
+            let confidence = Number(item && item.confidence);
+
+            // Detector normally sends 0–1 confidence. Be defensive if an
+            // upstream result ever arrives as 0–100.
+            if (confidence > 1 && confidence <= 100) {
+              confidence = confidence / 100;
+            }
+
+            return {
+              genre: String(item && item.genre || "").trim(),
+              confidence
+            };
+          })
           .filter(item =>
             item.genre &&
             Number.isFinite(item.confidence) &&
@@ -3521,13 +3484,16 @@
           .slice(0, 5);
 
         if (!genres.length) {
-          liveGenresDetected.style.display = "none";
-          liveGenresDetectedList.innerHTML = "";
+          if (liveGenresDetectedStatus) {
+            liveGenresDetectedStatus.textContent = "Analysing live audio…";
+          }
           return;
         }
 
-        const maxConfidence = Math.max(...genres.map(item => item.confidence), 0.01);
-        liveGenresDetectedList.innerHTML = "";
+        const maxConfidence = Math.max(
+          ...genres.map(item => item.confidence),
+          0.01
+        );
 
         genres.forEach(item => {
           const row = document.createElement("div");
@@ -3535,7 +3501,10 @@
 
           const name = item.genre.replace(/^.*---/, "");
           const percent = Math.round(item.confidence * 100);
-          const barWidth = Math.max(4, Math.min(100, (item.confidence / maxConfidence) * 100));
+          const barWidth = Math.max(
+            4,
+            Math.min(100, (item.confidence / maxConfidence) * 100)
+          );
 
           row.innerHTML =
             '<span class="live-genre-detected-name" title="' +
@@ -3554,77 +3523,6 @@
 
         if (liveGenresDetectedStatus) {
           liveGenresDetectedStatus.textContent = "Current live audio";
-        }
-
-        liveGenresDetected.style.display = "block";
-      }
-
-      async function loadLiveGenresForDJ(
-        featuredIdentity,
-        relayIdentity,
-        routerAiGenre,
-        username
-      ) {
-        if (!liveGenresDetected || !liveGenresDetectedList) return;
-
-        const requestId = ++liveGenresRequestId;
-
-        // If the selected DJ is the router DJ, use the live result already
-        // returned by /api/live.
-        if (
-          featuredIdentity &&
-          relayIdentity &&
-          featuredIdentity === relayIdentity
-        ) {
-          renderLiveGenresDetected(routerAiGenre);
-          return;
-        }
-
-        // A manually selected DJ needs its latest stored AI result.
-        if (!username) {
-          renderLiveGenresDetected(null);
-          return;
-        }
-
-        try {
-          liveGenresDetected.style.display = "block";
-          if (liveGenresDetectedStatus) {
-            liveGenresDetectedStatus.textContent = "Loading latest detection…";
-          }
-          liveGenresDetectedList.innerHTML = "";
-
-          const response = await fetch(
-            getFreshUrl(
-              "https://api.radiorrr.com/api/ai-genre?username=" +
-              encodeURIComponent(username)
-            ),
-            {
-              cache: "no-store",
-              headers: {
-                "Cache-Control": "no-cache",
-                "Pragma": "no-cache"
-              }
-            }
-          );
-
-          if (requestId !== liveGenresRequestId) return;
-
-          if (!response.ok) {
-            throw new Error("AI genre API returned " + response.status);
-          }
-
-          const data = await response.json();
-          renderLiveGenresDetected(data || null);
-
-          if (data && Array.isArray(data.genres) && data.genres.length) {
-            if (liveGenresDetectedStatus) {
-              liveGenresDetectedStatus.textContent = "Latest detected audio";
-            }
-          }
-        } catch (error) {
-          if (requestId !== liveGenresRequestId) return;
-          console.warn("Radio RRR genre detection lookup failed:", error);
-          renderLiveGenresDetected(null);
         }
       }
 
@@ -4276,11 +4174,10 @@
             : "";
           const hasRelay = Boolean(selectedFeaturedDj && featuredIdentity);
 
-          loadLiveGenresForDJ(
-            featuredIdentity,
-            routerIdentity,
+          updateLiveGenresDetected(
             aiGenre,
-            selectedFeaturedDj ? getDJUsername(selectedFeaturedDj) : ""
+            featuredIdentity,
+            routerIdentity
           );
 
           if (hasRelay) {
