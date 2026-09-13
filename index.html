@@ -2602,19 +2602,19 @@
           "player header"
           "player info"
           "player ai";
-        grid-template-rows: auto auto auto;
+        grid-template-rows: max-content max-content max-content;
         gap: 0.75rem;
-        align-items: stretch;
-        align-content: stretch;
+        align-items: start;
+        align-content: start;
         padding: 0.7rem;
       }
 
       #randomLiveDj .radio-router-player {
         grid-area: player;
-        aspect-ratio: auto;
+        aspect-ratio: 4 / 3;
         height: auto;
         min-height: 0;
-        align-self: stretch;
+        align-self: start;
       }
 
       #randomLiveDj .radio-router-player #liveDjVideo {
@@ -2623,6 +2623,14 @@
         max-width: 100%;
         max-height: 100%;
         object-fit: contain;
+      }
+
+      /* Keep every right-hand dashboard item pinned to the top of its row. */
+      #randomLiveDj .random-live-header,
+      #randomLiveDj .current-dj-card,
+      #randomLiveDj .random-live-dj-row,
+      #randomLiveDj .live-genres-detected {
+        align-self: start;
       }
 
       #randomLiveDj .random-live-header {
