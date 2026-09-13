@@ -2496,10 +2496,10 @@
        vertically distributing the Current DJ and AI panels. */
     @media (min-width: 1200px) {
       #randomLiveDj {
-        grid-template-columns: minmax(0, 1.55fr) minmax(370px, 0.85fr);
+        grid-template-columns: minmax(0, 1.72fr) minmax(360px, 0.78fr);
         grid-template-areas: "player side";
         grid-template-rows: 1fr;
-        height: clamp(600px, 78vh, 780px);
+        height: clamp(620px, 80vh, 800px);
         gap: 0.75rem;
         align-items: stretch;
         align-content: start;
@@ -2513,6 +2513,7 @@
         min-height: 0;
         aspect-ratio: auto;
         align-self: stretch;
+        width: 100%;
       }
 
       #randomLiveDj .live-router-side {
