@@ -3651,7 +3651,8 @@
           return;
         }
 
-        const genres = genreData.genres
+      liveGenresDetectedStatus.textContent = "AI detected · live audio";
+              const genres = genreData.genres
           .map(item => {
             let confidence = Number(item && item.confidence);
 
@@ -4462,6 +4463,28 @@
         }
       }
 
+
+      function getLiveDisplayGenre(dj) {
+        if (!dj) return "LIVE";
+
+        // For live DJs, AI detection is authoritative for the music
+        // currently being played. Fall back to the stored/profile genre
+        // until an AI result is available.
+        const aiGenre = String(dj.ai_genre || "").trim();
+        if (aiGenre) return aiGenre;
+
+        const storedGenre = String(dj.genre || "").trim();
+        if (storedGenre) {
+          // Never expose the internal parent---subgenre format.
+          if (storedGenre.includes("---")) {
+            return storedGenre.split("---", 2)[1].trim();
+          }
+          return storedGenre;
+        }
+
+        return "LIVE";
+      }
+
       function appendDjCard(dj, isLive, routerIdentity, moveWatchButton) {
         const name =
           dj.name || dj.username || dj.display_name || "DJ";
@@ -4517,7 +4540,9 @@
             : "OFFLINE";
         const actionText = isActuallyLive ? "▶ WATCH LIVE" : "VIEW TIKTOK";
         const actionUrl = isActuallyLive ? liveUrl : profileUrl;
-        const genres = getStoredDJGenres(dj);
+        const genres = isActuallyLive
+          ? [getLiveDisplayGenre(dj)]
+          : getStoredDJGenres(dj);
         const genreHtml = genres.length
           ? genres.slice(0, 5).map(getGenrePillHtml).join("")
           : "Genre: Detecting...";
