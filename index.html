@@ -3607,16 +3607,25 @@
 
         let genreData = null;
 
-        // The current router DJ already comes with its latest AI result
-        // from /api/live, so use that directly.
+        // /api/live supplies ai_genre as a display string (for example
+        // "Pop Rap"), while /api/ai-genre supplies the full detection
+        // object containing the ranked genres. The LIVE GENRES DETECTED
+        // panel needs the full object, so never treat a display string as
+        // complete genre-data.
+        const hasFullAiGenreData =
+          aiGenre &&
+          typeof aiGenre === "object" &&
+          Array.isArray(aiGenre.genres);
+
         if (
           routerIdentityValue &&
-          selectedIdentity === routerIdentityValue
+          selectedIdentity === routerIdentityValue &&
+          hasFullAiGenreData
         ) {
-          genreData = aiGenre || null;
+          genreData = aiGenre;
         } else {
-          // A manually selected live DJ may not be the DJ currently feeding
-          // the router. Fetch that DJ's latest stored AI result.
+          // Fetch the latest stored AI result when the selected/default DJ
+          // only has the short ai_genre display string.
           try {
             const username = selectedIdentity.replace(/^username:/i, "").replace(/^@/, "");
             const response = await fetch(
