@@ -132,13 +132,13 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 2rem;
-      padding: 1rem 1.35rem;
+      gap: 1.75rem;
+      padding: 1rem 1.2rem;
       border-radius: 16px;
       background:
         radial-gradient(circle at top left, rgba(255,0,102,0.30), transparent 55%),
         radial-gradient(circle at bottom right, rgba(56,189,248,0.20), transparent 55%),
-        linear-gradient(90deg, rgba(5,7,22,0.88), rgba(5,7,22,0.38)),
+        linear-gradient(90deg, rgba(5,7,22,0.86), rgba(5,7,22,0.34)),
         url('radiorrr_background.png') center / cover no-repeat;
       border: 1px solid rgba(129,140,248,0.6);
       box-shadow:
@@ -149,7 +149,7 @@
     }
 
     .hero-left img {
-      width: 150px;
+      width: 155px;
       max-width: 100%;
       border-radius: 10px;
       display: block;
@@ -164,64 +164,60 @@
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      padding: 0.14rem 0.72rem;
+      padding: 0.12rem 0.7rem;
       border-radius: 999px;
-      font-size: 0.72rem;
-      font-weight: 700;
+      font-size: 0.75rem;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.12em;
       background: rgba(239, 68, 68, 0.18);
       border: 1px solid rgba(248, 113, 113, 0.6);
       color: #fecaca;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.55rem;
     }
 
     .live-dot {
       width: 8px;
       height: 8px;
-      flex: 0 0 8px;
       border-radius: 50%;
       background: #f87171;
       box-shadow: 0 0 8px rgba(248,113,113,0.95);
     }
 
     .hero-title {
-      font-size: clamp(1.75rem, 3vw, 2.25rem);
-      line-height: 1;
-      font-weight: 900;
+      font-size: 1.7rem;
+      font-weight: 800;
       letter-spacing: 0.16em;
       text-transform: uppercase;
       color: #e0e7ff;
       text-shadow:
         0 0 8px rgba(129,140,248,0.75),
         0 0 16px rgba(59,130,246,0.8);
-      margin: 0 0 0.22rem;
+      margin-bottom: 0.3rem;
     }
 
-    .hero-main-message {
-      font-size: clamp(1.05rem, 1.8vw, 1.35rem);
-      line-height: 1.15;
-      font-weight: 900;
-      letter-spacing: 0.07em;
+    .hero-brand-title {
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: #ffffff;
-      text-shadow:
-        0 0 7px rgba(255,255,255,0.28),
-        0 0 14px rgba(103,232,249,0.38);
-      margin: 0 0 0.42rem;
-    }
-
-    .hero-description {
-      max-width: 680px;
-      font-size: 0.9rem;
-      line-height: 1.4;
-      font-weight: 600;
-      color: #c7d2fe;
+      background: linear-gradient(90deg, #67e8f9 0%, #a78bfa 55%, #c4b5fd 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 10px rgba(103,232,249,0.35), 0 0 14px rgba(139,92,246,0.35);
       margin: 0;
     }
 
-    .hero-description strong {
-      color: #67e8f9;
+    .live-now-playing {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #f9a8d4;
+      margin: 0.15rem 0 0.45rem;
+      text-shadow: 0 0 6px rgba(129,140,248,0.7);
+    }
+
+    .live-now-playing strong {
+      color: #ffffff;
       font-weight: 800;
     }
 
@@ -1792,12 +1788,12 @@
       }
 
       .hero {
-        padding: 1rem 1.5rem;
+        padding: 1.25rem 1.5rem;
         margin-bottom: 1.25rem;
       }
 
       .hero-left img {
-        width: 165px;
+        width: 180px;
       }
 
       .hero-title {
@@ -2087,11 +2083,7 @@
       }
 
       .hero-left img {
-        width: min(120px, 40vw);
-      }
-
-      .hero {
-        gap: 0.9rem;
+        width: min(128px, 45vw);
       }
 
       .hero-title {
@@ -2100,15 +2092,10 @@
         overflow-wrap: anywhere;
       }
 
-      .hero-main-message {
-        font-size: clamp(0.92rem, 4.6vw, 1.15rem);
-        letter-spacing: 0.045em;
-        overflow-wrap: anywhere;
-      }
-
-      .hero-description {
+      .hero-brand-title {
         font-size: 0.78rem;
-        line-height: 1.35;
+        letter-spacing: 0.1em;
+        overflow-wrap: anywhere;
       }
 
       .nav-tabs {
@@ -2368,23 +2355,19 @@
       <div class="hero-left">
         <img
           src="logo.png"
-          alt="Radio RRR online radio logo"
+          alt="RadioRRR online radio logo"
         >
       </div>
 
       <div class="hero-right">
         <div class="live-pill">
           <span class="live-dot"></span>
-          LIVE DJ RADIO · 24/7
+          LIVE DJs · BROADCASTING 24/7
         </div>
 
         <h1 class="hero-title">RADIO RRR</h1>
 
-        <p class="hero-main-message">LIVE DJs. LIVE MUSIC. 24/7.</p>
-
-        <p class="hero-description">
-          Discover DJs broadcasting live — <strong>no playlists required.</strong>
-        </p>
+        <p class="hero-brand-title">DISCOVER LIVE DJs — NO PLAYLISTS REQUIRED</p>
       </div>
     </section>
 
