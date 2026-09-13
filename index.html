@@ -1274,12 +1274,11 @@
     .live-genres-detected {
       display: none;
       margin: 0 0 0.9rem;
-      padding: 0.95rem 1rem 1rem;
+      padding: 0.85rem 1rem;
       border-radius: 14px;
       background:
-        radial-gradient(circle at top left, rgba(34,211,238,0.11), transparent 55%),
-        radial-gradient(circle at bottom right, rgba(168,85,247,0.09), transparent 55%),
-        rgba(7,10,25,0.94);
+        radial-gradient(circle at top left, rgba(34,211,238,0.10), transparent 55%),
+        rgba(7,10,25,0.92);
       border: 1px solid rgba(34,211,238,0.38);
       box-shadow: 0 0 12px rgba(34,211,238,0.12);
       text-align: left;
@@ -1287,10 +1286,10 @@
 
     .live-genres-detected-title {
       display: flex;
-      align-items: flex-end;
+      align-items: baseline;
       justify-content: space-between;
       gap: 0.75rem;
-      margin-bottom: 0.72rem;
+      margin-bottom: 0.65rem;
     }
 
     .live-genres-detected-title > div {
@@ -1321,34 +1320,35 @@
       flex: 0 0 auto;
     }
 
+    /* Target and AI detection stay side-by-side on desktop.
+       The AI side keeps the original confidence-bar presentation. */
     .live-genre-comparison {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-      align-items: stretch;
-      gap: 0.75rem;
+      grid-template-columns: minmax(180px, 0.78fr) 28px minmax(0, 1.22fr);
+      align-items: start;
+      gap: 0.55rem;
     }
 
     .live-genre-target-panel,
     .live-genre-detected-panel {
       min-width: 0;
-      padding: 0.72rem 0.8rem;
+      padding: 0.7rem 0.78rem;
       border-radius: 11px;
       background: rgba(4, 7, 18, 0.58);
-      border: 1px solid rgba(129,140,248,0.18);
     }
 
     .live-genre-target-panel {
-      border-color: rgba(129,140,248,0.34);
+      border: 1px solid rgba(129,140,248,0.34);
     }
 
     .live-genre-detected-panel {
-      border-color: rgba(34,211,238,0.28);
+      border: 1px solid rgba(34,211,238,0.28);
     }
 
     .live-genre-panel-label {
       margin-bottom: 0.55rem;
       color: #ffffff;
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       font-weight: 800;
       letter-spacing: 0.07em;
       text-transform: uppercase;
@@ -1358,20 +1358,19 @@
       display: flex;
       flex-wrap: wrap;
       gap: 0.34rem;
-      min-height: 1.9rem;
       align-content: flex-start;
     }
 
     .live-genre-target-pill {
       display: inline-flex;
       align-items: center;
-      min-height: 1.55rem;
-      padding: 0.22rem 0.48rem;
+      min-height: 1.5rem;
+      padding: 0.2rem 0.46rem;
       border-radius: 999px;
       background: rgba(129,140,248,0.10);
       border: 1px solid rgba(129,140,248,0.28);
       color: #c7d2fe;
-      font-size: 0.66rem;
+      font-size: 0.64rem;
       font-weight: 700;
       line-height: 1.15;
     }
@@ -1396,15 +1395,16 @@
     .live-genre-vs {
       align-self: center;
       color: #a5b4fc;
-      font-size: 0.72rem;
+      font-size: 0.68rem;
       font-weight: 900;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.05em;
+      text-align: center;
       text-shadow: 0 0 7px rgba(168,85,247,0.65);
     }
 
     .live-genres-detected-list {
       display: grid;
-      gap: 0.42rem;
+      gap: 0.34rem;
     }
 
     .live-genre-detected-row {
@@ -1428,7 +1428,6 @@
 
     .live-genre-detected-row.is-match .live-genre-detected-name {
       color: #bbf7d0;
-      text-shadow: 0 0 5px rgba(34,197,94,0.24);
     }
 
     .live-genre-detected-row.is-partial .live-genre-detected-name {
@@ -1452,13 +1451,13 @@
     }
 
     .live-genre-detected-row.is-match .live-genre-detected-bar > span {
-      background: linear-gradient(90deg, #22c55e, #22d3ee);
-      box-shadow: 0 0 7px rgba(34,197,94,0.42);
+      background: linear-gradient(90deg, #22c55e, #34d399);
+      box-shadow: 0 0 7px rgba(34,197,94,0.45);
     }
 
     .live-genre-detected-row.is-partial .live-genre-detected-bar > span {
-      background: linear-gradient(90deg, #facc15, #f97316);
-      box-shadow: 0 0 7px rgba(250,204,21,0.34);
+      background: linear-gradient(90deg, #facc15, #fb923c);
+      box-shadow: 0 0 7px rgba(250,204,21,0.4);
     }
 
     .live-genre-detected-confidence {
@@ -1469,67 +1468,80 @@
     }
 
     .live-genre-match {
-      margin-top: 0.68rem;
-      padding: 0.5rem 0.7rem;
-      border-radius: 9px;
-      font-size: 0.72rem;
+      margin-top: 0.55rem;
+      padding: 0.48rem 0.65rem;
+      border-radius: 8px;
+      font-size: 0.68rem;
       font-weight: 800;
       text-align: center;
-      letter-spacing: 0.03em;
-      border: 1px solid rgba(129,140,248,0.25);
       background: rgba(129,140,248,0.08);
-      color: #c7d2fe;
+      border: 1px solid rgba(129,140,248,0.18);
+      color: #c7c7ff;
     }
 
     .live-genre-match.is-match {
-      border-color: rgba(34,197,94,0.42);
-      background: rgba(34,197,94,0.09);
+      background: rgba(34,197,94,0.08);
+      border-color: rgba(34,197,94,0.45);
       color: #bbf7d0;
-      box-shadow: 0 0 10px rgba(34,197,94,0.10);
     }
 
     .live-genre-match.is-partial {
-      border-color: rgba(250,204,21,0.38);
-      background: rgba(250,204,21,0.07);
+      background: rgba(250,204,21,0.08);
+      border-color: rgba(250,204,21,0.4);
       color: #fde68a;
     }
 
     .live-genre-match.is-off-target {
-      border-color: rgba(248,113,113,0.38);
       background: rgba(248,113,113,0.07);
+      border-color: rgba(248,113,113,0.35);
       color: #fecaca;
     }
 
     @media (max-width: 700px) {
       .live-genre-comparison {
-        grid-template-columns: 1fr;
-        gap: 0.45rem;
+        grid-template-columns: minmax(150px, 0.82fr) 24px minmax(0, 1.18fr);
+        gap: 0.4rem;
       }
 
-      .live-genre-vs {
-        justify-self: center;
-        padding: 0.05rem 0;
+      .live-genre-target-panel,
+      .live-genre-detected-panel {
+        padding: 0.62rem 0.58rem;
+      }
+
+      .live-genre-detected-row {
+        grid-template-columns: max-content minmax(0, 1fr) 38px;
+        gap: 0.38rem;
       }
     }
 
     @media (max-width: 520px) {
       .live-genres-detected {
-        padding: 0.75rem 0.8rem 0.85rem;
+        padding: 0.75rem 0.8rem;
       }
 
       .live-genres-detected-title {
         align-items: flex-start;
         flex-direction: column;
-        gap: 0.18rem;
+        gap: 0.15rem;
+      }
+
+      .live-genre-comparison {
+        grid-template-columns: minmax(0, 0.9fr) 20px minmax(0, 1.1fr);
+        gap: 0.3rem;
       }
 
       .live-genre-detected-row {
-        grid-template-columns: max-content minmax(0, 1fr) 40px;
-        gap: 0.4rem;
+        grid-template-columns: max-content minmax(0, 1fr) 36px;
+        gap: 0.32rem;
       }
 
       .live-genre-detected-name {
-        max-width: 42vw;
+        max-width: 30vw;
+        font-size: 0.65rem;
+      }
+
+      .live-genre-detected-confidence {
+        font-size: 0.64rem;
       }
     }
 
@@ -2751,31 +2763,31 @@
           </div>
 
           <!-- RRR TARGET VS AI HEARING -->
-          <section id="liveGenresDetected" class="live-genres-detected" aria-live="polite">
-            <div class="live-genres-detected-title">
-              <div>
-                <strong>🎯 RRR TARGET</strong>
-                <span class="live-genres-detected-subtitle">What this programming block is looking for</span>
-              </div>
-              <span id="liveGenresDetectedStatus" class="live-genres-detected-status">Refresh in 30 sec</span>
+        <section id="liveGenresDetected" class="live-genres-detected" aria-live="polite">
+          <div class="live-genres-detected-title">
+            <div>
+              <strong>🎯 RRR TARGET vs 🎵 AI HEARING</strong>
+              <span class="live-genres-detected-subtitle">What RRR wants vs what the AI is hearing right now</span>
+            </div>
+            <span id="liveGenresDetectedStatus" class="live-genres-detected-status">Refresh in 30 sec</span>
+          </div>
+
+          <div class="live-genre-comparison">
+            <div class="live-genre-target-panel">
+              <div class="live-genre-panel-label">🎯 RRR TARGET</div>
+              <div id="liveGenreTargetList" class="live-genre-target-list"></div>
             </div>
 
-            <div class="live-genre-comparison">
-              <div class="live-genre-target-panel">
-                <div class="live-genre-panel-label">🎯 RRR TARGET</div>
-                <div id="liveGenreTargetList" class="live-genre-target-list"></div>
-              </div>
+            <div class="live-genre-vs">VS</div>
 
-              <div class="live-genre-vs">VS</div>
-
-              <div class="live-genre-detected-panel">
-                <div class="live-genre-panel-label">🎵 AI HEARING</div>
-                <div id="liveGenresDetectedList" class="live-genres-detected-list"></div>
-              </div>
+            <div class="live-genre-detected-panel">
+              <div class="live-genre-panel-label">🎵 AI HEARING</div>
+              <div id="liveGenresDetectedList" class="live-genres-detected-list"></div>
             </div>
+          </div>
 
-            <div id="liveGenreMatch" class="live-genre-match" hidden></div>
-          </section>
+          <div id="liveGenreMatch" class="live-genre-match" hidden></div>
+        </section>
 
         </div>
 
