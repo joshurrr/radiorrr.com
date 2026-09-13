@@ -1279,7 +1279,9 @@
 
     .live-genre-detected-row {
       display: grid;
-      grid-template-columns: minmax(110px, 1fr) minmax(80px, 2fr) 42px;
+      /* Dynamic genre-name column: it grows to fit the longest detected
+         genre, while the bar automatically takes the remaining space. */
+      grid-template-columns: max-content minmax(0, 1fr) 42px;
       align-items: center;
       gap: 0.55rem;
       min-width: 0;
@@ -1287,6 +1289,7 @@
 
     .live-genre-detected-name {
       min-width: 0;
+      max-width: min(32ch, 40vw);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -1330,8 +1333,17 @@
       }
 
       .live-genre-detected-row {
-        grid-template-columns: minmax(95px, 1fr) minmax(60px, 1.4fr) 40px;
+        /* Keep the label content-sized on smaller screens too; the bar
+           absorbs whatever width is left. */
+        grid-template-columns: max-content minmax(0, 1fr) 40px;
         gap: 0.4rem;
+      }
+    }
+
+
+    @media (max-width: 520px) {
+      .live-genre-detected-name {
+        max-width: 42vw;
       }
     }
 
@@ -2099,7 +2111,9 @@
       }
 
       #randomLiveDj .live-genre-detected-row {
-        grid-template-columns: minmax(78px, 0.9fr) minmax(70px, 2fr) 38px;
+        /* Dynamic label width on phones. The confidence column stays compact
+           and the bar uses all remaining horizontal space. */
+        grid-template-columns: max-content minmax(0, 1fr) 38px;
         gap: 0.45rem;
       }
 
