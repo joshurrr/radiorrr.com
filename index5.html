@@ -1274,12 +1274,11 @@
     .live-genres-detected {
       display: none;
       margin: 0 0 0.9rem;
-      padding: 0.95rem 1rem 1rem;
+      padding: 0.85rem 1rem;
       border-radius: 14px;
       background:
-        radial-gradient(circle at top left, rgba(34,211,238,0.11), transparent 55%),
-        radial-gradient(circle at bottom right, rgba(168,85,247,0.09), transparent 55%),
-        rgba(7,10,25,0.94);
+        radial-gradient(circle at top left, rgba(34,211,238,0.10), transparent 55%),
+        rgba(7,10,25,0.92);
       border: 1px solid rgba(34,211,238,0.38);
       box-shadow: 0 0 12px rgba(34,211,238,0.12);
       text-align: left;
@@ -1287,18 +1286,13 @@
 
     .live-genres-detected-title {
       display: flex;
-      align-items: flex-end;
+      align-items: baseline;
       justify-content: space-between;
       gap: 0.75rem;
-      margin-bottom: 0.72rem;
-    }
-
-    .live-genres-detected-title > div {
-      min-width: 0;
+      margin-bottom: 0.55rem;
     }
 
     .live-genres-detected-title strong {
-      display: block;
       color: #ffffff;
       font-size: 0.92rem;
       font-weight: 800;
@@ -1306,109 +1300,21 @@
       text-shadow: 0 0 7px rgba(34,211,238,0.55);
     }
 
-    .live-genres-detected-subtitle {
-      display: block;
-      margin-top: 0.12rem;
-      color: #a5b4fc;
-      font-size: 0.68rem;
-      line-height: 1.35;
-    }
-
     .live-genres-detected-status {
       color: #a5b4fc;
       font-size: 0.7rem;
       white-space: nowrap;
-      flex: 0 0 auto;
-    }
-
-    .live-genre-comparison {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-      align-items: stretch;
-      gap: 0.75rem;
-    }
-
-    .live-genre-target-panel,
-    .live-genre-detected-panel {
-      min-width: 0;
-      padding: 0.72rem 0.8rem;
-      border-radius: 11px;
-      background: rgba(4, 7, 18, 0.58);
-      border: 1px solid rgba(129,140,248,0.18);
-    }
-
-    .live-genre-target-panel {
-      border-color: rgba(129,140,248,0.34);
-    }
-
-    .live-genre-detected-panel {
-      border-color: rgba(34,211,238,0.28);
-    }
-
-    .live-genre-panel-label {
-      margin-bottom: 0.55rem;
-      color: #ffffff;
-      font-size: 0.74rem;
-      font-weight: 800;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-    }
-
-    .live-genre-target-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.34rem;
-      min-height: 1.9rem;
-      align-content: flex-start;
-    }
-
-    .live-genre-target-pill {
-      display: inline-flex;
-      align-items: center;
-      min-height: 1.55rem;
-      padding: 0.22rem 0.48rem;
-      border-radius: 999px;
-      background: rgba(129,140,248,0.10);
-      border: 1px solid rgba(129,140,248,0.28);
-      color: #c7d2fe;
-      font-size: 0.66rem;
-      font-weight: 700;
-      line-height: 1.15;
-    }
-
-    .live-genre-target-pill.is-match {
-      background: rgba(34,197,94,0.10);
-      border-color: rgba(34,197,94,0.45);
-      color: #bbf7d0;
-      box-shadow: 0 0 7px rgba(34,197,94,0.12);
-    }
-
-    .live-genre-target-pill.is-partial {
-      background: rgba(250,204,21,0.08);
-      border-color: rgba(250,204,21,0.35);
-      color: #fde68a;
-    }
-
-    .live-genre-target-pill.is-unmatched {
-      opacity: 0.78;
-    }
-
-    .live-genre-vs {
-      align-self: center;
-      color: #a5b4fc;
-      font-size: 0.72rem;
-      font-weight: 900;
-      letter-spacing: 0.08em;
-      text-shadow: 0 0 7px rgba(168,85,247,0.65);
     }
 
     .live-genres-detected-list {
       display: grid;
-      gap: 0.42rem;
+      gap: 0.34rem;
     }
 
     .live-genre-detected-row {
       display: grid;
+      /* Dynamic genre-name column: it grows to fit the longest detected
+         genre, while the bar automatically takes the remaining space. */
       grid-template-columns: max-content minmax(0, 1fr) 42px;
       align-items: center;
       gap: 0.55rem;
@@ -1424,15 +1330,6 @@
       color: #e0e0ff;
       font-size: 0.72rem;
       font-weight: 700;
-    }
-
-    .live-genre-detected-row.is-match .live-genre-detected-name {
-      color: #bbf7d0;
-      text-shadow: 0 0 5px rgba(34,197,94,0.24);
-    }
-
-    .live-genre-detected-row.is-partial .live-genre-detected-name {
-      color: #fde68a;
     }
 
     .live-genre-detected-bar {
@@ -1451,16 +1348,6 @@
       box-shadow: 0 0 7px rgba(34,211,238,0.45);
     }
 
-    .live-genre-detected-row.is-match .live-genre-detected-bar > span {
-      background: linear-gradient(90deg, #22c55e, #22d3ee);
-      box-shadow: 0 0 7px rgba(34,197,94,0.42);
-    }
-
-    .live-genre-detected-row.is-partial .live-genre-detected-bar > span {
-      background: linear-gradient(90deg, #facc15, #f97316);
-      box-shadow: 0 0 7px rgba(250,204,21,0.34);
-    }
-
     .live-genre-detected-confidence {
       color: #ffffff;
       font-size: 0.7rem;
@@ -1468,66 +1355,27 @@
       text-align: right;
     }
 
-    .live-genre-match {
-      margin-top: 0.68rem;
-      padding: 0.5rem 0.7rem;
-      border-radius: 9px;
-      font-size: 0.72rem;
-      font-weight: 800;
-      text-align: center;
-      letter-spacing: 0.03em;
-      border: 1px solid rgba(129,140,248,0.25);
-      background: rgba(129,140,248,0.08);
-      color: #c7d2fe;
-    }
-
-    .live-genre-match.is-match {
-      border-color: rgba(34,197,94,0.42);
-      background: rgba(34,197,94,0.09);
-      color: #bbf7d0;
-      box-shadow: 0 0 10px rgba(34,197,94,0.10);
-    }
-
-    .live-genre-match.is-partial {
-      border-color: rgba(250,204,21,0.38);
-      background: rgba(250,204,21,0.07);
-      color: #fde68a;
-    }
-
-    .live-genre-match.is-off-target {
-      border-color: rgba(248,113,113,0.38);
-      background: rgba(248,113,113,0.07);
-      color: #fecaca;
-    }
-
-    @media (max-width: 700px) {
-      .live-genre-comparison {
-        grid-template-columns: 1fr;
-        gap: 0.45rem;
-      }
-
-      .live-genre-vs {
-        justify-self: center;
-        padding: 0.05rem 0;
-      }
-    }
-
     @media (max-width: 520px) {
       .live-genres-detected {
-        padding: 0.75rem 0.8rem 0.85rem;
+        padding: 0.75rem 0.8rem;
       }
 
       .live-genres-detected-title {
         align-items: flex-start;
         flex-direction: column;
-        gap: 0.18rem;
+        gap: 0.15rem;
       }
 
       .live-genre-detected-row {
+        /* Keep the label content-sized on smaller screens too; the bar
+           absorbs whatever width is left. */
         grid-template-columns: max-content minmax(0, 1fr) 40px;
         gap: 0.4rem;
       }
+    }
 
+
+    @media (max-width: 520px) {
       .live-genre-detected-name {
         max-width: 42vw;
       }
@@ -2694,7 +2542,7 @@
             </div>
 
             <div class="random-live-targeting">
-              🎯 <span id="heroTargeting">Loading target genres…</span>
+              - Targeting: <span id="heroTargeting">Loading target genres…</span>
             </div>
           </div>
 
@@ -2750,32 +2598,14 @@
             </div>
           </div>
 
-          <!-- RRR TARGET VS AI HEARING -->
-          <section id="liveGenresDetected" class="live-genres-detected" aria-live="polite">
-            <div class="live-genres-detected-title">
-              <div>
-                <strong>🎯 RRR TARGET</strong>
-                <span class="live-genres-detected-subtitle">What this programming block is looking for</span>
-              </div>
-              <span id="liveGenresDetectedStatus" class="live-genres-detected-status">Refresh in 30 sec</span>
-            </div>
-
-            <div class="live-genre-comparison">
-              <div class="live-genre-target-panel">
-                <div class="live-genre-panel-label">🎯 RRR TARGET</div>
-                <div id="liveGenreTargetList" class="live-genre-target-list"></div>
-              </div>
-
-              <div class="live-genre-vs">VS</div>
-
-              <div class="live-genre-detected-panel">
-                <div class="live-genre-panel-label">🎵 AI HEARING</div>
-                <div id="liveGenresDetectedList" class="live-genres-detected-list"></div>
-              </div>
-            </div>
-
-            <div id="liveGenreMatch" class="live-genre-match" hidden></div>
-          </section>
+                    <!-- LIVE GENRES DETECTED -->
+        <section id="liveGenresDetected" class="live-genres-detected" aria-live="polite">
+          <div class="live-genres-detected-title">
+            <strong>LIVE GENRES DETECTED</strong>
+            <span id="liveGenresDetectedStatus" class="live-genres-detected-status">Live Genre Refresh in 30 sec</span>
+          </div>
+          <div id="liveGenresDetectedList" class="live-genres-detected-list"></div>
+        </section>
 
         </div>
 
@@ -3541,12 +3371,6 @@
       const liveGenresDetectedList =
         document.getElementById("liveGenresDetectedList");
 
-      const liveGenreTargetList =
-        document.getElementById("liveGenreTargetList");
-
-      const liveGenreMatch =
-        document.getElementById("liveGenreMatch");
-
       const randomLiveDjFrame =
         document.getElementById("randomLiveDjFrame");
 
@@ -3850,160 +3674,30 @@
         return true;
       }
 
-      function normalizeGenreForMatch(value) {
-        return String(value || "")
-          .replace(/^.*---/, "")
-          .toLowerCase()
-          .replace(/&/g, "and")
-          .replace(/[^a-z0-9]+/g, " ")
-          .trim()
-          .replace(/\s+/g, " ");
-      }
-
-      function getScheduleTargetGenres() {
-        const block = getCurrentScheduleBlock(new Date().getHours());
-        return String(block && block.genres || "")
-          .split("·")
-          .map(item => item.trim())
-          .filter(Boolean);
-      }
-
-      function classifyGenreMatch(detectedGenre, targetGenres) {
-        const detected = normalizeGenreForMatch(detectedGenre);
-        if (!detected || !targetGenres.length) return "none";
-
-        const exact = targetGenres.some(target =>
-          normalizeGenreForMatch(target) === detected
-        );
-        if (exact) return "match";
-
-        // Treat broad/narrow variants as a valid match. For example,
-        // "Deep House" matches the RRR target "House", and "Tech House"
-        // matches "House". This is a UI classification only; router
-        // eligibility remains controlled by the backend.
-        const broadMatch = targetGenres.some(target => {
-          const normalizedTarget = normalizeGenreForMatch(target);
-          return normalizedTarget && (
-            detected.includes(normalizedTarget) ||
-            normalizedTarget.includes(detected)
-          );
-        });
-        if (broadMatch) return "match";
-
-        // One shared meaningful word is useful as a visual "partial"
-        // indicator without claiming a full genre match.
-        const detectedWords = new Set(detected.split(" ").filter(w => w.length > 2));
-        const partial = targetGenres.some(target => {
-          const targetWords = normalizeGenreForMatch(target)
-            .split(" ")
-            .filter(w => w.length > 2);
-          return targetWords.some(word => detectedWords.has(word));
-        });
-
-        return partial ? "partial" : "none";
-      }
-
-      function renderLiveGenreTarget(targetGenres, detectedGenres) {
-        if (!liveGenreTargetList) return;
-
-        liveGenreTargetList.innerHTML = "";
-
-        const detectedNames = detectedGenres.map(item =>
-          normalizeGenreForMatch(item.genre)
-        );
-
-        targetGenres.forEach(target => {
-          const state = detectedNames.some(detected =>
-            classifyGenreMatch(detected, [target]) === "match"
-          )
-            ? "match"
-            : detectedNames.some(detected =>
-                classifyGenreMatch(detected, [target]) === "partial"
-              )
-              ? "partial"
-              : "none";
-
-          const pill = document.createElement("span");
-          pill.className = "live-genre-target-pill" +
-            (state === "match" ? " is-match" :
-              state === "partial" ? " is-partial" : " is-unmatched");
-          pill.textContent = target;
-          pill.title = state === "match"
-            ? "Currently detected"
-            : state === "partial"
-              ? "Related to detected audio"
-              : "RRR target — not currently detected";
-          liveGenreTargetList.appendChild(pill);
-        });
-      }
-
-      function renderLiveGenreMatch(detectedGenres, targetGenres) {
-        if (!liveGenreMatch) return;
-
-        liveGenreMatch.hidden = false;
-        liveGenreMatch.className = "live-genre-match";
-
-        if (!detectedGenres.length) {
-          liveGenreMatch.textContent = "⏳ ANALYSING LIVE AUDIO — no confident genre result yet";
-          return;
-        }
-
-        const matches = detectedGenres.filter(item =>
-          classifyGenreMatch(item.genre, targetGenres) === "match"
-        );
-        const partials = detectedGenres.filter(item =>
-          classifyGenreMatch(item.genre, targetGenres) === "partial"
-        );
-
-        if (matches.length) {
-          const names = matches.slice(0, 2).map(item => item.genre).join(" + ");
-          liveGenreMatch.classList.add("is-match");
-          liveGenreMatch.textContent = "🟢 RRR GENRE MATCH — " + names;
-        } else if (partials.length) {
-          const names = partials.slice(0, 2).map(item => item.genre).join(" + ");
-          liveGenreMatch.classList.add("is-partial");
-          liveGenreMatch.textContent = "🟡 PARTIAL MATCH — " + names;
-        } else {
-          liveGenreMatch.classList.add("is-off-target");
-          liveGenreMatch.textContent = "🔴 NO GENRE MATCH — current audio is outside this RRR block";
-        }
-      }
-
       async function updateLiveGenresDetected(aiGenre, featuredIdentity, relayIdentity) {
         if (!liveGenresDetected || !liveGenresDetectedList) return;
 
         const requestId = ++liveGenreRequestId;
         const selectedIdentity = String(featuredIdentity || "").trim();
         const routerIdentityValue = String(relayIdentity || "").trim();
-        const targetGenres = getScheduleTargetGenres();
 
         // Nothing is live/selected: hide the panel.
         if (!selectedIdentity) {
           liveGenresDetected.style.display = "none";
           liveGenresDetectedList.innerHTML = "";
-          if (liveGenreTargetList) liveGenreTargetList.innerHTML = "";
-          if (liveGenreMatch) {
-            liveGenreMatch.hidden = true;
-            liveGenreMatch.textContent = "";
-          }
           return;
         }
 
         liveGenresDetected.style.display = "block";
         liveGenresDetectedList.innerHTML = "";
-        renderLiveGenreTarget(targetGenres, []);
-        if (liveGenreMatch) {
-          liveGenreMatch.hidden = false;
-          liveGenreMatch.className = "live-genre-match";
-          liveGenreMatch.textContent = "⏳ ANALYSING LIVE AUDIO…";
-        }
 
         let genreData = null;
 
         // /api/live supplies ai_genre as a display string (for example
         // "Pop Rap"), while /api/ai-genre supplies the full detection
-        // object containing the ranked genres. The comparison panel needs
-        // the full object whenever possible.
+        // object containing the ranked genres. The LIVE GENRES DETECTED
+        // panel needs the full object, so never treat a display string as
+        // complete genre-data.
         const hasFullAiGenreData =
           aiGenre &&
           typeof aiGenre === "object" &&
@@ -4016,6 +3710,8 @@
         ) {
           genreData = aiGenre;
         } else {
+          // Fetch the latest stored AI result when the selected/default DJ
+          // only has the short ai_genre display string.
           try {
             const username = selectedIdentity.replace(/^username:/i, "").replace(/^@/, "");
             const response = await fetch(
@@ -4047,16 +3743,11 @@
           if (liveGenresDetectedStatus) {
             liveGenresDetectedStatus.textContent = "Analysing live audio…";
           }
-          renderLiveGenreTarget(targetGenres, []);
-          renderLiveGenreMatch([], targetGenres);
           return;
         }
 
-        if (liveGenresDetectedStatus) {
-          liveGenresDetectedStatus.textContent = "AI detected · live audio";
-        }
-
-        const genres = genreData.genres
+      liveGenresDetectedStatus.textContent = "AI detected · live audio";
+              const genres = genreData.genres
           .map(item => {
             let confidence = Number(item && item.confidence);
 
@@ -4077,9 +3768,6 @@
           .sort((a, b) => b.confidence - a.confidence)
           .slice(0, 5);
 
-        renderLiveGenreTarget(targetGenres, genres);
-        renderLiveGenreMatch(genres, targetGenres);
-
         if (!genres.length) {
           if (liveGenresDetectedStatus) {
             liveGenresDetectedStatus.textContent = "Analysing live audio…";
@@ -4094,10 +3782,7 @@
 
         genres.forEach(item => {
           const row = document.createElement("div");
-          const matchState = classifyGenreMatch(item.genre, targetGenres);
-          row.className = "live-genre-detected-row" +
-            (matchState === "match" ? " is-match" :
-              matchState === "partial" ? " is-partial" : " is-none");
+          row.className = "live-genre-detected-row";
 
           const name = item.genre.replace(/^.*---/, "");
           const percent = Math.round(item.confidence * 100);
@@ -4106,16 +3791,10 @@
             Math.min(100, (item.confidence / maxConfidence) * 100)
           );
 
-          const matchIcon = matchState === "match"
-            ? "🟢 "
-            : matchState === "partial"
-              ? "🟡 "
-              : "";
-
           row.innerHTML =
             '<span class="live-genre-detected-name" title="' +
               escapeAttr(name) + '">' +
-              matchIcon + escapeHtml(name) +
+              escapeHtml(name) +
             '</span>' +
             '<span class="live-genre-detected-bar" aria-hidden="true">' +
               '<span style="width:' + barWidth.toFixed(1) + '%;"></span>' +
