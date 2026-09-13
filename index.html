@@ -126,13 +126,13 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 1.75rem;
-      padding: 1rem 1.2rem;
+      gap: 1.6rem;
+      padding: 1rem 0.95rem;
       border-radius: 16px;
       background:
         radial-gradient(circle at top left, rgba(255,0,102,0.30), transparent 55%),
         radial-gradient(circle at bottom right, rgba(56,189,248,0.20), transparent 55%),
-        linear-gradient(90deg, rgba(5,7,22,0.86), rgba(5,7,22,0.34)),
+        linear-gradient(90deg, rgba(5,7,22,0.88), rgba(5,7,22,0.38)),
         url('radiorrr_background.png') center / cover no-repeat;
       border: 1px solid rgba(129,140,248,0.6);
       box-shadow:
@@ -143,7 +143,7 @@
     }
 
     .hero-left img {
-      width: 155px;
+      width: 150px;
       max-width: 100%;
       border-radius: 10px;
       display: block;
@@ -158,60 +158,64 @@
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      padding: 0.12rem 0.7rem;
+      padding: 0.14rem 0.72rem;
       border-radius: 999px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.1em;
       background: rgba(239, 68, 68, 0.18);
       border: 1px solid rgba(248, 113, 113, 0.6);
       color: #fecaca;
-      margin-bottom: 0.55rem;
+      margin-bottom: 0.5rem;
     }
 
     .live-dot {
       width: 8px;
       height: 8px;
+      flex: 0 0 8px;
       border-radius: 50%;
       background: #f87171;
       box-shadow: 0 0 8px rgba(248,113,113,0.95);
     }
 
     .hero-title {
-      font-size: 1.7rem;
-      font-weight: 800;
+      font-size: clamp(1.75rem, 3vw, 2.25rem);
+      line-height: 1;
+      font-weight: 900;
       letter-spacing: 0.16em;
       text-transform: uppercase;
       color: #e0e7ff;
       text-shadow:
         0 0 8px rgba(129,140,248,0.75),
         0 0 16px rgba(59,130,246,0.8);
-      margin-bottom: 0.3rem;
+      margin: 0 0 0.22rem;
     }
 
-    .hero-brand-title {
-      font-size: 1rem;
-      font-weight: 800;
-      letter-spacing: 0.18em;
+    .hero-main-message {
+      font-size: clamp(1.05rem, 1.8vw, 1.35rem);
+      line-height: 1.15;
+      font-weight: 900;
+      letter-spacing: 0.07em;
       text-transform: uppercase;
-      background: linear-gradient(90deg, #67e8f9 0%, #a78bfa 55%, #c4b5fd 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow: 0 0 10px rgba(103,232,249,0.35), 0 0 14px rgba(139,92,246,0.35);
+      color: #ffffff;
+      text-shadow:
+        0 0 7px rgba(255,255,255,0.28),
+        0 0 14px rgba(103,232,249,0.38);
+      margin: 0 0 0.42rem;
+    }
+
+    .hero-description {
+      max-width: 680px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      font-weight: 600;
+      color: #c7d2fe;
       margin: 0;
     }
 
-    .live-now-playing {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: #f9a8d4;
-      margin: 0.15rem 0 0.45rem;
-      text-shadow: 0 0 6px rgba(129,140,248,0.7);
-    }
-
-    .live-now-playing strong {
-      color: #ffffff;
+    .hero-description strong {
+      color: #67e8f9;
       font-weight: 800;
     }
 
@@ -2025,16 +2029,13 @@
       }
 
       .hero {
-        padding: 1.25rem 1.5rem;
+        padding: 1rem 1.05rem;
         margin-bottom: 1.25rem;
+        gap: 1.6rem;
       }
 
       .hero-left img {
-        width: 180px;
-      }
-
-      .hero-title {
-        font-size: 2rem;
+        width: 165px;
       }
 
       .nav-tabs {
@@ -2736,26 +2737,55 @@
       }
     }
 
+
+    /* Restored Radio RRR hero responsive sizing */
+    @media (max-width: 720px) {
+      .hero-main-message {
+        font-size: clamp(0.92rem, 4.6vw, 1.15rem);
+        letter-spacing: 0.045em;
+        overflow-wrap: anywhere;
+      }
+
+      .hero-description {
+        font-size: 0.78rem;
+        line-height: 1.35;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .hero-main-message {
+        font-size: 1.05rem;
+      }
+    }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 <body>
 <main class="wrapper">
 <!-- HERO BANNER -->
-<section class="hero">
-<div class="hero-left">
-<img alt="RadioRRR online radio logo" src="logo.png"/>
-</div>
-<div class="hero-right">
-<div class="live-pill">
-<span class="live-dot"></span>
-          LIVE DJs · BROADCASTING 24/7
+    <section class="hero">
+      <div class="hero-left">
+        <img
+          src="logo.png"
+          alt="Radio RRR online radio logo"
+        >
+      </div>
+
+      <div class="hero-right">
+        <div class="live-pill">
+          <span class="live-dot"></span>
+          LIVE DJ RADIO · STREAMING
         </div>
-<h1 class="hero-title">RADIO RRR</h1>
-<p class="hero-brand-title">DISCOVER LIVE DJs — NO PLAYLISTS REQUIRED</p>
-</div>
-</section>
-<!-- NAV TABS -->
+
+        <h1 class="hero-main-message">LIVE DJs. LIVE MUSIC. 24/7.</h1>
+
+        <p class="hero-description">
+          Discover DJs broadcasting live — <strong>no playlists required.</strong>
+        </p>
+      </div>
+    </section>
+
+    <!-- NAV TABS -->
 <nav class="nav-tabs">
 <!-- LIVE DJs -->
 <a class="live-nav active" data-target="live-section">
