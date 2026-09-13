@@ -1357,22 +1357,38 @@
       }
     }
 
-    /* SCHEDULE */
+    /* SCHEDULE — spreadsheet / Excel-style grid */
     .schedule-table {
       margin-top: 1rem;
       padding-top: 0.5rem;
-      border-top: 1px solid rgba(129, 140, 248, 0.15);
+      border: 1px solid rgba(129, 140, 248, 0.45);
+      border-radius: 6px;
+      overflow: hidden;
+      background: rgba(5, 7, 16, 0.55);
     }
 
     .schedule-row {
       display: grid;
       grid-template-columns: 1.05fr 1.15fr 2fr;
-      gap: 1rem;
-      align-items: center;
-      padding: 0.78rem 0;
-      border-bottom: 1px solid rgba(129, 140, 248, 0.12);
+      gap: 0;
+      align-items: stretch;
+      padding: 0;
+      border-bottom: 1px solid rgba(129, 140, 248, 0.38);
       color: #f5f5f5;
       font-size: 0.84rem;
+    }
+
+    .schedule-row > div {
+      padding: 0.72rem 0.75rem;
+      border-right: 1px solid rgba(129, 140, 248, 0.32);
+    }
+
+    .schedule-row > div:last-child {
+      border-right: 0;
+    }
+
+    .schedule-row:last-child {
+      border-bottom: 0;
     }
 
     .schedule-row > div:first-child {
@@ -1391,11 +1407,20 @@
     }
 
     .schedule-header {
-      padding-top: 0.2rem;
-      padding-bottom: 0.55rem;
-      border-bottom: 1px solid rgba(129, 140, 248, 0.25);
+      padding: 0;
+      border-bottom: 1px solid rgba(129, 140, 248, 0.55);
       color: #ffffff;
       font-weight: 800;
+      background: rgba(129, 140, 248, 0.10);
+    }
+
+    .schedule-header > div {
+      padding: 0.72rem 0.75rem;
+      border-right: 1px solid rgba(129, 140, 248, 0.42);
+    }
+
+    .schedule-header > div:last-child {
+      border-right: 0;
     }
 
     .schedule-header > div {
