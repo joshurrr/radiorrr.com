@@ -698,6 +698,24 @@
       font-weight: 800;
     }
 
+    .random-live-targeting {
+      flex: 1;
+      min-width: 240px;
+      margin-top: 0.15rem;
+      text-align: right;
+      color: #a5b4fc;
+      font-size: 0.68rem;
+      font-weight: 700;
+      line-height: 1.4;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .random-live-targeting span {
+      color: #c7c7ff;
+      font-weight: 600;
+    }
+
     .random-live-subtitle {
       color: #c7c7ff;
       font-size: 0.82rem;
@@ -2520,6 +2538,10 @@
             <div class="random-live-now-playing">
               Now Playing: <strong id="heroNowPlaying">Loading current block…</strong>
             </div>
+
+            <div class="random-live-targeting">
+              - Targeting: <span id="heroTargeting">Loading target genres…</span>
+            </div>
           </div>
 
           <div class="random-live-dj-row">
@@ -3301,6 +3323,9 @@
 
       const heroNowEl =
         document.getElementById("heroNowPlaying");
+
+      const heroTargetingEl =
+        document.getElementById("heroTargeting");
 
       const liveDjsList =
         document.getElementById("liveDjsList");
@@ -4802,6 +4827,11 @@
         if (heroNowEl) {
           heroNowEl.textContent =
             blockLabel;
+        }
+
+        if (heroTargetingEl) {
+          heroTargetingEl.textContent =
+            block.genres;
         }
 
       }
