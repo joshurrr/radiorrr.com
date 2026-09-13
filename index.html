@@ -2586,7 +2586,78 @@
         overflow-wrap: anywhere;
       }
     }
-  </style>
+  
+
+    /* Desktop fit pass: make the live router behave like a single station
+       console instead of letting the portrait player's aspect ratio create
+       unused space below it. */
+    @media (min-width: 1200px) {
+      #live-section > .channel {
+        padding: 0.75rem;
+      }
+
+      #randomLiveDj {
+        grid-template-columns: minmax(0, 1.55fr) minmax(370px, 0.85fr);
+        grid-template-areas:
+          "player header"
+          "player info"
+          "player ai";
+        grid-template-rows: auto auto auto;
+        gap: 0.75rem;
+        align-items: stretch;
+        align-content: stretch;
+        padding: 0.7rem;
+      }
+
+      #randomLiveDj .radio-router-player {
+        grid-area: player;
+        aspect-ratio: auto;
+        height: auto;
+        min-height: 0;
+        align-self: stretch;
+      }
+
+      #randomLiveDj .radio-router-player #liveDjVideo {
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+
+      #randomLiveDj .random-live-header {
+        padding-top: 0.15rem;
+      }
+
+      #randomLiveDj .current-dj-card {
+        margin-bottom: 0;
+        padding: 0.75rem 0.8rem;
+      }
+
+      #randomLiveDj .random-live-dj-row {
+        padding: 0.75rem;
+      }
+
+      #randomLiveDj .live-genres-detected {
+        margin: 0;
+        padding: 0.75rem 0.8rem;
+      }
+
+      #randomLiveDj .live-genres-detected-title {
+        margin-bottom: 0.5rem;
+      }
+
+      #randomLiveDj .live-genre-comparison {
+        gap: 0.4rem;
+      }
+
+      #randomLiveDj .live-genre-target-panel,
+      #randomLiveDj .live-genre-detected-panel {
+        padding: 0.6rem;
+      }
+    }
+
+</style>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 
