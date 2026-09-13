@@ -692,6 +692,55 @@
       font-weight: 800;
     }
 
+    .random-live-program-target {
+      margin-top: 0.55rem;
+      padding: 0.5rem 0.65rem 0.6rem;
+      border: 1px solid rgba(129, 140, 248, 0.34);
+      border-radius: 10px;
+      background: rgba(12, 15, 35, 0.68);
+      box-shadow: 0 0 10px rgba(34, 211, 238, 0.06);
+    }
+
+    .random-live-program-target-label {
+      color: #c7c7ff;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.38rem;
+      text-shadow: 0 0 6px rgba(34, 211, 238, 0.35);
+    }
+
+    .random-live-program-target-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      min-width: 0;
+    }
+
+    .random-live-program-target-pill {
+      display: inline-flex;
+      align-items: center;
+      min-width: 0;
+      padding: 0.22rem 0.48rem;
+      border: 1px solid rgba(129, 140, 248, 0.42);
+      border-radius: 999px;
+      background: rgba(31, 25, 65, 0.62);
+      color: #d8d8f8;
+      font-size: 0.66rem;
+      font-weight: 700;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 720px) {
+      .random-live-program-target {
+        margin-top: 0.4rem;
+      }
+      .random-live-program-target-pill {
+        font-size: 0.64rem;
+      }
+    }
+
     .random-live-subtitle {
       color: #c7c7ff;
       font-size: 0.82rem;
@@ -2673,6 +2722,10 @@
 <div class="random-live-now-playing">
               Now Playing: <strong id="heroNowPlaying">Loading current block…</strong>
 </div>
+<div class="random-live-program-target" aria-label="Current program genre targets">
+  <div class="random-live-program-target-label">🎯 RRR TARGET GENRES</div>
+  <div class="random-live-program-target-list" id="liveProgramTargetGenres"></div>
+</div>
 </div>
 <!-- CURRENT DJ CARD — intentionally first -->
 <section aria-label="Current DJ" class="current-dj-card">
@@ -3350,6 +3403,9 @@
 
       const heroNowEl =
         document.getElementById("heroNowPlaying");
+
+      const liveProgramTargetGenres =
+        document.getElementById("liveProgramTargetGenres");
 
       const liveDjsList =
         document.getElementById("liveDjsList");
@@ -4862,6 +4918,23 @@
         if (heroNowEl) {
           heroNowEl.textContent =
             blockLabel;
+        }
+
+        if (liveProgramTargetGenres) {
+          liveProgramTargetGenres.innerHTML =
+            block.genres
+              .split("·")
+              .map(function (genre) {
+                const safeGenre = genre
+                  .trim()
+                  .replace(/&/g, "&amp;")
+                  .replace(/</g, "&lt;")
+                  .replace(/>/g, "&gt;");
+                return '<span class="random-live-program-target-pill">' +
+                  safeGenre +
+                  '</span>';
+              })
+              .join("");
         }
 
       }
