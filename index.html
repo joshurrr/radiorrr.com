@@ -2602,11 +2602,15 @@
           "player header"
           "player info"
           "player ai";
+        /* The player establishes the console height; the three right-hand
+           tracks must remain intrinsic so they cannot spread vertically. */
         grid-template-rows: max-content max-content max-content;
+        height: clamp(600px, 78vh, 780px);
         gap: 0.75rem;
         align-items: start;
         align-content: start;
         padding: 0.7rem;
+        box-sizing: border-box;
       }
 
       #randomLiveDj .radio-router-player {
@@ -2634,7 +2638,19 @@
       }
 
       #randomLiveDj .random-live-header {
+        grid-area: header;
         padding-top: 0.15rem;
+        align-self: start;
+      }
+
+      #randomLiveDj .current-dj-card {
+        grid-area: info;
+        align-self: start;
+      }
+
+      #randomLiveDj .live-genres-detected {
+        grid-area: ai;
+        align-self: start;
       }
 
       #randomLiveDj .current-dj-card {
