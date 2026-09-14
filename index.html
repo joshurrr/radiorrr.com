@@ -1267,6 +1267,27 @@
       outline: none;
     }
 
+    /* Secondary LIVE DJ cards are the switch controls. The whole card is
+       clickable rather than using a separate WATCH LIVE button. */
+    .dj-card.dj-live-switch-card {
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .dj-card.dj-live-switch-card:hover,
+    .dj-card.dj-live-switch-card:focus-visible {
+      transform: translateY(-2px);
+      box-shadow:
+        0 0 20px rgba(34,211,238,0.55),
+        0 0 28px rgba(129,140,248,0.35);
+      border-color: #22d3ee !important;
+      outline: none;
+    }
+
+    .dj-card.dj-live-switch-card:active {
+      transform: translateY(0);
+    }
+
     .dj-card-top {
       display: flex;
       align-items: center;
@@ -5036,9 +5057,7 @@
           '<div class="dj-card-top">' +
             photoHtml +
             '<div>' +
-              (moveWatchButton
-                ? '<div class="dj-status-row">' + liveStatusHtml + watchHtml + '</div>'
-                : liveStatusHtml) +
+              liveStatusHtml +
               '<div class="dj-name">' + escapeHtml(String(name)) + '</div>' +
               '<div class="dj-genre">' + genreHtml + '</div>' +
             '</div>' +
@@ -5047,9 +5066,12 @@
           (isFavourite || moveWatchButton ? "" : watchHtml);
 
         if (moveWatchButton && isActuallyLive) {
-          card.style.cursor = "pointer";
-          card.addEventListener("click", async function (event) {
-            if (event.target.closest(".dj-watch")) return;
+          card.classList.add("dj-live-switch-card");
+          card.setAttribute("role", "button");
+          card.setAttribute("tabindex", "0");
+          card.setAttribute("aria-label", "Switch Radio RRR to " + String(name));
+
+          const switchToDj = async function () {
             if (card.dataset.switching === "1") return;
 
             const targetUsername = getDJUsername(dj);
@@ -5103,6 +5125,17 @@
             } finally {
               card.dataset.switching = "0";
               card.style.opacity = originalOpacity;
+            }
+          };
+
+          card.addEventListener("click", function () {
+            switchToDj();
+          });
+
+          card.addEventListener("keydown", function (event) {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              switchToDj();
             }
           });
         }
