@@ -4824,8 +4824,11 @@
             : "OFFLINE";
         const actionText = isActuallyLive ? "▶ WATCH LIVE" : "VIEW TIKTOK";
         const actionUrl = isActuallyLive ? liveUrl : profileUrl;
+        // Secondary live DJ cards show their known/stored genres only.
+        // Do not run or fetch live AI detection for these DJs. The featured
+        // DJ remains the only DJ whose current audio is actively analysed.
         const genres = isActuallyLive
-          ? [getLiveDisplayGenre(dj)]
+          ? getDJGenres(dj)
           : getStoredDJGenres(dj);
         const genreHtml = genres.length
           ? genres.slice(0, 5).map(getGenrePillHtml).join("")
