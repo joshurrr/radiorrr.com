@@ -4231,7 +4231,8 @@
         const currentDjCard = document.querySelector("#randomLiveDj .current-dj-card");
         if (currentDjCard) {
           if (profilePic) {
-            currentDjCard.style.backgroundImage = `url("${String(profilePic).replace(/"/g, '\\"')}")`;
+            const safeProfilePic = JSON.stringify(String(profilePic));
+            currentDjCard.style.backgroundImage = "url(" + safeProfilePic + ")";
           } else {
             currentDjCard.style.backgroundImage = "";
           }
@@ -5011,6 +5012,19 @@
           dj.avatar ||
           dj.photo ||
           "";
+
+        // Live DJ cards use the DJ profile image as a subtle full-card
+        // background. A dark translucent gradient keeps the text readable
+        // while letting the photo add visual personality to the card.
+        if (isActuallyLive && profilePic) {
+          card.style.backgroundImage =
+            'linear-gradient(90deg, rgba(7,10,25,0.92) 0%, rgba(7,10,25,0.76) 48%, rgba(7,10,25,0.58) 100%), url("' +
+            String(profilePic).replace(/"/g, '\\"') +
+            '")';
+          card.style.backgroundSize = "cover";
+          card.style.backgroundPosition = "center";
+          card.style.backgroundRepeat = "no-repeat";
+        }
 
         const photoHtml = profilePic
           ? '<img class="dj-thumb" src="' + escapeAttr(String(profilePic)) +
