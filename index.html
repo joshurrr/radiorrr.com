@@ -577,6 +577,45 @@
       display: block;
     }
 
+    /* LIVE AUDIO */
+    .live-audio-channel {
+      text-align: left;
+    }
+
+    .live-audio-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    .live-audio-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 0.04em;
+      text-shadow: 0 0 8px rgba(34,211,238,0.65);
+    }
+
+    .live-audio-subtitle {
+      color: #a5b4fc;
+      font-size: 0.78rem;
+    }
+
+    .audio-nav {
+      border-color: rgba(34,211,238,0.55) !important;
+      color: #bae6fd !important;
+      background: radial-gradient(circle at top, rgba(8,45,58,0.95), rgba(6,10,25,0.98)) !important;
+    }
+
+    .audio-nav:hover {
+      border-color: #22d3ee !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 12px rgba(34,211,238,0.55), 0 0 18px rgba(129,140,248,0.45) !important;
+    }
+
     /* CHANNEL PANELS */
     .channel {
       padding: 0.9rem 1rem;
@@ -2650,10 +2689,15 @@
 
     <!-- NAV TABS -->
 <nav class="nav-tabs">
-<!-- LIVE DJs -->
+<!-- LIVE VIDEO -->
 <a class="live-nav active" data-target="live-section">
 <span class="live-nav-dot"></span>
-<span class="nav-label">Live DJs</span>
+<span class="nav-label">Live Video</span>
+</a>
+<!-- LIVE AUDIO -->
+<a class="audio-nav" data-target="stream-section">
+<span class="nav-icon">🔊</span>
+<span class="nav-label">Live Audio</span>
 </a>
 <a data-target="events-section">
 <span class="nav-icon">📅</span>
@@ -2690,14 +2734,18 @@
 </form>
 </div>
 </div>
-<!-- RADIO TAB -->
-<div class="content-pane" id="stream-section">
-<div class="channel">
+<!-- LIVE AUDIO TAB -->
+<div class="content-pane hidden-pane" id="stream-section">
+<div class="channel live-audio-channel">
+<div class="live-audio-header">
+<div class="live-audio-title">🔊 LIVE AUDIO</div>
+<div class="live-audio-subtitle">Radio RRR · Live broadcast</div>
+</div>
 <div class="visualizer">
 <canvas id="viz"></canvas>
 </div>
 <audio controls="" crossorigin="anonymous" id="liveStream">
-<source src="https://stream.nightride.fm/nightride.mp3" type="audio/mpeg"/>
+<source src="https://stream.radiorrr.com/radio.mp3" type="audio/mpeg"/>
           Your browser does not support the audio element.
         </audio>
 <button class="kick" id="kickPlay">Play</button>
@@ -3572,6 +3620,16 @@
 
         if (activeLink) {
           activeLink.classList.add("active");
+        }
+
+        // The LIVE AUDIO and LIVE VIDEO experiences should not play over
+        // each other when the user changes tabs.
+        if (targetId !== "stream-section" && audio && !audio.paused) {
+          audio.pause();
+        }
+
+        if (targetId !== "live-section" && liveDjVideo && !liveDjVideo.paused) {
+          liveDjVideo.pause();
         }
 
       }
