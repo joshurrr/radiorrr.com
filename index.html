@@ -3997,8 +3997,10 @@
         // For a live DJ, AI detection is now the authoritative display
         // source. Profile/bio genres remain a fallback if no AI result exists.
         const aiGenres = getLiveAIGenres(dj);
+        // Show the top few genres from the current AI detection.
+        // The historical/learned DJ profile will replace this source later.
         const genres = aiGenres.length
-          ? [aiGenres[0]]
+          ? aiGenres.slice(0, 3)
           : getDJGenres(dj);
 
         randomLiveDjGenres.innerHTML = "";
