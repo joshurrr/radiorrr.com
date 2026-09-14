@@ -3954,10 +3954,53 @@
           '</span>';
       }
 
+      function getLiveAIGenres(dj) {
+        const raw = Array.isArray(dj && dj.ai_genres)
+          ? dj.ai_genres
+          : [];
+
+        const genres = [];
+        const seen = new Set();
+
+        raw.forEach(item => {
+          const rawGenre =
+            item && typeof item === "object"
+              ? item.genre
+              : item;
+
+          const value = String(rawGenre || "").trim();
+          if (!value) return;
+
+          // AI labels are stored as Parent---Child.
+          // The frontend displays only the child genre.
+          const parts = value.split("---");
+          const displayGenre =
+            parts.length > 1
+              ? parts.slice(1).join("---").trim()
+              : value;
+
+          if (!displayGenre) return;
+
+          const key = displayGenre.toLowerCase();
+          if (seen.has(key)) return;
+
+          seen.add(key);
+          genres.push(displayGenre);
+        });
+
+        return genres;
+      }
+
       function updateLiveDjGenres(dj) {
         if (!randomLiveDjGenres) return;
 
-        const genres = getDJGenres(dj);
+        // For a live DJ, AI detection is now the authoritative display
+        // source. Profile/bio genres remain a fallback if no AI result exists.
+        const aiGenres = getLiveAIGenres(dj);
+        const genres = aiGenres.length
+          ? [aiGenres[0]]
+          : getDJGenres(dj);
+
         randomLiveDjGenres.innerHTML = "";
 
         if (randomLiveDjGenresField) {
