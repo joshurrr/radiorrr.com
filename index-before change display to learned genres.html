@@ -3991,72 +3991,17 @@
         return genres;
       }
 
-      let learnedDJGenreRequestId = 0;
-
-      async function updateLiveDjGenres(dj) {
+      function updateLiveDjGenres(dj) {
         if (!randomLiveDjGenres) return;
 
-        const requestId = ++learnedDJGenreRequestId;
-        const username = getDJUsername(dj);
-
-        // The CURRENT DJ card shows the learned/rolling DJ profile.
-        // This is deliberately separate from LIVE GENRES DETECTED, which
-        // continues to show the latest live audio classification.
-        let genres = [];
-
-        if (username) {
-          try {
-            const response = await fetch(
-              getFreshUrl(
-                "https://api.radiorrr.com/api/ai-genre/profile?username=" +
-                encodeURIComponent(username)
-              ),
-              {
-                cache: "no-store",
-                headers: {
-                  "Cache-Control": "no-cache",
-                  "Pragma": "no-cache"
-                }
-              }
-            );
-
-            if (response.ok) {
-              const profile = await response.json();
-              const learned = Array.isArray(profile && profile.genres)
-                ? profile.genres
-                : [];
-
-              learned.forEach(item => {
-                const rawGenre =
-                  item && typeof item === "object"
-                    ? item.genre
-                    : item;
-
-                const value = String(rawGenre || "").trim();
-                if (!value) return;
-
-                const displayGenre = value.split("---").pop().trim();
-                if (!displayGenre) return;
-
-                if (!genres.some(
-                  existing => existing.toLowerCase() === displayGenre.toLowerCase()
-                )) {
-                  genres.push(displayGenre);
-                }
-              });
-            }
-          } catch (error) {
-            console.warn("Could not load learned DJ genre profile:", error);
-          }
-        }
-
-        // Ignore a slower response for an older DJ selection.
-        if (requestId !== learnedDJGenreRequestId) return;
-
-        // Fallback only when the learned profile is unavailable.
-        if (!genres.length) {
-          genres = getDJGenres(dj);
-        }
+        // For a live DJ, AI detection is now the authoritative display
+        // source. Profile/bio genres remain a fallback if no AI result exists.
+        const aiGenres = getLiveAIGenres(dj);
+        // Show the top few genres from the current AI detection.
+        // The historical/learned DJ profile will replace this source later.
+        const genres = aiGenres.length
+          ? aiGenres.slice(0, 3)
+          : getDJGenres(dj);
 
         randomLiveDjGenres.innerHTML = "";
 
