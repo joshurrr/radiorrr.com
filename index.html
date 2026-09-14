@@ -4769,6 +4769,76 @@
         return "LIVE";
       }
 
+
+      const learnedDJGenreCache = new Map();
+      const LEARNED_DJ_GENRE_CACHE_MS = 5 * 60 * 1000;
+
+      async function getLearnedDJGenresForCard(dj) {
+        const username = getDJUsername(dj);
+        if (!username) return [];
+
+        const key = username.toLowerCase();
+        const cached = learnedDJGenreCache.get(key);
+        if (cached && (Date.now() - cached.timestamp) < LEARNED_DJ_GENRE_CACHE_MS) {
+          return cached.genres;
+        }
+
+        try {
+          const response = await fetch(
+            getFreshUrl(
+              "https://api.radiorrr.com/api/ai-genre/profile?username=" +
+              encodeURIComponent(username)
+            ),
+            {
+              cache: "no-store",
+              headers: {
+                "Cache-Control": "no-cache",
+                "Pragma": "no-cache"
+              }
+            }
+          );
+
+          if (!response.ok) return [];
+
+          const profile = await response.json();
+          const learned = Array.isArray(profile && profile.genres)
+            ? profile.genres
+            : [];
+
+          const genres = [];
+          const seen = new Set();
+
+          learned.forEach(item => {
+            const rawGenre =
+              item && typeof item === "object"
+                ? item.genre
+                : item;
+
+            const value = String(rawGenre || "").trim();
+            if (!value) return;
+
+            const displayGenre = value.split("---").pop().trim();
+            if (!displayGenre) return;
+
+            const key = displayGenre.toLowerCase();
+            if (seen.has(key)) return;
+
+            seen.add(key);
+            genres.push(displayGenre);
+          });
+
+          learnedDJGenreCache.set(key, {
+            timestamp: Date.now(),
+            genres
+          });
+
+          return genres;
+        } catch (error) {
+          console.warn("Could not load learned DJ genre profile for card:", error);
+          return [];
+        }
+      }
+
       function appendDjCard(dj, isLive, routerIdentity, moveWatchButton) {
         const name =
           dj.name || dj.username || dj.display_name || "DJ";
@@ -4824,11 +4894,14 @@
             : "OFFLINE";
         const actionText = isActuallyLive ? "▶ WATCH LIVE" : "VIEW TIKTOK";
         const actionUrl = isActuallyLive ? liveUrl : profileUrl;
-        const genres = isActuallyLive
-          ? [getLiveDisplayGenre(dj)]
+        // Live DJ cards show the learned/rolling profile, not the
+        // 30-second live AI snapshot. Start with a local fallback while
+        // the learned profile is fetched.
+        const initialGenres = isActuallyLive
+          ? getStoredDJGenres(dj)
           : getStoredDJGenres(dj);
-        const genreHtml = genres.length
-          ? genres.slice(0, 5).map(getGenrePillHtml).join("")
+        const genreHtml = initialGenres.length
+          ? initialGenres.slice(0, 5).map(getGenrePillHtml).join("")
           : "Genre: Detecting...";
         const liveStatusHtml =
           '<div class="dj-live" style="' +
@@ -4878,11 +4951,24 @@
                 ? '<div class="dj-status-row">' + liveStatusHtml + watchHtml + '</div>'
                 : liveStatusHtml) +
               '<div class="dj-name">' + escapeHtml(String(name)) + '</div>' +
-              '<div class="dj-genre">' + genreHtml + '</div>' +
+              '<div class="dj-genre" data-learned-genre-card="true">' + genreHtml + '</div>' +
             '</div>' +
           '</div>' +
           metaHtml +
           (isFavourite || moveWatchButton ? "" : watchHtml);
+
+        if (isActuallyLive) {
+          const genreField = card.querySelector('[data-learned-genre-card="true"]');
+          if (genreField) {
+            getLearnedDJGenresForCard(dj).then(learnedGenres => {
+              if (!card.isConnected || !learnedGenres.length) return;
+              genreField.innerHTML = learnedGenres
+                .slice(0, 5)
+                .map(getGenrePillHtml)
+                .join("");
+            });
+          }
+        }
 
         if (moveWatchButton && isActuallyLive) {
           card.style.cursor = "pointer";
