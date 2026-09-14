@@ -1416,6 +1416,25 @@
         0 0 14px rgba(168,85,247,0.16),
         inset 0 0 20px rgba(34,211,238,0.025);
       text-align: left;
+      position: relative;
+      overflow: hidden;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .current-dj-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(4,7,18,0.90), rgba(4,7,18,0.66) 55%, rgba(4,7,18,0.78));
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .current-dj-card .random-live-dj-row {
+      position: relative;
+      z-index: 1;
     }
 
     .current-dj-card-heading {
@@ -4189,6 +4208,8 @@
 
       function updateLiveDjProfile(dj) {
         if (!dj) {
+          const currentDjCard = document.querySelector("#randomLiveDj .current-dj-card");
+          if (currentDjCard) currentDjCard.style.backgroundImage = "";
           if (randomLiveDjAvatar) {
             randomLiveDjAvatar.hidden = true;
             randomLiveDjAvatar.innerHTML = "";
@@ -4206,6 +4227,17 @@
           dj.avatar ||
           dj.photo ||
           "";
+
+        const currentDjCard = document.querySelector("#randomLiveDj .current-dj-card");
+        if (currentDjCard) {
+          if (profilePic) {
+            const safeProfilePic = String(profilePic).replace(/\/g, "\\").replace(/"/g, '\\"');
+            currentDjCard.style.backgroundImage =
+              'url("' + safeProfilePic + '")';
+          } else {
+            currentDjCard.style.backgroundImage = "";
+          }
+        }
 
         if (randomLiveDjAvatar) {
           randomLiveDjAvatar.innerHTML = "";
