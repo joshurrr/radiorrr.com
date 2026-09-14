@@ -3714,43 +3714,10 @@
       }
 
       function handleManualDJStreamFailure(data) {
-        const isManualStream =
-          manualFeaturedDJIdentity &&
-          activeLiveStreamUrl.indexOf("/api/live-stream?dj=") !== -1;
-        const isManifestFailure = data && (
-          data.response && data.response.code === 503 ||
-          data.details === Hls.ErrorDetails.MANIFEST_LOAD_ERROR ||
-          data.details === Hls.ErrorDetails.MANIFEST_LOAD_TIMEOUT
-        );
-
-        if (!isManualStream || !isManifestFailure || manualDJStreamFailureHandled) {
-          return false;
-        }
-
-        manualDJStreamFailureHandled = true;
-
-        if (nativePlaybackRecoveryTimer) {
-          window.clearTimeout(nativePlaybackRecoveryTimer);
-          nativePlaybackRecoveryTimer = null;
-        }
-
-        if (window.radioRrrHls) {
-          window.radioRrrHls.destroy();
-          window.radioRrrHls = null;
-        }
-
-        if (window.radioRrrHlsBackground) {
-          window.radioRrrHlsBackground.destroy();
-          window.radioRrrHlsBackground = null;
-        }
-
-        manualFeaturedDJIdentity = "";
-        manualFeaturedDJMissingCount = 0;
-        activeLiveUsername = "";
-        activeLiveStreamKey = "";
-        activeLiveStreamUrl = "";
-        loadLiveDJs();
-        return true;
+        // Per-DJ browser relays are no longer used. DJ switching is handled
+        // globally by the Router so the website and AI detector share one
+        // authoritative stream.
+        return false;
       }
 
       function normalizeGenreForMatch(value) {
@@ -4140,10 +4107,10 @@
         const username = getDJUsername(dj);
         const name = dj.name || dj.username || dj.display_name || "LIVE DJ";
         const liveUrl = getDJLiveUrl(dj);
-        const streamUrl = manualFeaturedDJIdentity &&
-          getDJIdentity(dj) === manualFeaturedDJIdentity
-          ? RADIO_ROUTER_STREAM_URL + "?dj=" + encodeURIComponent(username)
-          : RADIO_ROUTER_STREAM_URL;
+        // The website, audio relay and AI detector must all consume the
+        // same authoritative Radio RRR relay. A selected DJ is switched
+        // globally by /api/live/switch before this function is called.
+        const streamUrl = RADIO_ROUTER_STREAM_URL;
 
         activeLiveUsername = username;
         activeLiveStreamKey = username || String(name);
@@ -4889,15 +4856,62 @@
 
         if (moveWatchButton && isActuallyLive) {
           card.style.cursor = "pointer";
-          card.addEventListener("click", function (event) {
+          card.addEventListener("click", async function (event) {
             if (event.target.closest(".dj-watch")) return;
+            if (card.dataset.switching === "1") return;
 
-            manualFeaturedDJIdentity = getDJIdentity(dj);
-            manualFeaturedDJMissingCount = 0;
-            manualDJStreamFailureHandled = false;
-            currentFeaturedDJ = dj;
-            showLiveDjPlayer(dj);
-            loadLiveDJs();
+            const targetUsername = getDJUsername(dj);
+            if (!targetUsername) return;
+
+            card.dataset.switching = "1";
+            const originalOpacity = card.style.opacity;
+            card.style.opacity = "0.65";
+
+            try {
+              const response = await fetch(
+                getFreshUrl(
+                  "https://api.radiorrr.com/api/live/switch?dj=" +
+                  encodeURIComponent(targetUsername)
+                ),
+                {
+                  method: "POST",
+                  cache: "no-store",
+                  headers: {
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
+                  }
+                }
+              );
+
+              const result = await response.json().catch(() => ({}));
+
+              if (!response.ok || !result || result.ok !== true) {
+                throw new Error(
+                  result.detail ||
+                  result.message ||
+                  "Radio RRR could not switch to this DJ"
+                );
+              }
+
+              // The Router is now authoritative. Do not create a private
+              // per-DJ stream in this browser; reload the routed DJ and use
+              // the same global relay consumed by the AI detector.
+              manualFeaturedDJIdentity = "";
+              manualFeaturedDJMissingCount = 0;
+              manualDJStreamFailureHandled = false;
+              currentFeaturedDJ = result.relay || dj;
+
+              await loadLiveDJs();
+            } catch (error) {
+              console.error("Radio RRR DJ switch failed:", error);
+              alert(
+                "Radio RRR could not switch to this DJ. The current live stream has been left unchanged if possible.\n\n" +
+                String(error.message || error)
+              );
+            } finally {
+              card.dataset.switching = "0";
+              card.style.opacity = originalOpacity;
+            }
           });
         }
 
