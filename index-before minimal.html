@@ -1416,25 +1416,6 @@
         0 0 14px rgba(168,85,247,0.16),
         inset 0 0 20px rgba(34,211,238,0.025);
       text-align: left;
-      position: relative;
-      overflow: hidden;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
-
-    .current-dj-card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, rgba(4,7,18,0.90), rgba(4,7,18,0.66) 55%, rgba(4,7,18,0.78));
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .current-dj-card .random-live-dj-row {
-      position: relative;
-      z-index: 1;
     }
 
     .current-dj-card-heading {
@@ -2089,10 +2070,10 @@
         align-items: stretch;
         gap: 0.75rem;
         margin: 0;
-        padding: 0;
-        border: none;
-        border-radius: 0;
-        background: transparent;
+        padding: 1rem;
+        border: 1px solid rgba(129, 140, 248, 0.35);
+        border-radius: 12px;
+        background: rgba(7, 10, 25, 0.58);
       }
 
       #randomLiveDj .random-live-dj-profile {
@@ -2724,7 +2705,6 @@
 
       #randomLiveDj .live-router-side .live-genres-detected {
         padding: 0.75rem 0.8rem;
-        margin-top: 0.25rem;
       }
     }
 
@@ -2856,7 +2836,7 @@
 <div class="live-router-side">
 <div class="random-live-header">
 <div class="random-live-heading-row">
-<div class="random-live-title">🔴 LIVE NOW</div>
+<div class="random-live-title">🔴 NOW LIVE</div>
 <div class="random-live-audio-actions">
 <button class="random-live-button random-live-audio-toggle" id="liveDjUnmute" type="button">
                   🔊 UNMUTE LIVE
@@ -2864,7 +2844,7 @@
 </div>
 </div>
 <div class="random-live-now-playing">
-              <strong id="heroNowPlaying">Loading current block…</strong>
+              Now Playing: <strong id="heroNowPlaying">Loading current block…</strong>
 </div>
 
 </div>
@@ -4208,8 +4188,6 @@
 
       function updateLiveDjProfile(dj) {
         if (!dj) {
-          const currentDjCard = document.querySelector("#randomLiveDj .current-dj-card");
-          if (currentDjCard) currentDjCard.style.backgroundImage = "";
           if (randomLiveDjAvatar) {
             randomLiveDjAvatar.hidden = true;
             randomLiveDjAvatar.innerHTML = "";
@@ -4227,15 +4205,6 @@
           dj.avatar ||
           dj.photo ||
           "";
-
-        const currentDjCard = document.querySelector("#randomLiveDj .current-dj-card");
-        if (currentDjCard) {
-          if (profilePic) {
-            currentDjCard.style.backgroundImage = `url("${String(profilePic).replace(/"/g, '\\"')}")`;
-          } else {
-            currentDjCard.style.backgroundImage = "";
-          }
-        }
 
         if (randomLiveDjAvatar) {
           randomLiveDjAvatar.innerHTML = "";
