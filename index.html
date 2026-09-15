@@ -3538,6 +3538,8 @@
 <div class="visualizer">
 <canvas id="viz"></canvas>
 </div>
+<!-- Persistent station audio: this element intentionally remains mounted
+     while tabs are switched so the live radio stream is never interrupted. -->
 <audio controls="" crossorigin="anonymous" id="liveStream">
 <source src="https://stream.radiorrr.com/radio.mp3" type="audio/mpeg"/>
           Your browser does not support the audio element.
@@ -4457,12 +4459,14 @@
           activeLink.classList.add("active");
         }
 
-        // The LIVE AUDIO and LIVE VIDEO experiences should not play over
-        // each other when the user changes tabs.
-        if (targetId !== "stream-section" && audio && !audio.paused) {
-          audio.pause();
-        }
+        // RADIO RRR AUDIO IS A STATION-WIDE BACKGROUND STREAM.
+        // Changing tabs must NEVER pause or recreate the <audio> element.
+        // The stream should continue playing while the listener browses
+        // Schedule, Tools, Live Video, etc. Only the radio controls themselves
+        // are allowed to pause the audio stream.
 
+        // Live DJ video is different: stop it when leaving Live Video so its
+        // video/audio does not continue playing over the radio stream.
         if (targetId !== "live-section" && liveDjVideo && !liveDjVideo.paused) {
           liveDjVideo.pause();
         }
