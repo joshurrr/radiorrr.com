@@ -4218,10 +4218,22 @@
       }
 
       function handleManualDJStreamFailure(data) {
-        // Per-DJ browser relays are no longer used. DJ switching is handled
-        // globally by the Router so the website and AI detector share one
-        // authoritative stream.
-        return false;
+        // A manually selected DJ uses the Router's per-DJ browser relay.
+        // If that private relay fails fatally, abandon only this browser's
+        // override and return to the station-wide default relay.
+        if (!manualFeaturedDJIdentity || !data || !data.fatal) return false;
+        if (manualDJStreamFailureHandled) return true;
+
+        manualDJStreamFailureHandled = true;
+        manualFeaturedDJIdentity = "";
+        manualFeaturedDJMissingCount = 0;
+
+        window.setTimeout(function () {
+          manualDJStreamFailureHandled = false;
+          loadLiveDJs();
+        }, 250);
+
+        return true;
       }
 
       function normalizeGenreForMatch(value) {
@@ -4663,13 +4675,19 @@
         const username = getDJUsername(dj);
         const name = dj.name || dj.username || dj.display_name || "LIVE DJ";
         const liveUrl = getDJLiveUrl(dj);
-        // The website, audio relay and AI detector must all consume the
-        // same authoritative Radio RRR relay. A selected DJ is switched
-        // globally by /api/live/switch before this function is called.
-        const streamUrl = RADIO_ROUTER_STREAM_URL;
+        // The station default uses the shared Router relay. A listener who
+        // manually selects a DJ gets that DJ's existing per-DJ manual relay
+        // in this browser only. Never call /api/live/switch for a listener
+        // selection because that changes the shared station relay.
+        const isManualSelection =
+          Boolean(manualFeaturedDJIdentity) &&
+          getDJIdentity(dj) === manualFeaturedDJIdentity;
+        const streamUrl = isManualSelection && username
+          ? RADIO_ROUTER_STREAM_URL + "?dj=" + encodeURIComponent(username)
+          : RADIO_ROUTER_STREAM_URL;
 
         activeLiveUsername = username;
-        activeLiveStreamKey = username || String(name);
+        activeLiveStreamKey = (isManualSelection ? "manual:" : "default:") + (username || String(name));
         activeLiveStreamUrl = streamUrl;
         liveDjVideo.autoplay = true;
         liveDjVideo.playsInline = true;
@@ -5441,15 +5459,16 @@
            * The router therefore follows data.relay, never live[0].
            */
            if (relayDj) {
-              if (
-                liveFeaturedOverride &&
-                getDJUsername(liveFeaturedOverride).toLowerCase() !==
-                  String(activeLiveUsername).toLowerCase()
-              ) {
-                showLiveDjPlayer(liveFeaturedOverride);
+              if (manualFeaturedDJIdentity && liveFeaturedOverride) {
+                if (
+                  activeLiveStreamKey !==
+                  "manual:" + getDJUsername(liveFeaturedOverride)
+                ) {
+                  showLiveDjPlayer(liveFeaturedOverride);
+                }
               } else if (!manualFeaturedDJIdentity && routerUsername) {
                if (
-                 activeLiveStreamKey !== routerKey
+                 activeLiveStreamKey !== "default:" + routerKey
                ) {
                 showLiveDjPlayer(relayDj);
               } else {
@@ -5477,8 +5496,8 @@
           }
 
           /*
-           * Do not let the old random-DJ picker overwrite the router.
-           * The router is now controlled exclusively by data.relay.
+           * data.relay is the station-wide default. A manualFeaturedDJIdentity
+           * is a browser-local override and must never alter data.relay.
            */
           liveDjsList.innerHTML = "";
 
@@ -5500,7 +5519,7 @@
            const selectedFavouriteDj = manualFeaturedDJIdentity
              ? uniqueFavouriteDJs.find(dj => getDJIdentity(dj) === manualFeaturedDJIdentity)
              : null;
-           const selectedFeaturedDj = relayDj && selectedLiveDj
+           const selectedFeaturedDj = manualFeaturedDJIdentity && selectedLiveDj
              ? hydrateLiveDJProfile(selectedLiveDj, selectedFavouriteDj)
              : routedDj;
           currentFeaturedDJ = selectedFeaturedDj;
@@ -5740,7 +5759,7 @@
           card.classList.add("dj-live-switch-card");
           card.setAttribute("role", "button");
           card.setAttribute("tabindex", "0");
-          card.setAttribute("aria-label", "Switch Radio RRR to " + String(name));
+          card.setAttribute("aria-label", "Watch " + String(name) + " in this browser");
 
           const switchToDj = async function () {
             if (card.dataset.switching === "1") return;
@@ -5753,46 +5772,28 @@
             card.style.opacity = "0.65";
 
             try {
-              const response = await fetch(
-                getFreshUrl(
-                  "https://api.radiorrr.com/api/live/switch?dj=" +
-                  encodeURIComponent(targetUsername)
-                ),
-                {
-                  method: "POST",
-                  cache: "no-store",
-                  headers: {
-                    "Cache-Control": "no-cache",
-                    "Pragma": "no-cache"
-                  }
-                }
+              // IMPORTANT: do not call /api/live/switch here. That endpoint
+              // changes the shared station relay. The Router already supports
+              // per-DJ manual relays via /api/live-stream?dj=USERNAME.
+              // This selection therefore affects this browser only.
+              manualFeaturedDJIdentity = getDJIdentity(dj);
+              manualFeaturedDJMissingCount = 0;
+              manualDJStreamFailureHandled = false;
+              currentFeaturedDJ = dj;
+
+              showLiveDjPlayer(dj);
+              await updateLiveGenresDetected(
+                null,
+                manualFeaturedDJIdentity,
+                ""
               );
-
-              const result = await response.json().catch(() => ({}));
-
-              if (!response.ok || !result || result.ok !== true) {
-                throw new Error(
-                  result.detail ||
-                  result.message ||
-                  "Radio RRR could not switch to this DJ"
-                );
-              }
-
-              // The Router is now authoritative. Do not create a private
-              // per-DJ stream in this browser; reload the routed DJ and use
-              // the same global relay consumed by the AI detector.
+              await loadLiveDJs();
+            } catch (error) {
+              console.error("Radio RRR DJ selection failed:", error);
               manualFeaturedDJIdentity = "";
               manualFeaturedDJMissingCount = 0;
               manualDJStreamFailureHandled = false;
-              currentFeaturedDJ = result.relay || dj;
-
               await loadLiveDJs();
-            } catch (error) {
-              console.error("Radio RRR DJ switch failed:", error);
-              alert(
-                "Radio RRR could not switch to this DJ. The current live stream has been left unchanged if possible.\n\n" +
-                String(error.message || error)
-              );
             } finally {
               card.dataset.switching = "0";
               card.style.opacity = originalOpacity;
