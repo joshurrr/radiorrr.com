@@ -4497,13 +4497,8 @@
         // Navigation must never touch its playback state.
         // The element has been moved outside the tab panes, so hiding a pane
         // cannot tear down the live media element.
-        if (stationAudioWanted && audio && audio.paused) {
-          window.setTimeout(function () {
-            if (stationAudioWanted && audio.paused) {
-              audio.play().catch(function () {});
-            }
-          }, 0);
-        }
+        // Do not call pause(), load(), src=, or AudioContext operations here.
+        // A tab click must be completely irrelevant to station playback.
 
         // Live DJ video is different: stop it when leaving Live Video so its
         // video/audio does not continue playing over the radio stream.
@@ -4527,8 +4522,6 @@
             if (targetId) {
 
               switchTab(targetId);
-
-              playNavClick();
 
             }
 
@@ -6712,66 +6705,28 @@
 
       function initAudioAnalyser() {
 
-        if (audioCtx || !audio)
-          return;
+        /*
+         * IMPORTANT: Do NOT route the station <audio> element through a
+         * Web Audio MediaElementSource.  Doing that makes the AudioContext
+         * part of the radio playback path; if the browser suspends that
+         * context while the user changes the site's tabs, the stream can
+         * remain "playing" but become completely silent.
+         *
+         * Radio RRR playback is therefore deliberately native HTMLMedia
+         * playback.  The visualizer continues with its own animation below.
+         */
+        analyserReady = false;
+        analyser = null;
+        dataArray = null;
 
-        try {
-
-          const AC =
-            window.AudioContext ||
-            window.webkitAudioContext;
-
-          if (!AC) return;
-
-          audioCtx = new AC();
-
-          const source =
-            audioCtx.createMediaElementSource(
-              audio
-            );
-
-          analyser =
-            audioCtx.createAnalyser();
-
-          analyser.fftSize =
-            2048;
-
-          analyser.smoothingTimeConstant =
-            0.85;
-
-          dataArray =
-            new Uint8Array(
-              analyser.frequencyBinCount
-            );
-
-          source.connect(
-            analyser
-          );
-
-          analyser.connect(
-            audioCtx.destination
-          );
-
-          analyserReady = true;
-
-          setStatus(
-            "visualizer connected"
-          );
-
-        } catch (e) {
-
-          analyserReady = false;
-
-          console.warn(
-            "Analyser init failed:",
-            e
-          );
-
-          setStatus(
-            "visualizer blocked. Animation will still run."
-          );
-
+        if (audio) {
+          audio.muted = false;
+          audio.volume = 1;
         }
+
+        setStatus(
+          "visualizer active"
+        );
 
       }
 
@@ -7685,6 +7640,13 @@
           }
         );
 
+      }
+
+      // Keep the station's native media output explicitly unmuted.
+      // This is independent of the Live DJ video, which has its own mute state.
+      if (audio) {
+        audio.muted = false;
+        audio.volume = 1;
       }
 
       // Background watchdog: navigation, hidden panes, HLS/video activity or
