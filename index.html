@@ -3361,6 +3361,49 @@
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+<style id="rrr-secondary-live-final-layout">
+/* RRR: secondary live DJ row — compact, fixed-size, left aligned */
+#liveDjsList .live-djs-grid {
+  display: grid !important;
+  grid-template-columns: repeat(5, 176px) !important;
+  grid-auto-columns: 176px !important;
+  justify-content: start !important;
+  justify-items: start !important;
+  align-content: start !important;
+  gap: 14px !important;
+}
+
+#liveDjsList .dj-card.dj-live-switch-card {
+  width: 176px !important;
+  min-width: 176px !important;
+  max-width: 176px !important;
+  height: 264px !important;
+  min-height: 264px !important;
+  max-height: 264px !important;
+  flex: none !important;
+  box-sizing: border-box !important;
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  #liveDjsList .live-djs-grid {
+    grid-template-columns: repeat(4, 176px) !important;
+  }
+}
+@media (min-width: 480px) and (max-width: 767px) {
+  #liveDjsList .live-djs-grid {
+    grid-template-columns: repeat(2, 176px) !important;
+    gap: 12px !important;
+  }
+}
+@media (max-width: 479px) {
+  #liveDjsList .live-djs-grid {
+    grid-template-columns: 176px !important;
+    gap: 12px !important;
+  }
+}
+</style>
+
 </head>
 <body>
 <main class="wrapper">
