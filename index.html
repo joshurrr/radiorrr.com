@@ -4356,6 +4356,40 @@
       const audio =
         document.getElementById("liveStream");
 
+      /*
+       * STATION AUDIO MUST BE PAGE-LIFETIME
+       * -----------------------------------
+       * The radio stream is not a tab/player. It is the station itself.
+       * Keep the media element mounted directly under <body> so changing a
+       * content pane (including display:none) can never suspend or tear down
+       * the live connection. The custom RRR Play/Pause button remains in the
+       * Live Audio pane and controls this same element.
+       */
+      let stationAudioWanted = false;
+      let stationAudioRecoveryTimer = null;
+      let stationAudioLastHealthy = Date.now();
+      let stationAudioManualAction = false;
+
+      if (audio) {
+        const persistentAudioHost = document.createElement("div");
+        persistentAudioHost.id = "rrrPersistentStationAudio";
+        persistentAudioHost.setAttribute("aria-hidden", "true");
+        persistentAudioHost.style.position = "fixed";
+        persistentAudioHost.style.width = "1px";
+        persistentAudioHost.style.height = "1px";
+        persistentAudioHost.style.overflow = "hidden";
+        persistentAudioHost.style.opacity = "0";
+        persistentAudioHost.style.pointerEvents = "none";
+        persistentAudioHost.style.left = "-10000px";
+        persistentAudioHost.style.top = "-10000px";
+        document.body.appendChild(persistentAudioHost);
+        persistentAudioHost.appendChild(audio);
+
+        // The custom RRR controls are the station controls.
+        audio.removeAttribute("controls");
+        audio.preload = "auto";
+      }
+
       const statusEl =
         document.getElementById("status");
 
@@ -4460,10 +4494,16 @@
         }
 
         // RADIO RRR AUDIO IS A STATION-WIDE BACKGROUND STREAM.
-        // Changing tabs must NEVER pause or recreate the <audio> element.
-        // The stream should continue playing while the listener browses
-        // Schedule, Tools, Live Video, etc. Only the radio controls themselves
-        // are allowed to pause the audio stream.
+        // Navigation must never touch its playback state.
+        // The element has been moved outside the tab panes, so hiding a pane
+        // cannot tear down the live media element.
+        if (stationAudioWanted && audio && audio.paused) {
+          window.setTimeout(function () {
+            if (stationAudioWanted && audio.paused) {
+              audio.play().catch(function () {});
+            }
+          }, 0);
+        }
 
         // Live DJ video is different: stop it when leaving Live Video so its
         // video/audio does not continue playing over the radio stream.
@@ -7434,7 +7474,10 @@
           "click",
           function () {
 
+            stationAudioManualAction = true;
+
             if (audio.paused) {
+              stationAudioWanted = true;
 
               setStatus(
                 "connecting..."
@@ -7486,6 +7529,7 @@
 
             } else {
 
+              stationAudioWanted = false;
               audio.pause();
 
               setStatus(
@@ -7503,6 +7547,9 @@
         audio.addEventListener(
           "play",
           function () {
+
+            stationAudioWanted = true;
+            stationAudioManualAction = false;
 
             if (
               audioCtx &&
@@ -7527,16 +7574,100 @@
         );
 
         audio.addEventListener(
+          "playing",
+          function () {
+            stationAudioLastHealthy = Date.now();
+            if (stationAudioRecoveryTimer) {
+              window.clearTimeout(stationAudioRecoveryTimer);
+              stationAudioRecoveryTimer = null;
+            }
+          }
+        );
+
+        audio.addEventListener(
+          "timeupdate",
+          function () {
+            stationAudioLastHealthy = Date.now();
+          }
+        );
+
+        audio.addEventListener(
+          "waiting",
+          function () {
+            stationAudioLastHealthy = Date.now();
+            if (!stationAudioWanted || stationAudioRecoveryTimer) return;
+
+            stationAudioRecoveryTimer = window.setTimeout(function () {
+              stationAudioRecoveryTimer = null;
+              if (!stationAudioWanted) return;
+
+              // Do not reconnect on every tiny network hiccup. Only rebuild
+              // the live source after a sustained stall.
+              if (Date.now() - stationAudioLastHealthy < 6000) return;
+
+              const currentSrc = audio.currentSrc || "https://stream.radiorrr.com/radio.mp3";
+              audio.src = currentSrc;
+              audio.load();
+              audio.play().catch(function () {});
+            }, 6500);
+          }
+        );
+
+        audio.addEventListener(
+          "stalled",
+          function () {
+            if (!stationAudioWanted || stationAudioRecoveryTimer) return;
+            stationAudioRecoveryTimer = window.setTimeout(function () {
+              stationAudioRecoveryTimer = null;
+              if (!stationAudioWanted) return;
+              audio.play().catch(function () {});
+            }, 3000);
+          }
+        );
+
+        audio.addEventListener(
+          "error",
+          function () {
+            if (!stationAudioWanted) return;
+            window.setTimeout(function () {
+              if (!stationAudioWanted) return;
+              const currentSrc = audio.currentSrc || "https://stream.radiorrr.com/radio.mp3";
+              audio.src = currentSrc;
+              audio.load();
+              audio.play().catch(function () {});
+            }, 1500);
+          }
+        );
+
+        // If anything other than the RRR controls manages to pause the
+        // element, immediately restore the station stream.
+        audio.addEventListener(
           "pause",
           function () {
 
-            setStatus(
-              "paused"
-            );
+            if (stationAudioManualAction) {
+              stationAudioManualAction = false;
+              setStatus(
+                "paused"
+              );
+              kick.textContent =
+                "Play";
+              return;
+            }
 
-            kick.textContent =
-              "Play";
-
+            // Unexpected pause: this is not a user request. Keep the station
+            // alive and retry without requiring the listener to press Play.
+            if (stationAudioWanted) {
+              kick.textContent = "Reconnecting…";
+              window.setTimeout(function () {
+                if (stationAudioWanted && audio.paused) {
+                  audio.play().then(function () {
+                    kick.textContent = "Pause";
+                    setStatus("playing");
+                  }).catch(function () {});
+                }
+              }, 250);
+            }
           }
         );
 
@@ -7555,6 +7686,16 @@
         );
 
       }
+
+      // Background watchdog: navigation, hidden panes, HLS/video activity or
+      // transient browser stalls must not silently kill the radio station.
+      window.setInterval(function () {
+        if (!audio || !stationAudioWanted || document.hidden) return;
+
+        if (audio.paused) {
+          audio.play().catch(function () {});
+        }
+      }, 2500);
 
     });
 
