@@ -1377,6 +1377,12 @@
       color: #cbd5e1;
       opacity: 0.9;
     }
+      .main-dj-match-score {
+        margin-top: 0.18rem;
+        margin-bottom: 0.35rem;
+        font-size: 0.58rem;
+        padding: 0.14rem 0.38rem;
+      }
 
     .dj-status-row .dj-live {
       min-width: 0;
@@ -3226,6 +3232,7 @@
 <div class="random-live-dj-identity">
 <div class="random-live-dj-avatar" hidden="" id="randomLiveDjAvatar"></div>
 <div class="random-live-dj-name" id="randomLiveDjName">Checking LIVE DJs…</div>
+<div class="dj-match-score main-dj-match-score match-low" id="randomLiveDjMatch" title="RRR genre compatibility score out of 100">🎯 PROGRAM MATCH —</div>
 </div>
 <div class="random-live-dj-profile-field random-live-dj-genres-field" hidden="" id="randomLiveDjGenresField">
 <div aria-label="DJ genres" class="random-live-genres" id="randomLiveDjGenres"></div>
@@ -3886,6 +3893,8 @@
 
       const randomLiveDjName =
         document.getElementById("randomLiveDjName");
+      const randomLiveDjMatch =
+        document.getElementById("randomLiveDjMatch");
 
       const randomLiveDjGenres =
         document.getElementById("randomLiveDjGenres");
@@ -4737,6 +4746,7 @@
           liveDjBackground.muted = true;
         }
         randomLiveDjName.textContent = "🎧 " + String(name);
+        updateMainDJMatchScore(dj);
         updateLiveDjGenres(dj);
         updateLiveDjProfile(dj);
         randomLiveDj.style.display = "block";
@@ -4989,6 +4999,44 @@
         ).trim().toLowerCase().replace(/\s+/g, " ");
 
         return name ? "name:" + name : "";
+      }
+
+      function updateMainDJMatchScore(dj) {
+        if (!randomLiveDjMatch) return;
+
+        const username = getDJUsername(dj);
+        const key = String(username || "")
+          .replace(/^@/, "")
+          .trim()
+          .toLowerCase();
+
+        const score = Number(
+          key ? currentLiveMatchScores[key] : NaN
+        );
+
+        if (!Number.isFinite(score)) {
+          randomLiveDjMatch.textContent = "🎯 PROGRAM MATCH —";
+          randomLiveDjMatch.className =
+            "dj-match-score main-dj-match-score match-low";
+          return;
+        }
+
+        const rounded = Math.max(
+          0,
+          Math.min(100, Math.round(score))
+        );
+
+        const matchClass =
+          rounded >= 50
+            ? "match-high"
+            : rounded >= 20
+              ? "match-mid"
+              : "match-low";
+
+        randomLiveDjMatch.textContent =
+          "🎯 PROGRAM MATCH " + rounded;
+        randomLiveDjMatch.className =
+          "dj-match-score main-dj-match-score " + matchClass;
       }
 
       function mergeDJRecords() {
@@ -5581,6 +5629,7 @@
                     relayDj.display_name ||
                     "LIVE DJ"
                   );
+                updateMainDJMatchScore(relayDj);
                 updateLiveDjGenres(relayDj);
                 updateLiveDjProfile(relayDj);
                 randomLiveDj.style.display = "block";
@@ -5792,7 +5841,7 @@
 
           matchScoreHtml =
             '<div class="dj-match-score ' + matchClass + '" title="RRR genre compatibility score out of 100">' +
-            '🎯 MATCH ' + roundedMatchScore +
+            '🎯 PROGRAM MATCH ' + roundedMatchScore +
             '</div>';
         }
 
