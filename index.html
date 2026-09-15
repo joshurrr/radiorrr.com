@@ -1610,9 +1610,15 @@
 
 
 
-    /* DISCOVER DJs */
+    /* DISCOVER DJs
+       Keep the discovery panel out of the individual LIVE DJ card grid.
+       Making it span the complete grid also prevents its height from
+       stretching the last LIVE DJ card in the same CSS grid row. */
     .dj-discovery {
-      margin-top: 1.25rem;
+      grid-column: 1 / -1;
+      width: 100%;
+      min-width: 0;
+      margin-top: 0.25rem;
       padding: 1rem;
       border-radius: 16px;
       background:
@@ -1688,8 +1694,9 @@
 
     .dj-discovery-results {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
       gap: 0.75rem;
+      align-items: stretch;
     }
 
     .dj-discovery-card {
