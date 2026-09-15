@@ -3363,12 +3363,12 @@
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
 <style id="rrr-secondary-live-final-layout">
-/* RRR: secondary live DJ row — compact, fixed-size, genuinely left aligned.
-   IMPORTANT: #liveDjsList itself is the .live-djs-grid element. */
+/* RRR: secondary live DJ row — slightly larger compact portrait cards.
+   Desktop: 7 across, left aligned, fixed card size. */
 #liveDjsList {
   display: grid !important;
-  grid-template-columns: repeat(5, 176px) !important;
-  grid-auto-columns: 176px !important;
+  grid-template-columns: repeat(7, 185px) !important;
+  grid-auto-columns: 185px !important;
   justify-content: start !important;
   justify-items: start !important;
   align-content: start !important;
@@ -3376,36 +3376,50 @@
 }
 
 #liveDjsList .dj-card.dj-live-switch-card {
-  width: 176px !important;
-  min-width: 176px !important;
-  max-width: 176px !important;
-  height: 264px !important;
-  min-height: 264px !important;
-  max-height: 264px !important;
+  width: 185px !important;
+  min-width: 185px !important;
+  max-width: 185px !important;
+  height: 278px !important;
+  min-height: 278px !important;
+  max-height: 278px !important;
   flex: none !important;
   justify-self: start !important;
   box-sizing: border-box !important;
 }
 
+#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+@media (min-width: 1200px) {
+  #liveDjsList {
+    grid-template-columns: repeat(7, 185px) !important;
+  }
+}
+
 @media (min-width: 768px) and (max-width: 1199px) {
   #liveDjsList {
-    grid-template-columns: repeat(4, 176px) !important;
+    grid-template-columns: repeat(5, 185px) !important;
   }
 }
+
 @media (min-width: 480px) and (max-width: 767px) {
   #liveDjsList {
-    grid-template-columns: repeat(2, 176px) !important;
-    gap: 12px !important;
-  }
-}
-@media (max-width: 479px) {
-  #liveDjsList {
-    grid-template-columns: 176px !important;
+    grid-template-columns: repeat(3, 185px) !important;
     gap: 12px !important;
   }
 }
 
-</style>
+@media (max-width: 479px) {
+  #liveDjsList {
+    grid-template-columns: repeat(2, 185px) !important;
+    gap: 12px !important;
+  }
+}
+
 </head>
 <body>
 <main class="wrapper">
