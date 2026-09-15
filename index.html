@@ -1340,6 +1340,44 @@
       margin-bottom: 0.35rem;
     }
 
+.dj-match-score {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.28rem;
+      width: fit-content;
+      padding: 0.16rem 0.42rem;
+      margin-top: 0.08rem;
+      margin-bottom: 0.42rem;
+      border-radius: 999px;
+      border: 1px solid rgba(129,140,248,0.42);
+      background: rgba(15,23,42,0.78);
+      color: #c7c7ff;
+      font-size: 0.62rem;
+      line-height: 1.1;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      box-shadow: 0 0 7px rgba(129,140,248,0.12);
+    }
+
+    .dj-match-score.match-high {
+      border-color: rgba(34,211,238,0.58);
+      color: #a5f3fc;
+      box-shadow: 0 0 8px rgba(34,211,238,0.18);
+    }
+
+    .dj-match-score.match-mid {
+      border-color: rgba(168,85,247,0.52);
+      color: #ddd6fe;
+    }
+
+    .dj-match-score.match-low {
+      border-color: rgba(148,163,184,0.38);
+      color: #cbd5e1;
+      opacity: 0.9;
+    }
+
     .dj-status-row .dj-live {
       min-width: 0;
       margin-bottom: 0;
@@ -4926,6 +4964,7 @@
       /* RANDOM LIVE DJ */
 
       let currentLiveDJs = [];
+      let currentLiveMatchScores = {};
       let currentRandomDJ = null;
       let currentFeaturedDJ = null;
       let manualFeaturedDJIdentity = "";
@@ -5414,7 +5453,55 @@
             return;
           }
 
+          // Stage 3 exposes the same ranking used by the automatic relay
+          // selector. Use it only as a display/monitoring signal here.
+          // If the endpoint is temporarily unavailable, the DJ cards still
+          // render normally without scores.
+          let genreMatchData = null;
+          try {
+            const matchResponse = await fetch(
+              getFreshUrl("https://api.radiorrr.com/api/genre-match"),
+              {
+                cache: "no-store",
+                headers: {
+                  "Cache-Control": "no-cache",
+                  "Pragma": "no-cache"
+                },
+                signal: liveDjRequestController.signal
+              }
+            );
+
+            if (matchResponse.ok) {
+              genreMatchData = await matchResponse.json();
+            }
+          } catch (matchError) {
+            if (matchError && matchError.name === "AbortError") {
+              return;
+            }
+            console.warn("Radio RRR genre-match display unavailable:", matchError);
+          }
+
           const live = Array.isArray(data.live) ? data.live : [];
+
+          currentLiveMatchScores = {};
+          if (
+            genreMatchData &&
+            Array.isArray(genreMatchData.ranked)
+          ) {
+            genreMatchData.ranked.forEach(item => {
+              const key = String(item.username || "")
+                .replace(/^@/, "")
+                .trim()
+                .toLowerCase();
+
+              if (!key) return;
+
+              const score = Number(item.score);
+              if (Number.isFinite(score)) {
+                currentLiveMatchScores[key] = score;
+              }
+            });
+          }
           const favourites = Array.isArray(data.favourites) ? data.favourites : [];
           const relayDj = data.relay || null;
           const routerUsername = relayDj ? getDJUsername(relayDj) : "";
@@ -5430,6 +5517,18 @@
           const aiGenre = data.ai_genre || null;
 
           currentLiveDJs = live;
+
+          const liveKeys = new Set(
+            live.map(dj =>
+              getDJUsername(dj).toLowerCase()
+            ).filter(Boolean)
+          );
+
+          Object.keys(currentLiveMatchScores).forEach(key => {
+            if (!liveKeys.has(key)) {
+              delete currentLiveMatchScores[key];
+            }
+          });
 
            const uniqueLiveDJs = mergeUniqueDJs(live);
            const uniqueFavouriteDJs = mergeUniqueDJs(favourites);
@@ -5668,6 +5767,35 @@
 
         const isActuallyLive = isLive || dj.live === true;
 
+        const matchKey = String(username || "")
+          .replace(/^@/, "")
+          .trim()
+          .toLowerCase();
+
+        const matchScore = isActuallyLive
+          ? currentLiveMatchScores[matchKey]
+          : undefined;
+
+        let matchScoreHtml = "";
+        if (Number.isFinite(matchScore)) {
+          const roundedMatchScore = Math.max(
+            0,
+            Math.min(100, Math.round(matchScore))
+          );
+
+          const matchClass =
+            roundedMatchScore >= 50
+              ? "match-high"
+              : roundedMatchScore >= 20
+                ? "match-mid"
+                : "match-low";
+
+          matchScoreHtml =
+            '<div class="dj-match-score ' + matchClass + '" title="RRR genre compatibility score out of 100">' +
+            '🎯 MATCH ' + roundedMatchScore +
+            '</div>';
+        }
+
         const viewerText =
           viewers !== undefined && viewers !== null && Number(viewers) > 0
             ? " · " + viewers + " watching"
@@ -5749,6 +5877,7 @@
             '<div>' +
               liveStatusHtml +
               '<div class="dj-name">' + escapeHtml(String(name)) + '</div>' +
+              matchScoreHtml +
               '<div class="dj-genre">' + genreHtml + '</div>' +
             '</div>' +
           '</div>' +
