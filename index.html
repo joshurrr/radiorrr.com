@@ -3400,7 +3400,7 @@
 }
 @media (max-width: 479px) {
   #liveDjsList {
-    grid-template-columns: 176px !important;
+    grid-template-columns: 176px minmax(0, 1fr) !important;
     gap: 12px !important;
   }
 }
@@ -3412,9 +3412,13 @@
    panel span the entire available content width. The previous fixed-width
    grid tracks limited the Discover panel to the first ~900px of the page. */
 #liveDjsList {
-  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
-  grid-auto-columns: minmax(0, 1fr) !important;
+  /* Keep LIVE DJ cards compact and left-aligned, while the final
+     1fr track gives the Discover panel room to span the full width. */
+  grid-template-columns: repeat(5, 176px) minmax(0, 1fr) !important;
+  grid-auto-columns: 176px !important;
   width: 100% !important;
+  justify-content: start !important;
+  justify-items: start !important;
 }
 
 #liveDjsList > .dj-discovery {
@@ -3432,7 +3436,7 @@
 
 @media (min-width: 768px) and (max-width: 1199px) {
   #liveDjsList {
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    grid-template-columns: repeat(4, 176px) minmax(0, 1fr) !important;
   }
 }
 
