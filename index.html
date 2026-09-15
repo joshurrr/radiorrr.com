@@ -5083,6 +5083,7 @@
       let djDiscoveryDJs = [];
       let djDiscoveryQuery = "";
       let djDiscoveryGenre = "";
+      let djDiscoveryRenderId = 0;
 
       function getDiscoveryGenres(dj) {
         // The /api/live favourite records can expose genres under several
@@ -5138,10 +5139,61 @@
         return filterMusicGenres(out);
       }
 
-      function renderDjDiscovery(favourites) {
+      async function renderDjDiscovery(favourites, liveDJs) {
         if (!liveDjsList) return;
 
-        djDiscoveryDJs = Array.isArray(favourites) ? favourites.slice() : [];
+        const renderId = ++djDiscoveryRenderId;
+        const favouriteList = Array.isArray(favourites) ? favourites.slice() : [];
+        const liveList = Array.isArray(liveDJs) ? liveDJs : [];
+
+        // Discover is based on the RRR catalogue, but a DJ who is live can
+        // have fresher genre/profile data in /api/live than the catalogue
+        // record. Merge the live record over the favourite record so the
+        // search/filter view sees the same DJ data as the LIVE cards.
+        const liveByIdentity = new Map();
+        liveList.forEach(live => {
+          const identity = getDJIdentity(live);
+          if (identity) liveByIdentity.set(identity, live);
+        });
+
+        djDiscoveryDJs = favouriteList.map(favourite => {
+          const live = liveByIdentity.get(getDJIdentity(favourite));
+          if (!live) return favourite;
+
+          const merged = mergeDJRecords(live, favourite);
+          // The live record is authoritative for live status.
+          merged.live = true;
+          return merged;
+        });
+
+        // A live DJ's rolling AI genre profile is fetched by
+        // getLearnedDJGenres(), which is already cached for two minutes.
+        // Populate that profile here so a genre such as TRANCE is immediately
+        // available to Discover even when the older favourite record has
+        // genre: null. This fixes the mismatch between the LIVE card and the
+        // Discover filter without adding another backend data source.
+        await Promise.all(
+          liveList.map(async live => {
+            const identity = getDJIdentity(live);
+            if (!identity) return;
+
+            const merged = djDiscoveryDJs.find(
+              dj => getDJIdentity(dj) === identity
+            );
+            if (!merged) return;
+
+            const learnedGenres = await getLearnedDJGenres(live);
+            if (learnedGenres.length) {
+              merged.rrr_learned_genres = learnedGenres;
+            }
+            merged.live = true;
+          })
+        );
+
+        // A newer 30-second /api/live refresh may have started while the
+        // profile requests above were in flight. Never let an older render
+        // overwrite the latest catalogue state.
+        if (renderId !== djDiscoveryRenderId) return;
 
         let section = document.getElementById("rrrDjDiscovery");
         if (!section) {
@@ -5520,7 +5572,7 @@
 
           // Offline RRR favourites are no longer rendered as a long list here.
           // They are available through the searchable DISCOVER DJs section below.
-          renderDjDiscovery(uniqueFavouriteDJs);
+          await renderDjDiscovery(uniqueFavouriteDJs, uniqueLiveDJs);
 
         } catch (error) {
           if (error && error.name === "AbortError") return;
