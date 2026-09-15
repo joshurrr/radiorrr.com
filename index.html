@@ -1288,6 +1288,205 @@
       transform: translateY(0);
     }
 
+    /* Compact secondary LIVE DJ cards — intentionally separate from the
+       featured/current DJ card above. These mirror the RRR live-card design
+       with a portrait image, LIVE badge, learned genres and Program Match. */
+    .dj-card.dj-live-switch-card {
+      position: relative;
+      min-width: 0;
+      height: 100%;
+      padding: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      background-color: #070a19;
+      background-position: center top;
+      background-size: cover;
+      border-radius: 12px;
+    }
+
+    .dj-card.dj-live-switch-card .dj-secondary-photo {
+      position: absolute;
+      inset: 0 0 auto 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      z-index: 0;
+    }
+
+    .dj-card.dj-live-switch-card .dj-secondary-placeholder {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-size: 2rem;
+      background: radial-gradient(circle at top, rgba(34,211,238,0.2), rgba(7,10,25,0.95) 72%);
+      z-index: 0;
+    }
+
+    .dj-card.dj-live-switch-card .dj-secondary-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(180deg, rgba(4,7,18,0.08) 0%, rgba(4,7,18,0.12) 32%, rgba(4,7,18,0.72) 62%, rgba(4,7,18,0.97) 100%);
+      pointer-events: none;
+    }
+
+    .dj-card.dj-live-switch-card .dj-secondary-content {
+      position: relative;
+      z-index: 2;
+      min-width: 0;
+      padding: 0.65rem 0.7rem 0.7rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.22rem;
+    }
+
+    .dj-card.dj-live-switch-card .dj-secondary-live {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.28rem;
+      margin: 0 0 0.12rem;
+      padding: 0.18rem 0.38rem;
+      border-radius: 5px;
+      background: #ff176f;
+      color: #fff;
+      font-size: 0.58rem;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      box-shadow: 0 0 9px rgba(255,23,111,0.45);
+    }
+
+    .dj-card.dj-live-switch-card .dj-secondary-live-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 5px rgba(255,255,255,0.9);
+    }
+
+    .dj-card.dj-live-switch-card .dj-secondary-name {
+      min-width: 0;
+      color: #fff;
+      font-size: 0.82rem;
+      line-height: 1.12;
+      font-weight: 900;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-shadow: 0 1px 5px rgba(0,0,0,0.75);
+    }
+
+    .dj-card.dj-live-switch-card .dj-secondary-genres {
+      min-height: 1.05rem;
+      display: flex;
+      align-items: center;
+      flex-wrap: nowrap;
+      gap: 0.22rem;
+      overflow: hidden;
+      margin-top: 0.08rem;
+    }
+
+    .dj-card.dj-live-switch-card .dj-secondary-genres .dj-genre-pill {
+      flex: 0 0 auto;
+      max-width: 100%;
+      padding: 0.16rem 0.32rem;
+      font-size: 0.48rem;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .dj-card.dj-live-switch-card .dj-secondary-match-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.35rem;
+      margin-top: 0.22rem;
+      color: #d7ddff;
+      font-size: 0.51rem;
+      line-height: 1.1;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .dj-card.dj-live-switch-card .dj-secondary-match-value {
+      color: #fff;
+      font-size: 0.54rem;
+      font-weight: 900;
+    }
+
+    .dj-card.dj-live-switch-card .dj-secondary-match-bar {
+      width: 100%;
+      height: 4px;
+      margin-top: 0.08rem;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(148,163,184,0.26);
+      box-shadow: inset 0 0 4px rgba(0,0,0,0.45);
+    }
+
+    .dj-card.dj-live-switch-card .dj-secondary-match-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #22d3ee, #34d399);
+      box-shadow: 0 0 7px rgba(52,211,153,0.45);
+    }
+
+    .dj-card.dj-live-switch-card .dj-secondary-match-fill.match-mid {
+      background: linear-gradient(90deg, #a855f7, #c084fc);
+      box-shadow: 0 0 7px rgba(168,85,247,0.4);
+    }
+
+    .dj-card.dj-live-switch-card .dj-secondary-match-fill.match-low {
+      background: #94a3b8;
+      box-shadow: none;
+    }
+
+    @media (min-width: 1200px) {
+      #liveDjsList .dj-card.dj-live-switch-card {
+        min-height: 184px;
+      }
+
+      #liveDjsList .live-djs-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 0.8rem;
+      }
+    }
+
+    @media (min-width: 768px) and (max-width: 1199px) {
+      #liveDjsList .dj-card.dj-live-switch-card {
+        min-height: 190px;
+      }
+
+      #liveDjsList .live-djs-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.8rem;
+      }
+    }
+
+    @media (max-width: 767px) {
+      #liveDjsList .dj-card.dj-live-switch-card {
+        min-height: 205px;
+      }
+
+      #liveDjsList .live-djs-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.65rem;
+      }
+    }
+
+    @media (max-width: 420px) {
+      #liveDjsList .live-djs-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .dj-card-top {
       display: flex;
       align-items: center;
@@ -5920,18 +6119,54 @@
             '<div class="dj-thumb-placeholder" style="display:none;">🎧</div>'
           : '<div class="dj-thumb-placeholder">🎧</div>';
 
-        card.innerHTML =
-          '<div class="dj-card-top">' +
-            photoHtml +
-            '<div>' +
-              liveStatusHtml +
-              '<div class="dj-name">' + escapeHtml(String(name)) + '</div>' +
-              matchScoreHtml +
-              '<div class="dj-genre">' + genreHtml + '</div>' +
+        if (moveWatchButton && isActuallyLive) {
+          const safeScore = Number.isFinite(matchScore)
+            ? Math.max(0, Math.min(100, Math.round(matchScore)))
+            : null;
+          const secondaryMatchClass = safeScore === null
+            ? "match-low"
+            : safeScore >= 50
+              ? "match-high"
+              : safeScore >= 20
+                ? "match-mid"
+                : "match-low";
+          const secondaryScoreText = safeScore === null ? "—" : safeScore + "%";
+          const secondaryFillWidth = safeScore === null ? 0 : safeScore;
+          const secondaryGenres = genres.length
+            ? genres.slice(0, 4).map(getGenrePillHtml).join("")
+            : '<span class="dj-genre-pill genre-neon-electric-blue">Live DJ</span>';
+          const secondaryPhoto = profilePic
+            ? '<img class="dj-secondary-photo" src="' + escapeAttr(String(profilePic)) +
+              '" alt="" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\';">' +
+              '<div class="dj-secondary-placeholder" style="display:none;">🎧</div>'
+            : '<div class="dj-secondary-placeholder">🎧</div>';
+
+          card.innerHTML =
+            secondaryPhoto +
+            '<div class="dj-secondary-overlay"></div>' +
+            '<div class="dj-secondary-content">' +
+              '<div class="dj-secondary-live"><span class="dj-secondary-live-dot"></span>LIVE</div>' +
+              '<div class="dj-secondary-name" title="' + escapeAttr(String(name)) + '">' + escapeHtml(String(name)) + '</div>' +
+              '<div class="dj-secondary-genres" aria-label="Learned DJ genres">' + secondaryGenres + '</div>' +
+              '<div class="dj-secondary-match-label"><span>Program Match</span><span class="dj-secondary-match-value">' + secondaryScoreText + '</span></div>' +
+              '<div class="dj-secondary-match-bar" aria-label="Program Match ' + secondaryScoreText + '">' +
+                '<div class="dj-secondary-match-fill ' + secondaryMatchClass + '" style="width:' + secondaryFillWidth + '%"></div>' +
+              '</div>' +
+            '</div>';
+        } else {
+          card.innerHTML =
+            '<div class="dj-card-top">' +
+              photoHtml +
+              '<div>' +
+                liveStatusHtml +
+                '<div class="dj-name">' + escapeHtml(String(name)) + '</div>' +
+                matchScoreHtml +
+                '<div class="dj-genre">' + genreHtml + '</div>' +
+              '</div>' +
             '</div>' +
-          '</div>' +
-          metaHtml +
-          (isFavourite || moveWatchButton ? "" : watchHtml);
+            metaHtml +
+            (isFavourite ? "" : watchHtml);
+        }
 
         if (moveWatchButton && isActuallyLive) {
           card.classList.add("dj-live-switch-card");
