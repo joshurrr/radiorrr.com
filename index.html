@@ -4955,6 +4955,56 @@
         return merged;
       }
 
+      /*
+       * LIVE profile hydration
+       *
+       * live_djs contains live-state data, while favourite_djs is the
+       * canonical source for stable DJ profile metadata such as profile_pic.
+       * Do not rely on the live record to carry that metadata when a DJ moves
+       * from the featured position into the secondary LIVE cards.
+       *
+       * mergeDJRecords() is intentionally non-destructive, but that also
+       * means a missing/empty profile field in the live record can make the
+       * source of truth less obvious. This helper explicitly restores the
+       * canonical profile fields from favourite_djs whenever available.
+       */
+      function hydrateLiveDJProfile(dj, favourite) {
+        const merged = mergeDJRecords(dj, favourite);
+
+        if (favourite) {
+          const profileFields = [
+            "profile_pic",
+            "profile_picture",
+            "avatar",
+            "photo",
+            "bio",
+            "biography",
+            "profile_bio",
+            "about",
+            "followers",
+            "following",
+            "verified",
+            "tiktok_user_id",
+            "profile_updated_at"
+          ];
+
+          profileFields.forEach(field => {
+            const value = favourite[field];
+            const isEmpty =
+              value === undefined ||
+              value === null ||
+              value === "" ||
+              Array.isArray(value) && value.length === 0;
+
+            if (!isEmpty) {
+              merged[field] = value;
+            }
+          });
+        }
+
+        return merged;
+      }
+
       function mergeUniqueDJs(djs) {
         const unique = [];
         const indexes = new Map();
@@ -5387,7 +5437,10 @@
             ? uniqueFavouriteDJs.find(dj => getDJIdentity(dj) === routerIdentity)
             : null;
           const routedDj = relayDj
-            ? mergeDJRecords(relayDj, matchingLiveDj, matchingFavouriteDj)
+            ? hydrateLiveDJProfile(
+                mergeDJRecords(relayDj, matchingLiveDj),
+                matchingFavouriteDj
+              )
             : null;
            const selectedLiveDj = manualFeaturedDJIdentity
              ? uniqueLiveDJs.find(dj => getDJIdentity(dj) === manualFeaturedDJIdentity)
@@ -5396,7 +5449,7 @@
              ? uniqueFavouriteDJs.find(dj => getDJIdentity(dj) === manualFeaturedDJIdentity)
              : null;
            const selectedFeaturedDj = relayDj && selectedLiveDj
-             ? mergeDJRecords(selectedLiveDj, selectedFavouriteDj)
+             ? hydrateLiveDJProfile(selectedLiveDj, selectedFavouriteDj)
              : routedDj;
           currentFeaturedDJ = selectedFeaturedDj;
           const featuredIdentity = selectedFeaturedDj
@@ -5442,7 +5495,7 @@
                 const matchingFavourite = uniqueFavouriteDJs.find(
                   favourite => getDJIdentity(favourite) === getDJIdentity(dj)
                 );
-                const merged = mergeDJRecords(dj, matchingFavourite);
+                const merged = hydrateLiveDJProfile(dj, matchingFavourite);
                 merged.rrr_learned_genres = await getLearnedDJGenres(merged);
                 return merged;
               })
