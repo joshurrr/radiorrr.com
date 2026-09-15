@@ -244,7 +244,7 @@
     /* NAV TABS */
     .nav-tabs {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 0.5rem;
       margin-top: 0.4rem;
       margin-bottom: 0.45rem;
@@ -2838,10 +2838,6 @@
 <span class="nav-icon">🛠️</span>
 <span class="nav-label">Tools</span>
 </a>
-<!-- RECOMMEND A DJ -->
-<button aria-controls="recommendDjModal" aria-haspopup="dialog" class="recommend-dj-button" id="recommendDjOpen" type="button">
-        🎧 RECOMMEND A DJ
-      </button>
 </nav>
 <!-- RECOMMEND DJ MODAL -->
 <div aria-labelledby="recommendDjTitle" aria-modal="true" class="recommend-modal" id="recommendDjModal" role="dialog">
@@ -3058,6 +3054,9 @@
           Always open the TikTok profile and review it before removing a DJ.
         </div>
 <div class="tools-actions">
+<button class="tool-button" id="recommendDjOpen" type="button">
+            🎧 Submit a DJ
+          </button>
 <button class="tool-button" id="scanRrrDjs" type="button">
             🔍 Scan RRR DJ List
           </button>
