@@ -2526,6 +2526,43 @@
     /* Phone-only router refinements. Keep the live feed inline and bounded
        while leaving the desktop console composition unchanged. */
     @media (max-width: 767px) {
+      /* Mobile-only order:
+         LIVE header -> current DJ -> video feed -> detected genres.
+         The desktop grid is deliberately untouched. */
+      #randomLiveDj {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas:
+          "header"
+          "info"
+          "player"
+          "ai";
+        grid-auto-rows: auto;
+        gap: 0.75rem;
+      }
+
+      #randomLiveDj .live-router-side {
+        display: contents;
+      }
+
+      #randomLiveDj .random-live-header {
+        grid-area: header;
+        margin: 0;
+      }
+
+      #randomLiveDj .current-dj-card {
+        grid-area: info;
+        margin: 0;
+      }
+
+      #randomLiveDj .radio-router-player {
+        grid-area: player;
+      }
+
+      #randomLiveDj .live-genres-detected {
+        grid-area: ai;
+        margin: 0;
+      }
       .random-live-header {
         align-items: flex-start;
         gap: 0.45rem;
