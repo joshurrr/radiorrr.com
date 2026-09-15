@@ -3406,6 +3406,48 @@
 }
 
 </style>
+
+<style id="rrr-discover-full-width-fix">
+/* RRR: keep the secondary LIVE cards compact, but let the Discover DJs
+   panel span the entire available content width. The previous fixed-width
+   grid tracks limited the Discover panel to the first ~900px of the page. */
+#liveDjsList {
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  grid-auto-columns: minmax(0, 1fr) !important;
+  width: 100% !important;
+}
+
+#liveDjsList > .dj-discovery {
+  grid-column: 1 / -1 !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  justify-self: stretch !important;
+}
+
+#liveDjsList > .dj-discovery .dj-discovery-results {
+  width: 100%;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  #liveDjsList {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (min-width: 480px) and (max-width: 767px) {
+  #liveDjsList {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 479px) {
+  #liveDjsList {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+</style>
 </head>
 <body>
 <main class="wrapper">
@@ -3581,8 +3623,8 @@
 <div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">04:00 – 08:00</div><div role="cell"><strong>🌅 Sunrise Sessions</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-cyan">Chill</span><span class="dj-genre-pill genre-neon-cyan">Downtempo</span><span class="dj-genre-pill genre-neon-cyan">Ambient</span><span class="dj-genre-pill genre-neon-electric-purple">Deep House</span></div></div></div>
 <div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">08:00 – 12:00</div><div role="cell"><strong>🚗 Day Drive</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-yellow">80s</span><span class="dj-genre-pill genre-neon-blue-purple">Synthwave</span><span class="dj-genre-pill genre-neon-aqua">Chill Electro</span><span class="dj-genre-pill genre-neon-magenta">Nu-Disco</span></div></div></div>
 <div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">12:00 – 16:00</div><div role="cell"><strong>⚡ Afternoon Beats</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-hot-pink">House</span><span class="dj-genre-pill genre-neon-electric-purple">Deep House</span><span class="dj-genre-pill genre-neon-violet">Progressive</span><span class="dj-genre-pill genre-neon-hot-pink">Funky House</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">16:00 – 20:00</div><div role="cell"><strong>🔥 Prime Time</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-hot-pink">House</span><span class="dj-genre-pill genre-neon-hot-pink">Tech House</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-violet">Progressive</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">20:00 – 00:00</div><div role="cell"><strong>🌙 Night Drive</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-aqua">Electro</span><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-violet">Progressive</span></div></div></div>
+<div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">16:00 – 20:00</div><div role="cell"><strong>🔥 Dinner Warm ups</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-hot-pink">House</span><span class="dj-genre-pill genre-neon-hot-pink">Tech House</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-violet">Progressive</span></div></div></div>
+<div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">20:00 – 00:00</div><div role="cell"><strong>🌙 Prime Time</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-aqua">Electro</span><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-violet">Progressive</span></div></div></div>
 <div class="schedule-row" role="row"><div role="cell">FRIDAY · WEEKEND WARM-UP</div><div role="cell">00:00 – 04:00</div><div role="cell"><strong>🔥 After Dark</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-electric-blue">Hard Techno</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-cyan">Psy-Trance</span></div></div></div>
 <div class="schedule-row" role="row"><div role="cell">FRIDAY · WEEKEND WARM-UP</div><div role="cell">04:00 – 08:00</div><div role="cell"><strong>🌅 Late Mornings</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-violet">Progressive</span><span class="dj-genre-pill genre-neon-cyan">Psy-Trance</span></div></div></div>
 <div class="schedule-row" role="row"><div role="cell">FRIDAY · WEEKEND WARM-UP</div><div role="cell">08:00 – 12:00</div><div role="cell"><strong>☀️ Morning</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-cyan">Chill</span><span class="dj-genre-pill genre-neon-hot-pink">House</span><span class="dj-genre-pill genre-neon-violet">Progressive</span><span class="dj-genre-pill genre-neon-cyan">Melodic</span></div></div></div>
@@ -6392,13 +6434,13 @@
           {
             start: 16,
             end: 20,
-            name: "Prime Time",
+            name: "Dinner Warm ups",
             genres: "House · Tech House · Trance · Progressive"
           },
           {
             start: 20,
             end: 24,
-            name: "Night Drive",
+            name: "Prime Time",
             genres: "Electro · Techno · Trance · Progressive"
           }
         ];
