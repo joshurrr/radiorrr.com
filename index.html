@@ -1608,6 +1608,194 @@
       }
     }
 
+
+
+    /* DISCOVER DJs */
+    .dj-discovery {
+      margin-top: 1.25rem;
+      padding: 1rem;
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at top left, rgba(255,0,102,0.10), transparent 52%),
+        radial-gradient(circle at bottom right, rgba(34,211,238,0.08), transparent 55%),
+        rgba(7,10,25,0.94);
+      border: 1px solid rgba(129,140,248,0.48);
+      box-shadow: 0 0 14px rgba(129,140,248,0.12);
+      text-align: left;
+    }
+
+    .dj-discovery-header {
+      margin-bottom: 0.75rem;
+    }
+
+    .dj-discovery-title {
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 0 8px rgba(34,211,238,0.55);
+    }
+
+    .dj-discovery-subtitle {
+      margin-top: 0.2rem;
+      color: #a5b4fc;
+      font-size: 0.78rem;
+    }
+
+    .dj-discovery-search {
+      width: 100%;
+      padding: 0.72rem 0.85rem;
+      border-radius: 10px;
+      border: 1px solid rgba(129,140,248,0.58);
+      background: rgba(3,7,18,0.92);
+      color: #fff;
+      outline: none;
+      font-size: 0.9rem;
+    }
+
+    .dj-discovery-search::placeholder {
+      color: #8185b8;
+    }
+
+    .dj-discovery-search:focus {
+      border-color: #22d3ee;
+      box-shadow: 0 0 0 2px rgba(34,211,238,0.10), 0 0 12px rgba(34,211,238,0.22);
+    }
+
+    .dj-discovery-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin: 0.65rem 0 0.8rem;
+    }
+
+    .dj-discovery-chip {
+      border: 1px solid rgba(129,140,248,0.48);
+      border-radius: 999px;
+      padding: 0.3rem 0.62rem;
+      background: rgba(15,23,42,0.82);
+      color: #c7c7ff;
+      font-size: 0.68rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .dj-discovery-chip:hover,
+    .dj-discovery-chip.active {
+      border-color: #22d3ee;
+      color: #fff;
+      box-shadow: 0 0 9px rgba(34,211,238,0.28);
+    }
+
+    .dj-discovery-results {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+
+    .dj-discovery-card {
+      min-width: 0;
+      padding: 0.8rem;
+      border-radius: 13px;
+      border: 1px solid rgba(168,85,247,0.42);
+      background: rgba(7,10,25,0.92);
+      color: inherit;
+      text-decoration: none;
+      transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .dj-discovery-card:hover,
+    .dj-discovery-card:focus-visible {
+      transform: translateY(-2px);
+      border-color: #22d3ee;
+      box-shadow: 0 0 16px rgba(34,211,238,0.28);
+      outline: none;
+    }
+
+    .dj-discovery-card-top {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      min-width: 0;
+    }
+
+    .dj-discovery-thumb {
+      width: 52px;
+      height: 52px;
+      flex: 0 0 52px;
+      border-radius: 11px;
+      object-fit: cover;
+      border: 1px solid rgba(129,140,248,0.55);
+      background: rgba(15,23,42,0.9);
+    }
+
+    .dj-discovery-name-wrap {
+      min-width: 0;
+    }
+
+    .dj-discovery-name {
+      color: #fff;
+      font-weight: 850;
+      font-size: 0.92rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .dj-discovery-handle {
+      color: #a5b4fc;
+      font-size: 0.7rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .dj-discovery-status {
+      margin-top: 0.55rem;
+      color: #94a3b8;
+      font-size: 0.66rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .dj-discovery-status.live {
+      color: #fecaca;
+    }
+
+    .dj-discovery-genres {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.28rem;
+      margin-top: 0.45rem;
+    }
+
+    .dj-discovery-empty {
+      grid-column: 1 / -1;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 1px solid rgba(129,140,248,0.3);
+      color: #a5b4fc;
+      text-align: center;
+      background: rgba(5,7,20,0.65);
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 900px) {
+      .dj-discovery-results {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      .dj-discovery {
+        padding: 0.8rem;
+      }
+
+      .dj-discovery-results {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
     /* SCHEDULE — spreadsheet / Excel-style grid */
     .schedule-table {
       margin-top: 1rem;
@@ -4763,6 +4951,197 @@
         });
       }
 
+      /* DISCOVER DJs
+         Offline favourite DJs are searchable instead of being rendered as a
+         long page. Genres come from learned AI genre profiles only. */
+      let djDiscoveryDJs = [];
+      let djDiscoveryQuery = "";
+      let djDiscoveryGenre = "";
+
+      function getDiscoveryGenres(dj) {
+        const raw = Array.isArray(dj && dj.rrr_learned_genres)
+          ? dj.rrr_learned_genres
+          : getLiveAIGenres(dj);
+
+        const out = [];
+        const seen = new Set();
+
+        raw.forEach(item => {
+          const value = String(item || "").split("---").pop().trim();
+          if (!value) return;
+          const key = value.toLowerCase();
+          if (seen.has(key)) return;
+          seen.add(key);
+          out.push(value);
+        });
+
+        return out;
+      }
+
+      function renderDjDiscovery(favourites) {
+        if (!liveDjsList) return;
+
+        djDiscoveryDJs = Array.isArray(favourites) ? favourites.slice() : [];
+
+        let section = document.getElementById("rrrDjDiscovery");
+        if (!section) {
+          section = document.createElement("section");
+          section.id = "rrrDjDiscovery";
+          section.className = "dj-discovery";
+          liveDjsList.appendChild(section);
+        }
+
+        section.innerHTML = "";
+        section.innerHTML =
+          '<div class="dj-discovery-header">' +
+            '<div class="dj-discovery-title">🎧 DISCOVER DJs</div>' +
+            '<div class="dj-discovery-subtitle">Search the RRR DJ catalogue by name, @username or AI-detected genre.</div>' +
+          '</div>' +
+          '<input class="dj-discovery-search" id="djDiscoverySearch" type="search" ' +
+            'autocomplete="off" placeholder="Search DJ name, @username or genre…" aria-label="Search RRR DJs">' +
+          '<div class="dj-discovery-chips" id="djDiscoveryChips"></div>' +
+          '<div class="dj-discovery-results" id="djDiscoveryResults"></div>';
+
+        const search = section.querySelector("#djDiscoverySearch");
+        search.value = djDiscoveryQuery;
+
+        search.addEventListener("input", function () {
+          djDiscoveryQuery = this.value;
+          renderDjDiscoveryResults();
+        });
+
+        renderDjDiscoveryChips();
+        renderDjDiscoveryResults();
+      }
+
+      function renderDjDiscoveryChips() {
+        const chips = document.getElementById("djDiscoveryChips");
+        if (!chips) return;
+
+        const counts = new Map();
+
+        djDiscoveryDJs.forEach(dj => {
+          getDiscoveryGenres(dj).forEach(genre => {
+            const key = genre.toLowerCase();
+            if (!counts.has(key)) counts.set(key, { label: genre, count: 0 });
+            counts.get(key).count++;
+          });
+        });
+
+        const genres = Array.from(counts.values())
+          .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label))
+          .slice(0, 14);
+
+        chips.innerHTML =
+          '<button type="button" class="dj-discovery-chip ' +
+          (!djDiscoveryGenre ? "active" : "") +
+          '" data-genre="">ALL</button>' +
+          genres.map(item =>
+            '<button type="button" class="dj-discovery-chip ' +
+            (djDiscoveryGenre.toLowerCase() === item.label.toLowerCase() ? "active" : "") +
+            '" data-genre="' + escapeAttr(item.label) + '">' +
+            escapeHtml(item.label) + ' · ' + item.count +
+            '</button>'
+          ).join("");
+
+        chips.querySelectorAll(".dj-discovery-chip").forEach(button => {
+          button.addEventListener("click", function () {
+            djDiscoveryGenre = this.getAttribute("data-genre") || "";
+            renderDjDiscoveryChips();
+            renderDjDiscoveryResults();
+          });
+        });
+      }
+
+      function renderDjDiscoveryResults() {
+        const resultsEl = document.getElementById("djDiscoveryResults");
+        if (!resultsEl) return;
+
+        const query = djDiscoveryQuery.trim().toLowerCase();
+        const genreFilter = djDiscoveryGenre.trim().toLowerCase();
+
+        const ranked = djDiscoveryDJs
+          .map(dj => {
+            const name = String(dj.name || dj.display_name || dj.username || "").trim();
+            const username = getDJUsername(dj);
+            const genres = getDiscoveryGenres(dj);
+            const haystack = [
+              name,
+              username,
+              dj.unique_id,
+              dj.handle,
+              dj.bio,
+              dj.biography,
+              genres.join(" ")
+            ].map(value => String(value || "").toLowerCase()).join(" ");
+
+            if (genreFilter && !genres.some(g => g.toLowerCase() === genreFilter)) {
+              return null;
+            }
+
+            if (query && !haystack.includes(query)) return null;
+
+            let score = 0;
+            if (query) {
+              if (name.toLowerCase().startsWith(query)) score += 30;
+              if (username.toLowerCase() === query.replace(/^@/, "")) score += 50;
+              if (genres.some(g => g.toLowerCase().startsWith(query))) score += 20;
+            }
+
+            return { dj, name, username, genres, score };
+          })
+          .filter(Boolean)
+          .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
+
+        const limited = ranked.slice(0, 12);
+
+        if (!limited.length) {
+          resultsEl.innerHTML =
+            '<div class="dj-discovery-empty">' +
+            (djDiscoveryDJs.length
+              ? "No DJs match that search. Try another name or genre."
+              : "No DJs are currently available in the RRR catalogue.") +
+            '</div>';
+          return;
+        }
+
+        resultsEl.innerHTML = limited.map(item => {
+          const dj = item.dj;
+          const profilePic =
+            dj.profile_pic || dj.profile_picture || dj.avatar || dj.photo || "";
+          const profileUrl =
+            dj.profile_url ||
+            (item.username
+              ? "https://www.tiktok.com/@" + item.username
+              : "#");
+          const isLive = dj.live === true;
+          const status = isLive ? "🔴 LIVE NOW" : "OFFLINE";
+          const genresHtml = item.genres.length
+            ? item.genres.slice(0, 5).map(getGenrePillHtml).join("")
+            : '<span class="dj-genre-pill genre-neon-cyan">AI profile building</span>';
+
+          const photo = profilePic
+            ? '<img class="dj-discovery-thumb" src="' + escapeAttr(String(profilePic)) +
+              '" alt="" loading="lazy" onerror="this.style.display=\'none\'">'
+            : '<div class="dj-thumb-placeholder">🎧</div>';
+
+          return '<a class="dj-discovery-card" href="' + escapeAttr(String(profileUrl)) +
+            '" target="_blank" rel="noopener">' +
+              '<div class="dj-discovery-card-top">' +
+                photo +
+                '<div class="dj-discovery-name-wrap">' +
+                  '<div class="dj-discovery-name">' + escapeHtml(item.name || "DJ") + '</div>' +
+                  '<div class="dj-discovery-handle">@' + escapeHtml(item.username) + '</div>' +
+                '</div>' +
+              '</div>' +
+              '<div class="dj-discovery-status ' + (isLive ? "live" : "") + '">' +
+                status +
+              '</div>' +
+              '<div class="dj-discovery-genres">' + genresHtml + '</div>' +
+            '</a>';
+        }).join("");
+      }
+
       /* LIVE DJs API */
 
       async function loadLiveDJs() {
@@ -4970,31 +5349,9 @@
             liveDjsList.appendChild(emptyLive);
           }
 
-          const favHeader = document.createElement("div");
-          favHeader.style.gridColumn = "1 / -1";
-          favHeader.style.marginTop = "0.8rem";
-          favHeader.innerHTML =
-            '<div style="font-size:1.05rem;font-weight:800;color:#fff;margin:0.2rem 0 0.1rem;text-shadow:0 0 8px rgba(129,140,248,0.65);">⭐ RRR FAVOURITES</div><small style="color:#c7c7ff;">Favourite DJs we\'re watching for.</small>';
-          liveDjsList.appendChild(favHeader);
-
-          const allocatedIdentities = new Set(
-            [routedDj].concat(otherLiveDJs).filter(Boolean).map(getDJIdentity)
-          );
-          const availableFavouriteDJs = uniqueFavouriteDJs.filter(
-            dj => !allocatedIdentities.has(getDJIdentity(dj))
-          );
-
-          if (availableFavouriteDJs.length) {
-            availableFavouriteDJs.forEach(dj => appendDjCard(dj, false));
-          } else {
-            const emptyFav = document.createElement("div");
-            emptyFav.className = "live-empty";
-            emptyFav.style.gridColumn = "1 / -1";
-            emptyFav.textContent = favourites.length
-              ? "All current favourites are already shown above."
-              : "No favourite DJs have been added yet.";
-            liveDjsList.appendChild(emptyFav);
-          }
+          // Offline RRR favourites are no longer rendered as a long list here.
+          // They are available through the searchable DISCOVER DJs section below.
+          renderDjDiscovery(uniqueFavouriteDJs);
 
         } catch (error) {
           if (error && error.name === "AbortError") return;
