@@ -1916,6 +1916,44 @@
         font-size: 0.72rem;
       }
     }
+
+    /* ACTIVE SCHEDULE ROW — bright white station-style outline */
+    .schedule-row.schedule-active {
+      position: relative;
+      z-index: 2;
+      border-bottom-color: transparent;
+      box-shadow:
+        0 0 5px rgba(255,255,255,0.95),
+        0 0 12px rgba(255,255,255,0.75),
+        0 0 24px rgba(255,255,255,0.45);
+    }
+
+    .schedule-row.schedule-active::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: 2px solid #ffffff;
+      border-radius: 3px;
+      pointer-events: none;
+      box-shadow:
+        0 0 7px rgba(255,255,255,0.95),
+        0 0 16px rgba(255,255,255,0.7);
+      animation: scheduleActiveGlow 2.8s ease-in-out infinite;
+    }
+
+    @keyframes scheduleActiveGlow {
+      0%, 100% {
+        opacity: 0.82;
+      }
+      50% {
+        opacity: 1;
+      }
+    }
+
+    .schedule-row.schedule-active > div {
+      border-color: rgba(255,255,255,0.28);
+    }
+
     .events-list {
 
       text-align: left;
@@ -5843,6 +5881,55 @@
 
       }
 
+
+      function updateActiveScheduleRow(now) {
+
+        const rows = document.querySelectorAll(
+          '.schedule-table .schedule-row:not(.schedule-header)'
+        );
+
+        rows.forEach(function (row) {
+          row.classList.remove('schedule-active');
+        });
+
+        if (!rows.length) return;
+
+        const dayIndex = now.getDay();
+        const hour = now.getHours() + (now.getMinutes() / 60);
+
+        let dayType = 'weekday';
+        if (dayIndex === 5) dayType = 'friday';
+        else if (dayIndex === 6) dayType = 'saturday';
+        else if (dayIndex === 0) dayType = 'sunday';
+
+        rows.forEach(function (row) {
+          const cells = row.querySelectorAll(':scope > div');
+          if (cells.length < 4) return;
+
+          const dayText = cells[0].textContent.trim().toUpperCase();
+          const timeText = cells[1].textContent.trim();
+
+          const matchesDay =
+            (dayType === 'weekday' && dayText.indexOf('WEEKDAYS') === 0) ||
+            (dayType === 'friday' && dayText.indexOf('FRIDAY') === 0) ||
+            (dayType === 'saturday' && dayText.indexOf('SATURDAY') === 0) ||
+            (dayType === 'sunday' && dayText.indexOf('SUNDAY') === 0);
+
+          if (!matchesDay) return;
+
+          const times = timeText.match(/(\d{2}):(\d{2})\s*[–-]\s*(\d{2}):(\d{2})/);
+          if (!times) return;
+
+          const start = Number(times[1]) + Number(times[2]) / 60;
+          let end = Number(times[3]) + Number(times[4]) / 60;
+          if (end === 0) end = 24;
+
+          if (hour >= start && hour < end) {
+            row.classList.add('schedule-active');
+          }
+        });
+      }
+
       function updateTitles() {
 
         const now =
@@ -5866,6 +5953,8 @@
             now.getHours(),
             now.getDay()
           );
+
+        updateActiveScheduleRow(now);
 
         const blockLabel =
           dayName +
