@@ -4966,16 +4966,50 @@
       let djDiscoveryGenre = "";
 
       function getDiscoveryGenres(dj) {
-        const raw = Array.isArray(dj && dj.rrr_learned_genres)
-          ? dj.rrr_learned_genres
-          : getLiveAIGenres(dj);
+        // The /api/live favourite records can expose genres under several
+        // field names depending on how the DJ was learned. Use all of them
+        // so genre search works for both older and newer catalogue records.
+        const rawSources = [
+          dj && dj.rrr_learned_genres,
+          dj && dj.ai_genres,
+          dj && dj.genres,
+          dj && dj.genre,
+          dj && dj.detected_genres,
+          dj && dj.current_genres,
+          dj && dj.rrr_genres
+        ];
+
+        const raw = [];
+        rawSources.forEach(source => {
+          if (Array.isArray(source)) {
+            raw.push(...source);
+          } else if (source && typeof source === "object") {
+            // Handle simple keyed genre maps as well as { genre: ... }.
+            if (source.genre) raw.push(source.genre);
+            else raw.push(...Object.values(source));
+          } else if (source) {
+            // A comma/pipe separated string is common in older records.
+            raw.push(...String(source).split(/[,|]/));
+          }
+        });
+
+        // Keep the existing LIVE AI parser as a final fallback.
+        if (!raw.length) {
+          raw.push(...getLiveAIGenres(dj));
+        }
 
         const out = [];
         const seen = new Set();
 
         raw.forEach(item => {
-          const value = String(item || "").split("---").pop().trim();
+          const rawValue =
+            item && typeof item === "object"
+              ? (item.genre || item.name || item.label || "")
+              : item;
+
+          const value = String(rawValue || "").split("---").pop().trim();
           if (!value) return;
+
           const key = value.toLowerCase();
           if (seen.has(key)) return;
           seen.add(key);
@@ -5079,6 +5113,12 @@
               dj.handle,
               dj.bio,
               dj.biography,
+              dj.genre,
+              dj.genres,
+              dj.ai_genres,
+              dj.detected_genres,
+              dj.current_genres,
+              dj.rrr_genres,
               genres.join(" ")
             ].map(value => String(value || "").toLowerCase()).join(" ");
 
