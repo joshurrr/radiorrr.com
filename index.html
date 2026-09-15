@@ -2526,18 +2526,12 @@
     /* Phone-only router refinements. Keep the live feed inline and bounded
        while leaving the desktop console composition unchanged. */
     @media (max-width: 767px) {
-      /* Mobile-only order:
-         LIVE header -> current DJ -> video feed -> detected genres.
-         The desktop grid is deliberately untouched. */
+      /* On mobile the genre panel is physically moved below the player by
+         JavaScript. This avoids iOS/Safari display:contents/grid ordering
+         quirks and guarantees the visual order below. */
       #randomLiveDj {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr);
-        grid-template-areas:
-          "header"
-          "info"
-          "player"
-          "ai";
-        grid-auto-rows: auto;
+        display: flex !important;
+        flex-direction: column !important;
         gap: 0.75rem;
       }
 
@@ -2545,22 +2539,11 @@
         display: contents;
       }
 
-      #randomLiveDj .random-live-header {
-        grid-area: header;
-        margin: 0;
-      }
-
-      #randomLiveDj .current-dj-card {
-        grid-area: info;
-        margin: 0;
-      }
-
-      #randomLiveDj .radio-router-player {
-        grid-area: player;
-      }
-
+      #randomLiveDj .random-live-header,
+      #randomLiveDj .current-dj-card,
+      #randomLiveDj .radio-router-player,
       #randomLiveDj .live-genres-detected {
-        grid-area: ai;
+        width: 100%;
         margin: 0;
       }
       .random-live-header {
@@ -3660,6 +3643,48 @@
 
       const liveDjUnmute =
         document.getElementById("liveDjUnmute");
+
+      /* MOBILE LIVE ROUTER ORDER
+         The LIVE GENRES DETECTED panel lives inside the desktop side column.
+         On phones, move that existing panel after the video element in the
+         actual DOM rather than relying on CSS display:contents ordering.
+         Desktop DOM/layout is restored automatically above the breakpoint. */
+      if (randomLiveDj && liveGenresDetected) {
+        const mobileGenreMedia =
+          window.matchMedia("(max-width: 767px)");
+        const originalGenreParent = liveGenresDetected.parentNode;
+
+        function syncMobileGenreLayout() {
+          const player =
+            randomLiveDj.querySelector(".radio-router-player");
+
+          if (!player || !originalGenreParent) return;
+
+          if (mobileGenreMedia.matches) {
+            if (liveGenresDetected.parentNode !== randomLiveDj) {
+              randomLiveDj.insertBefore(
+                liveGenresDetected,
+                player.nextSibling
+              );
+            } else if (liveGenresDetected.previousElementSibling !== player) {
+              randomLiveDj.insertBefore(
+                liveGenresDetected,
+                player.nextSibling
+              );
+            }
+          } else if (liveGenresDetected.parentNode !== originalGenreParent) {
+            originalGenreParent.appendChild(liveGenresDetected);
+          }
+        }
+
+        syncMobileGenreLayout();
+
+        if (mobileGenreMedia.addEventListener) {
+          mobileGenreMedia.addEventListener("change", syncMobileGenreLayout);
+        } else if (mobileGenreMedia.addListener) {
+          mobileGenreMedia.addListener(syncMobileGenreLayout);
+        }
+      }
 
 
       const copyLiveAudioUrl = document.getElementById("copyLiveAudioUrl");
