@@ -3307,6 +3307,55 @@
         font-size: 1.05rem;
       }
     }
+
+    /* FINAL SECONDARY LIVE DJ CARD SHAPE
+       Keep these as portrait/vertical cards rather than short landscape cards. */
+    #liveDjsList .live-djs-grid {
+      align-items: start;
+    }
+
+    #liveDjsList .dj-card.dj-live-switch-card {
+      width: 100%;
+      height: auto;
+      min-height: 0;
+      aspect-ratio: 3 / 4;
+      box-sizing: border-box;
+    }
+
+    #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+    }
+
+    @media (min-width: 900px) {
+      #liveDjsList .live-djs-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 0.8rem;
+      }
+    }
+
+    @media (min-width: 768px) and (max-width: 899px) {
+      #liveDjsList .live-djs-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.8rem;
+      }
+    }
+
+    @media (max-width: 767px) {
+      #liveDjsList .live-djs-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.65rem;
+      }
+    }
+
+    @media (max-width: 420px) {
+      #liveDjsList .live-djs-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
