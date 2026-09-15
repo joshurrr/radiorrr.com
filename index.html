@@ -4208,70 +4208,101 @@
       }
 
       let learnedDJGenreRequestId = 0;
+      const learnedDJGenreCache = new Map();
+      const LEARNED_DJ_GENRE_CACHE_TTL = 2 * 60 * 1000;
+
+      function parseLearnedDJGenres(profile) {
+        const learned = Array.isArray(profile && profile.genres)
+          ? profile.genres
+          : [];
+
+        const genres = [];
+
+        learned.forEach(item => {
+          const rawGenre =
+            item && typeof item === "object"
+              ? item.genre
+              : item;
+
+          const value = String(rawGenre || "").trim();
+          if (!value) return;
+
+          const displayGenre = value.split("---").pop().trim();
+          if (!displayGenre) return;
+
+          if (!genres.some(
+            existing => existing.toLowerCase() === displayGenre.toLowerCase()
+          )) {
+            genres.push(displayGenre);
+          }
+        });
+
+        return genres;
+      }
+
+      async function getLearnedDJGenres(dj) {
+        const username = getDJUsername(dj);
+        if (!username) return [];
+
+        const cacheKey = username.toLowerCase();
+        const cached = learnedDJGenreCache.get(cacheKey);
+        const now = Date.now();
+
+        if (cached && (now - cached.timestamp) < LEARNED_DJ_GENRE_CACHE_TTL) {
+          return cached.genres.slice();
+        }
+
+        try {
+          const response = await fetch(
+            getFreshUrl(
+              "https://api.radiorrr.com/api/ai-genre/profile?username=" +
+              encodeURIComponent(username)
+            ),
+            {
+              cache: "no-store",
+              headers: {
+                "Cache-Control": "no-cache",
+                "Pragma": "no-cache"
+              }
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("API returned " + response.status);
+          }
+
+          const genres = parseLearnedDJGenres(await response.json());
+          learnedDJGenreCache.set(cacheKey, {
+            timestamp: now,
+            genres
+          });
+
+          return genres.slice();
+        } catch (error) {
+          console.warn("Could not load learned DJ genre profile:", error);
+
+          // Keep the last known learned profile if a temporary request fails.
+          return cached ? cached.genres.slice() : [];
+        }
+      }
 
       async function updateLiveDjGenres(dj) {
         if (!randomLiveDjGenres) return;
 
         const requestId = ++learnedDJGenreRequestId;
-        const username = getDJUsername(dj);
 
         // The CURRENT DJ card shows the learned/rolling DJ profile.
         // This is deliberately separate from LIVE GENRES DETECTED, which
         // continues to show the latest live audio classification.
-        let genres = [];
-
-        if (username) {
-          try {
-            const response = await fetch(
-              getFreshUrl(
-                "https://api.radiorrr.com/api/ai-genre/profile?username=" +
-                encodeURIComponent(username)
-              ),
-              {
-                cache: "no-store",
-                headers: {
-                  "Cache-Control": "no-cache",
-                  "Pragma": "no-cache"
-                }
-              }
-            );
-
-            if (response.ok) {
-              const profile = await response.json();
-              const learned = Array.isArray(profile && profile.genres)
-                ? profile.genres
-                : [];
-
-              learned.forEach(item => {
-                const rawGenre =
-                  item && typeof item === "object"
-                    ? item.genre
-                    : item;
-
-                const value = String(rawGenre || "").trim();
-                if (!value) return;
-
-                const displayGenre = value.split("---").pop().trim();
-                if (!displayGenre) return;
-
-                if (!genres.some(
-                  existing => existing.toLowerCase() === displayGenre.toLowerCase()
-                )) {
-                  genres.push(displayGenre);
-                }
-              });
-            }
-          } catch (error) {
-            console.warn("Could not load learned DJ genre profile:", error);
-          }
-        }
+        let genres = await getLearnedDJGenres(dj);
 
         // Ignore a slower response for an older DJ selection.
         if (requestId !== learnedDJGenreRequestId) return;
 
-        // Fallback only when the learned profile is unavailable.
+        // Only use the stored/profile genre as a fallback if the DJ has never
+        // accumulated a learned AI profile. Do not live-analyse this card.
         if (!genres.length) {
-          genres = getDJGenres(dj);
+          genres = getStoredDJGenres(dj);
         }
 
         randomLiveDjGenres.innerHTML = "";
@@ -4908,12 +4939,23 @@
               "SWITCH TO ANOTHER LIVE DJ" +
               '</div>';
             liveDjsList.appendChild(otherLiveHeader);
-            otherLiveDJs.forEach(dj => {
-              const matchingFavourite = uniqueFavouriteDJs.find(
-                favourite => getDJIdentity(favourite) === getDJIdentity(dj)
-              );
+            // Secondary LIVE cards use the DJ's previously learned genre
+            // profile. Fetch those profiles in parallel, but do not request
+            // or perform any live audio analysis for these DJs.
+            const secondaryLiveDJs = await Promise.all(
+              otherLiveDJs.map(async dj => {
+                const matchingFavourite = uniqueFavouriteDJs.find(
+                  favourite => getDJIdentity(favourite) === getDJIdentity(dj)
+                );
+                const merged = mergeDJRecords(dj, matchingFavourite);
+                merged.rrr_learned_genres = await getLearnedDJGenres(merged);
+                return merged;
+              })
+            );
+
+            secondaryLiveDJs.forEach(dj => {
               appendDjCard(
-                mergeDJRecords(dj, matchingFavourite),
+                dj,
                 true,
                 featuredIdentity,
                 true
@@ -5041,11 +5083,12 @@
             : "OFFLINE";
         const actionText = isActuallyLive ? "▶ WATCH LIVE" : "VIEW TIKTOK";
         const actionUrl = isActuallyLive ? liveUrl : profileUrl;
-        // Secondary live DJ cards show their known/stored genres only.
-        // Do not run or fetch live AI detection for these DJs. The featured
-        // DJ remains the only DJ whose current audio is actively analysed.
-        const genres = isActuallyLive
-          ? getDJGenres(dj)
+        // Secondary LIVE DJ cards are rendered from their previously learned
+        // AI genre profile, supplied by loadLiveDJs(). They never use the
+        // current live audio classification. The featured DJ remains the
+        // only DJ whose current audio is actively analysed.
+        const genres = Array.isArray(dj.rrr_learned_genres)
+          ? dj.rrr_learned_genres
           : getStoredDJGenres(dj);
         const genreHtml = genres.length
           ? genres.slice(0, 5).map(getGenrePillHtml).join("")
