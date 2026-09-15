@@ -3162,12 +3162,6 @@
 <div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–WED</div><div role="cell">12:00 – 16:00</div><div role="cell"><strong>⚡ Afternoon</strong><br>House · Deep House · Progressive · Funky House</div></div>
 <div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–WED</div><div role="cell">16:00 – 20:00</div><div role="cell"><strong>🔥 Prime Time</strong><br>House · Tech House · Trance · Progressive</div></div>
 <div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–WED</div><div role="cell">20:00 – 00:00</div><div role="cell"><strong>🌙 Night Drive</strong><br>Electro · Techno · Trance · Progressive</div></div>
-<div class="schedule-row" role="row"><div role="cell">THURSDAY · 80s THURSDAY</div><div role="cell">00:00 – 04:00</div><div role="cell"><strong>🌅 Early Morning Drive</strong><br>Electro · Techno · Dark Synth · Drum &amp; Bass · Trance · Hard Techno · Dark Electro · Acid Techno</div></div>
-<div class="schedule-row" role="row"><div role="cell">THURSDAY · 80s THURSDAY</div><div role="cell">04:00 – 08:00</div><div role="cell"><strong>☀️ Morning Drive</strong><br>Chill · Downtempo · Synthwave · Ambient · Chillwave · Chillout · Balearic · Deep House</div></div>
-<div class="schedule-row" role="row"><div role="cell">THURSDAY · 80s THURSDAY</div><div role="cell">08:00 – 12:00</div><div role="cell"><strong>🚗 Day Drive</strong><br>80s · Synthwave · Chill Electro · New Wave · Nu-Disco · Electro Pop · Retrowave</div></div>
-<div class="schedule-row" role="row"><div role="cell">THURSDAY · 80s THURSDAY</div><div role="cell">12:00 – 16:00</div><div role="cell"><strong>⚡ Afternoon</strong><br>House · Deep House · Progressive · Funky House · Disco House · Nu-Disco · Soulful House · Melodic House</div></div>
-<div class="schedule-row" role="row"><div role="cell">THURSDAY · 80s THURSDAY</div><div role="cell">16:00 – 20:00</div><div role="cell"><strong>🔥 Prime Time</strong><br>Electro · House · Tech House · Trance · 80s · Progressive House · Electro House · Tech Trance</div></div>
-<div class="schedule-row" role="row"><div role="cell">THURSDAY · 80s THURSDAY</div><div role="cell">20:00 – 00:00</div><div role="cell"><strong>🌙 Night Drive</strong><br>Electro · Techno · Progressive · Trance · Progressive House · Melodic Techno · Electro House · Tech Trance</div></div>
 <div class="schedule-row" role="row"><div role="cell">FRIDAY · WEEKEND WARM-UP</div><div role="cell">00:00 – 04:00</div><div role="cell"><strong>🔥 After Dark</strong><br>Techno · Hard Techno · Trance · Psy-Trance</div></div>
 <div class="schedule-row" role="row"><div role="cell">FRIDAY · WEEKEND WARM-UP</div><div role="cell">04:00 – 08:00</div><div role="cell"><strong>🌅 Late Mornings</strong><br>Techno · Trance · Progressive · Psy-Trance</div></div>
 <div class="schedule-row" role="row"><div role="cell">FRIDAY · WEEKEND WARM-UP</div><div role="cell">08:00 – 12:00</div><div role="cell"><strong>☀️ Morning</strong><br>Chill · House · Progressive · Melodic</div></div>
@@ -5713,45 +5707,6 @@
           }
         ];
 
-        const thursdayBlocks = [
-          {
-            start: 0,
-            end: 4,
-            name: "Early Morning Drive",
-            genres: "Electro · Techno · Dark Synth · Drum & Bass · Trance · Hard Techno · Dark Electro · Acid Techno"
-          },
-          {
-            start: 4,
-            end: 8,
-            name: "Morning Drive",
-            genres: "Chill · Downtempo · Synthwave · Ambient · Chillwave · Chillout · Balearic · Deep House"
-          },
-          {
-            start: 8,
-            end: 12,
-            name: "Day Drive",
-            genres: "80s · Synthwave · Chill Electro · New Wave · Nu-Disco · Electro Pop · Retrowave · Nu-Disco"
-          },
-          {
-            start: 12,
-            end: 16,
-            name: "Afternoon",
-            genres: "House · Deep House · Progressive · Funky House · Disco House · Nu-Disco · Soulful House · Melodic House"
-          },
-          {
-            start: 16,
-            end: 20,
-            name: "Prime Time",
-            genres: "Electro · House · Tech House · Trance · 80s · Progressive House · Electro House · Tech Trance"
-          },
-          {
-            start: 20,
-            end: 24,
-            name: "Night Drive",
-            genres: "Electro · Techno · Progressive · Trance · Progressive House · Melodic Techno · Electro House · Tech Trance"
-          }
-        ];
-
         const fridaySaturdayBlocks = [
           {
             start: 0,
@@ -5832,9 +5787,7 @@
 
         let blocks = weekdayBlocks;
 
-        if (dayIndex === 4) {
-          blocks = thursdayBlocks;
-        } else if (dayIndex === 5 || dayIndex === 6) {
+        if (dayIndex === 5 || dayIndex === 6) {
           blocks = fridaySaturdayBlocks;
         } else if (dayIndex === 0) {
           blocks = sundayBlocks;
