@@ -4329,10 +4329,10 @@
       function getStoredDJGenres(dj) {
         if (!window.RadioRRRGenreDetection) return [];
 
-        return window.RadioRRRGenreDetection.normalizeGenres(
+        return filterMusicGenres(window.RadioRRRGenreDetection.normalizeGenres(
           [dj && dj.genre, dj && dj.genre_keywords, dj && dj.genres],
           ""
-        );
+        ));
       }
 
       const GENRE_NEON_CLASS_MAP = [
@@ -4365,6 +4365,15 @@
           '</span>';
       }
 
+      function isMusicGenre(value) {
+        const text = String(value || "").trim();
+        return !!text && !/^non[\s_-]*music$/i.test(text);
+      }
+
+      function filterMusicGenres(genres) {
+        return (Array.isArray(genres) ? genres : []).filter(isMusicGenre);
+      }
+
       function getLiveAIGenres(dj) {
         const raw = Array.isArray(dj && dj.ai_genres)
           ? dj.ai_genres
@@ -4390,7 +4399,7 @@
               ? parts.slice(1).join("---").trim()
               : value;
 
-          if (!displayGenre) return;
+          if (!displayGenre || !isMusicGenre(displayGenre)) return;
 
           const key = displayGenre.toLowerCase();
           if (seen.has(key)) return;
@@ -4423,7 +4432,7 @@
           if (!value) return;
 
           const displayGenre = value.split("---").pop().trim();
-          if (!displayGenre) return;
+          if (!displayGenre || !isMusicGenre(displayGenre)) return;
 
           if (!genres.some(
             existing => existing.toLowerCase() === displayGenre.toLowerCase()
@@ -5008,7 +5017,7 @@
               : item;
 
           const value = String(rawValue || "").split("---").pop().trim();
-          if (!value) return;
+          if (!value || !isMusicGenre(value)) return;
 
           const key = value.toLowerCase();
           if (seen.has(key)) return;
@@ -5016,7 +5025,7 @@
           out.push(value);
         });
 
-        return out;
+        return filterMusicGenres(out);
       }
 
       function renderDjDiscovery(favourites) {
@@ -5412,16 +5421,16 @@
 
 
       function getLiveDisplayGenre(dj) {
-        if (!dj) return "LIVE";
+        if (!dj) return "";
 
         // For live DJs, AI detection is authoritative for the music
         // currently being played. Fall back to the stored/profile genre
         // until an AI result is available.
         const aiGenre = String(dj.ai_genre || "").trim();
-        if (aiGenre) return aiGenre;
+        if (aiGenre && isMusicGenre(aiGenre)) return aiGenre;
 
         const storedGenre = String(dj.genre || "").trim();
-        if (storedGenre) {
+        if (storedGenre && isMusicGenre(storedGenre)) {
           // Never expose the internal parent---subgenre format.
           if (storedGenre.includes("---")) {
             return storedGenre.split("---", 2)[1].trim();
@@ -5429,7 +5438,7 @@
           return storedGenre;
         }
 
-        return "LIVE";
+        return "";
       }
 
       function appendDjCard(dj, isLive, routerIdentity, moveWatchButton) {
@@ -5496,7 +5505,7 @@
           : getStoredDJGenres(dj);
         const genreHtml = genres.length
           ? genres.slice(0, 5).map(getGenrePillHtml).join("")
-          : "Genre: Detecting...";
+          : "";
         const liveStatusHtml =
           '<div class="dj-live" style="' +
           (isActuallyLive ? "" : "color:#a5b4fc;") +
