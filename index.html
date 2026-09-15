@@ -5125,7 +5125,7 @@
           const status = isLive ? "🔴 LIVE NOW" : "OFFLINE";
           const genresHtml = item.genres.length
             ? item.genres.slice(0, 5).map(getGenrePillHtml).join("")
-            : '<span class="dj-genre-pill genre-neon-cyan">AI profile building</span>';
+            : '';
 
           const photo = profilePic
             ? '<img class="dj-discovery-thumb" src="' + escapeAttr(String(profilePic)) +
