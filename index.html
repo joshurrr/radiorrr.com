@@ -3309,16 +3309,22 @@
     }
 
     /* FINAL SECONDARY LIVE DJ CARD SHAPE
-       Keep these as portrait/vertical cards rather than short landscape cards. */
+       Fixed compact portrait cards. The cards do not stretch to fill the row. */
     #liveDjsList .live-djs-grid {
+      grid-template-columns: repeat(5, 176px);
+      justify-content: start;
       align-items: start;
+      gap: 14px;
     }
 
     #liveDjsList .dj-card.dj-live-switch-card {
-      width: 100%;
-      height: auto;
-      min-height: 0;
-      aspect-ratio: 3 / 4;
+      width: 176px;
+      height: 264px;
+      min-width: 176px;
+      min-height: 264px;
+      max-width: 176px;
+      max-height: 264px;
+      aspect-ratio: auto;
       box-sizing: border-box;
     }
 
@@ -3329,30 +3335,27 @@
       object-position: center top;
     }
 
-    @media (min-width: 900px) {
+    @media (min-width: 768px) and (max-width: 1199px) {
       #liveDjsList .live-djs-grid {
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 0.8rem;
+        grid-template-columns: repeat(4, 176px);
+        justify-content: start;
+        gap: 14px;
       }
     }
 
-    @media (min-width: 768px) and (max-width: 899px) {
+    @media (min-width: 480px) and (max-width: 767px) {
       #liveDjsList .live-djs-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 0.8rem;
+        grid-template-columns: repeat(2, 176px);
+        justify-content: start;
+        gap: 12px;
       }
     }
 
-    @media (max-width: 767px) {
+    @media (max-width: 479px) {
       #liveDjsList .live-djs-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 0.65rem;
-      }
-    }
-
-    @media (max-width: 420px) {
-      #liveDjsList .live-djs-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 176px;
+        justify-content: start;
+        gap: 12px;
       }
     }
 
