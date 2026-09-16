@@ -3595,6 +3595,209 @@
   }
 }
 </style>
+
+    /* RRR OFFLINE DISCOVERY CARDS — match the secondary LIVE DJ cards exactly.
+       Presentation only: discovery/search/filter behaviour is unchanged. */
+    #rrrDjDiscovery .dj-discovery-results {
+      display: grid !important;
+      grid-template-columns: repeat(6, 176px) !important;
+      justify-content: start !important;
+      justify-items: start !important;
+      align-items: start !important;
+      gap: 14px !important;
+      width: 100% !important;
+    }
+
+    #rrrDjDiscovery .dj-discovery-card {
+      position: relative !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: flex-end !important;
+      width: 176px !important;
+      min-width: 176px !important;
+      max-width: 176px !important;
+      height: 264px !important;
+      min-height: 264px !important;
+      max-height: 264px !important;
+      padding: 0 !important;
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+      border-radius: 12px !important;
+      background: #070a19 !important;
+    }
+
+    #rrrDjDiscovery .dj-discovery-card-top {
+      position: absolute !important;
+      inset: 0 !important;
+      display: block !important;
+      margin: 0 !important;
+      z-index: 0 !important;
+    }
+
+    #rrrDjDiscovery .dj-discovery-thumb,
+    #rrrDjDiscovery .dj-discovery-placeholder {
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: none !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      object-fit: cover !important;
+      object-position: center top !important;
+      background: radial-gradient(circle at top, rgba(34,211,238,0.2), rgba(7,10,25,0.95) 72%) !important;
+    }
+
+    #rrrDjDiscovery .dj-discovery-overlay {
+      position: absolute !important;
+      inset: 0 !important;
+      z-index: 1 !important;
+      pointer-events: none !important;
+      background: linear-gradient(180deg, rgba(4,7,18,0.08) 0%, rgba(4,7,18,0.12) 32%, rgba(4,7,18,0.72) 62%, rgba(4,7,18,0.97) 100%) !important;
+    }
+
+    #rrrDjDiscovery .dj-discovery-content {
+      position: relative !important;
+      z-index: 2 !important;
+      min-width: 0 !important;
+      padding: 0.65rem 0.7rem 0.7rem !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 0.22rem !important;
+    }
+
+    #rrrDjDiscovery .dj-discovery-status {
+      align-self: flex-start !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 0.28rem !important;
+      margin: 0 0 0.12rem !important;
+      padding: 0.18rem 0.38rem !important;
+      border-radius: 5px !important;
+      background: rgba(71,85,105,0.82) !important;
+      color: #e2e8f0 !important;
+      font-size: 0.58rem !important;
+      line-height: 1 !important;
+      font-weight: 900 !important;
+      letter-spacing: 0.06em !important;
+      text-transform: uppercase !important;
+      box-shadow: none !important;
+    }
+
+    #rrrDjDiscovery .dj-discovery-status.live {
+      background: #ff176f !important;
+      color: #fff !important;
+      box-shadow: 0 0 9px rgba(255,23,111,0.45) !important;
+    }
+
+    #rrrDjDiscovery .dj-discovery-status-dot {
+      width: 5px !important;
+      height: 5px !important;
+      flex: 0 0 5px !important;
+      border-radius: 50% !important;
+      background: #94a3b8 !important;
+    }
+
+    #rrrDjDiscovery .dj-discovery-status.live .dj-discovery-status-dot {
+      background: #fff !important;
+      box-shadow: 0 0 5px rgba(255,255,255,0.9) !important;
+    }
+
+    #rrrDjDiscovery .dj-discovery-name {
+      min-width: 0 !important;
+      color: #fff !important;
+      font-size: 0.82rem !important;
+      line-height: 1.12 !important;
+      font-weight: 900 !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      text-shadow: 0 1px 5px rgba(0,0,0,0.75) !important;
+    }
+
+    #rrrDjDiscovery .dj-discovery-handle {
+      min-width: 0 !important;
+      color: #a5b4fc !important;
+      font-size: 0.62rem !important;
+      line-height: 1.15 !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    #rrrDjDiscovery .dj-discovery-genres {
+      min-height: 1.05rem !important;
+      display: flex !important;
+      align-items: center !important;
+      flex-wrap: nowrap !important;
+      gap: 0.22rem !important;
+      overflow: hidden !important;
+      margin: 0.08rem 0 0 !important;
+    }
+
+    #rrrDjDiscovery .dj-discovery-genres .dj-genre-pill {
+      flex: 0 0 auto !important;
+      max-width: 100% !important;
+      padding: 0.16rem 0.32rem !important;
+      font-size: 0.48rem !important;
+      line-height: 1 !important;
+      white-space: nowrap !important;
+    }
+
+    #rrrDjDiscovery .dj-discovery-match-label {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+      gap: 0.35rem !important;
+      margin-top: 0.22rem !important;
+      color: #d7ddff !important;
+      font-size: 0.51rem !important;
+      line-height: 1.1 !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.03em !important;
+      text-transform: uppercase !important;
+    }
+
+    #rrrDjDiscovery .dj-discovery-match-label span:last-child {
+      color: #fff !important;
+      font-size: 0.54rem !important;
+      font-weight: 900 !important;
+    }
+
+    #rrrDjDiscovery .dj-discovery-match-bar {
+      width: 100% !important;
+      height: 4px !important;
+      margin-top: 0.08rem !important;
+      overflow: hidden !important;
+      border-radius: 999px !important;
+      background: rgba(148,163,184,0.26) !important;
+      box-shadow: inset 0 0 4px rgba(0,0,0,0.45) !important;
+    }
+
+    #rrrDjDiscovery .dj-discovery-match-fill {
+      width: 0 !important;
+      height: 100% !important;
+      border-radius: inherit !important;
+      background: #94a3b8 !important;
+      box-shadow: none !important;
+    }
+
+    @media (min-width: 1200px) {
+      #rrrDjDiscovery .dj-discovery-results { grid-template-columns: repeat(6, 176px) !important; }
+    }
+    @media (min-width: 900px) and (max-width: 1199px) {
+      #rrrDjDiscovery .dj-discovery-results { grid-template-columns: repeat(5, 176px) !important; }
+    }
+    @media (min-width: 768px) and (max-width: 899px) {
+      #rrrDjDiscovery .dj-discovery-results { grid-template-columns: repeat(4, 176px) !important; }
+    }
+    @media (min-width: 480px) and (max-width: 767px) {
+      #rrrDjDiscovery .dj-discovery-results { grid-template-columns: repeat(2, 176px) !important; gap: 12px !important; }
+    }
+    @media (max-width: 479px) {
+      #rrrDjDiscovery .dj-discovery-results { grid-template-columns: 176px !important; gap: 12px !important; }
+    }
+
 </head>
 <body>
 <main class="wrapper">
@@ -5983,22 +6186,28 @@
 
           const photo = profilePic
             ? '<img class="dj-discovery-thumb" src="' + escapeAttr(String(profilePic)) +
-              '" alt="" loading="lazy" onerror="this.style.display=\'none\'">'
-            : '<div class="dj-thumb-placeholder">🎧</div>';
+              '" alt="" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\';">' +
+              '<div class="dj-discovery-placeholder" style="display:none;">🎧</div>'
+            : '<div class="dj-discovery-placeholder">🎧</div>';
 
-          return '<a class="dj-discovery-card" href="' + escapeAttr(String(profileUrl)) +
+          return '<a class="dj-discovery-card' + (isLive ? ' is-live' : '') + '" href="' + escapeAttr(String(profileUrl)) +
             '" target="_blank" rel="noopener">' +
               '<div class="dj-discovery-card-top">' +
                 photo +
-                '<div class="dj-discovery-name-wrap">' +
-                  '<div class="dj-discovery-name">' + escapeHtml(item.name || "DJ") + '</div>' +
-                  '<div class="dj-discovery-handle">@' + escapeHtml(item.username) + '</div>' +
+              '</div>' +
+              '<div class="dj-discovery-overlay"></div>' +
+              '<div class="dj-discovery-content">' +
+                '<div class="dj-discovery-status ' + (isLive ? "live" : "offline") + '">' +
+                  '<span class="dj-discovery-status-dot"></span>' + status.replace('🔴 ', '') +
                 '</div>' +
+                '<div class="dj-discovery-name" title="' + escapeAttr(String(item.name || "DJ")) + '">' +
+                  escapeHtml(item.name || "DJ") +
+                '</div>' +
+                '<div class="dj-discovery-handle">@' + escapeHtml(item.username) + '</div>' +
+                '<div class="dj-discovery-genres" aria-label="DJ genres">' + genresHtml + '</div>' +
+                '<div class="dj-discovery-match-label"><span>PROGRAM MATCH</span><span>—</span></div>' +
+                '<div class="dj-discovery-match-bar"><div class="dj-discovery-match-fill"></div></div>' +
               '</div>' +
-              '<div class="dj-discovery-status ' + (isLive ? "live" : "") + '">' +
-                status +
-              '</div>' +
-              '<div class="dj-discovery-genres">' + genresHtml + '</div>' +
             '</a>';
         }).join("");
       }
