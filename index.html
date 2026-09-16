@@ -4889,10 +4889,18 @@
         // Do not call pause(), load(), src=, or AudioContext operations here.
         // A tab click must be completely irrelevant to station playback.
 
-        // Live DJ video is different: stop it when leaving Live Video so its
-        // video/audio does not continue playing over the radio stream.
-        if (targetId !== "live-section" && liveDjVideo && !liveDjVideo.paused) {
-          liveDjVideo.pause();
+        // Keep the featured Live DJ stream alive while navigating around the
+        // site.  The player is intentionally allowed to continue playing when
+        // Schedule, About, etc. are opened.  Do NOT pause or mute it here.
+        // Some browsers can reset media state when a player is moved into a
+        // hidden pane, so restore the listener's explicit audio choice after
+        // the tab switch and ask the browser to keep playback running.
+        if (targetId !== "live-section" && liveDjVideo && activeLiveStreamKey) {
+          liveDjVideo.muted = !userRequestedAudio;
+          updateLiveDjMuteButton();
+          if (liveDjVideo.paused) {
+            liveDjVideo.play().catch(() => {});
+          }
         }
 
       }
