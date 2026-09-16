@@ -125,7 +125,7 @@
     .hero {
       display: flex;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: space-between;
       gap: 1.6rem;
       padding: 1rem 0.95rem;
       border-radius: 16px;
@@ -585,7 +585,7 @@
     .live-audio-header {
       display: flex;
       align-items: baseline;
-      justify-content: flex-start;
+      justify-content: space-between;
       gap: 0.75rem;
       margin-bottom: 0.65rem;
       flex-wrap: wrap;
@@ -769,7 +769,7 @@
     .random-live-heading-row {
       display: flex;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: space-between;
       gap: 0.65rem 1rem;
       min-width: 0;
     }
@@ -1205,7 +1205,7 @@
     .live-djs-header {
       display: flex;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: space-between;
       gap: 1rem;
       margin-bottom: 1rem;
       flex-wrap: wrap;
@@ -1288,205 +1288,6 @@
       transform: translateY(0);
     }
 
-    /* Compact secondary LIVE DJ cards — intentionally separate from the
-       featured/current DJ card above. These mirror the RRR live-card design
-       with a portrait image, LIVE badge, learned genres and Program Match. */
-    .dj-card.dj-live-switch-card {
-      position: relative;
-      min-width: 0;
-      height: 100%;
-      padding: 0;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      background-color: #070a19;
-      background-position: center top;
-      background-size: cover;
-      border-radius: 12px;
-    }
-
-    .dj-card.dj-live-switch-card .dj-secondary-photo {
-      position: absolute;
-      inset: 0 0 auto 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center top;
-      z-index: 0;
-    }
-
-    .dj-card.dj-live-switch-card .dj-secondary-placeholder {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      font-size: 2rem;
-      background: radial-gradient(circle at top, rgba(34,211,238,0.2), rgba(7,10,25,0.95) 72%);
-      z-index: 0;
-    }
-
-    .dj-card.dj-live-switch-card .dj-secondary-overlay {
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      background: linear-gradient(180deg, rgba(4,7,18,0.08) 0%, rgba(4,7,18,0.12) 32%, rgba(4,7,18,0.72) 62%, rgba(4,7,18,0.97) 100%);
-      pointer-events: none;
-    }
-
-    .dj-card.dj-live-switch-card .dj-secondary-content {
-      position: relative;
-      z-index: 2;
-      min-width: 0;
-      padding: 0.65rem 0.7rem 0.7rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.22rem;
-    }
-
-    .dj-card.dj-live-switch-card .dj-secondary-live {
-      align-self: flex-start;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.28rem;
-      margin: 0 0 0.12rem;
-      padding: 0.18rem 0.38rem;
-      border-radius: 5px;
-      background: #ff176f;
-      color: #fff;
-      font-size: 0.58rem;
-      line-height: 1;
-      font-weight: 900;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      box-shadow: 0 0 9px rgba(255,23,111,0.45);
-    }
-
-    .dj-card.dj-live-switch-card .dj-secondary-live-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: #fff;
-      box-shadow: 0 0 5px rgba(255,255,255,0.9);
-    }
-
-    .dj-card.dj-live-switch-card .dj-secondary-name {
-      min-width: 0;
-      color: #fff;
-      font-size: 0.82rem;
-      line-height: 1.12;
-      font-weight: 900;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      text-shadow: 0 1px 5px rgba(0,0,0,0.75);
-    }
-
-    .dj-card.dj-live-switch-card .dj-secondary-genres {
-      min-height: 1.05rem;
-      display: flex;
-      align-items: center;
-      flex-wrap: nowrap;
-      gap: 0.22rem;
-      overflow: hidden;
-      margin-top: 0.08rem;
-    }
-
-    .dj-card.dj-live-switch-card .dj-secondary-genres .dj-genre-pill {
-      flex: 0 0 auto;
-      max-width: 100%;
-      padding: 0.16rem 0.32rem;
-      font-size: 0.48rem;
-      line-height: 1;
-      white-space: nowrap;
-    }
-
-    .dj-card.dj-live-switch-card .dj-secondary-match-label {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 0.35rem;
-      margin-top: 0.22rem;
-      color: #d7ddff;
-      font-size: 0.51rem;
-      line-height: 1.1;
-      font-weight: 800;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-    }
-
-    .dj-card.dj-live-switch-card .dj-secondary-match-value {
-      color: #fff;
-      font-size: 0.54rem;
-      font-weight: 900;
-    }
-
-    .dj-card.dj-live-switch-card .dj-secondary-match-bar {
-      width: 100%;
-      height: 4px;
-      margin-top: 0.08rem;
-      overflow: hidden;
-      border-radius: 999px;
-      background: rgba(148,163,184,0.26);
-      box-shadow: inset 0 0 4px rgba(0,0,0,0.45);
-    }
-
-    .dj-card.dj-live-switch-card .dj-secondary-match-fill {
-      height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, #22d3ee, #34d399);
-      box-shadow: 0 0 7px rgba(52,211,153,0.45);
-    }
-
-    .dj-card.dj-live-switch-card .dj-secondary-match-fill.match-mid {
-      background: linear-gradient(90deg, #a855f7, #c084fc);
-      box-shadow: 0 0 7px rgba(168,85,247,0.4);
-    }
-
-    .dj-card.dj-live-switch-card .dj-secondary-match-fill.match-low {
-      background: #94a3b8;
-      box-shadow: none;
-    }
-
-    @media (min-width: 1200px) {
-      #liveDjsList .dj-card.dj-live-switch-card {
-        min-height: 184px;
-      }
-
-      #liveDjsList .live-djs-grid {
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 0.8rem;
-      }
-    }
-
-    @media (min-width: 768px) and (max-width: 1199px) {
-      #liveDjsList .dj-card.dj-live-switch-card {
-        min-height: 190px;
-      }
-
-      #liveDjsList .live-djs-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 0.8rem;
-      }
-    }
-
-    @media (max-width: 767px) {
-      #liveDjsList .dj-card.dj-live-switch-card {
-        min-height: 205px;
-      }
-
-      #liveDjsList .live-djs-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 0.65rem;
-      }
-    }
-
-    @media (max-width: 420px) {
-      #liveDjsList .live-djs-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
     .dj-card-top {
       display: flex;
       align-items: center;
@@ -1533,7 +1334,7 @@
     .dj-status-row {
       display: flex;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: space-between;
       gap: 0.6rem;
       min-width: 0;
       margin-bottom: 0.35rem;
@@ -1704,7 +1505,7 @@
     .current-dj-card-heading {
       display: flex;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: space-between;
       gap: 0.75rem;
       margin-bottom: 0.65rem;
     }
@@ -1757,7 +1558,7 @@
     .live-genres-detected-title {
       display: flex;
       align-items: baseline;
-      justify-content: flex-start;
+      justify-content: space-between;
       gap: 0.75rem;
       margin-bottom: 0.55rem;
     }
@@ -2267,7 +2068,7 @@
     .tools-header {
       display: flex;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: space-between;
       gap: 1rem;
       flex-wrap: wrap;
       margin-bottom: 1rem;
@@ -2382,7 +2183,7 @@
     .scanner-result-head {
       display: flex;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: space-between;
       gap: 0.8rem;
       flex-wrap: wrap;
     }
@@ -3307,151 +3108,8 @@
         font-size: 1.05rem;
       }
     }
-
-    /* FINAL SECONDARY LIVE DJ CARD SHAPE
-       Fixed compact portrait cards. The cards do not stretch to fill the row. */
-    #liveDjsList .live-djs-grid {
-      grid-template-columns: repeat(5, 176px);
-      justify-content: start;
-      align-items: start;
-      gap: 14px;
-    }
-
-    #liveDjsList .dj-card.dj-live-switch-card {
-      width: 176px;
-      height: 264px;
-      min-width: 176px;
-      min-height: 264px;
-      max-width: 176px;
-      max-height: 264px;
-      aspect-ratio: auto;
-      box-sizing: border-box;
-    }
-
-    #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-photo {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center top;
-    }
-
-    @media (min-width: 768px) and (max-width: 1199px) {
-      #liveDjsList .live-djs-grid {
-        grid-template-columns: repeat(4, 176px);
-        justify-content: start;
-        gap: 14px;
-      }
-    }
-
-    @media (min-width: 480px) and (max-width: 767px) {
-      #liveDjsList .live-djs-grid {
-        grid-template-columns: repeat(2, 176px);
-        justify-content: start;
-        gap: 12px;
-      }
-    }
-
-    @media (max-width: 479px) {
-      #liveDjsList .live-djs-grid {
-        grid-template-columns: 176px;
-        justify-content: start;
-        gap: 12px;
-      }
-    }
-
 </style>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
-<style id="rrr-secondary-live-final-layout">
-/* RRR: secondary live DJ row — compact, fixed-size, genuinely left aligned.
-   IMPORTANT: #liveDjsList itself is the .live-djs-grid element. */
-#liveDjsList {
-  display: grid !important;
-  grid-template-columns: repeat(5, 176px) !important;
-  grid-auto-columns: 176px !important;
-  justify-content: start !important;
-  justify-items: start !important;
-  align-content: start !important;
-  gap: 14px !important;
-}
-
-#liveDjsList .dj-card.dj-live-switch-card {
-  width: 176px !important;
-  min-width: 176px !important;
-  max-width: 176px !important;
-  height: 264px !important;
-  min-height: 264px !important;
-  max-height: 264px !important;
-  flex: none !important;
-  justify-self: start !important;
-  box-sizing: border-box !important;
-}
-
-@media (min-width: 768px) and (max-width: 1199px) {
-  #liveDjsList {
-    grid-template-columns: repeat(4, 176px) !important;
-  }
-}
-@media (min-width: 480px) and (max-width: 767px) {
-  #liveDjsList {
-    grid-template-columns: repeat(2, 176px) !important;
-    gap: 12px !important;
-  }
-}
-@media (max-width: 479px) {
-  #liveDjsList {
-    grid-template-columns: 176px minmax(0, 1fr) !important;
-    gap: 12px !important;
-  }
-}
-
-</style>
-
-<style id="rrr-discover-full-width-fix">
-/* RRR: keep the secondary LIVE cards compact, but let the Discover DJs
-   panel span the entire available content width. The previous fixed-width
-   grid tracks limited the Discover panel to the first ~900px of the page. */
-#liveDjsList {
-  /* Keep LIVE DJ cards compact and left-aligned, while the final
-     1fr track gives the Discover panel room to span the full width. */
-  grid-template-columns: repeat(5, 176px) minmax(0, 1fr) !important;
-  grid-auto-columns: 176px !important;
-  width: 100% !important;
-  justify-content: start !important;
-  justify-items: start !important;
-}
-
-#liveDjsList > .dj-discovery {
-  grid-column: 1 / -1 !important;
-  width: 100% !important;
-  max-width: none !important;
-  min-width: 0 !important;
-  justify-self: stretch !important;
-}
-
-#liveDjsList > .dj-discovery .dj-discovery-results {
-  width: 100%;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-}
-
-@media (min-width: 768px) and (max-width: 1199px) {
-  #liveDjsList {
-    grid-template-columns: repeat(4, 176px) minmax(0, 1fr) !important;
-  }
-}
-
-@media (min-width: 480px) and (max-width: 767px) {
-  #liveDjsList {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  }
-}
-
-@media (max-width: 479px) {
-  #liveDjsList {
-    grid-template-columns: minmax(0, 1fr) !important;
-  }
-}
-</style>
 </head>
 <body>
 <main class="wrapper">
@@ -3538,8 +3196,6 @@
 <div class="visualizer">
 <canvas id="viz"></canvas>
 </div>
-<!-- Persistent station audio: this element intentionally remains mounted
-     while tabs are switched so the live radio stream is never interrupted. -->
 <audio controls="" crossorigin="anonymous" id="liveStream">
 <source src="https://stream.radiorrr.com/radio.mp3" type="audio/mpeg"/>
           Your browser does not support the audio element.
@@ -3625,12 +3281,12 @@
         </small>
 <div class="schedule-table" role="table" aria-label="Radio RRR weekly schedule">
 <div class="schedule-row schedule-header" role="row"><div role="columnheader">DAY</div><div role="columnheader">TIME</div><div role="columnheader">PROGRAM</div><div role="columnheader">GENRES</div></div>
-<div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">00:00 – 04:00</div><div role="cell"><strong>🌙 Late Nights Insomnia</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-cyan">Chill</span><span class="dj-genre-pill genre-neon-electric-purple">Deep House</span><span class="dj-genre-pill genre-neon-cyan">Melodic</span><span class="dj-genre-pill genre-neon-violet">Progressive</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">04:00 – 08:00</div><div role="cell"><strong>🌅 Sunrise Sessions</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-cyan">Chill</span><span class="dj-genre-pill genre-neon-cyan">Downtempo</span><span class="dj-genre-pill genre-neon-cyan">Ambient</span><span class="dj-genre-pill genre-neon-electric-purple">Deep House</span></div></div></div>
+<div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">00:00 – 04:00</div><div role="cell"><strong>🌅 Early Mornings</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-electric-blue">Tech Trance</span><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-aqua">Dark Electro</span><span class="dj-genre-pill genre-neon-cyan">Trance</span></div></div></div>
+<div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">04:00 – 08:00</div><div role="cell"><strong>☀️ Morning Drive</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-cyan">Chill</span><span class="dj-genre-pill genre-neon-cyan">Downtempo</span><span class="dj-genre-pill genre-neon-cyan">Ambient</span><span class="dj-genre-pill genre-neon-electric-purple">Deep House</span></div></div></div>
 <div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">08:00 – 12:00</div><div role="cell"><strong>🚗 Day Drive</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-yellow">80s</span><span class="dj-genre-pill genre-neon-blue-purple">Synthwave</span><span class="dj-genre-pill genre-neon-aqua">Chill Electro</span><span class="dj-genre-pill genre-neon-magenta">Nu-Disco</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">12:00 – 16:00</div><div role="cell"><strong>⚡ Afternoon Beats</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-hot-pink">House</span><span class="dj-genre-pill genre-neon-electric-purple">Deep House</span><span class="dj-genre-pill genre-neon-violet">Progressive</span><span class="dj-genre-pill genre-neon-hot-pink">Funky House</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">16:00 – 20:00</div><div role="cell"><strong>🔥 Dinner Warm ups</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-hot-pink">House</span><span class="dj-genre-pill genre-neon-hot-pink">Tech House</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-violet">Progressive</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">20:00 – 00:00</div><div role="cell"><strong>🌙 Prime Time</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-aqua">Electro</span><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-violet">Progressive</span></div></div></div>
+<div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">12:00 – 16:00</div><div role="cell"><strong>⚡ Afternoon</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-hot-pink">House</span><span class="dj-genre-pill genre-neon-electric-purple">Deep House</span><span class="dj-genre-pill genre-neon-violet">Progressive</span><span class="dj-genre-pill genre-neon-hot-pink">Funky House</span></div></div></div>
+<div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">16:00 – 20:00</div><div role="cell"><strong>🔥 Prime Time</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-hot-pink">House</span><span class="dj-genre-pill genre-neon-hot-pink">Tech House</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-violet">Progressive</span></div></div></div>
+<div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">20:00 – 00:00</div><div role="cell"><strong>🌙 Night Drive</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-aqua">Electro</span><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-violet">Progressive</span></div></div></div>
 <div class="schedule-row" role="row"><div role="cell">FRIDAY · WEEKEND WARM-UP</div><div role="cell">00:00 – 04:00</div><div role="cell"><strong>🔥 After Dark</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-electric-blue">Hard Techno</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-cyan">Psy-Trance</span></div></div></div>
 <div class="schedule-row" role="row"><div role="cell">FRIDAY · WEEKEND WARM-UP</div><div role="cell">04:00 – 08:00</div><div role="cell"><strong>🌅 Late Mornings</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-violet">Progressive</span><span class="dj-genre-pill genre-neon-cyan">Psy-Trance</span></div></div></div>
 <div class="schedule-row" role="row"><div role="cell">FRIDAY · WEEKEND WARM-UP</div><div role="cell">08:00 – 12:00</div><div role="cell"><strong>☀️ Morning</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-cyan">Chill</span><span class="dj-genre-pill genre-neon-hot-pink">House</span><span class="dj-genre-pill genre-neon-violet">Progressive</span><span class="dj-genre-pill genre-neon-cyan">Melodic</span></div></div></div>
@@ -3645,7 +3301,7 @@
 <div class="schedule-row" role="row"><div role="cell">SATURDAY · WEEKEND</div><div role="cell">20:00 – 00:00</div><div role="cell"><strong>🌙 Party Night</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-orange">BASSLINE</span><span class="dj-genre-pill genre-neon-orange">Drum &amp; Bass</span></div></div></div>
 <div class="schedule-row" role="row"><div role="cell">SUNDAY · SUNDAY SESSIONS</div><div role="cell">00:00 – 04:00</div><div role="cell"><strong>🌙 After Dark</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-aqua">Electro</span><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-cyan">Chill</span></div></div></div>
 <div class="schedule-row" role="row"><div role="cell">SUNDAY · SUNDAY SESSIONS</div><div role="cell">04:00 – 08:00</div><div role="cell"><strong>🌅 Early Morning</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-cyan">Chill</span><span class="dj-genre-pill genre-neon-cyan">Ambient</span><span class="dj-genre-pill genre-neon-cyan">Downtempo</span><span class="dj-genre-pill genre-neon-electric-purple">Deep House</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">SUNDAY · SUNDAY SESSIONS</div><div role="cell">08:00 – 12:00</div><div role="cell"><strong>🌅 Sunrise Sessions</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-yellow">80s</span><span class="dj-genre-pill genre-neon-blue-purple">Synthwave</span><span class="dj-genre-pill genre-neon-aqua">Chill Electro</span><span class="dj-genre-pill genre-neon-magenta">Nu-Disco</span></div></div></div>
+<div class="schedule-row" role="row"><div role="cell">SUNDAY · SUNDAY SESSIONS</div><div role="cell">08:00 – 12:00</div><div role="cell"><strong>☀️ Morning Drive</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-yellow">80s</span><span class="dj-genre-pill genre-neon-blue-purple">Synthwave</span><span class="dj-genre-pill genre-neon-aqua">Chill Electro</span><span class="dj-genre-pill genre-neon-magenta">Nu-Disco</span></div></div></div>
 <div class="schedule-row" role="row"><div role="cell">SUNDAY · SUNDAY SESSIONS</div><div role="cell">12:00 – 16:00</div><div role="cell"><strong>🚗 Day Drive</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-hot-pink">House</span><span class="dj-genre-pill genre-neon-electric-purple">Deep House</span><span class="dj-genre-pill genre-neon-violet">Progressive</span><span class="dj-genre-pill genre-neon-hot-pink">Funky House</span></div></div></div>
 <div class="schedule-row" role="row"><div role="cell">SUNDAY · SUNDAY SESSIONS</div><div role="cell">16:00 – 20:00</div><div role="cell"><strong>🔥 Prime Time</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-hot-pink">Tech House</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-violet">Progressive</span><span class="dj-genre-pill genre-neon-cyan">Melodic</span></div></div></div>
 <div class="schedule-row" role="row"><div role="cell">SUNDAY · SUNDAY SESSIONS</div><div role="cell">20:00 – 00:00</div><div role="cell"><strong>🌙 Night Drive</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-aqua">Electro</span><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-cyan">Chill</span></div></div></div>
@@ -4356,40 +4012,6 @@
       const audio =
         document.getElementById("liveStream");
 
-      /*
-       * STATION AUDIO MUST BE PAGE-LIFETIME
-       * -----------------------------------
-       * The radio stream is not a tab/player. It is the station itself.
-       * Keep the media element mounted directly under <body> so changing a
-       * content pane (including display:none) can never suspend or tear down
-       * the live connection. The custom RRR Play/Pause button remains in the
-       * Live Audio pane and controls this same element.
-       */
-      let stationAudioWanted = false;
-      let stationAudioRecoveryTimer = null;
-      let stationAudioLastHealthy = Date.now();
-      let stationAudioManualAction = false;
-
-      if (audio) {
-        const persistentAudioHost = document.createElement("div");
-        persistentAudioHost.id = "rrrPersistentStationAudio";
-        persistentAudioHost.setAttribute("aria-hidden", "true");
-        persistentAudioHost.style.position = "fixed";
-        persistentAudioHost.style.width = "1px";
-        persistentAudioHost.style.height = "1px";
-        persistentAudioHost.style.overflow = "hidden";
-        persistentAudioHost.style.opacity = "0";
-        persistentAudioHost.style.pointerEvents = "none";
-        persistentAudioHost.style.left = "-10000px";
-        persistentAudioHost.style.top = "-10000px";
-        document.body.appendChild(persistentAudioHost);
-        persistentAudioHost.appendChild(audio);
-
-        // The custom RRR controls are the station controls.
-        audio.removeAttribute("controls");
-        audio.preload = "auto";
-      }
-
       const statusEl =
         document.getElementById("status");
 
@@ -4493,15 +4115,12 @@
           activeLink.classList.add("active");
         }
 
-        // RADIO RRR AUDIO IS A STATION-WIDE BACKGROUND STREAM.
-        // Navigation must never touch its playback state.
-        // The element has been moved outside the tab panes, so hiding a pane
-        // cannot tear down the live media element.
-        // Do not call pause(), load(), src=, or AudioContext operations here.
-        // A tab click must be completely irrelevant to station playback.
+        // The LIVE AUDIO and LIVE VIDEO experiences should not play over
+        // each other when the user changes tabs.
+        if (targetId !== "stream-section" && audio && !audio.paused) {
+          audio.pause();
+        }
 
-        // Live DJ video is different: stop it when leaving Live Video so its
-        // video/audio does not continue playing over the radio stream.
         if (targetId !== "live-section" && liveDjVideo && !liveDjVideo.paused) {
           liveDjVideo.pause();
         }
@@ -4522,6 +4141,8 @@
             if (targetId) {
 
               switchTab(targetId);
+
+              playNavClick();
 
             }
 
@@ -4548,14 +4169,6 @@
       let liveDjRequestController = null;
       let nativePlaybackRecoveryTimer = null;
       let manualDJStreamFailureHandled = false;
-
-      // The backend relay has its own liveness grace period. TikTok can
-      // occasionally return a false "offline" result for one or two checks
-      // while the existing relay stream is still healthy. Never tear down a
-      // working player just because one /api/live response has no relay.
-      const LIVE_RELAY_MISSING_GRACE_MS = 2 * 60 * 1000;
-      let relayMissingSince = 0;
-      let lastKnownRelayDJ = null;
 
       // Mobile browsers (especially iOS/Safari) are much less tolerant of
       // maintaining two simultaneous HLS decoders for the same live stream.
@@ -5280,8 +4893,6 @@
         activeLiveUsername = "";
         activeLiveStreamKey = "";
         activeLiveStreamUrl = "";
-        relayMissingSince = 0;
-        lastKnownRelayDJ = null;
 
         if (nativePlaybackRecoveryTimer) {
           window.clearTimeout(nativePlaybackRecoveryTimer);
@@ -5423,7 +5034,7 @@
               : "match-low";
 
         randomLiveDjMatch.textContent =
-          "🎯 PROGRAM MATCH " + rounded + "%";
+          "🎯 PROGRAM MATCH " + rounded;
         randomLiveDjMatch.className =
           "dj-match-score main-dj-match-score " + matchClass;
       }
@@ -5940,55 +5551,7 @@
             });
           }
           const favourites = Array.isArray(data.favourites) ? data.favourites : [];
-
-          // data.relay is the station-wide relay selected by the backend.
-          // If TikTok briefly reports the DJ as offline, the backend may
-          // deliberately keep the existing relay alive. Preserve that same
-          // relay in the browser instead of destroying a healthy HLS player.
-          const reportedRelayDj = data.relay || null;
-
-          if (reportedRelayDj) {
-            relayMissingSince = 0;
-            lastKnownRelayDJ = reportedRelayDj;
-          } else if (
-            !manualFeaturedDJIdentity &&
-            activeLiveStreamKey.indexOf("default:") === 0 &&
-            activeLiveUsername
-          ) {
-            if (!relayMissingSince) {
-              relayMissingSince = Date.now();
-              console.warn(
-                "Radio RRR: relay temporarily missing from API; keeping the existing LIVE player"
-              );
-            }
-          } else {
-            relayMissingSince = 0;
-          }
-
-          const relayGraceActive =
-            !reportedRelayDj &&
-            !manualFeaturedDJIdentity &&
-            activeLiveStreamKey.indexOf("default:") === 0 &&
-            activeLiveUsername &&
-            relayMissingSince > 0 &&
-            (Date.now() - relayMissingSince) < LIVE_RELAY_MISSING_GRACE_MS &&
-            lastKnownRelayDJ;
-
-          if (
-            !reportedRelayDj &&
-            !manualFeaturedDJIdentity &&
-            relayMissingSince > 0 &&
-            (Date.now() - relayMissingSince) >= LIVE_RELAY_MISSING_GRACE_MS
-          ) {
-            console.warn(
-              "Radio RRR: relay missing beyond frontend grace period; allowing fallback"
-            );
-          }
-
-          const relayDj = reportedRelayDj || (
-            relayGraceActive ? lastKnownRelayDJ : null
-          );
-
+          const relayDj = data.relay || null;
           const routerUsername = relayDj ? getDJUsername(relayDj) : "";
           const routerIdentity = relayDj ? getDJIdentity(relayDj) : "";
           const routerKey = relayDj
@@ -6075,8 +5638,8 @@
               showRadioFallback();
             }
           } else if (!manualFeaturedDJIdentity) {
-            // No relay was reported and there is no active grace-protected
-            // player. This is a genuine station fallback condition.
+            // A successful no-relay response is authoritative. Do not keep
+            // displaying the previous DJ while the router is offline.
             showRadioFallback();
           }
 
@@ -6357,54 +5920,18 @@
             '<div class="dj-thumb-placeholder" style="display:none;">🎧</div>'
           : '<div class="dj-thumb-placeholder">🎧</div>';
 
-        if (moveWatchButton && isActuallyLive) {
-          const safeScore = Number.isFinite(matchScore)
-            ? Math.max(0, Math.min(100, Math.round(matchScore)))
-            : null;
-          const secondaryMatchClass = safeScore === null
-            ? "match-low"
-            : safeScore >= 50
-              ? "match-high"
-              : safeScore >= 20
-                ? "match-mid"
-                : "match-low";
-          const secondaryScoreText = safeScore === null ? "—" : safeScore + "%";
-          const secondaryFillWidth = safeScore === null ? 0 : safeScore;
-          const secondaryGenres = genres.length
-            ? genres.slice(0, 4).map(getGenrePillHtml).join("")
-            : '<span class="dj-genre-pill genre-neon-electric-blue">Live DJ</span>';
-          const secondaryPhoto = profilePic
-            ? '<img class="dj-secondary-photo" src="' + escapeAttr(String(profilePic)) +
-              '" alt="" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\';">' +
-              '<div class="dj-secondary-placeholder" style="display:none;">🎧</div>'
-            : '<div class="dj-secondary-placeholder">🎧</div>';
-
-          card.innerHTML =
-            secondaryPhoto +
-            '<div class="dj-secondary-overlay"></div>' +
-            '<div class="dj-secondary-content">' +
-              '<div class="dj-secondary-live"><span class="dj-secondary-live-dot"></span>LIVE</div>' +
-              '<div class="dj-secondary-name" title="' + escapeAttr(String(name)) + '">' + escapeHtml(String(name)) + '</div>' +
-              '<div class="dj-secondary-genres" aria-label="Learned DJ genres">' + secondaryGenres + '</div>' +
-              '<div class="dj-secondary-match-label"><span>Program Match</span><span class="dj-secondary-match-value">' + secondaryScoreText + '</span></div>' +
-              '<div class="dj-secondary-match-bar" aria-label="Program Match ' + secondaryScoreText + '">' +
-                '<div class="dj-secondary-match-fill ' + secondaryMatchClass + '" style="width:' + secondaryFillWidth + '%"></div>' +
-              '</div>' +
-            '</div>';
-        } else {
-          card.innerHTML =
-            '<div class="dj-card-top">' +
-              photoHtml +
-              '<div>' +
-                liveStatusHtml +
-                '<div class="dj-name">' + escapeHtml(String(name)) + '</div>' +
-                matchScoreHtml +
-                '<div class="dj-genre">' + genreHtml + '</div>' +
-              '</div>' +
+        card.innerHTML =
+          '<div class="dj-card-top">' +
+            photoHtml +
+            '<div>' +
+              liveStatusHtml +
+              '<div class="dj-name">' + escapeHtml(String(name)) + '</div>' +
+              matchScoreHtml +
+              '<div class="dj-genre">' + genreHtml + '</div>' +
             '</div>' +
-            metaHtml +
-            (isFavourite ? "" : watchHtml);
-        }
+          '</div>' +
+          metaHtml +
+          (isFavourite || moveWatchButton ? "" : watchHtml);
 
         if (moveWatchButton && isActuallyLive) {
           card.classList.add("dj-live-switch-card");
@@ -6509,13 +6036,13 @@
           {
             start: 0,
             end: 4,
-            name: "Late Nights Insomnia",
-            genres: "Chill · Deep House · Melodic · Progressive"
+            name: "Early Mornings",
+            genres: "Tech Trance · Techno · Dark Electro · Trance"
           },
           {
             start: 4,
             end: 8,
-            name: "Sunrise Sessions",
+            name: "Morning Drive",
             genres: "Chill · Downtempo · Ambient · Deep House"
           },
           {
@@ -6527,19 +6054,19 @@
           {
             start: 12,
             end: 16,
-            name: "Afternoon Beats",
+            name: "Afternoon",
             genres: "House · Deep House · Progressive · Funky House"
           },
           {
             start: 16,
             end: 20,
-            name: "Dinner Warm ups",
+            name: "Prime Time",
             genres: "House · Tech House · Trance · Progressive"
           },
           {
             start: 20,
             end: 24,
-            name: "Prime Time",
+            name: "Night Drive",
             genres: "Electro · Techno · Trance · Progressive"
           }
         ];
@@ -6763,28 +6290,66 @@
 
       function initAudioAnalyser() {
 
-        /*
-         * IMPORTANT: Do NOT route the station <audio> element through a
-         * Web Audio MediaElementSource.  Doing that makes the AudioContext
-         * part of the radio playback path; if the browser suspends that
-         * context while the user changes the site's tabs, the stream can
-         * remain "playing" but become completely silent.
-         *
-         * Radio RRR playback is therefore deliberately native HTMLMedia
-         * playback.  The visualizer continues with its own animation below.
-         */
-        analyserReady = false;
-        analyser = null;
-        dataArray = null;
+        if (audioCtx || !audio)
+          return;
 
-        if (audio) {
-          audio.muted = false;
-          audio.volume = 1;
+        try {
+
+          const AC =
+            window.AudioContext ||
+            window.webkitAudioContext;
+
+          if (!AC) return;
+
+          audioCtx = new AC();
+
+          const source =
+            audioCtx.createMediaElementSource(
+              audio
+            );
+
+          analyser =
+            audioCtx.createAnalyser();
+
+          analyser.fftSize =
+            2048;
+
+          analyser.smoothingTimeConstant =
+            0.85;
+
+          dataArray =
+            new Uint8Array(
+              analyser.frequencyBinCount
+            );
+
+          source.connect(
+            analyser
+          );
+
+          analyser.connect(
+            audioCtx.destination
+          );
+
+          analyserReady = true;
+
+          setStatus(
+            "visualizer connected"
+          );
+
+        } catch (e) {
+
+          analyserReady = false;
+
+          console.warn(
+            "Analyser init failed:",
+            e
+          );
+
+          setStatus(
+            "visualizer blocked. Animation will still run."
+          );
+
         }
-
-        setStatus(
-          "visualizer active"
-        );
 
       }
 
@@ -7487,10 +7052,7 @@
           "click",
           function () {
 
-            stationAudioManualAction = true;
-
             if (audio.paused) {
-              stationAudioWanted = true;
 
               setStatus(
                 "connecting..."
@@ -7542,7 +7104,6 @@
 
             } else {
 
-              stationAudioWanted = false;
               audio.pause();
 
               setStatus(
@@ -7560,9 +7121,6 @@
         audio.addEventListener(
           "play",
           function () {
-
-            stationAudioWanted = true;
-            stationAudioManualAction = false;
 
             if (
               audioCtx &&
@@ -7587,100 +7145,16 @@
         );
 
         audio.addEventListener(
-          "playing",
-          function () {
-            stationAudioLastHealthy = Date.now();
-            if (stationAudioRecoveryTimer) {
-              window.clearTimeout(stationAudioRecoveryTimer);
-              stationAudioRecoveryTimer = null;
-            }
-          }
-        );
-
-        audio.addEventListener(
-          "timeupdate",
-          function () {
-            stationAudioLastHealthy = Date.now();
-          }
-        );
-
-        audio.addEventListener(
-          "waiting",
-          function () {
-            stationAudioLastHealthy = Date.now();
-            if (!stationAudioWanted || stationAudioRecoveryTimer) return;
-
-            stationAudioRecoveryTimer = window.setTimeout(function () {
-              stationAudioRecoveryTimer = null;
-              if (!stationAudioWanted) return;
-
-              // Do not reconnect on every tiny network hiccup. Only rebuild
-              // the live source after a sustained stall.
-              if (Date.now() - stationAudioLastHealthy < 6000) return;
-
-              const currentSrc = audio.currentSrc || "https://stream.radiorrr.com/radio.mp3";
-              audio.src = currentSrc;
-              audio.load();
-              audio.play().catch(function () {});
-            }, 6500);
-          }
-        );
-
-        audio.addEventListener(
-          "stalled",
-          function () {
-            if (!stationAudioWanted || stationAudioRecoveryTimer) return;
-            stationAudioRecoveryTimer = window.setTimeout(function () {
-              stationAudioRecoveryTimer = null;
-              if (!stationAudioWanted) return;
-              audio.play().catch(function () {});
-            }, 3000);
-          }
-        );
-
-        audio.addEventListener(
-          "error",
-          function () {
-            if (!stationAudioWanted) return;
-            window.setTimeout(function () {
-              if (!stationAudioWanted) return;
-              const currentSrc = audio.currentSrc || "https://stream.radiorrr.com/radio.mp3";
-              audio.src = currentSrc;
-              audio.load();
-              audio.play().catch(function () {});
-            }, 1500);
-          }
-        );
-
-        // If anything other than the RRR controls manages to pause the
-        // element, immediately restore the station stream.
-        audio.addEventListener(
           "pause",
           function () {
 
-            if (stationAudioManualAction) {
-              stationAudioManualAction = false;
-              setStatus(
-                "paused"
-              );
-              kick.textContent =
-                "Play";
-              return;
-            }
+            setStatus(
+              "paused"
+            );
 
-            // Unexpected pause: this is not a user request. Keep the station
-            // alive and retry without requiring the listener to press Play.
-            if (stationAudioWanted) {
-              kick.textContent = "Reconnecting…";
-              window.setTimeout(function () {
-                if (stationAudioWanted && audio.paused) {
-                  audio.play().then(function () {
-                    kick.textContent = "Pause";
-                    setStatus("playing");
-                  }).catch(function () {});
-                }
-              }, 250);
-            }
+            kick.textContent =
+              "Play";
+
           }
         );
 
@@ -7699,23 +7173,6 @@
         );
 
       }
-
-      // Keep the station's native media output explicitly unmuted.
-      // This is independent of the Live DJ video, which has its own mute state.
-      if (audio) {
-        audio.muted = false;
-        audio.volume = 1;
-      }
-
-      // Background watchdog: navigation, hidden panes, HLS/video activity or
-      // transient browser stalls must not silently kill the radio station.
-      window.setInterval(function () {
-        if (!audio || !stationAudioWanted || document.hidden) return;
-
-        if (audio.paused) {
-          audio.play().catch(function () {});
-        }
-      }, 2500);
 
     });
 
