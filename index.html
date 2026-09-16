@@ -3966,8 +3966,11 @@
 <div class="random-live-dj-name" id="randomLiveDjName">Checking LIVE DJs…</div>
 <div class="dj-match-score main-dj-match-score match-low" id="randomLiveDjMatch" title="RRR genre compatibility score out of 100">🎯 PROGRAM MATCH —</div>
 </div>
-<div class="random-live-dj-profile-field random-live-dj-genres-field" hidden="" id="randomLiveDjGenresField">
-<div aria-label="DJ genres" class="random-live-genres" id="randomLiveDjGenres"></div>
+<div class="random-live-dj-profile-field random-live-dj-genres-field" id="randomLiveDjGenresField">
+<div class="random-live-dj-profile-label">LIVE GENRES DETECTED</div>
+<div aria-label="Current live AI detected genres" class="random-live-genres" id="randomLiveDjGenres">
+<span class="random-live-genre">ANALYSING LIVE AUDIO…</span>
+</div>
 </div>
 <div class="random-live-dj-profile-field" hidden="" id="randomLiveDjBioField">
 <div class="random-live-dj-profile-label">Bio</div>
@@ -5419,7 +5422,14 @@
         randomLiveDjGenres.innerHTML = "";
 
         if (randomLiveDjGenresField) {
-          randomLiveDjGenresField.hidden = !genres.length;
+          randomLiveDjGenresField.hidden = false;
+        }
+
+        if (!genres.length) {
+          const tag = document.createElement("span");
+          tag.className = "random-live-genre";
+          tag.textContent = "ANALYSING LIVE AUDIO…";
+          randomLiveDjGenres.appendChild(tag);
         }
 
         genres.forEach(genre => {
