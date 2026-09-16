@@ -1383,9 +1383,11 @@
     }
 
     .dj-card.dj-live-switch-card .dj-secondary-genres {
-      min-height: 1.05rem;
+      min-height: 0;
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
       flex-wrap: nowrap;
       gap: 0.22rem;
       overflow: hidden;
@@ -1395,8 +1397,9 @@
     .dj-card.dj-live-switch-card .dj-secondary-genres .dj-genre-pill {
       flex: 0 0 auto;
       max-width: 100%;
-      padding: 0.16rem 0.32rem;
-      font-size: 0.48rem;
+      width: fit-content;
+      padding: 0.15rem 0.34rem;
+      font-size: 0.52rem;
       line-height: 1;
       white-space: nowrap;
     }
@@ -1408,16 +1411,16 @@
       gap: 0.35rem;
       margin-top: 0.22rem;
       color: #d7ddff;
-      font-size: 0.51rem;
-      line-height: 1.1;
+      font-size: 0.45rem;
+      line-height: 1;
       font-weight: 800;
       letter-spacing: 0.03em;
       text-transform: uppercase;
     }
 
     .dj-card.dj-live-switch-card .dj-secondary-match-value {
-      color: #fff;
-      font-size: 0.54rem;
+      color: #22d3ee;
+      font-size: 0.82rem;
       font-weight: 900;
     }
 
@@ -1450,7 +1453,7 @@
 
     @media (min-width: 1200px) {
       #liveDjsList .dj-card.dj-live-switch-card {
-        min-height: 184px;
+        min-height: 250px;
       }
 
       #liveDjsList .live-djs-grid {
@@ -1461,7 +1464,7 @@
 
     @media (min-width: 768px) and (max-width: 1199px) {
       #liveDjsList .dj-card.dj-live-switch-card {
-        min-height: 190px;
+        min-height: 250px;
       }
 
       #liveDjsList .live-djs-grid {
@@ -1472,7 +1475,7 @@
 
     @media (max-width: 767px) {
       #liveDjsList .dj-card.dj-live-switch-card {
-        min-height: 205px;
+        min-height: 255px;
       }
 
       #liveDjsList .live-djs-grid {
@@ -1701,6 +1704,43 @@
       z-index: 1;
     }
 
+    .current-dj-card .live-genres-detected {
+      position: relative;
+      z-index: 1;
+      display: none;
+      margin: 0.7rem 0 0;
+      padding: 0.72rem 0.78rem;
+      border-radius: 12px;
+      background: rgba(3,7,20,0.78);
+      border: 1px solid rgba(34,211,238,0.42);
+      box-shadow: 0 0 12px rgba(34,211,238,0.10);
+    }
+
+    .current-dj-card .live-genres-detected-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.45rem;
+    }
+
+    .current-dj-card .live-genre-detected-name {
+      width: fit-content;
+      max-width: 100%;
+      padding: 0.17rem 0.34rem;
+      border-radius: 999px;
+      border: 1px solid rgba(34,211,238,0.62);
+      background: rgba(8,15,30,0.82);
+      font-size: 0.62rem;
+      line-height: 1;
+      font-weight: 800;
+    }
+
+    .current-dj-card .live-genre-detected-confidence {
+      font-size: 0.78rem;
+      font-weight: 900;
+    }
+
     .current-dj-card-heading {
       display: flex;
       align-items: center;
@@ -1741,19 +1781,6 @@
     }
 
     /* LIVE GENRES DETECTED */
-    .current-dj-card .live-genres-detected {
-      display: none;
-      margin: 0.75rem 0 0;
-      padding: 0.8rem 0.9rem;
-      border-radius: 12px;
-      background:
-        radial-gradient(circle at top left, rgba(34,211,238,0.10), transparent 55%),
-        rgba(3,6,18,0.76);
-      border: 1px solid rgba(34,211,238,0.38);
-      box-shadow: 0 0 12px rgba(34,211,238,0.10), inset 0 0 14px rgba(34,211,238,0.025);
-      text-align: left;
-    }
-
     .live-genres-detected {
       display: none;
       margin: 0 0 0.9rem;
@@ -1806,21 +1833,13 @@
 
     .live-genre-detected-name {
       min-width: 0;
-      width: fit-content;
       max-width: min(32ch, 40vw);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       color: #e0e0ff;
-      font-size: 0.62rem;
-      line-height: 1;
-      font-weight: 800;
-      letter-spacing: 0.025em;
-      padding: 0.22rem 0.42rem;
-      border-radius: 999px;
-      border: 1px solid rgba(34,211,238,0.62);
-      background: rgba(8,15,30,0.78);
-      box-sizing: border-box;
+      font-size: 0.72rem;
+      font-weight: 700;
     }
 
     .live-genre-detected-bar {
@@ -2605,10 +2624,7 @@
 
       #randomLiveDj {
         grid-template-columns: minmax(0, 1.65fr) minmax(300px, 0.75fr);
-        grid-template-areas:
-          "player header"
-          "player info"
-          "player ai";
+        grid-template-areas: "player side";
         grid-template-rows: auto auto auto;
         gap: 1.25rem;
         align-items: start;
@@ -2755,13 +2771,6 @@
 
       /* On phones the live experience stacks naturally:
          video first, DJ card second, detected genres last. */
-      #randomLiveDj .live-genres-detected {
-        grid-area: auto;
-        width: 100%;
-        margin: 0;
-        align-self: stretch;
-        box-sizing: border-box;
-      }
 
       #randomLiveDj .radio-router-player {
         grid-area: player;
@@ -3212,10 +3221,6 @@
         align-self: start;
       }
 
-      #randomLiveDj .live-genres-detected {
-        grid-area: ai;
-        align-self: start;
-      }
 
       #randomLiveDj .current-dj-card {
         margin-bottom: 0;
@@ -3285,8 +3290,7 @@
       }
 
       #randomLiveDj .live-router-side .random-live-header,
-      #randomLiveDj .live-router-side .current-dj-card,
-      #randomLiveDj .live-router-side .live-genres-detected {
+      #randomLiveDj .live-router-side .current-dj-card {
         grid-area: auto;
         align-self: stretch;
         flex: 0 0 auto;
@@ -3302,10 +3306,6 @@
         padding: 0.75rem 0.8rem;
       }
 
-      #randomLiveDj .live-router-side .live-genres-detected {
-        padding: 0.75rem 0.8rem;
-        margin-top: 0.25rem;
-      }
     }
 
 
@@ -3987,6 +3987,7 @@
 <div class="random-live-dj-name" id="randomLiveDjName">Checking LIVE DJs…</div>
 <div class="dj-match-score main-dj-match-score match-low" id="randomLiveDjMatch" title="RRR genre compatibility score out of 100">🎯 PROGRAM MATCH —</div>
 </div>
+
 <div class="random-live-dj-profile-field" hidden="" id="randomLiveDjBioField">
 <div class="random-live-dj-profile-label">Bio</div>
 <p class="random-live-dj-bio" id="randomLiveDjBio"></p>
@@ -4693,49 +4694,6 @@
 
       const liveDjUnmute =
         document.getElementById("liveDjUnmute");
-
-      /* MOBILE LIVE ROUTER ORDER
-         The LIVE GENRES DETECTED panel lives inside the desktop side column.
-         On phones, move that existing panel after the video element in the
-         actual DOM rather than relying on CSS display:contents ordering.
-         Desktop DOM/layout is restored automatically above the breakpoint. */
-      if (randomLiveDj && liveGenresDetected) {
-        const mobileGenreMedia =
-          window.matchMedia("(max-width: 767px)");
-        const originalGenreParent = liveGenresDetected.parentNode;
-
-        function syncMobileGenreLayout() {
-          const player =
-            randomLiveDj.querySelector(".radio-router-player");
-
-          if (!player || !originalGenreParent) return;
-
-          if (mobileGenreMedia.matches) {
-            if (liveGenresDetected.parentNode !== randomLiveDj) {
-              randomLiveDj.insertBefore(
-                liveGenresDetected,
-                player.nextSibling
-              );
-            } else if (liveGenresDetected.previousElementSibling !== player) {
-              randomLiveDj.insertBefore(
-                liveGenresDetected,
-                player.nextSibling
-              );
-            }
-          } else if (liveGenresDetected.parentNode !== originalGenreParent) {
-            originalGenreParent.appendChild(liveGenresDetected);
-          }
-        }
-
-        syncMobileGenreLayout();
-
-        if (mobileGenreMedia.addEventListener) {
-          mobileGenreMedia.addEventListener("change", syncMobileGenreLayout);
-        } else if (mobileGenreMedia.addListener) {
-          mobileGenreMedia.addListener(syncMobileGenreLayout);
-        }
-      }
-
 
       const copyLiveAudioUrl = document.getElementById("copyLiveAudioUrl");
       const liveAudioStreamUrl = document.getElementById("liveAudioStreamUrl");
@@ -5557,7 +5515,6 @@
         }
         randomLiveDjName.textContent = "🎧 " + String(name);
         updateMainDJMatchScore(dj);
-        updateLiveDjGenres(dj);
         updateLiveDjProfile(dj);
         randomLiveDj.style.display = "block";
 
@@ -6571,7 +6528,6 @@
                     "LIVE DJ"
                   );
                 updateMainDJMatchScore(relayDj);
-                updateLiveDjGenres(relayDj);
                 updateLiveDjProfile(relayDj);
                 randomLiveDj.style.display = "block";
               }
@@ -6624,7 +6580,6 @@
           );
 
           if (hasRelay) {
-            updateLiveDjGenres(selectedFeaturedDj);
             updateLiveDjProfile(selectedFeaturedDj);
           }
 
@@ -6908,7 +6863,7 @@
           const secondaryScoreText = safeScore === null ? "—" : safeScore + "%";
           const secondaryFillWidth = safeScore === null ? 0 : safeScore;
           const secondaryGenres = genres.length
-            ? genres.slice(0, 4).map(getGenrePillHtml).join("")
+            ? genres.slice(0, 5).map(getGenrePillHtml).join("")
             : '<span class="dj-genre-pill genre-neon-electric-blue">ANALYSING LIVE AUDIO</span>';
           const secondaryGenreAge = formatLiveGenreAge(dj.rrr_ai_detected_at);
           const secondaryPhoto = profilePic
@@ -6928,7 +6883,7 @@
               '<div class="dj-secondary-name" title="' + escapeAttr(String(name)) + '">' + escapeHtml(String(name)) + '</div>' +
               '<div class="dj-secondary-genres" aria-label="Live AI detected genres">' + secondaryGenres + '</div>' +
               (secondaryGenreAge ? '<div style="font-size:0.62rem;font-weight:800;color:#67e8f9;margin-top:0.12rem;letter-spacing:0.04em;">' + secondaryGenreAge + '</div>' : '') +
-              '<div class="dj-secondary-match-label"><span>Program Match</span><span class="dj-secondary-match-value">' + secondaryScoreText + '</span></div>' +
+              '<div class="dj-secondary-match-label"><span>PROGRAM MATCH</span><span class="dj-secondary-match-value">' + secondaryScoreText + '</span></div>' +
               '<div class="dj-secondary-match-bar" aria-label="Program Match ' + secondaryScoreText + '">' +
                 '<div class="dj-secondary-match-fill ' + secondaryMatchClass + '" style="width:' + secondaryFillWidth + '%"></div>' +
               '</div>' +
