@@ -825,7 +825,23 @@
       min-width: 0;
     }
 
-    .random-live-program-target-pill {
+        .random-live-target-label {
+      margin-top: 0.35rem;
+      color: #22d3ee;
+      font-size: 0.55rem;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+    }
+
+    .random-live-program-targets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.22rem;
+      margin-top: 0.25rem;
+    }
+
+.random-live-program-target-pill {
       display: inline-flex;
       align-items: center;
       min-width: 0;
@@ -3974,6 +3990,8 @@
 </div>
 <div class="random-live-now-playing">
               <strong id="heroNowPlaying">Loading current block…</strong>
+              <div class="random-live-target-label">TARGET GENRES</div>
+              <div class="random-live-program-targets" id="liveProgramTargetGenres" aria-label="Current program target genres"></div>
 </div>
 
 </div>
@@ -7000,7 +7018,63 @@
         resumeLivePlayback();
       });
 
+      // The public site uses the Radio RRR scheduler API as the source of
+      // truth for the current programme and its target genres. The built-in
+      // schedule below remains a fallback if the API is temporarily unavailable.
+      let publicScheduleRows = [];
+
+      function publicScheduleDayName(dayIndex) {
+        return ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][dayIndex];
+      }
+
+      function loadPublicScheduleForTargets() {
+        fetch("https://api.radiorrr.com/api/schedule?_rrr=" + Date.now(), {
+          cache: "no-store",
+          headers: { "Accept": "application/json" }
+        })
+        .then(function(response) {
+          if (!response.ok) throw new Error("Schedule API " + response.status);
+          return response.json();
+        })
+        .then(function(data) {
+          if (!Array.isArray(data.schedule)) throw new Error("Invalid schedule response");
+          publicScheduleRows = data.schedule.map(function(row) {
+            return {
+              day: String(row.day || ""),
+              start: Number(row.start_minutes),
+              end: Number(row.end_minutes),
+              name: String(row.name || ""),
+              genres: Array.isArray(row.genres) ? row.genres.map(String) : []
+            };
+          });
+          updateTitles();
+        })
+        .catch(function(error) {
+          console.warn("[RRR] Public schedule refresh failed:", error);
+        });
+      }
+
       function getCurrentScheduleBlock(hour, dayIndex) {
+
+        if (publicScheduleRows.length) {
+          const dayName = publicScheduleDayName(dayIndex);
+          const rows = publicScheduleRows.filter(function(row) {
+            return row.day.toLowerCase() === dayName.toLowerCase();
+          });
+          const currentMinutes = hour * 60;
+          const current = rows.find(function(row) {
+            const end = row.end === 0 ? 1440 : row.end;
+            return currentMinutes >= row.start && currentMinutes < end;
+          });
+          if (current) {
+            return {
+              start: current.start / 60,
+              end: current.end === 0 ? 24 : current.end / 60,
+              name: current.name,
+              genres: current.genres.join(" · ")
+            };
+          }
+        }
 
         const weekdayBlocks = [
           {
@@ -7240,9 +7314,15 @@
       }
 
       updateTitles();
+      loadPublicScheduleForTargets();
 
       setInterval(
         updateTitles,
+        60 * 1000
+      );
+
+      setInterval(
+        loadPublicScheduleForTargets,
         60 * 1000
       );
 
