@@ -4851,11 +4851,10 @@
         // here. Changing tabs must not pause, reload, mute, or recreate it.
         // This matches the behaviour of the earlier working Radio RRR build.
 
-        // Live DJ video is separate from the station audio. Stop the video
-        // when leaving Live Video so it cannot play over the radio stream.
-        if (targetId !== "live-section" && liveDjVideo && !liveDjVideo.paused) {
-          liveDjVideo.pause();
-        }
+        // IMPORTANT: Live DJ video is also NOT touched by menu switching.
+        // Keep the live video stream running when the listener opens Schedule,
+        // Tools, Live Audio, etc. The player must only be stopped by its own
+        // DJ/stream lifecycle logic or an explicit user action.
 
       }
 
