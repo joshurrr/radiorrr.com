@@ -3802,6 +3802,37 @@
       #rrrDjDiscovery .dj-discovery-results { grid-template-columns: 176px !important; gap: 12px !important; }
     }
 </style>
+
+<style id="rrr-mobile-live-video-edge-to-edge">
+/* RRR MOBILE LIVE VIDEO — use the full card width on phones.
+   The 9:16 player matches the native portrait TikTok feed, so the video
+   can fill the available width without side bars or distortion. Desktop
+   layout is intentionally untouched. */
+@media (max-width: 767px) {
+  #randomLiveDj .radio-router-player {
+    width: calc(100% + 1.3rem) !important;
+    max-width: none !important;
+    margin-left: -0.65rem !important;
+    margin-right: -0.65rem !important;
+    aspect-ratio: 9 / 16 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  #randomLiveDj .radio-router-player #liveDjVideo {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    object-fit: contain !important;
+    object-position: center center !important;
+  }
+}
+</style>
+
 </head>
 <body>
 <main class="wrapper">
