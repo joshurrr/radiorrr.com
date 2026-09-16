@@ -3366,7 +3366,7 @@
        remains unchanged. */
     #rrrDjDiscovery .dj-discovery-results {
       display: grid;
-      grid-template-columns: repeat(6, 176px) !important;
+      grid-template-columns: repeat(7, 176px) !important;
       justify-content: start !important;
       justify-items: start !important;
       align-items: start !important;
@@ -3782,7 +3782,10 @@
       box-shadow: none !important;
     }
 
-    @media (min-width: 1200px) {
+    @media (min-width: 1400px) {
+      #rrrDjDiscovery .dj-discovery-results { grid-template-columns: repeat(7, 176px) !important; }
+    }
+    @media (min-width: 1200px) and (max-width: 1399px) {
       #rrrDjDiscovery .dj-discovery-results { grid-template-columns: repeat(6, 176px) !important; }
     }
     @media (min-width: 900px) and (max-width: 1199px) {
@@ -6111,6 +6114,67 @@
         });
       }
 
+      function getDiscoveryScore(dj, genres) {
+        if (!dj) return 0;
+
+        // Prefer an explicit RRR discovery/popularity score when the API
+        // supplies one. Never use the bot-risk scanner score for ordering.
+        const explicitScore = [
+          dj.discovery_score,
+          dj.discoveryScore,
+          dj.popularity_score,
+          dj.popularityScore,
+          dj.dj_score,
+          dj.djScore
+        ]
+          .map(value => Number(value))
+          .find(value => Number.isFinite(value));
+
+        if (Number.isFinite(explicitScore)) {
+          return Math.max(0, Math.min(100, explicitScore));
+        }
+
+        const followers = Number(
+          dj.followers ?? dj.follower_count ?? dj.followerCount
+        );
+        const likes = Number(
+          dj.likes ?? dj.like_count ?? dj.likeCount
+        );
+        const videos = Number(
+          dj.videos ?? dj.video_count ?? dj.videoCount
+        );
+
+        let score = 0;
+
+        // Popularity/activity are deliberately logarithmic so a huge account
+        // does not completely swamp smaller DJs.
+        if (Number.isFinite(followers) && followers > 0) {
+          score += Math.min(42, Math.log10(followers + 1) * 7);
+        }
+
+        if (Number.isFinite(likes) && likes > 0) {
+          score += Math.min(28, Math.log10(likes + 1) * 4.7);
+        }
+
+        if (Number.isFinite(videos) && videos > 0) {
+          score += Math.min(12, videos * 0.35);
+        }
+
+        if (Array.isArray(genres)) {
+          score += Math.min(8, genres.length * 1.6);
+        }
+
+        if (dj.verified === true || dj.is_verified === true) {
+          score += 5;
+        }
+
+        // A currently live DJ gets a small discovery boost, while the
+        // popularity/activity signals remain the main driver of the order.
+        if (dj.live === true) score += 5;
+
+        return Math.max(0, Math.min(100, score));
+      }
+
       function renderDjDiscoveryResults() {
         const resultsEl = document.getElementById("djDiscoveryResults");
         if (!resultsEl) return;
@@ -6145,17 +6209,29 @@
 
             if (query && !haystack.includes(query)) return null;
 
-            let score = 0;
+            let searchScore = 0;
             if (query) {
-              if (name.toLowerCase().startsWith(query)) score += 30;
-              if (username.toLowerCase() === query.replace(/^@/, "")) score += 50;
-              if (genres.some(g => g.toLowerCase().startsWith(query))) score += 20;
+              if (name.toLowerCase().startsWith(query)) searchScore += 30;
+              if (username.toLowerCase() === query.replace(/^@/, "")) searchScore += 50;
+              if (genres.some(g => g.toLowerCase().startsWith(query))) searchScore += 20;
             }
 
-            return { dj, name, username, genres, score };
+            const discoveryScore = getDiscoveryScore(dj, genres);
+
+            return { dj, name, username, genres, searchScore, discoveryScore };
           })
           .filter(Boolean)
-          .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
+          .sort((a, b) => {
+            // With a search term, relevance remains the first priority.
+            // Otherwise the catalogue is ordered by the RRR discovery score.
+            if (query && b.searchScore !== a.searchScore) {
+              return b.searchScore - a.searchScore;
+            }
+            if (b.discoveryScore !== a.discoveryScore) {
+              return b.discoveryScore - a.discoveryScore;
+            }
+            return a.name.localeCompare(b.name);
+          });
 
         const limited = ranked.slice(0, 12);
 
