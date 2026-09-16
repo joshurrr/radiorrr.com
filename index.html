@@ -4599,6 +4599,12 @@
       function resumeLivePlayback() {
         if (!liveDjVideo || document.hidden) return;
 
+        // Preserve the listener's audio choice across relay/DJ handovers.
+        // Browsers can reset media state when a new HLS source is attached,
+        // so restore the requested state immediately before playback.
+        liveDjVideo.muted = !userRequestedAudio;
+        updateLiveDjMuteButton();
+
         liveDjVideo.play().catch(() => {});
 
         // On mobile the background video is deliberately disabled. This
