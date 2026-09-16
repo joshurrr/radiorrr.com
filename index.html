@@ -3359,7 +3359,149 @@
       }
     }
 
-\n\n    /* RRR: OFFLINE DISCOVERY CARDS — match the secondary LIVE DJ card\n       dimensions and portrait/card composition. Functionality and markup\n       remain unchanged; this only changes the offline card presentation. */\n    #rrrDjDiscovery .dj-discovery-results {\n      grid-template-columns: repeat(6, 176px);\n      justify-content: start;\n      align-items: start;\n      gap: 14px;\n    }\n\n    #rrrDjDiscovery .dj-discovery-card {\n      position: relative;\n      width: 176px;\n      min-width: 176px;\n      max-width: 176px;\n      height: 264px;\n      min-height: 264px;\n      max-height: 264px;\n      padding: 0;\n      overflow: hidden;\n      display: flex;\n      flex-direction: column;\n      justify-content: flex-end;\n      box-sizing: border-box;\n      border-radius: 12px;\n      border: 1px solid rgba(168,85,247,0.45);\n      background: #070a19;\n      background-position: center top;\n      background-size: cover;\n    }\n\n    #rrrDjDiscovery .dj-discovery-card-top {\n      position: absolute;\n      inset: 0;\n      display: block;\n      z-index: 0;\n    }\n\n    #rrrDjDiscovery .dj-discovery-thumb,\n    #rrrDjDiscovery .dj-thumb-placeholder {\n      position: absolute;\n      inset: 0;\n      width: 100%;\n      height: 100%;\n      border: 0;\n      border-radius: 0;\n      object-fit: cover;\n      object-position: center top;\n      background: radial-gradient(circle at top, rgba(34,211,238,0.2), rgba(7,10,25,0.95) 72%);\n    }\n\n    #rrrDjDiscovery .dj-discovery-card-top::after {\n      content: "";\n      position: absolute;\n      inset: 0;\n      background: linear-gradient(180deg, rgba(4,7,18,0.08) 0%, rgba(4,7,18,0.12) 32%, rgba(4,7,18,0.72) 62%, rgba(4,7,18,0.97) 100%);\n      pointer-events: none;\n    }\n\n    #rrrDjDiscovery .dj-discovery-name-wrap {\n      position: absolute;\n      left: 0.7rem;\n      right: 0.7rem;\n      bottom: 4.7rem;\n      z-index: 2;\n      min-width: 0;\n    }\n\n    #rrrDjDiscovery .dj-discovery-name {\n      color: #fff;\n      font-size: 0.82rem;\n      line-height: 1.12;\n      font-weight: 900;\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis;\n      text-shadow: 0 1px 5px rgba(0,0,0,0.75);\n    }\n\n    #rrrDjDiscovery .dj-discovery-handle {\n      color: #a5b4fc;\n      font-size: 0.62rem;\n      line-height: 1.15;\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis;\n    }\n\n    #rrrDjDiscovery .dj-discovery-status {\n      position: relative;\n      z-index: 3;\n      align-self: flex-start;\n      margin: 0 0.7rem 0.22rem;\n      padding: 0.18rem 0.38rem;\n      border-radius: 5px;\n      background: rgba(30,41,59,0.88);\n      color: #cbd5e1;\n      font-size: 0.58rem;\n      line-height: 1;\n      font-weight: 900;\n      letter-spacing: 0.06em;\n      text-transform: uppercase;\n    }\n\n    #rrrDjDiscovery .dj-discovery-status.live {\n      background: #ff176f;\n      color: #fff;\n      box-shadow: 0 0 9px rgba(255,23,111,0.45);\n    }\n\n    #rrrDjDiscovery .dj-discovery-genres {\n      position: relative;\n      z-index: 3;\n      min-height: 1.05rem;\n      display: flex;\n      flex-wrap: nowrap;\n      gap: 0.22rem;\n      overflow: hidden;\n      margin: 0 0.7rem 0.7rem;\n    }\n\n    #rrrDjDiscovery .dj-discovery-genres .dj-genre-pill {\n      flex: 0 0 auto;\n      max-width: 100%;\n      padding: 0.16rem 0.32rem;\n      font-size: 0.48rem;\n      line-height: 1;\n      white-space: nowrap;\n    }\n\n    #rrrDjDiscovery .dj-discovery-card:hover,\n    #rrrDjDiscovery .dj-discovery-card:focus-visible {\n      transform: translateY(-2px);\n      border-color: #22d3ee;\n      box-shadow: 0 0 20px rgba(34,211,238,0.45), 0 0 28px rgba(129,140,248,0.28);\n      outline: none;\n    }\n\n    @media (min-width: 900px) and (max-width: 1199px) {\n      #rrrDjDiscovery .dj-discovery-results {\n        grid-template-columns: repeat(5, 176px);\n      }\n    }\n\n    @media (min-width: 768px) and (max-width: 899px) {\n      #rrrDjDiscovery .dj-discovery-results {\n        grid-template-columns: repeat(4, 176px);\n      }\n    }\n\n    @media (min-width: 480px) and (max-width: 767px) {\n      #rrrDjDiscovery .dj-discovery-results {\n        grid-template-columns: repeat(2, 176px);\n        gap: 12px;\n      }\n    }\n\n    @media (max-width: 479px) {\n      #rrrDjDiscovery .dj-discovery-results {\n        grid-template-columns: 176px;\n        gap: 12px;\n      }\n    }\n
+
+
+    /* RRR: OFFLINE DISCOVERY CARDS — exact same footprint as the
+       secondary LIVE DJ cards. Presentation only; JS/markup/functionality
+       remains unchanged. */
+    #rrrDjDiscovery .dj-discovery-results {
+      display: grid;
+      grid-template-columns: repeat(6, 176px) !important;
+      justify-content: start !important;
+      justify-items: start !important;
+      align-items: start !important;
+      gap: 14px !important;
+      width: 100%;
+    }
+
+    #rrrDjDiscovery .dj-discovery-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      width: 176px !important;
+      min-width: 176px !important;
+      max-width: 176px !important;
+      height: 264px !important;
+      min-height: 264px !important;
+      max-height: 264px !important;
+      padding: 0 !important;
+      box-sizing: border-box;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    #rrrDjDiscovery .dj-discovery-card-top {
+      position: absolute;
+      inset: 0;
+      display: block;
+      z-index: 0;
+    }
+
+    #rrrDjDiscovery .dj-discovery-thumb,
+    #rrrDjDiscovery .dj-thumb-placeholder {
+      position: absolute;
+      inset: 0;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: none;
+      border: 0;
+      border-radius: 0;
+      object-fit: cover;
+      object-position: center top;
+    }
+
+    #rrrDjDiscovery .dj-discovery-card-top::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(4,7,18,0.08) 0%, rgba(4,7,18,0.12) 32%, rgba(4,7,18,0.72) 62%, rgba(4,7,18,0.97) 100%);
+      pointer-events: none;
+    }
+
+    #rrrDjDiscovery .dj-discovery-name-wrap {
+      position: absolute;
+      left: 0.7rem;
+      right: 0.7rem;
+      bottom: 4.7rem;
+      z-index: 2;
+    }
+
+    #rrrDjDiscovery .dj-discovery-name {
+      font-size: 0.82rem;
+      line-height: 1.12;
+      font-weight: 900;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #rrrDjDiscovery .dj-discovery-handle {
+      font-size: 0.62rem;
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #rrrDjDiscovery .dj-discovery-status {
+      position: relative;
+      z-index: 3;
+      align-self: flex-start;
+      margin: 0 0.7rem 0.22rem;
+      padding: 0.18rem 0.38rem;
+      border-radius: 5px;
+      font-size: 0.58rem;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    #rrrDjDiscovery .dj-discovery-genres {
+      position: relative;
+      z-index: 3;
+      min-height: 1.05rem;
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 0.22rem;
+      overflow: hidden;
+      margin: 0 0.7rem 0.7rem;
+    }
+
+    #rrrDjDiscovery .dj-discovery-genres .dj-genre-pill {
+      flex: 0 0 auto;
+      max-width: 100%;
+      padding: 0.16rem 0.32rem;
+      font-size: 0.48rem;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    @media (min-width: 900px) and (max-width: 1199px) {
+      #rrrDjDiscovery .dj-discovery-results {
+        grid-template-columns: repeat(5, 176px) !important;
+      }
+    }
+
+    @media (min-width: 768px) and (max-width: 899px) {
+      #rrrDjDiscovery .dj-discovery-results {
+        grid-template-columns: repeat(4, 176px) !important;
+      }
+    }
+
+    @media (min-width: 480px) and (max-width: 767px) {
+      #rrrDjDiscovery .dj-discovery-results {
+        grid-template-columns: repeat(2, 176px) !important;
+        gap: 12px !important;
+      }
+    }
+
+    @media (max-width: 479px) {
+      #rrrDjDiscovery .dj-discovery-results {
+        grid-template-columns: 176px !important;
+        gap: 12px !important;
+      }
+    }
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
