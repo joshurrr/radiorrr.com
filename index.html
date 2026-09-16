@@ -4952,10 +4952,9 @@
       function resumeLivePlayback() {
         if (!liveDjVideo || document.hidden) return;
 
-        // Preserve the listener's audio choice across relay/DJ handovers.
-        // Browsers can reset media state when a new HLS source is attached,
-        // so restore the requested state immediately before playback.
-        liveDjVideo.muted = !userRequestedAudio;
+        // Playback recovery must NOT change the user's current mute state.
+        // The HLS recovery timer can fire several seconds after UNMUTE.
+        // Re-applying a stale audio preference here can mute the player again.
         updateLiveDjMuteButton();
 
         liveDjVideo.play().catch(() => {});
@@ -5678,8 +5677,10 @@
 
       if (liveDjUnmute && liveDjVideo) {
         liveDjUnmute.addEventListener("click", function () {
-          userRequestedAudio = liveDjVideo.muted;
-          liveDjVideo.muted = !liveDjVideo.muted;
+          // Record the state the user is explicitly requesting.
+          const willUnmute = liveDjVideo.muted;
+          userRequestedAudio = willUnmute;
+          liveDjVideo.muted = !willUnmute;
           updateLiveDjMuteButton();
           liveDjVideo.play().catch(() => {});
 
