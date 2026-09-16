@@ -4856,6 +4856,15 @@
 
       function switchTab(targetId) {
 
+        // Capture the station state BEFORE changing pane visibility. Some
+        // mobile browsers can briefly suspend media during a tab swap.
+        const stationWasPlaying = Boolean(
+          audio && !audio.paused && !audio.ended
+        );
+        if (stationWasPlaying) {
+          stationAudioWanted = true;
+        }
+
         contentPanes.forEach(
           pane => pane.classList.add("hidden-pane")
         );
@@ -4903,6 +4912,19 @@
           }
         }
 
+        // Re-assert the station stream after the pane switch. This only runs
+        // when the station was already playing; a deliberately paused radio
+        // remains paused.
+        if (audio && (stationWasPlaying || stationAudioWanted)) {
+          audio.muted = false;
+          audio.volume = 1;
+          window.setTimeout(function () {
+            if (stationAudioWanted && audio.paused) {
+              audio.play().catch(function () {});
+            }
+          }, 0);
+        }
+
       }
 
       navLinks.forEach(link => {
@@ -4910,6 +4932,9 @@
         link.addEventListener(
           "click",
           function (e) {
+
+            // These are JavaScript tabs, not real navigation links.
+            e.preventDefault();
 
             const targetId =
               e.currentTarget.getAttribute(
