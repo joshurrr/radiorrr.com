@@ -3810,16 +3810,24 @@
    layout is intentionally untouched. */
 @media (max-width: 767px) {
   #randomLiveDj .radio-router-player {
+    /* Give the player breathing room from the rounded outer card.
+       That lets the video use square corners and reach the full card width
+       without being clipped by the card's top/bottom corner radius. */
     width: calc(100% + 1.3rem) !important;
     max-width: none !important;
     margin-left: -0.65rem !important;
     margin-right: -0.65rem !important;
+    margin-top: 0.8rem !important;
+    margin-bottom: 0.8rem !important;
     aspect-ratio: 9 / 16 !important;
     height: auto !important;
     min-height: 0 !important;
     max-height: none !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
+    border-radius: 0 !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
   }
 
   #randomLiveDj .radio-router-player #liveDjVideo {
