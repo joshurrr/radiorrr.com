@@ -3853,54 +3853,37 @@
 
 #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-list {
   display: flex;
-  flex-direction: column;
-  gap: 0.18rem;
-  width: 100%;
-  min-width: 0;
-  margin: 0.05rem 0 0.08rem;
-}
-
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(36px, 1.5fr) 24px;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.22rem;
+  width: 100%;
   min-width: 0;
-  line-height: 1;
+  margin: 0.08rem 0 0.12rem;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-name {
-  min-width: 0;
+#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-live-genre-bubble {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  padding: 0.2rem 0.38rem;
+  border: 1px solid rgba(var(--genre-neon-rgb, 34,211,238), 0.72);
+  border-radius: 999px;
+  background: linear-gradient(
+    135deg,
+    rgba(var(--genre-neon-rgb, 34,211,238), 0.24),
+    rgba(7,10,25,0.86)
+  );
+  color: var(--genre-text, #e0f2fe);
+  box-shadow: 0 0 7px rgba(var(--genre-neon-rgb, 34,211,238), 0.28);
+  font-size: 0.43rem;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
-  color: #e0e0ff;
-  font-size: 0.48rem;
-  font-weight: 800;
-}
-
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-bar {
-  display: block;
-  height: 3px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgba(148,163,184,0.24);
-  box-shadow: inset 0 0 3px rgba(0,0,0,0.5);
-}
-
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-bar > span {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #22d3ee, #ff176f);
-  box-shadow: 0 0 5px rgba(34,211,238,0.45);
-}
-
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-confidence {
-  color: #fff;
-  font-size: 0.48rem;
-  font-weight: 900;
-  text-align: right;
 }
 
 #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-empty {
@@ -6801,12 +6784,11 @@
             ? liveDetectedGenres.slice(0, 5).map(item => {
                 const name = String(item.genre || "").replace(/^.*---/, "").trim();
                 const percent = Math.round(Number(item.confidence) * 100);
-                const width = Math.max(4, Math.min(100, Number(item.relativeWidth || percent)));
-                return '<div class="dj-secondary-detected-row">' +
-                  '<span class="dj-secondary-detected-name" title="' + escapeAttr(name) + '">' + escapeHtml(name) + '</span>' +
-                  '<span class="dj-secondary-detected-bar"><span style="width:' + width.toFixed(1) + '%"></span></span>' +
-                  '<span class="dj-secondary-detected-confidence">' + percent + '%</span>' +
-                '</div>';
+                const genreClass = getGenreNeonClass(name);
+                return '<span class="dj-secondary-live-genre-bubble ' + genreClass + '" title="' +
+                  escapeAttr(name + ' · ' + percent + '%') + '">' +
+                  escapeHtml(name) + ' · ' + percent + '%' +
+                '</span>';
               }).join("")
             : '<div class="dj-secondary-detected-empty">Analysing live audio…</div>';
           const secondaryPhoto = profilePic
@@ -6821,7 +6803,7 @@
             '<div class="dj-secondary-content">' +
               '<div class="dj-secondary-live"><span class="dj-secondary-live-dot"></span>LIVE</div>' +
               '<div class="dj-secondary-name" title="' + escapeAttr(String(name)) + '">' + escapeHtml(String(name)) + '</div>' +
-              '<div class="dj-secondary-detected-title">LIVE DETECTED</div>' +
+              '<div class="dj-secondary-detected-title">LIVE GENRE BUBBLES</div>' +
               '<div class="dj-secondary-detected-list" aria-label="Live detected genres">' + secondaryDetectedGenres + '</div>' +
               '<div class="dj-secondary-match-label"><span>Program Match</span><span class="dj-secondary-match-value">' + secondaryScoreText + '</span></div>' +
               '<div class="dj-secondary-match-bar" aria-label="Program Match ' + secondaryScoreText + '">' +
