@@ -1740,18 +1740,13 @@
       margin-bottom: 0;
     }
 
-    /* LIVE GENRES DETECTED now lives INSIDE the Current DJ card.
-       Keep it above the card's background overlay and let it expand the
-       card naturally instead of occupying a separate dashboard row. */
-    .current-dj-card .live-genres-detected {
+    /* LIVE GENRES DETECTED — physically inside the Current DJ card. */
+    .current-dj-card > .live-genres-detected {
       position: relative;
       z-index: 1;
-      margin: 0.75rem 0 0;
-      padding: 0.7rem 0.8rem;
+      width: 100%;
       box-sizing: border-box;
-      background: rgba(4, 7, 18, 0.72);
-      border-color: rgba(34, 211, 238, 0.38);
-      box-shadow: 0 0 10px rgba(34, 211, 238, 0.10);
+      margin: 0.75rem 0 0;
     }
 
     /* LIVE GENRES DETECTED */
@@ -2746,12 +2741,11 @@
         margin-top: 0.1rem;
       }
 
-      /* On phones the live experience stacks naturally with the detected
-         genres remaining inside the Current DJ card. */
+      /* On phones the live experience stacks naturally with detected genres
+         remaining inside the Current DJ card. */
       #randomLiveDj .live-genres-detected {
-        grid-area: auto;
         width: 100%;
-        margin: 0;
+        margin: 0.75rem 0 0;
         align-self: stretch;
         box-sizing: border-box;
       }
@@ -2762,10 +2756,9 @@
         min-height: 0;
       }
 
-      #randomLiveDj .live-genres-detected {
-        grid-area: ai;
-        margin: 0;
-        align-self: start;
+      #randomLiveDj .current-dj-card > .live-genres-detected {
+        margin: 0.75rem 0 0;
+        align-self: stretch;
       }
 
       #liveDjsList {
@@ -3058,7 +3051,7 @@
     /* Phone-only router refinements. Keep the live feed inline and bounded
        while leaving the desktop console composition unchanged. */
     @media (max-width: 767px) {
-      /* The detected genre panel is nested inside the Current DJ card. */
+      /* LIVE GENRES DETECTED remains inside the Current DJ card on mobile. */
       #randomLiveDj {
         display: flex !important;
         flex-direction: column !important;
@@ -3071,14 +3064,10 @@
 
       #randomLiveDj .random-live-header,
       #randomLiveDj .current-dj-card,
-      #randomLiveDj .radio-router-player {
+      #randomLiveDj .radio-router-player,
+      #randomLiveDj .live-genres-detected {
         width: 100%;
         margin: 0;
-      }
-
-      #randomLiveDj .current-dj-card .live-genres-detected {
-        width: 100%;
-        margin: 0.7rem 0 0;
       }
       .random-live-header {
         align-items: flex-start;
@@ -3208,8 +3197,8 @@
       }
 
       #randomLiveDj .live-genres-detected {
-        grid-area: auto;
-        align-self: stretch;
+        grid-area: ai;
+        align-self: start;
       }
 
       #randomLiveDj .current-dj-card {
@@ -3280,8 +3269,7 @@
       }
 
       #randomLiveDj .live-router-side .random-live-header,
-      #randomLiveDj .live-router-side .current-dj-card,
-      #randomLiveDj .live-router-side .live-genres-detected {
+      #randomLiveDj .live-router-side .current-dj-card {
         grid-area: auto;
         align-self: stretch;
         flex: 0 0 auto;
@@ -3297,10 +3285,6 @@
         padding: 0.75rem 0.8rem;
       }
 
-      #randomLiveDj .live-router-side .live-genres-detected {
-        padding: 0.75rem 0.8rem;
-        margin-top: 0.25rem;
-      }
     }
 
 
@@ -3998,7 +3982,6 @@
           </div>
           <div id="liveGenresDetectedList" class="live-genres-detected-list"></div>
         </section>
-</div>
 </section>
 </div><div class="radio-router-player">
 <video aria-hidden="true" autoplay="" class="live-dj-background" crossorigin="anonymous" id="liveDjBackground" muted="" playsinline="" preload="none" webkit-playsinline="">
@@ -4669,6 +4652,9 @@
       const liveDjUnmute =
         document.getElementById("liveDjUnmute");
 
+      /* LIVE GENRES DETECTED stays inside the Current DJ card at every breakpoint. */
+
+
       const copyLiveAudioUrl = document.getElementById("copyLiveAudioUrl");
       const liveAudioStreamUrl = document.getElementById("liveAudioStreamUrl");
 
@@ -4994,7 +4980,7 @@
         const selectedIdentity = String(featuredIdentity || "").trim();
         const routerIdentityValue = String(relayIdentity || "").trim();
 
-        // Nothing is live/selected: hide the panel inside the Current DJ card.
+        // Nothing is live/selected: hide the panel.
         if (!selectedIdentity) {
           liveGenresDetected.style.display = "none";
           liveGenresDetectedList.innerHTML = "";
