@@ -577,15 +577,17 @@ window.formspree =
 })();
 </script>
 
-<script src="script.js?v=20260917.2"></script>
+<script src="script.js?v=20260917.1"></script>
 
 <script>
 /*
  * RadioRRR HLS PLAYBACK GUARD
+ * This is deliberately isolated from the DJ/genre code.
  *
- * Keep an explicit user-unmute alive when the browser tab loses focus or
- * visibility.  script.js owns HLS creation/reselection; this guard only
- * protects the user's audio choice and performs conservative stall recovery.
+ * Goals:
+ *  1. Preserve an explicit user unmute across HLS recoveries/restarts.
+ *  2. Recover a live HLS player that has genuinely stopped progressing.
+ *  3. Never create a second HLS player or a second media element.
  */
 (function () {
   "use strict";
@@ -596,149 +598,84 @@ window.formspree =
 
     if (!video) return;
 
-    /*
-     * Persist the user's audio choice on window so it survives HLS
-     * re-selection and any other code that changes video.muted.
-     */
-    let userHasRequestedAudio =
-      window.rrrUserRequestedAudio === true ||
-      video.dataset.rrrUserAudio === "1";
-
+    let userHasRequestedAudio = false;
     let lastCurrentTime = video.currentTime || 0;
     let lastProgressAt = Date.now();
     let recoveryInProgress = false;
+    let recoveryCount = 0;
 
-    function updateMuteButton() {
-      if (!unmuteButton) return;
+    function markUserAudioChoice() {
+      userHasRequestedAudio = video.muted;
+      video.dataset.rrrUserAudio = userHasRequestedAudio ? "1" : "0";
 
       if (userHasRequestedAudio) {
-        unmuteButton.textContent = "🔊 MUTE LIVE";
-      } else {
-        unmuteButton.textContent = "🔇 UNMUTE LIVE";
-      }
-    }
-
-    function restoreUserAudio() {
-      if (!userHasRequestedAudio) return;
-
-      /*
-       * This is deliberately idempotent.  If script.js or a browser lifecycle
-       * event has muted the player, immediately restore the user's choice.
-       */
-      if (video.muted) {
         video.muted = false;
+        video.defaultMuted = false;
+      } else {
+        video.muted = true;
+        video.defaultMuted = true;
       }
-      video.defaultMuted = false;
-      video.dataset.rrrUserAudio = "1";
-      window.rrrUserRequestedAudio = true;
-      updateMuteButton();
-    }
-
-    function rememberUserMute() {
-      userHasRequestedAudio = false;
-      video.dataset.rrrUserAudio = "0";
-      window.rrrUserRequestedAudio = false;
-      video.muted = true;
-      video.defaultMuted = true;
-      updateMuteButton();
     }
 
     if (unmuteButton) {
       /*
-       * Capture phase runs before script.js's normal click handler.  This is
-       * important because script.js may also update muted in its click handler.
+       * Capture phase runs before script.js's normal click handler.
+       * This records the user's intent before any playback/recovery code runs.
        */
       unmuteButton.addEventListener("click", function () {
-        const wasMuted = video.muted;
+        const willUnmute = video.muted;
+        userHasRequestedAudio = willUnmute;
+        video.dataset.rrrUserAudio = willUnmute ? "1" : "0";
 
-        if (wasMuted) {
-          userHasRequestedAudio = true;
-          window.rrrUserRequestedAudio = true;
-          video.dataset.rrrUserAudio = "1";
+        if (willUnmute) {
           video.muted = false;
           video.defaultMuted = false;
-
-          /*
-           * Run again after the existing click handler has finished, in case
-           * it also touched the muted property.
-           */
-          setTimeout(restoreUserAudio, 0);
-          setTimeout(restoreUserAudio, 75);
         } else {
-          rememberUserMute();
+          video.muted = true;
+          video.defaultMuted = true;
         }
-
-        updateMuteButton();
       }, true);
     }
-
-    /*
-     * If any other code changes muted after the user explicitly unmuted,
-     * volumechange gives us a reliable signal to put it back.
-     */
-    video.addEventListener("volumechange", function () {
-      if (userHasRequestedAudio && video.muted) {
-        restoreUserAudio();
-      } else {
-        updateMuteButton();
-      }
-    });
-
-    /*
-     * Tab switching / browser focus changes were the regression reported on
-     * Radio RRR.  Restore audio on both lifecycle paths, including while the
-     * page is hidden.  Do not wait for the normal watchdog.
-     */
-    document.addEventListener("visibilitychange", function () {
-      if (userHasRequestedAudio) {
-        restoreUserAudio();
-        setTimeout(restoreUserAudio, 50);
-        setTimeout(restoreUserAudio, 250);
-      }
-    });
-
-    window.addEventListener("blur", function () {
-      if (userHasRequestedAudio) {
-        restoreUserAudio();
-        setTimeout(restoreUserAudio, 50);
-      }
-    });
-
-    window.addEventListener("focus", function () {
-      if (userHasRequestedAudio) {
-        restoreUserAudio();
-        setTimeout(restoreUserAudio, 50);
-      }
-    });
-
-    window.addEventListener("pageshow", function () {
-      if (userHasRequestedAudio) {
-        restoreUserAudio();
-        setTimeout(restoreUserAudio, 100);
-      }
-    });
 
     video.addEventListener("timeupdate", function () {
       if (video.currentTime !== lastCurrentTime) {
         lastCurrentTime = video.currentTime;
         lastProgressAt = Date.now();
+        recoveryCount = 0;
       }
     });
 
     video.addEventListener("playing", function () {
       lastCurrentTime = video.currentTime || lastCurrentTime;
       lastProgressAt = Date.now();
-      restoreUserAudio();
+
+      /*
+       * If the user explicitly unmuted, playback recovery is not allowed
+       * to silently put the video back into muted state.
+       */
+      if (userHasRequestedAudio) {
+        video.muted = false;
+        video.defaultMuted = false;
+      }
     });
 
     video.addEventListener("pause", function () {
+      /*
+       * A programmatic pause during teardown/reselection is legitimate.
+       * Only restart if the player is still the active visible live player.
+       */
       if (
         userHasRequestedAudio &&
+        document.visibilityState !== "hidden" &&
         video.src &&
         !recoveryInProgress
       ) {
         setTimeout(function () {
-          if (userHasRequestedAudio && video.paused && video.src) {
+          if (
+            userHasRequestedAudio &&
+            video.paused &&
+            video.src
+          ) {
             video.play().catch(function () {});
           }
         }, 250);
@@ -749,6 +686,7 @@ window.formspree =
       if (recoveryInProgress || !video.src) return;
 
       recoveryInProgress = true;
+      recoveryCount += 1;
 
       const hls = window.radioRrrHls;
 
@@ -757,12 +695,14 @@ window.formspree =
           hls.startLoad(-1);
         }
 
-        if (
-          hls &&
-          typeof hls.recoverMediaError === "function" &&
-          video.readyState < 3
-        ) {
-          hls.recoverMediaError();
+        if (hls && typeof hls.recoverMediaError === "function") {
+          /*
+           * Only use media-error recovery after a genuine stall. This avoids
+           * needlessly rebuilding the decoder during normal HLS operation.
+           */
+          if (video.readyState < 3) {
+            hls.recoverMediaError();
+          }
         }
       } catch (e) {
         console.warn("Radio RRR HLS recovery warning:", e);
@@ -770,7 +710,11 @@ window.formspree =
 
       setTimeout(function () {
         recoveryInProgress = false;
-        restoreUserAudio();
+
+        if (userHasRequestedAudio) {
+          video.muted = false;
+          video.defaultMuted = false;
+        }
 
         if (video.paused && video.src) {
           video.play().catch(function () {});
@@ -782,6 +726,10 @@ window.formspree =
     }
 
     video.addEventListener("waiting", function () {
+      /*
+       * Give the relay a few seconds before intervening. Brief HLS waits are
+       * normal and should not cause a disruptive reload.
+       */
       setTimeout(function () {
         if (
           video.readyState < 3 &&
@@ -801,23 +749,29 @@ window.formspree =
     });
 
     /*
-     * Watchdog deliberately does NOT stop when the tab is hidden.  Browsers
-     * throttle background timers, but this remains a second line of defence
-     * if another handler mutes the player during tab switching.
+     * Background watchdog. It only intervenes after ~8 seconds with no
+     * playback progress, so ordinary buffering is left completely alone.
      */
     setInterval(function () {
-      if (!video.src) return;
+      if (
+        document.visibilityState === "hidden" ||
+        !video.src ||
+        video.paused
+      ) {
+        return;
+      }
 
-      restoreUserAudio();
+      if (userHasRequestedAudio) {
+        video.muted = false;
+        video.defaultMuted = false;
+      }
 
-      if (video.paused) return;
+      const stalledFor = Date.now() - lastProgressAt;
 
-      if (Date.now() - lastProgressAt > 8000) {
+      if (stalledFor > 8000) {
         recoverHls();
       }
     }, 2000);
-
-    updateMuteButton();
   }
 
   if (document.readyState === "loading") {
