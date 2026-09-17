@@ -3878,6 +3878,24 @@
 }
 </style>
 
+
+<style id="rrr-live-genres-in-dj-card">
+.current-dj-card .current-dj-live-genres {
+  margin-top: 14px !important;
+  width: 100%;
+  box-sizing: border-box;
+}
+.current-dj-card .current-dj-live-genres .live-genres-detected,
+.current-dj-card .current-dj-live-genres {
+  max-width: 100%;
+}
+@media (max-width: 700px) {
+  .current-dj-card .current-dj-live-genres {
+    margin-top: 10px !important;
+  }
+}
+</style>
+
 </head>
 <body>
 <main class="wrapper">
@@ -3942,7 +3960,6 @@
 <input autocomplete="off" data-fs-field="" id="recommendDjUsername" inputmode="text" maxlength="24" name="username" placeholder="@username" required="" type="text"/>
 <span data-fs-error="username"></span>
 <button data-fs-submit-btn="" type="submit">RECOMMEND DJ</button>
-<div class="recommend-status success" data-fs-success=""></div>
 <div class="recommend-status error" data-fs-error=""></div>
 </form>
 </div>
@@ -3970,7 +3987,6 @@
           Your browser does not support the audio element.
         </audio>
 <button class="kick" id="kickPlay">Play</button>
-<div class="status" id="status"></div>
 </div>
 </div>
 <!-- LIVE DJs TAB -->
@@ -3991,7 +4007,6 @@
 <div class="random-live-now-playing">
               <strong id="heroNowPlaying">Loading current block…</strong>
               <div class="random-live-target-label">TARGET GENRES</div>
-              <div class="random-live-program-targets" id="liveProgramTargetGenres" aria-label="Current program target genres"></div>
 </div>
 
 </div>
@@ -4001,7 +4016,6 @@
 <div class="random-live-dj-row">
 <div class="random-live-dj-profile">
 <div class="random-live-dj-identity">
-<div class="random-live-dj-avatar" hidden="" id="randomLiveDjAvatar"></div>
 <div class="random-live-dj-name" id="randomLiveDjName">Checking LIVE DJs…</div>
 <div class="dj-match-score main-dj-match-score match-low" id="randomLiveDjMatch" title="RRR genre compatibility score out of 100">🎯 PROGRAM MATCH —</div>
 </div>
@@ -4015,12 +4029,13 @@
 </div>
 </div>
 </div>
-        <section id="liveGenresDetected" class="live-genres-detected" aria-live="polite">
+        
+
+<section id="liveGenresDetected" class="current-dj-live-genres live-genres-detected" aria-live="polite">
           <div class="live-genres-detected-title">
             <strong>LIVE GENRES DETECTED</strong>
             <span id="liveGenresDetectedStatus" class="live-genres-detected-status">Live Genre Refresh in 30 sec</span>
           </div>
-          <div id="liveGenresDetectedList" class="live-genres-detected-list"></div>
         </section>
 </section>
 </div><div class="radio-router-player">
@@ -4144,7 +4159,6 @@
             Scan Account
           </button>
 </div>
-<div class="scanner-summary" id="scannerSummary"></div>
 <div class="scanner-results" id="scannerResults">
 <div class="scanner-empty">
             Click <strong>Scan RRR DJ List</strong> to analyse the DJs currently in the RRR favourites list.
