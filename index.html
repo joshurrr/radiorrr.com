@@ -4966,20 +4966,12 @@
       function resumeLivePlayback() {
         if (!liveDjVideo || document.hidden) return;
 
-        // Playback recovery must NOT change the user's current mute state.
-        // The HLS recovery timer can fire several seconds after UNMUTE.
-        // Re-applying a stale audio preference here can mute the player again.
+        // The user's explicit audio choice is authoritative. Recovery and
+        // HLS events must never silently mute the player again.
+        liveDjVideo.muted = !userRequestedAudio;
         updateLiveDjMuteButton();
 
         liveDjVideo.play().catch(() => {});
-
-        // On mobile the background video is deliberately disabled. This
-        // prevents a second HLS/native-HLS connection competing with the
-        // actual player for the same live relay.
-        if (liveDjBackground && !isMobileLivePlayer) {
-          liveDjBackground.muted = true;
-          liveDjBackground.play().catch(() => {});
-        }
       }
 
       function updateLiveDjMuteButton() {
@@ -4992,35 +4984,13 @@
       }
 
       function scheduleNativePlaybackRecovery() {
-        if (nativePlaybackRecoveryTimer) {
-          window.clearTimeout(nativePlaybackRecoveryTimer);
+        // Do not replace/reload the media element here. hls.js owns HLS
+        // recovery. Replacing the source after waiting/stalled resets media
+        // state and can also lose the user's unmute gesture.
+        if (liveDjVideo && !document.hidden) {
+          liveDjVideo.muted = !userRequestedAudio;
+          updateLiveDjMuteButton();
         }
-
-        nativePlaybackRecoveryTimer = window.setTimeout(function () {
-          nativePlaybackRecoveryTimer = null;
-
-          if (
-            !liveDjVideo ||
-            document.hidden ||
-            activeLiveStreamKey === "" ||
-            (
-              liveDjVideo.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA &&
-              !liveDjVideo.paused
-            )
-          ) {
-            resumeLivePlayback();
-            return;
-          }
-
-          // Safari's native HLS player can remain in a waiting state after a
-          // playlist refresh. Recreate only that source, never the DJ label.
-          const streamUrl = getFreshUrl(activeLiveStreamUrl || RADIO_ROUTER_STREAM_URL);
-          liveDjVideo.pause();
-          liveDjVideo.src = streamUrl;
-          liveDjVideo.load();
-          liveDjVideo.addEventListener("loadedmetadata", resumeLivePlayback, { once: true });
-          resumeLivePlayback();
-        }, 8000);
       }
 
       function handleManualDJStreamFailure(data) {
@@ -5619,52 +5589,6 @@
             resumeLivePlayback();
           });
 
-          // Desktop keeps the blurred background copy for the existing
-          // visual treatment. Mobile deliberately uses ONE HLS connection.
-          if (liveDjBackground && !isMobileLivePlayer) {
-            const bgHls = new Hls({
-              enableWorker: true,
-              lowLatencyMode: false,
-              liveSyncDurationCount: 5,
-              maxLiveSyncPlaybackRate: 1.1,
-              maxBufferLength: 30,
-              maxMaxBufferLength: 60,
-              backBufferLength: 30,
-              manifestLoadingTimeOut: 10000,
-              manifestLoadingMaxRetry: 3,
-              manifestLoadingRetryDelay: 1000
-            });
-
-            window.radioRrrHlsBackground = bgHls;
-            bgHls.loadSource(getFreshUrl(streamUrl));
-            bgHls.attachMedia(liveDjBackground);
-
-            bgHls.on(Hls.Events.MANIFEST_PARSED, function () {
-              liveDjBackground.play().catch(() => {});
-            });
-
-            bgHls.on(Hls.Events.ERROR, function (event, data) {
-              console.warn("Radio RRR background HLS error:", data);
-
-              if (handleManualDJStreamFailure(data)) return;
-
-              if (data.details === Hls.ErrorDetails.BUFFER_STALLED_ERROR) {
-                try {
-                  bgHls.startLoad();
-                } catch (e) {}
-                return;
-              }
-
-              if (data.fatal) {
-                if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
-                  bgHls.startLoad();
-                } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
-                  bgHls.recoverMediaError();
-                }
-              }
-            });
-          }
-
           hls.on(Hls.Events.ERROR, function (event, data) {
             console.warn("Radio RRR HLS error:", data);
 
@@ -5694,15 +5618,6 @@
           liveDjVideo.addEventListener("canplay", resumeLivePlayback, { once: true });
           resumeLivePlayback();
 
-          // Native HLS is common on Safari/iOS. Do not create a second
-          // native HLS stream on mobile; the main video is the only decoder.
-          if (liveDjBackground && !isMobileLivePlayer) {
-            liveDjBackground.src = getFreshUrl(streamUrl);
-            liveDjBackground.addEventListener("loadedmetadata", function () {
-              liveDjBackground.play().catch(() => {});
-            }, { once: true });
-            liveDjBackground.play().catch(() => {});
-          }
         } else {
           if (liveDjPlaceholder) {
             liveDjPlaceholder.querySelector("span").textContent =
@@ -5766,13 +5681,9 @@
           const willUnmute = liveDjVideo.muted;
           userRequestedAudio = willUnmute;
           liveDjVideo.muted = !willUnmute;
+          liveDjVideo.defaultMuted = !willUnmute;
           updateLiveDjMuteButton();
           liveDjVideo.play().catch(() => {});
-
-          if (liveDjBackground && !isMobileLivePlayer) {
-            liveDjBackground.muted = true;
-            liveDjBackground.play().catch(() => {});
-          }
         });
 
         liveDjVideo.addEventListener("volumechange", updateLiveDjMuteButton);
@@ -5781,6 +5692,11 @@
 
       if (liveDjVideo) {
         liveDjVideo.addEventListener("playing", function () {
+          // Re-assert the user's explicit mute/unmute choice whenever the
+          // media element starts playing or recovers.
+          liveDjVideo.muted = !userRequestedAudio;
+          updateLiveDjMuteButton();
+
           const player = liveDjVideo.closest(".radio-router-player");
           if (player) player.classList.add("live-active");
         });
