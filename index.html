@@ -3878,24 +3878,6 @@
 }
 </style>
 
-
-<style id="rrr-live-genres-in-dj-card">
-.current-dj-card .current-dj-live-genres {
-  margin-top: 14px !important;
-  width: 100%;
-  box-sizing: border-box;
-}
-.current-dj-card .current-dj-live-genres .live-genres-detected,
-.current-dj-card .current-dj-live-genres {
-  max-width: 100%;
-}
-@media (max-width: 700px) {
-  .current-dj-card .current-dj-live-genres {
-    margin-top: 10px !important;
-  }
-}
-</style>
-
 </head>
 <body>
 <main class="wrapper">
@@ -3960,6 +3942,7 @@
 <input autocomplete="off" data-fs-field="" id="recommendDjUsername" inputmode="text" maxlength="24" name="username" placeholder="@username" required="" type="text"/>
 <span data-fs-error="username"></span>
 <button data-fs-submit-btn="" type="submit">RECOMMEND DJ</button>
+<div class="recommend-status success" data-fs-success=""></div>
 <div class="recommend-status error" data-fs-error=""></div>
 </form>
 </div>
@@ -3987,6 +3970,7 @@
           Your browser does not support the audio element.
         </audio>
 <button class="kick" id="kickPlay">Play</button>
+<div class="status" id="status"></div>
 </div>
 </div>
 <!-- LIVE DJs TAB -->
@@ -4007,6 +3991,7 @@
 <div class="random-live-now-playing">
               <strong id="heroNowPlaying">Loading current block…</strong>
               <div class="random-live-target-label">TARGET GENRES</div>
+              <div class="random-live-program-targets" id="liveProgramTargetGenres" aria-label="Current program target genres"></div>
 </div>
 
 </div>
@@ -4016,6 +4001,7 @@
 <div class="random-live-dj-row">
 <div class="random-live-dj-profile">
 <div class="random-live-dj-identity">
+<div class="random-live-dj-avatar" hidden="" id="randomLiveDjAvatar"></div>
 <div class="random-live-dj-name" id="randomLiveDjName">Checking LIVE DJs…</div>
 <div class="dj-match-score main-dj-match-score match-low" id="randomLiveDjMatch" title="RRR genre compatibility score out of 100">🎯 PROGRAM MATCH —</div>
 </div>
@@ -4029,13 +4015,12 @@
 </div>
 </div>
 </div>
-        
-
-<section id="liveGenresDetected" class="current-dj-live-genres live-genres-detected" aria-live="polite">
+        <section id="liveGenresDetected" class="live-genres-detected" aria-live="polite">
           <div class="live-genres-detected-title">
             <strong>LIVE GENRES DETECTED</strong>
             <span id="liveGenresDetectedStatus" class="live-genres-detected-status">Live Genre Refresh in 30 sec</span>
           </div>
+          <div id="liveGenresDetectedList" class="live-genres-detected-list"></div>
         </section>
 </section>
 </div><div class="radio-router-player">
@@ -4064,7 +4049,6 @@
         </small>
 <div class="schedule-table" role="table" aria-label="Radio RRR weekly schedule">
 <div class="schedule-row schedule-header" role="row"><div role="columnheader">DAY</div><div role="columnheader">TIME</div><div role="columnheader">PROGRAM</div><div role="columnheader">GENRES</div></div>
-<div id="publicScheduleRows">
 <div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">00:00 – 04:00</div><div role="cell"><strong>🌙 Late Nights Insomnia</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-cyan">Chill</span><span class="dj-genre-pill genre-neon-electric-purple">Deep House</span><span class="dj-genre-pill genre-neon-cyan">Melodic</span><span class="dj-genre-pill genre-neon-violet">Progressive</span></div></div></div>
 <div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">04:00 – 08:00</div><div role="cell"><strong>🌅 Sunrise Sessions</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-cyan">Chill</span><span class="dj-genre-pill genre-neon-cyan">Downtempo</span><span class="dj-genre-pill genre-neon-cyan">Ambient</span><span class="dj-genre-pill genre-neon-electric-purple">Deep House</span></div></div></div>
 <div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">08:00 – 12:00</div><div role="cell"><strong>🚗 Day Drive</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-yellow">80s</span><span class="dj-genre-pill genre-neon-blue-purple">Synthwave</span><span class="dj-genre-pill genre-neon-aqua">Chill Electro</span><span class="dj-genre-pill genre-neon-magenta">Nu-Disco</span></div></div></div>
@@ -4089,8 +4073,6 @@
 <div class="schedule-row" role="row"><div role="cell">SUNDAY · SUNDAY SESSIONS</div><div role="cell">12:00 – 16:00</div><div role="cell"><strong>🚗 Day Drive</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-hot-pink">House</span><span class="dj-genre-pill genre-neon-electric-purple">Deep House</span><span class="dj-genre-pill genre-neon-violet">Progressive</span><span class="dj-genre-pill genre-neon-hot-pink">Funky House</span></div></div></div>
 <div class="schedule-row" role="row"><div role="cell">SUNDAY · SUNDAY SESSIONS</div><div role="cell">16:00 – 20:00</div><div role="cell"><strong>🔥 Prime Time</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-hot-pink">Tech House</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-violet">Progressive</span><span class="dj-genre-pill genre-neon-cyan">Melodic</span></div></div></div>
 <div class="schedule-row" role="row"><div role="cell">SUNDAY · SUNDAY SESSIONS</div><div role="cell">20:00 – 00:00</div><div role="cell"><strong>🌙 Night Drive</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-aqua">Electro</span><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-cyan">Chill</span></div></div></div>
-
-</div>
 </div>
 </div>
 </div>
@@ -4159,6 +4141,7 @@
             Scan Account
           </button>
 </div>
+<div class="scanner-summary" id="scannerSummary"></div>
 <div class="scanner-results" id="scannerResults">
 <div class="scanner-empty">
             Click <strong>Scan RRR DJ List</strong> to analyse the DJs currently in the RRR favourites list.
@@ -7044,106 +7027,6 @@
         return ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][dayIndex];
       }
 
-      function publicGenreClass(genre) {
-        const g = String(genre || "").toLowerCase();
-        if (g.includes("80s")) return "genre-neon-yellow";
-        if (g.includes("bass") || g.includes("drum")) return "genre-neon-orange";
-        if (g.includes("techno")) return "genre-neon-electric-blue";
-        if (g.includes("trance")) return "genre-neon-cyan";
-        if (g.includes("electro")) return "genre-neon-aqua";
-        if (g.includes("house")) return "genre-neon-hot-pink";
-        if (g.includes("progressive") || g.includes("psy")) return "genre-neon-violet";
-        if (g.includes("synth") || g.includes("retro")) return "genre-neon-blue-purple";
-        if (g.includes("ambient") || g.includes("chill") || g.includes("downtempo")) return "genre-neon-cyan";
-        return "genre-neon-electric-purple";
-      }
-
-      function publicProgramIcon(name, startMinutes) {
-        const n = String(name || "").toLowerCase();
-        if (n.includes("sunrise") || n.includes("morning")) return "🌅";
-        if (n.includes("drive")) return "🚗";
-        if (n.includes("afternoon") || n.includes("day party")) return "⚡";
-        if (n.includes("dinner") || n.includes("prime") || n.includes("after dark")) return "🔥";
-        if (n.includes("night") || Number(startMinutes) >= 1200 || Number(startMinutes) < 240) return "🌙";
-        return "🎧";
-      }
-
-      function escapePublicHtml(value) {
-        return String(value == null ? "" : value)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#039;");
-      }
-
-      function publicScheduleSignature(rows) {
-        return (rows || []).map(function (r) {
-          return [r.day, r.start, r.end, r.name, (r.genres || []).join("|")].join("~");
-        }).join("||");
-      }
-
-      function renderPublicSchedule() {
-        const container = document.getElementById("publicScheduleRows");
-        if (!container || !publicScheduleRows.length) return;
-
-        const byDay = {};
-        ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].forEach(function (day) {
-          byDay[day] = publicScheduleRows.filter(function (r) {
-            return r.day.toLowerCase() === day.toLowerCase();
-          }).sort(function (a, b) {
-            return a.start - b.start;
-          });
-        });
-
-        const displayRows = [];
-        const weekdaySignature = publicScheduleSignature(byDay.Monday);
-        const weekdaySame = ["Monday", "Tuesday", "Wednesday", "Thursday"].every(function (day) {
-          return publicScheduleSignature(byDay[day]) === weekdaySignature;
-        });
-
-        if (weekdaySame && byDay.Monday.length) {
-          byDay.Monday.forEach(function (r) {
-            displayRows.push({ row: r, label: "WEEKDAYS · MON–THU" });
-          });
-        } else {
-          ["Monday", "Tuesday", "Wednesday", "Thursday"].forEach(function (day) {
-            byDay[day].forEach(function (r) {
-              displayRows.push({ row: r, label: day.toUpperCase() });
-            });
-          });
-        }
-
-        byDay.Friday.forEach(function (r) {
-          displayRows.push({ row: r, label: "FRIDAY · WEEKEND WARM-UP" });
-        });
-        byDay.Saturday.forEach(function (r) {
-          displayRows.push({ row: r, label: "SATURDAY · WEEKEND" });
-        });
-        byDay.Sunday.forEach(function (r) {
-          displayRows.push({ row: r, label: "SUNDAY · SUNDAY SESSIONS" });
-        });
-
-        if (!displayRows.length) return;
-
-        container.innerHTML = displayRows.map(function (item) {
-          const r = item.row;
-          const start = Number(r.start);
-          const end = Number(r.end) === 0 ? 1440 : Number(r.end);
-          const startText = String(Math.floor(start / 60)).padStart(2, "0") + ":" + String(start % 60).padStart(2, "0");
-          const endText = end === 1440 ? "00:00" : String(Math.floor(end / 60)).padStart(2, "0") + ":" + String(end % 60).padStart(2, "0");
-          const genres = r.genres.map(function (genre) {
-            return '<span class="dj-genre-pill ' + publicGenreClass(genre) + '">' + escapePublicHtml(genre) + '</span>';
-          }).join("");
-          return '<div class="schedule-row" role="row" data-schedule-day="' + escapePublicHtml(r.day) + '" data-start-minutes="' + start + '" data-end-minutes="' + end + '">' +
-            '<div role="cell">' + escapePublicHtml(item.label) + '</div>' +
-            '<div role="cell">' + startText + ' – ' + endText + '</div>' +
-            '<div role="cell"><strong>' + publicProgramIcon(r.name, start) + ' ' + escapePublicHtml(r.name) + '</strong></div>' +
-            '<div role="cell"><div class="schedule-genres">' + genres + '</div></div>' +
-            '</div>';
-        }).join("");
-      }
-
       function loadPublicScheduleForTargets() {
         fetch("https://api.radiorrr.com/api/schedule?_rrr=" + Date.now(), {
           cache: "no-store",
@@ -7163,10 +7046,7 @@
               name: String(row.name || ""),
               genres: Array.isArray(row.genres) ? row.genres.map(String) : []
             };
-          }).filter(function(row) {
-            return row.day && Number.isFinite(row.start) && Number.isFinite(row.end) && row.end !== row.start;
           });
-          renderPublicSchedule();
           updateTitles();
         })
         .catch(function(error) {
@@ -7343,45 +7223,38 @@
         if (!rows.length) return;
 
         const dayIndex = now.getDay();
-        const minuteOfDay = now.getHours() * 60 + now.getMinutes();
+        const hour = now.getHours() + (now.getMinutes() / 60);
 
-        if (publicScheduleRows.length) {
-          const dayName = publicScheduleDayName(dayIndex);
-          rows.forEach(function (row) {
-            const day = row.getAttribute('data-schedule-day');
-            const start = Number(row.getAttribute('data-start-minutes'));
-            const end = Number(row.getAttribute('data-end-minutes'));
-            if (day && day.toLowerCase() === dayName.toLowerCase() && Number.isFinite(start) && Number.isFinite(end) && minuteOfDay >= start && minuteOfDay < end) {
-              row.classList.add('schedule-active');
-            }
-          });
-          return;
-        }
-
-        // Known-good static fallback rows.
-        const dayType =
-          dayIndex === 5 ? 'friday' :
-          dayIndex === 6 ? 'saturday' :
-          dayIndex === 0 ? 'sunday' :
-          'weekday';
+        let dayType = 'weekday';
+        if (dayIndex === 5) dayType = 'friday';
+        else if (dayIndex === 6) dayType = 'saturday';
+        else if (dayIndex === 0) dayType = 'sunday';
 
         rows.forEach(function (row) {
           const cells = row.querySelectorAll(':scope > div');
           if (cells.length < 4) return;
+
           const dayText = cells[0].textContent.trim().toUpperCase();
           const timeText = cells[1].textContent.trim();
+
           const matchesDay =
             (dayType === 'weekday' && dayText.indexOf('WEEKDAYS') === 0) ||
             (dayType === 'friday' && dayText.indexOf('FRIDAY') === 0) ||
             (dayType === 'saturday' && dayText.indexOf('SATURDAY') === 0) ||
             (dayType === 'sunday' && dayText.indexOf('SUNDAY') === 0);
+
           if (!matchesDay) return;
+
           const times = timeText.match(/(\d{2}):(\d{2})\s*[–-]\s*(\d{2}):(\d{2})/);
           if (!times) return;
-          const start = Number(times[1]) * 60 + Number(times[2]);
-          let end = Number(times[3]) * 60 + Number(times[4]);
-          if (end === 0) end = 1440;
-          if (minuteOfDay >= start && minuteOfDay < end) row.classList.add('schedule-active');
+
+          const start = Number(times[1]) + Number(times[2]) / 60;
+          let end = Number(times[3]) + Number(times[4]) / 60;
+          if (end === 0) end = 24;
+
+          if (hour >= start && hour < end) {
+            row.classList.add('schedule-active');
+          }
         });
       }
 
