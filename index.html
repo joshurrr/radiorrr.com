@@ -423,34 +423,35 @@ window.formspree =
 <script defer="" src="https://unpkg.com/@formspree/ajax@1"></script>
 
 <style id="rrr-secondary-live-genre-bubbles">
-/* Secondary LIVE DJ cards:
-   Keep Scout's live-detected genres, but display them as readable vertical bubbles.
-   The main/current DJ card is intentionally untouched. */
+/* Secondary LIVE DJ cards: presentation only. The main/current DJ card is untouched. */
 #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-list {
   display: flex !important;
   flex-direction: column !important;
   align-items: flex-start !important;
   justify-content: flex-start !important;
-  gap: 0.28rem !important;
+  gap: 0.16rem !important;
   width: 100% !important;
-  margin: 0.18rem 0 0.35rem !important;
+  margin: 0.02rem 0 0.16rem !important;
+  min-height: 0 !important;
 }
 
 #liveDjsList .dj-card.dj-live-switch-card .rrr-live-genre-bubble {
-  display: flex !important;
+  display: inline-flex !important;
   align-items: center !important;
+  align-self: flex-start !important;
   width: fit-content !important;
-   max-width: 100% !important;
-  min-height: 1.25rem !important;
-  padding: 0.16rem 0.48rem !important;
+  max-width: calc(100% - 2px) !important;
+  min-height: 1.02rem !important;
+  box-sizing: border-box !important;
+  padding: 0.12rem 0.42rem !important;
   border-radius: 999px !important;
   border: 1px solid rgba(103,232,249,0.75) !important;
   background: rgba(5,20,35,0.78) !important;
   color: #e0f7ff !important;
-  font-size: 0.62rem !important;
+  font-size: 0.54rem !important;
   font-weight: 800 !important;
-  line-height: 1.05 !important;
-  letter-spacing: 0.025em !important;
+  line-height: 1 !important;
+  letter-spacing: 0.02em !important;
   text-align: left !important;
   white-space: nowrap !important;
   overflow: hidden !important;
@@ -473,7 +474,6 @@ window.formspree =
   box-shadow: 0 0 7px rgba(34,197,94,0.18) !important;
 }
 
-/* Hide the old detector bars/percentages once converted. */
 #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-row {
   display: none !important;
 }

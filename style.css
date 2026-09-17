@@ -3866,136 +3866,106 @@
   font-style: italic;
 }
 
-/* ============================================================
-   RRR — SECONDARY LIVE DJ CARD VISUAL REFINEMENT
-   Presentation only. No markup, data, matching, audio or HLS changes.
-   The featured/current DJ card is intentionally excluded.
-   ============================================================ */
 
-#liveDjsList .dj-card.dj-live-switch-card {
-  border-radius: 14px !important;
-  border: 1px solid rgba(34,211,238,0.58) !important;
-  box-shadow:
-    0 0 10px rgba(34,211,238,0.14),
-    0 0 18px rgba(129,140,248,0.08) !important;
-}
-
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-overlay {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(3,7,18,0.02) 0%,
-      rgba(3,7,18,0.10) 27%,
-      rgba(3,7,18,0.54) 48%,
-      rgba(3,7,18,0.92) 69%,
-      rgba(3,7,18,0.985) 100%
-    ) !important;
-}
-
+/* RRR: FINAL SECONDARY LIVE DJ CARD POLISH
+   Presentation only. The main/current DJ card, JS, HLS/audio and matching logic
+   are intentionally untouched. */
 #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-content {
-  padding: 0.62rem 0.62rem 0.62rem !important;
-  gap: 0.18rem !important;
+  padding: 0.55rem 0.65rem 0.6rem !important;
+  gap: 0.16rem !important;
 }
 
-/* Keep the LIVE badge compact and visually separate from the identity. */
 #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-live {
-  margin-bottom: 0.16rem !important;
-  padding: 0.2rem 0.42rem !important;
-  border-radius: 6px !important;
-  font-size: 0.56rem !important;
-  letter-spacing: 0.055em !important;
+  margin: 0 0 0.08rem !important;
+  padding: 0.16rem 0.34rem !important;
+  font-size: 0.54rem !important;
 }
 
-/* Make the DJ name the primary piece of information on the card. */
 #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-name {
-  font-size: 0.86rem !important;
-  line-height: 1.12 !important;
-  font-weight: 900 !important;
-  text-shadow:
-    0 1px 4px rgba(0,0,0,0.95),
-    0 0 8px rgba(0,0,0,0.55) !important;
+  font-size: 0.78rem !important;
+  line-height: 1.08 !important;
+  margin: 0 !important;
 }
 
-/* Give the detected section a clear visual heading. */
 #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-title {
-  margin-top: 0.28rem !important;
-  margin-bottom: 0.06rem !important;
-  padding-left: 0.02rem !important;
-  color: #d8f7ff !important;
-  font-size: 0.49rem !important;
-  letter-spacing: 0.09em !important;
-  text-shadow: 0 0 6px rgba(34,211,238,0.35) !important;
+  display: block !important;
+  margin: 0.1rem 0 0.04rem !important;
+  color: #fde68a !important;
+  font-size: 0.46rem !important;
+  line-height: 1 !important;
+  letter-spacing: 0.07em !important;
 }
 
-/* Vertical detected genres: compact, text-sized pills rather than full-width bars. */
+#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-title::after {
+  content: "";
+}
+
 #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-list {
+  display: flex !important;
+  flex-direction: column !important;
   align-items: flex-start !important;
-  gap: 0.17rem !important;
+  justify-content: flex-start !important;
+  gap: 0.16rem !important;
   width: 100% !important;
-  margin: 0.08rem 0 0.12rem !important;
+  margin: 0.02rem 0 0.16rem !important;
+  min-height: 0 !important;
 }
 
 #liveDjsList .dj-card.dj-live-switch-card .rrr-live-genre-bubble {
+  display: inline-flex !important;
+  align-items: center !important;
+  align-self: flex-start !important;
   width: fit-content !important;
-  max-width: calc(100% - 0.02rem) !important;
-  min-height: 1.12rem !important;
-  padding: 0.15rem 0.46rem !important;
+  max-width: calc(100% - 2px) !important;
+  min-height: 1.02rem !important;
+  box-sizing: border-box !important;
+  padding: 0.12rem 0.42rem !important;
   border-radius: 999px !important;
-  font-size: 0.57rem !important;
+  font-size: 0.54rem !important;
   line-height: 1 !important;
-  font-weight: 850 !important;
+  font-weight: 800 !important;
   letter-spacing: 0.02em !important;
-  box-shadow: 0 0 6px rgba(56,189,248,0.16) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
-/* Compact program-match block: label and percentage share one line. */
 #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-match-label {
   display: flex !important;
-  align-items: baseline !important;
+  align-items: center !important;
   justify-content: space-between !important;
-  gap: 0.35rem !important;
   width: 100% !important;
-  margin-top: 0.24rem !important;
-  padding-top: 0.24rem !important;
-  border-top: 1px solid rgba(129,140,248,0.22) !important;
-  color: #dce4ff !important;
-  font-size: 0.55rem !important;
-  line-height: 1.1 !important;
-  font-weight: 850 !important;
-  letter-spacing: 0.045em !important;
+  min-width: 0 !important;
+  gap: 0.35rem !important;
+  margin: 0.06rem 0 0 !important;
+  padding: 0 !important;
+  color: #d7ddff !important;
+  font-size: 0.54rem !important;
+  line-height: 1 !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.02em !important;
+  white-space: nowrap !important;
+}
+
+#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-match-label > * {
+  white-space: nowrap !important;
 }
 
 #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-match-value {
   flex: 0 0 auto !important;
-  font-size: 0.62rem !important;
+  margin-left: auto !important;
+  color: #fff !important;
+  font-size: 0.58rem !important;
   font-weight: 900 !important;
-  color: #ffffff !important;
 }
 
 #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-match-bar {
   width: 100% !important;
   height: 3px !important;
-  margin-top: 0.08rem !important;
+  margin-top: 0.12rem !important;
   border-radius: 999px !important;
-  background: rgba(148,163,184,0.22) !important;
 }
 
 #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-match-fill {
-  box-shadow: 0 0 6px rgba(52,211,153,0.35) !important;
+  height: 100% !important;
 }
-
-/* Keep the cards readable at the existing compact footprint. */
-@media (max-width: 767px) {
-  #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-content {
-    padding: 0.58rem 0.58rem 0.58rem !important;
-  }
-
-  #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-name {
-    font-size: 0.82rem !important;
-  }
-
-  #liveDjsList .dj-card.dj-live-switch-card .rrr-live-genre-bubble {
-    font-size: 0.55rem !important;
-  }
-}
-
