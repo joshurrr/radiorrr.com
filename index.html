@@ -1860,8 +1860,6 @@
       }
     }
 
-
-
     /* DISCOVER DJs
        Keep the discovery panel out of the individual LIVE DJ card grid.
        Making it span the complete grid also prevents its height from
@@ -3358,8 +3356,6 @@
         gap: 12px;
       }
     }
-
-
 
     /* RRR: OFFLINE DISCOVERY CARDS — exact same footprint as the
        secondary LIVE DJ cards. Presentation only; JS/markup/functionality
@@ -5517,6 +5513,11 @@
       }
 
       function showLiveDjPlayer(dj) {
+  // Preserve the player's current mute/unmute state when manually switching DJs.
+  if (liveDjVideo) {
+    userRequestedAudio = !liveDjVideo.muted;
+  }
+
         if (!liveDjVideo || !randomLiveDj) return;
 
         const username = getDJUsername(dj);
@@ -6629,27 +6630,6 @@
         }
       }
 
-
-      function getLiveDisplayGenre(dj) {
-        if (!dj) return "";
-
-        // For live DJs, AI detection is authoritative for the music
-        // currently being played. Fall back to the stored/profile genre
-        // until an AI result is available.
-        const aiGenre = String(dj.ai_genre || "").trim();
-        if (aiGenre && isMusicGenre(aiGenre)) return aiGenre;
-
-        const storedGenre = String(dj.genre || "").trim();
-        if (storedGenre && isMusicGenre(storedGenre)) {
-          // Never expose the internal parent---subgenre format.
-          if (storedGenre.includes("---")) {
-            return storedGenre.split("---", 2)[1].trim();
-          }
-          return storedGenre;
-        }
-
-        return "";
-      }
 
       function appendDjCard(dj, isLive, routerIdentity, moveWatchButton) {
         const name =
@@ -8222,8 +8202,6 @@
         audio.muted = false;
         audio.volume = 1;
       }
-
-
 
     });
 
