@@ -545,5 +545,208 @@ window.formspree =
 </script>
 
 <script src="script.js?v=20260917.1"></script>
+
+<script>
+/*
+ * RadioRRR HLS PLAYBACK GUARD
+ * This is deliberately isolated from the DJ/genre code.
+ *
+ * Goals:
+ *  1. Preserve an explicit user unmute across HLS recoveries/restarts.
+ *  2. Recover a live HLS player that has genuinely stopped progressing.
+ *  3. Never create a second HLS player or a second media element.
+ */
+(function () {
+  "use strict";
+
+  function startHlsPlaybackGuard() {
+    const video = document.getElementById("liveDjVideo");
+    const unmuteButton = document.getElementById("liveDjUnmute");
+
+    if (!video) return;
+
+    let userHasRequestedAudio = false;
+    let lastCurrentTime = video.currentTime || 0;
+    let lastProgressAt = Date.now();
+    let recoveryInProgress = false;
+    let recoveryCount = 0;
+
+    function markUserAudioChoice() {
+      userHasRequestedAudio = video.muted;
+      video.dataset.rrrUserAudio = userHasRequestedAudio ? "1" : "0";
+
+      if (userHasRequestedAudio) {
+        video.muted = false;
+        video.defaultMuted = false;
+      } else {
+        video.muted = true;
+        video.defaultMuted = true;
+      }
+    }
+
+    if (unmuteButton) {
+      /*
+       * Capture phase runs before script.js's normal click handler.
+       * This records the user's intent before any playback/recovery code runs.
+       */
+      unmuteButton.addEventListener("click", function () {
+        const willUnmute = video.muted;
+        userHasRequestedAudio = willUnmute;
+        video.dataset.rrrUserAudio = willUnmute ? "1" : "0";
+
+        if (willUnmute) {
+          video.muted = false;
+          video.defaultMuted = false;
+        } else {
+          video.muted = true;
+          video.defaultMuted = true;
+        }
+      }, true);
+    }
+
+    video.addEventListener("timeupdate", function () {
+      if (video.currentTime !== lastCurrentTime) {
+        lastCurrentTime = video.currentTime;
+        lastProgressAt = Date.now();
+        recoveryCount = 0;
+      }
+    });
+
+    video.addEventListener("playing", function () {
+      lastCurrentTime = video.currentTime || lastCurrentTime;
+      lastProgressAt = Date.now();
+
+      /*
+       * If the user explicitly unmuted, playback recovery is not allowed
+       * to silently put the video back into muted state.
+       */
+      if (userHasRequestedAudio) {
+        video.muted = false;
+        video.defaultMuted = false;
+      }
+    });
+
+    video.addEventListener("pause", function () {
+      /*
+       * A programmatic pause during teardown/reselection is legitimate.
+       * Only restart if the player is still the active visible live player.
+       */
+      if (
+        userHasRequestedAudio &&
+        document.visibilityState !== "hidden" &&
+        video.src &&
+        !recoveryInProgress
+      ) {
+        setTimeout(function () {
+          if (
+            userHasRequestedAudio &&
+            video.paused &&
+            video.src
+          ) {
+            video.play().catch(function () {});
+          }
+        }, 250);
+      }
+    });
+
+    function recoverHls() {
+      if (recoveryInProgress || !video.src) return;
+
+      recoveryInProgress = true;
+      recoveryCount += 1;
+
+      const hls = window.radioRrrHls;
+
+      try {
+        if (hls && typeof hls.startLoad === "function") {
+          hls.startLoad(-1);
+        }
+
+        if (hls && typeof hls.recoverMediaError === "function") {
+          /*
+           * Only use media-error recovery after a genuine stall. This avoids
+           * needlessly rebuilding the decoder during normal HLS operation.
+           */
+          if (video.readyState < 3) {
+            hls.recoverMediaError();
+          }
+        }
+      } catch (e) {
+        console.warn("Radio RRR HLS recovery warning:", e);
+      }
+
+      setTimeout(function () {
+        recoveryInProgress = false;
+
+        if (userHasRequestedAudio) {
+          video.muted = false;
+          video.defaultMuted = false;
+        }
+
+        if (video.paused && video.src) {
+          video.play().catch(function () {});
+        }
+
+        lastCurrentTime = video.currentTime || lastCurrentTime;
+        lastProgressAt = Date.now();
+      }, 1200);
+    }
+
+    video.addEventListener("waiting", function () {
+      /*
+       * Give the relay a few seconds before intervening. Brief HLS waits are
+       * normal and should not cause a disruptive reload.
+       */
+      setTimeout(function () {
+        if (
+          video.readyState < 3 &&
+          Date.now() - lastProgressAt > 3500
+        ) {
+          recoverHls();
+        }
+      }, 3500);
+    });
+
+    video.addEventListener("stalled", function () {
+      setTimeout(function () {
+        if (Date.now() - lastProgressAt > 3500) {
+          recoverHls();
+        }
+      }, 3500);
+    });
+
+    /*
+     * Background watchdog. It only intervenes after ~8 seconds with no
+     * playback progress, so ordinary buffering is left completely alone.
+     */
+    setInterval(function () {
+      if (
+        document.visibilityState === "hidden" ||
+        !video.src ||
+        video.paused
+      ) {
+        return;
+      }
+
+      if (userHasRequestedAudio) {
+        video.muted = false;
+        video.defaultMuted = false;
+      }
+
+      const stalledFor = Date.now() - lastProgressAt;
+
+      if (stalledFor > 8000) {
+        recoverHls();
+      }
+    }, 2000);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", startHlsPlaybackGuard, { once: true });
+  } else {
+    startHlsPlaybackGuard();
+  }
+})();
+</script>
 </body>
 </html>
