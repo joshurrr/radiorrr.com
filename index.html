@@ -421,6 +421,129 @@ window.formspree =
 
 
 <script defer="" src="https://unpkg.com/@formspree/ajax@1"></script>
+
+<style id="rrr-secondary-live-genre-bubbles">
+/* Secondary LIVE DJ cards:
+   Keep Scout's live-detected genres, but display them as readable vertical bubbles.
+   The main/current DJ card is intentionally untouched. */
+#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-list {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: 0.28rem !important;
+  width: 100% !important;
+  margin: 0.18rem 0 0.35rem !important;
+}
+
+#liveDjsList .dj-card.dj-live-switch-card .rrr-live-genre-bubble {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-height: 1.25rem !important;
+  padding: 0.16rem 0.48rem !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(103,232,249,0.75) !important;
+  background: rgba(5,20,35,0.78) !important;
+  color: #e0f7ff !important;
+  font-size: 0.62rem !important;
+  font-weight: 800 !important;
+  line-height: 1.05 !important;
+  letter-spacing: 0.025em !important;
+  text-align: left !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  box-shadow: 0 0 7px rgba(56,189,248,0.20) !important;
+}
+
+#liveDjsList .dj-card.dj-live-switch-card .rrr-live-genre-bubble:nth-child(2n) {
+  border-color: rgba(255,77,171,0.78) !important;
+  box-shadow: 0 0 7px rgba(255,0,102,0.20) !important;
+}
+
+#liveDjsList .dj-card.dj-live-switch-card .rrr-live-genre-bubble:nth-child(3n) {
+  border-color: rgba(167,139,250,0.82) !important;
+  box-shadow: 0 0 7px rgba(139,92,246,0.20) !important;
+}
+
+#liveDjsList .dj-card.dj-live-switch-card .rrr-live-genre-bubble:nth-child(4n) {
+  border-color: rgba(74,222,128,0.78) !important;
+  box-shadow: 0 0 7px rgba(34,197,94,0.18) !important;
+}
+
+/* Hide the old detector bars/percentages once converted. */
+#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-row {
+  display: none !important;
+}
+</style>
+
+<script>
+(function () {
+  "use strict";
+
+  function convertSecondaryLiveGenres(root) {
+    const scope = root || document;
+
+    scope.querySelectorAll(
+      "#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-list"
+    ).forEach(function (list) {
+      // Already converted.
+      if (list.dataset.rrrBubbles === "1") return;
+
+      const rows = Array.from(
+        list.querySelectorAll(".dj-secondary-detected-row")
+      );
+
+      if (!rows.length) return;
+
+      const genres = rows.map(function (row) {
+        const nameEl = row.querySelector(".dj-secondary-detected-name");
+        return nameEl ? nameEl.textContent.trim() : "";
+      }).filter(Boolean);
+
+      if (!genres.length) return;
+
+      list.innerHTML = "";
+
+      genres.forEach(function (genre) {
+        const bubble = document.createElement("span");
+        bubble.className = "rrr-live-genre-bubble";
+        bubble.textContent = genre;
+        bubble.title = "Live detected: " + genre;
+        list.appendChild(bubble);
+      });
+
+      list.dataset.rrrBubbles = "1";
+    });
+  }
+
+  // Cards are populated asynchronously by script.js, so watch only the live-DJ
+  // container rather than changing any of the existing detection logic.
+  function startWatcher() {
+    const liveList = document.getElementById("liveDjsList");
+    if (!liveList) return;
+
+    convertSecondaryLiveGenres(liveList);
+
+    const observer = new MutationObserver(function () {
+      convertSecondaryLiveGenres(liveList);
+    });
+
+    observer.observe(liveList, {
+      childList: true,
+      subtree: true
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", startWatcher, { once: true });
+  } else {
+    startWatcher();
+  }
+})();
+</script>
+
 <script src="script.js?v=20260917.1"></script>
 </body>
 </html>
