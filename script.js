@@ -1,42 +1,5 @@
-/* Original inline script #2 */
-window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+/* Radio RRR application JavaScript — extracted from the working index.html */
 
-    gtag('config', 'G-M9Y6VXHFW3');
-
-/* Original inline script #3 */
-{
-    "@context": "https://schema.org",
-    "@type": "RadioStation",
-    "name": "RadioRRR",
-    "url": "https://radiorrr.com/",
-    "logo": "https://radiorrr.com/logo.png",
-    "description": "RadioRRR is an online radio station and live DJ discovery platform that curates DJs broadcasting across social platforms.",
-    "sameAs": [
-      "https://www.tiktok.com/@josh.u.rrr"
-    ],
-    "knowsAbout": [
-      "Online radio",
-      "Electronic music",
-      "Live DJ streams",
-      "DJ discovery",
-      "Synthwave",
-      "Electro",
-      "Retrowave"
-    ]
-  }
-
-/* Original inline script #4 */
-{
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "RadioRRR",
-    "url": "https://radiorrr.com/",
-    "description": "DISCOVER LIVE DJs — NO PLAYLISTS REQUIRED from RadioRRR."
-  }
-
-/* Original inline script #7 */
 document.addEventListener("DOMContentLoaded", function () {
 
 
@@ -4017,29 +3980,4 @@ document.addEventListener("DOMContentLoaded", function () {
         audio.volume = 1;
       }
 
-    });
-
-/* Original inline script #8 */
-window.formspree =
-      window.formspree ||
-      function () {
-        (formspree.q = formspree.q || []).push(arguments);
-      };
-
-    formspree('initForm', {
-      formElement: '#recommendDjForm',
-      formId: 'xjyvjoqg',
-      data: {
-        page: 'Radio RRR',
-        source: 'Recommend a DJ',
-      },
-      onSuccess: function () {
-        const form = document.getElementById('recommendDjForm');
-        if (form) {
-          const success = form.querySelector('[data-fs-success]');
-          if (success) {
-            success.textContent = "✓ Thanks! We've received your recommendation.";
-          }
-        }
-      },
     });

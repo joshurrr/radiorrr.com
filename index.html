@@ -26,6 +26,45 @@
 <meta content="RadioRRR logo" name="twitter:image:alt"/>
 <!-- Google tag (gtag.js) -->
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-M9Y6VXHFW3"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-M9Y6VXHFW3');
+  </script>
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "RadioStation",
+    "name": "RadioRRR",
+    "url": "https://radiorrr.com/",
+    "logo": "https://radiorrr.com/logo.png",
+    "description": "RadioRRR is an online radio station and live DJ discovery platform that curates DJs broadcasting across social platforms.",
+    "sameAs": [
+      "https://www.tiktok.com/@josh.u.rrr"
+    ],
+    "knowsAbout": [
+      "Online radio",
+      "Electronic music",
+      "Live DJ streams",
+      "DJ discovery",
+      "Synthwave",
+      "Electro",
+      "Retrowave"
+    ]
+  }
+  </script>
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "RadioRRR",
+    "url": "https://radiorrr.com/",
+    "description": "DISCOVER LIVE DJs — NO PLAYLISTS REQUIRED from RadioRRR."
+  }
+  </script>
+
 
 
 
@@ -354,6 +393,31 @@
     </p>
 </main>
 <script src="genre-detection.js"></script>
+<script>
+window.formspree =
+      window.formspree ||
+      function () {
+        (formspree.q = formspree.q || []).push(arguments);
+      };
+
+    formspree('initForm', {
+      formElement: '#recommendDjForm',
+      formId: 'xjyvjoqg',
+      data: {
+        page: 'Radio RRR',
+        source: 'Recommend a DJ',
+      },
+      onSuccess: function () {
+        const form = document.getElementById('recommendDjForm');
+        if (form) {
+          const success = form.querySelector('[data-fs-success]');
+          if (success) {
+            success.textContent = "✓ Thanks! We've received your recommendation.";
+          }
+        }
+      },
+    });
+</script>
 
 
 <script defer="" src="https://unpkg.com/@formspree/ajax@1"></script>
