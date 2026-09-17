@@ -825,23 +825,7 @@
       min-width: 0;
     }
 
-        .random-live-target-label {
-      margin-top: 0.35rem;
-      color: #22d3ee;
-      font-size: 0.55rem;
-      line-height: 1;
-      font-weight: 900;
-      letter-spacing: 0.08em;
-    }
-
-    .random-live-program-targets {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.22rem;
-      margin-top: 0.25rem;
-    }
-
-.random-live-program-target-pill {
+    .random-live-program-target-pill {
       display: inline-flex;
       align-items: center;
       min-width: 0;
@@ -1399,11 +1383,9 @@
     }
 
     .dj-card.dj-live-switch-card .dj-secondary-genres {
-      min-height: 0;
+      min-height: 1.05rem;
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: flex-start;
+      align-items: center;
       flex-wrap: nowrap;
       gap: 0.22rem;
       overflow: hidden;
@@ -1413,9 +1395,8 @@
     .dj-card.dj-live-switch-card .dj-secondary-genres .dj-genre-pill {
       flex: 0 0 auto;
       max-width: 100%;
-      width: fit-content;
-      padding: 0.15rem 0.34rem;
-      font-size: 0.52rem;
+      padding: 0.16rem 0.32rem;
+      font-size: 0.48rem;
       line-height: 1;
       white-space: nowrap;
     }
@@ -1427,16 +1408,16 @@
       gap: 0.35rem;
       margin-top: 0.22rem;
       color: #d7ddff;
-      font-size: 0.45rem;
-      line-height: 1;
+      font-size: 0.51rem;
+      line-height: 1.1;
       font-weight: 800;
       letter-spacing: 0.03em;
       text-transform: uppercase;
     }
 
     .dj-card.dj-live-switch-card .dj-secondary-match-value {
-      color: #22d3ee;
-      font-size: 0.82rem;
+      color: #fff;
+      font-size: 0.54rem;
       font-weight: 900;
     }
 
@@ -1469,7 +1450,7 @@
 
     @media (min-width: 1200px) {
       #liveDjsList .dj-card.dj-live-switch-card {
-        min-height: 250px;
+        min-height: 184px;
       }
 
       #liveDjsList .live-djs-grid {
@@ -1480,7 +1461,7 @@
 
     @media (min-width: 768px) and (max-width: 1199px) {
       #liveDjsList .dj-card.dj-live-switch-card {
-        min-height: 250px;
+        min-height: 190px;
       }
 
       #liveDjsList .live-djs-grid {
@@ -1491,7 +1472,7 @@
 
     @media (max-width: 767px) {
       #liveDjsList .dj-card.dj-live-switch-card {
-        min-height: 255px;
+        min-height: 205px;
       }
 
       #liveDjsList .live-djs-grid {
@@ -1718,43 +1699,6 @@
     .current-dj-card .random-live-dj-row {
       position: relative;
       z-index: 1;
-    }
-
-    .current-dj-card .live-genres-detected {
-      position: relative;
-      z-index: 1;
-      display: none;
-      margin: 0.7rem 0 0;
-      padding: 0.72rem 0.78rem;
-      border-radius: 12px;
-      background: rgba(3,7,20,0.78);
-      border: 1px solid rgba(34,211,238,0.42);
-      box-shadow: 0 0 12px rgba(34,211,238,0.10);
-    }
-
-    .current-dj-card .live-genres-detected-title {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-      margin-bottom: 0.45rem;
-    }
-
-    .current-dj-card .live-genre-detected-name {
-      width: fit-content;
-      max-width: 100%;
-      padding: 0.17rem 0.34rem;
-      border-radius: 999px;
-      border: 1px solid rgba(34,211,238,0.62);
-      background: rgba(8,15,30,0.82);
-      font-size: 0.62rem;
-      line-height: 1;
-      font-weight: 800;
-    }
-
-    .current-dj-card .live-genre-detected-confidence {
-      font-size: 0.78rem;
-      font-weight: 900;
     }
 
     .current-dj-card-heading {
@@ -2640,7 +2584,10 @@
 
       #randomLiveDj {
         grid-template-columns: minmax(0, 1.65fr) minmax(300px, 0.75fr);
-        grid-template-areas: "player side";
+        grid-template-areas:
+          "player header"
+          "player info"
+          "player ai";
         grid-template-rows: auto auto auto;
         gap: 1.25rem;
         align-items: start;
@@ -2787,6 +2734,13 @@
 
       /* On phones the live experience stacks naturally:
          video first, DJ card second, detected genres last. */
+      #randomLiveDj .live-genres-detected {
+        grid-area: auto;
+        width: 100%;
+        margin: 0;
+        align-self: stretch;
+        box-sizing: border-box;
+      }
 
       #randomLiveDj .radio-router-player {
         grid-area: player;
@@ -3194,7 +3148,7 @@
         /* The player establishes the console height; the three right-hand
            tracks must remain intrinsic so they cannot spread vertically. */
         grid-template-rows: max-content max-content max-content;
-        height: clamp(600px, 78vh, 780px);
+        height: clamp(700px, 88vh, 900px);
         gap: 0.75rem;
         align-items: start;
         align-content: start;
@@ -3237,6 +3191,10 @@
         align-self: start;
       }
 
+      #randomLiveDj .live-genres-detected {
+        grid-area: ai;
+        align-self: start;
+      }
 
       #randomLiveDj .current-dj-card {
         margin-bottom: 0;
@@ -3306,7 +3264,8 @@
       }
 
       #randomLiveDj .live-router-side .random-live-header,
-      #randomLiveDj .live-router-side .current-dj-card {
+      #randomLiveDj .live-router-side .current-dj-card,
+      #randomLiveDj .live-router-side .live-genres-detected {
         grid-area: auto;
         align-self: stretch;
         flex: 0 0 auto;
@@ -3322,6 +3281,10 @@
         padding: 0.75rem 0.8rem;
       }
 
+      #randomLiveDj .live-router-side .live-genres-detected {
+        padding: 0.75rem 0.8rem;
+        margin-top: 0.25rem;
+      }
     }
 
 
@@ -3990,8 +3953,6 @@
 </div>
 <div class="random-live-now-playing">
               <strong id="heroNowPlaying">Loading current block…</strong>
-              <div class="random-live-target-label">TARGET GENRES</div>
-              <div class="random-live-program-targets" id="liveProgramTargetGenres" aria-label="Current program target genres"></div>
 </div>
 
 </div>
@@ -4005,7 +3966,9 @@
 <div class="random-live-dj-name" id="randomLiveDjName">Checking LIVE DJs…</div>
 <div class="dj-match-score main-dj-match-score match-low" id="randomLiveDjMatch" title="RRR genre compatibility score out of 100">🎯 PROGRAM MATCH —</div>
 </div>
-
+<div class="random-live-dj-profile-field random-live-dj-genres-field" hidden="" id="randomLiveDjGenresField">
+<div aria-label="DJ genres" class="random-live-genres" id="randomLiveDjGenres"></div>
+</div>
 <div class="random-live-dj-profile-field" hidden="" id="randomLiveDjBioField">
 <div class="random-live-dj-profile-label">Bio</div>
 <p class="random-live-dj-bio" id="randomLiveDjBio"></p>
@@ -4015,6 +3978,8 @@
 </div>
 </div>
 </div>
+</section>
+
         <section id="liveGenresDetected" class="live-genres-detected" aria-live="polite">
           <div class="live-genres-detected-title">
             <strong>LIVE GENRES DETECTED</strong>
@@ -4022,7 +3987,6 @@
           </div>
           <div id="liveGenresDetectedList" class="live-genres-detected-list"></div>
         </section>
-</section>
 </div><div class="radio-router-player">
 <video aria-hidden="true" autoplay="" class="live-dj-background" crossorigin="anonymous" id="liveDjBackground" muted="" playsinline="" preload="none" webkit-playsinline="">
 </video>
@@ -4049,31 +4013,10 @@
         </small>
 <div class="schedule-table" role="table" aria-label="Radio RRR weekly schedule">
 <div class="schedule-row schedule-header" role="row"><div role="columnheader">DAY</div><div role="columnheader">TIME</div><div role="columnheader">PROGRAM</div><div role="columnheader">GENRES</div></div>
-<div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">00:00 – 04:00</div><div role="cell"><strong>🌙 Late Nights Insomnia</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-cyan">Chill</span><span class="dj-genre-pill genre-neon-electric-purple">Deep House</span><span class="dj-genre-pill genre-neon-cyan">Melodic</span><span class="dj-genre-pill genre-neon-violet">Progressive</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">04:00 – 08:00</div><div role="cell"><strong>🌅 Sunrise Sessions</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-cyan">Chill</span><span class="dj-genre-pill genre-neon-cyan">Downtempo</span><span class="dj-genre-pill genre-neon-cyan">Ambient</span><span class="dj-genre-pill genre-neon-electric-purple">Deep House</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">08:00 – 12:00</div><div role="cell"><strong>🚗 Day Drive</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-yellow">80s</span><span class="dj-genre-pill genre-neon-blue-purple">Synthwave</span><span class="dj-genre-pill genre-neon-aqua">Chill Electro</span><span class="dj-genre-pill genre-neon-magenta">Nu-Disco</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">12:00 – 16:00</div><div role="cell"><strong>⚡ Afternoon Beats</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-hot-pink">House</span><span class="dj-genre-pill genre-neon-electric-purple">Deep House</span><span class="dj-genre-pill genre-neon-violet">Progressive</span><span class="dj-genre-pill genre-neon-hot-pink">Funky House</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">16:00 – 20:00</div><div role="cell"><strong>🔥 Dinner Warm ups</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-hot-pink">House</span><span class="dj-genre-pill genre-neon-hot-pink">Tech House</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-violet">Progressive</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">WEEKDAYS · MON–THU</div><div role="cell">20:00 – 00:00</div><div role="cell"><strong>🌙 Prime Time</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-aqua">Electro</span><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-violet">Progressive</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">FRIDAY · WEEKEND WARM-UP</div><div role="cell">00:00 – 04:00</div><div role="cell"><strong>🔥 After Dark</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-electric-blue">Hard Techno</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-cyan">Psy-Trance</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">FRIDAY · WEEKEND WARM-UP</div><div role="cell">04:00 – 08:00</div><div role="cell"><strong>🌅 Late Mornings</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-violet">Progressive</span><span class="dj-genre-pill genre-neon-cyan">Psy-Trance</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">FRIDAY · WEEKEND WARM-UP</div><div role="cell">08:00 – 12:00</div><div role="cell"><strong>☀️ Morning</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-cyan">Chill</span><span class="dj-genre-pill genre-neon-hot-pink">House</span><span class="dj-genre-pill genre-neon-violet">Progressive</span><span class="dj-genre-pill genre-neon-cyan">Melodic</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">FRIDAY · WEEKEND WARM-UP</div><div role="cell">12:00 – 16:00</div><div role="cell"><strong>⚡ Day Party</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-hot-pink">House</span><span class="dj-genre-pill genre-neon-hot-pink">Tech House</span><span class="dj-genre-pill genre-neon-violet">Progressive</span><span class="dj-genre-pill genre-neon-aqua">Electro</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">FRIDAY · WEEKEND WARM-UP</div><div role="cell">16:00 – 20:00</div><div role="cell"><strong>🔥 Prime Time</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-hot-pink">Tech House</span><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-violet">Progressive</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">FRIDAY · WEEKEND WARM-UP</div><div role="cell">20:00 – 00:00</div><div role="cell"><strong>🌙 Party Night</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-orange">BASSLINE</span><span class="dj-genre-pill genre-neon-orange">Drum &amp; Bass</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">SATURDAY · WEEKEND</div><div role="cell">00:00 – 04:00</div><div role="cell"><strong>🔥 After Dark</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-electric-blue">Hard Techno</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-cyan">Psy-Trance</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">SATURDAY · WEEKEND</div><div role="cell">04:00 – 08:00</div><div role="cell"><strong>🌅 Late Mornings</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-violet">Progressive</span><span class="dj-genre-pill genre-neon-cyan">Psy-Trance</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">SATURDAY · WEEKEND</div><div role="cell">08:00 – 12:00</div><div role="cell"><strong>☀️ Morning</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-cyan">Chill</span><span class="dj-genre-pill genre-neon-hot-pink">House</span><span class="dj-genre-pill genre-neon-violet">Progressive</span><span class="dj-genre-pill genre-neon-cyan">Melodic</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">SATURDAY · WEEKEND</div><div role="cell">12:00 – 16:00</div><div role="cell"><strong>⚡ Day Party</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-hot-pink">House</span><span class="dj-genre-pill genre-neon-hot-pink">Tech House</span><span class="dj-genre-pill genre-neon-violet">Progressive</span><span class="dj-genre-pill genre-neon-aqua">Electro</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">SATURDAY · WEEKEND</div><div role="cell">16:00 – 20:00</div><div role="cell"><strong>🔥 Prime Time</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-hot-pink">Tech House</span><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-violet">Progressive</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">SATURDAY · WEEKEND</div><div role="cell">20:00 – 00:00</div><div role="cell"><strong>🌙 Party Night</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-orange">BASSLINE</span><span class="dj-genre-pill genre-neon-orange">Drum &amp; Bass</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">SUNDAY · SUNDAY SESSIONS</div><div role="cell">00:00 – 04:00</div><div role="cell"><strong>🌙 After Dark</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-aqua">Electro</span><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-cyan">Chill</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">SUNDAY · SUNDAY SESSIONS</div><div role="cell">04:00 – 08:00</div><div role="cell"><strong>🌅 Early Morning</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-cyan">Chill</span><span class="dj-genre-pill genre-neon-cyan">Ambient</span><span class="dj-genre-pill genre-neon-cyan">Downtempo</span><span class="dj-genre-pill genre-neon-electric-purple">Deep House</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">SUNDAY · SUNDAY SESSIONS</div><div role="cell">08:00 – 12:00</div><div role="cell"><strong>🌅 Sunrise Sessions</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-yellow">80s</span><span class="dj-genre-pill genre-neon-blue-purple">Synthwave</span><span class="dj-genre-pill genre-neon-aqua">Chill Electro</span><span class="dj-genre-pill genre-neon-magenta">Nu-Disco</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">SUNDAY · SUNDAY SESSIONS</div><div role="cell">12:00 – 16:00</div><div role="cell"><strong>🚗 Day Drive</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-hot-pink">House</span><span class="dj-genre-pill genre-neon-electric-purple">Deep House</span><span class="dj-genre-pill genre-neon-violet">Progressive</span><span class="dj-genre-pill genre-neon-hot-pink">Funky House</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">SUNDAY · SUNDAY SESSIONS</div><div role="cell">16:00 – 20:00</div><div role="cell"><strong>🔥 Prime Time</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-hot-pink">Tech House</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-violet">Progressive</span><span class="dj-genre-pill genre-neon-cyan">Melodic</span></div></div></div>
-<div class="schedule-row" role="row"><div role="cell">SUNDAY · SUNDAY SESSIONS</div><div role="cell">20:00 – 00:00</div><div role="cell"><strong>🌙 Night Drive</strong></div><div role="cell"><div class="schedule-genres"><span class="dj-genre-pill genre-neon-aqua">Electro</span><span class="dj-genre-pill genre-neon-electric-blue">Techno</span><span class="dj-genre-pill genre-neon-cyan">Trance</span><span class="dj-genre-pill genre-neon-cyan">Chill</span></div></div></div>
+<div id="publicScheduleRows">
+<div class="schedule-row" role="row"><div role="cell">LOADING</div><div role="cell">--:-- – --:--</div><div role="cell"><strong>Loading Radio RRR schedule…</strong></div><div role="cell"><div class="schedule-genres"></div></div></div>
 </div>
+</div></div>
 </div>
 </div>
 <!-- SOCIALS TAB -->
@@ -4713,6 +4656,49 @@
       const liveDjUnmute =
         document.getElementById("liveDjUnmute");
 
+      /* MOBILE LIVE ROUTER ORDER
+         The LIVE GENRES DETECTED panel lives inside the desktop side column.
+         On phones, move that existing panel after the video element in the
+         actual DOM rather than relying on CSS display:contents ordering.
+         Desktop DOM/layout is restored automatically above the breakpoint. */
+      if (randomLiveDj && liveGenresDetected) {
+        const mobileGenreMedia =
+          window.matchMedia("(max-width: 767px)");
+        const originalGenreParent = liveGenresDetected.parentNode;
+
+        function syncMobileGenreLayout() {
+          const player =
+            randomLiveDj.querySelector(".radio-router-player");
+
+          if (!player || !originalGenreParent) return;
+
+          if (mobileGenreMedia.matches) {
+            if (liveGenresDetected.parentNode !== randomLiveDj) {
+              randomLiveDj.insertBefore(
+                liveGenresDetected,
+                player.nextSibling
+              );
+            } else if (liveGenresDetected.previousElementSibling !== player) {
+              randomLiveDj.insertBefore(
+                liveGenresDetected,
+                player.nextSibling
+              );
+            }
+          } else if (liveGenresDetected.parentNode !== originalGenreParent) {
+            originalGenreParent.appendChild(liveGenresDetected);
+          }
+        }
+
+        syncMobileGenreLayout();
+
+        if (mobileGenreMedia.addEventListener) {
+          mobileGenreMedia.addEventListener("change", syncMobileGenreLayout);
+        } else if (mobileGenreMedia.addListener) {
+          mobileGenreMedia.addListener(syncMobileGenreLayout);
+        }
+      }
+
+
       const copyLiveAudioUrl = document.getElementById("copyLiveAudioUrl");
       const liveAudioStreamUrl = document.getElementById("liveAudioStreamUrl");
 
@@ -5149,7 +5135,7 @@
           );
 
           row.innerHTML =
-            '<span class="live-genre-detected-name ' + getGenreNeonClass(name) + '" title="' +
+            '<span class="live-genre-detected-name" title="' +
               escapeAttr(name) + '">' +
               escapeHtml(name) +
             '</span>' +
@@ -5347,85 +5333,37 @@
         }
       }
 
-      function formatLiveGenreAge(detectedAt) {
-        if (!detectedAt) return "";
-        const t = Date.parse(detectedAt);
-        if (!Number.isFinite(t)) return "";
-        const seconds = Math.max(0, Math.round((Date.now() - t) / 1000));
-        if (seconds < 60) return "LIVE · just now";
-        const minutes = Math.round(seconds / 60);
-        if (minutes < 60) return "LIVE · " + minutes + "m ago";
-        const hours = Math.round(minutes / 60);
-        return "LIVE · " + hours + "h ago";
-      }
-
-      function getFreshLiveAIGenres(dj) {
-        if (!dj) return [];
-        const detectedAt = dj.rrr_ai_detected_at || dj.ai_detected_at || "";
-        if (detectedAt) {
-          const age = Date.now() - Date.parse(detectedAt);
-          // Candidate scans can take several minutes to cycle through the
-          // live pool. Do not present an old result as if it were current.
-          if (!Number.isFinite(age) || age > 10 * 60 * 1000) return [];
-        }
-        return getLiveAIGenres(dj).slice(0, 5);
-      }
-
-      async function fetchLiveAIForDJ(dj) {
-        const username = getDJUsername(dj);
-        if (!username) return dj;
-        try {
-          const response = await fetch(
-            getFreshUrl(
-              "https://api.radiorrr.com/api/ai-genre?username=" +
-              encodeURIComponent(username)
-            ),
-            {
-              cache: "no-store",
-              headers: {
-                "Cache-Control": "no-cache",
-                "Pragma": "no-cache"
-              }
-            }
-          );
-          if (response.ok) {
-            const data = await response.json();
-            dj.ai_genres = Array.isArray(data.genres) ? data.genres : [];
-            dj.rrr_ai_detected_at = data.detected_at || "";
-          }
-        } catch (error) {
-          console.warn("Could not load live AI genres for DJ:", username, error);
-        }
-        return dj;
-      }
-
       async function updateLiveDjGenres(dj) {
         if (!randomLiveDjGenres) return;
 
         const requestId = ++learnedDJGenreRequestId;
-        const enriched = await fetchLiveAIForDJ(dj);
+
+        // The CURRENT DJ card shows the learned/rolling DJ profile.
+        // This is deliberately separate from LIVE GENRES DETECTED, which
+        // continues to show the latest live audio classification.
+        let genres = await getLearnedDJGenres(dj);
 
         // Ignore a slower response for an older DJ selection.
         if (requestId !== learnedDJGenreRequestId) return;
 
-        const genres = getFreshLiveAIGenres(enriched);
+        // Only use the stored/profile genre as a fallback if the DJ has never
+        // accumulated a learned AI profile. Do not live-analyse this card.
+        if (!genres.length) {
+          genres = getStoredDJGenres(dj);
+        }
+
         randomLiveDjGenres.innerHTML = "";
 
         if (randomLiveDjGenresField) {
           randomLiveDjGenresField.hidden = !genres.length;
         }
 
-        genres.forEach(genre => {
+        genres.slice(0, 5).forEach(genre => {
           const tag = document.createElement("span");
           tag.className = "random-live-genre " + getGenreNeonClass(genre);
           tag.textContent = genre;
           randomLiveDjGenres.appendChild(tag);
         });
-
-        if (genres.length && randomLiveDjGenresField) {
-          const age = formatLiveGenreAge(enriched.rrr_ai_detected_at);
-          randomLiveDjGenresField.title = age || "Live AI audio detection";
-        }
       }
 
       function updateLiveDjProfile(dj) {
@@ -5533,6 +5471,7 @@
         }
         randomLiveDjName.textContent = "🎧 " + String(name);
         updateMainDJMatchScore(dj);
+        updateLiveDjGenres(dj);
         updateLiveDjProfile(dj);
         randomLiveDj.style.display = "block";
 
@@ -6546,6 +6485,7 @@
                     "LIVE DJ"
                   );
                 updateMainDJMatchScore(relayDj);
+                updateLiveDjGenres(relayDj);
                 updateLiveDjProfile(relayDj);
                 randomLiveDj.style.display = "block";
               }
@@ -6598,44 +6538,13 @@
           );
 
           if (hasRelay) {
+            updateLiveDjGenres(selectedFeaturedDj);
             updateLiveDjProfile(selectedFeaturedDj);
           }
 
-          // Sort the secondary LIVE DJs by the same PROGRAM MATCH score
-          // used by RadioRouter's automatic selector. This makes the first
-          // card under SWITCH TO ANOTHER LIVE DJ the next automatic candidate.
-          const otherLiveDJs = uniqueLiveDJs
-            .filter(dj => getDJIdentity(dj) !== featuredIdentity)
-            .slice()
-            .sort((a, b) => {
-              const aKey = String(getDJUsername(a) || getDJIdentity(a) || "")
-                .replace(/^@/, "")
-                .trim()
-                .toLowerCase();
-              const bKey = String(getDJUsername(b) || getDJIdentity(b) || "")
-                .replace(/^@/, "")
-                .trim()
-                .toLowerCase();
-
-              const aScore = Number(currentLiveMatchScores[aKey]);
-              const bScore = Number(currentLiveMatchScores[bKey]);
-              const aValid = Number.isFinite(aScore);
-              const bValid = Number.isFinite(bScore);
-
-              if (aValid && bValid && bScore !== aScore) {
-                return bScore - aScore;
-              }
-              if (aValid !== bValid) {
-                return aValid ? -1 : 1;
-              }
-
-              // Keep a deterministic secondary order for equal/unavailable scores.
-              return String(a.name || a.username || "").localeCompare(
-                String(b.name || b.username || ""),
-                undefined,
-                { sensitivity: "base" }
-              );
-            });
+          const otherLiveDJs = uniqueLiveDJs.filter(
+            dj => getDJIdentity(dj) !== featuredIdentity
+          );
 
           if (routedDj && featuredIdentity &&
             getDJIdentity(routedDj) !== featuredIdentity &&
@@ -6652,25 +6561,21 @@
               "SWITCH TO ANOTHER LIVE DJ" +
               '</div>';
             liveDjsList.appendChild(otherLiveHeader);
-            // Secondary LIVE cards use the latest stored live-audio AI
-            // result. The candidate scout writes these results sequentially,
-            // so every card can show what that DJ was actually playing when
-            // they were last analysed.
+            // Secondary LIVE cards use the DJ's previously learned genre
+            // profile. Fetch those profiles in parallel, but do not request
+            // or perform any live audio analysis for these DJs.
             const secondaryLiveDJs = await Promise.all(
               otherLiveDJs.map(async dj => {
                 const matchingFavourite = uniqueFavouriteDJs.find(
                   favourite => getDJIdentity(favourite) === getDJIdentity(dj)
                 );
                 const merged = hydrateLiveDJProfile(dj, matchingFavourite);
-                await fetchLiveAIForDJ(merged);
+                merged.rrr_learned_genres = await getLearnedDJGenres(merged);
                 return merged;
               })
             );
 
-            secondaryLiveDJs.forEach((dj, index) => {
-              // Rank is based on the exact PROGRAM MATCH score used by the
-              // Router. Rank #1 is therefore the next candidate for takeover.
-              dj.rrr_live_rank = index + 1;
+            secondaryLiveDJs.forEach(dj => {
               appendDjCard(
                 dj,
                 true,
@@ -6807,10 +6712,13 @@
             : "OFFLINE";
         const actionText = isActuallyLive ? "▶ WATCH LIVE" : "VIEW TIKTOK";
         const actionUrl = isActuallyLive ? liveUrl : profileUrl;
-        // LIVE DJ cards show the latest current-audio AI detection, not the
-        // DJ's long-term profile. The candidate scout refreshes these values
-        // as it works through the live DJ pool.
-        const genres = getFreshLiveAIGenres(dj);
+        // Secondary LIVE DJ cards are rendered from their previously learned
+        // AI genre profile, supplied by loadLiveDJs(). They never use the
+        // current live audio classification. The featured DJ remains the
+        // only DJ whose current audio is actively analysed.
+        const genres = Array.isArray(dj.rrr_learned_genres)
+          ? dj.rrr_learned_genres
+          : getStoredDJGenres(dj);
         const genreHtml = genres.length
           ? genres.slice(0, 5).map(getGenrePillHtml).join("")
           : "";
@@ -6881,9 +6789,8 @@
           const secondaryScoreText = safeScore === null ? "—" : safeScore + "%";
           const secondaryFillWidth = safeScore === null ? 0 : safeScore;
           const secondaryGenres = genres.length
-            ? genres.slice(0, 5).map(getGenrePillHtml).join("")
-            : '<span class="dj-genre-pill genre-neon-electric-blue">ANALYSING LIVE AUDIO</span>';
-          const secondaryGenreAge = formatLiveGenreAge(dj.rrr_ai_detected_at);
+            ? genres.slice(0, 4).map(getGenrePillHtml).join("")
+            : '<span class="dj-genre-pill genre-neon-electric-blue">Live DJ</span>';
           const secondaryPhoto = profilePic
             ? '<img class="dj-secondary-photo" src="' + escapeAttr(String(profilePic)) +
               '" alt="" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\';">' +
@@ -6894,14 +6801,10 @@
             secondaryPhoto +
             '<div class="dj-secondary-overlay"></div>' +
             '<div class="dj-secondary-content">' +
-              '<div style="display:flex;align-items:center;justify-content:space-between;gap:0.45rem;">' +
-                '<div class="dj-secondary-live"><span class="dj-secondary-live-dot"></span>LIVE</div>' +
-                (dj.rrr_live_rank ? '<div style="font-size:0.72rem;font-weight:900;color:#a5b4fc;white-space:nowrap;">#' + dj.rrr_live_rank + ' NEXT</div>' : '') +
-              '</div>' +
+              '<div class="dj-secondary-live"><span class="dj-secondary-live-dot"></span>LIVE</div>' +
               '<div class="dj-secondary-name" title="' + escapeAttr(String(name)) + '">' + escapeHtml(String(name)) + '</div>' +
-              '<div class="dj-secondary-genres" aria-label="Live AI detected genres">' + secondaryGenres + '</div>' +
-              (secondaryGenreAge ? '<div style="font-size:0.62rem;font-weight:800;color:#67e8f9;margin-top:0.12rem;letter-spacing:0.04em;">' + secondaryGenreAge + '</div>' : '') +
-              '<div class="dj-secondary-match-label"><span>PROGRAM MATCH</span><span class="dj-secondary-match-value">' + secondaryScoreText + '</span></div>' +
+              '<div class="dj-secondary-genres" aria-label="Learned DJ genres">' + secondaryGenres + '</div>' +
+              '<div class="dj-secondary-match-label"><span>Program Match</span><span class="dj-secondary-match-value">' + secondaryScoreText + '</span></div>' +
               '<div class="dj-secondary-match-bar" aria-label="Program Match ' + secondaryScoreText + '">' +
                 '<div class="dj-secondary-match-fill ' + secondaryMatchClass + '" style="width:' + secondaryFillWidth + '%"></div>' +
               '</div>' +
@@ -7018,58 +6921,148 @@
         resumeLivePlayback();
       });
 
-      // The public site uses the Radio RRR scheduler API as the source of
-      // truth for the current programme and its target genres. The built-in
-      // schedule below remains a fallback if the API is temporarily unavailable.
+      // The scheduler API is the live source of truth for the public site.
+      // The existing hard-coded arrays below remain only as a temporary
+      // fallback if the API is unavailable.
       let publicScheduleRows = [];
+      let publicScheduleLoaded = false;
 
-      function publicScheduleDayName(dayIndex) {
-        return ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][dayIndex];
+      function publicDayName(dayIndex) {
+        return [
+          "Sunday",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday"
+        ][dayIndex];
       }
 
-      function loadPublicScheduleForTargets() {
-        fetch("https://api.radiorrr.com/api/schedule?_rrr=" + Date.now(), {
-          cache: "no-store",
-          headers: { "Accept": "application/json" }
-        })
-        .then(function(response) {
-          if (!response.ok) throw new Error("Schedule API " + response.status);
-          return response.json();
-        })
-        .then(function(data) {
-          if (!Array.isArray(data.schedule)) throw new Error("Invalid schedule response");
-          publicScheduleRows = data.schedule.map(function(row) {
-            return {
-              day: String(row.day || ""),
-              start: Number(row.start_minutes),
-              end: Number(row.end_minutes),
-              name: String(row.name || ""),
-              genres: Array.isArray(row.genres) ? row.genres.map(String) : []
-            };
-          });
-          updateTitles();
-        })
-        .catch(function(error) {
-          console.warn("[RRR] Public schedule refresh failed:", error);
+      function publicGenreClass(genre) {
+        const g = String(genre || "").toLowerCase();
+        if (g.includes("80s")) return "genre-neon-yellow";
+        if (g.includes("bass") || g.includes("drum")) return "genre-neon-orange";
+        if (g.includes("techno")) return "genre-neon-electric-blue";
+        if (g.includes("trance")) return "genre-neon-cyan";
+        if (g.includes("electro")) return "genre-neon-aqua";
+        if (g.includes("house")) return "genre-neon-hot-pink";
+        if (g.includes("progressive") || g.includes("psy")) return "genre-neon-violet";
+        if (g.includes("synth") || g.includes("retro")) return "genre-neon-blue-purple";
+        if (g.includes("ambient") || g.includes("chill") || g.includes("downtempo")) return "genre-neon-cyan";
+        return "genre-neon-electric-purple";
+      }
+
+      function publicProgramIcon(name, start) {
+        const n = String(name || "").toLowerCase();
+        if (n.includes("sunrise") || n.includes("morning")) return "🌅";
+        if (n.includes("drive")) return "🚗";
+        if (n.includes("afternoon") || n.includes("day party")) return "⚡";
+        if (n.includes("dinner") || n.includes("prime") || n.includes("after dark")) return "🔥";
+        if (n.includes("night") || Number(start) >= 20 || Number(start) < 4) return "🌙";
+        return "🎧";
+      }
+
+      function normalisePublicScheduleRows(rows) {
+        return (rows || []).map(function (row) {
+          return {
+            day: row.day,
+            start: row.start,
+            end: row.end,
+            name: row.name,
+            genres: Array.isArray(row.genres) ? row.genres : []
+          };
         });
+      }
+
+      function publicScheduleSignature(rows) {
+        return JSON.stringify((rows || []).map(function (r) {
+          return [r.start, r.end, r.name, r.genres];
+        }));
+      }
+
+      function renderPublicSchedule(rows) {
+        const container = document.getElementById("publicScheduleRows");
+        if (!container) return;
+
+        const byDay = {};
+        ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].forEach(function (day) {
+          byDay[day] = normalisePublicScheduleRows(rows).filter(function (r) { return r.day === day; });
+        });
+
+        const displayRows = [];
+        const weekdaySame = ["Monday", "Tuesday", "Wednesday", "Thursday"].every(function (day) {
+          return publicScheduleSignature(byDay[day]) === publicScheduleSignature(byDay.Monday);
+        });
+
+        if (weekdaySame && byDay.Monday.length) {
+          byDay.Monday.forEach(function (r) {
+            displayRows.push({ row: r, label: "WEEKDAYS · MON–THU" });
+          });
+        } else {
+          ["Monday", "Tuesday", "Wednesday", "Thursday"].forEach(function (day) {
+            byDay[day].forEach(function (r) {
+              displayRows.push({ row: r, label: day.toUpperCase() });
+            });
+          });
+        }
+
+        byDay.Friday.forEach(function (r) { displayRows.push({ row: r, label: "FRIDAY · WEEKEND WARM-UP" }); });
+        byDay.Saturday.forEach(function (r) { displayRows.push({ row: r, label: "SATURDAY · WEEKEND" }); });
+        byDay.Sunday.forEach(function (r) { displayRows.push({ row: r, label: "SUNDAY · SUNDAY SESSIONS" }); });
+
+        if (!displayRows.length) {
+          container.innerHTML = '<div class="schedule-row" role="row"><div role="cell">—</div><div role="cell">—</div><div role="cell"><strong>Schedule unavailable</strong></div><div role="cell"></div></div>';
+          return;
+        }
+
+        container.innerHTML = displayRows.map(function (item) {
+          const r = item.row;
+          const genres = r.genres.map(function (genre) {
+            const safe = String(genre).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
+            return '<span class="dj-genre-pill ' + publicGenreClass(genre) + '">' + safe + '</span>';
+          }).join("");
+          const safeName = String(r.name || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
+          return '<div class="schedule-row" role="row"><div role="cell">' + item.label + '</div><div role="cell">' + r.start + ' – ' + r.end + '</div><div role="cell"><strong>' + publicProgramIcon(r.name, r.start) + ' ' + safeName + '</strong></div><div role="cell"><div class="schedule-genres">' + genres + '</div></div></div>';
+        }).join("");
+      }
+
+      async function loadPublicSchedule() {
+        try {
+          const response = await fetch("https://api.radiorrr.com/api/schedule?public_site=" + Date.now(), {
+            cache: "no-store",
+            headers: { "Accept": "application/json" }
+          });
+          if (!response.ok) throw new Error("Schedule API returned " + response.status);
+          const data = await response.json();
+          if (!Array.isArray(data.schedule) || !data.schedule.length) throw new Error("Schedule API returned no schedule");
+
+          publicScheduleRows = normalisePublicScheduleRows(data.schedule);
+          publicScheduleLoaded = true;
+          renderPublicSchedule(publicScheduleRows);
+          updateTitles();
+        } catch (error) {
+          console.warn("Radio RRR public schedule API unavailable; using fallback schedule:", error);
+          if (!publicScheduleLoaded) renderPublicSchedule([]);
+          updateTitles();
+        }
       }
 
       function getCurrentScheduleBlock(hour, dayIndex) {
 
         if (publicScheduleRows.length) {
-          const dayName = publicScheduleDayName(dayIndex);
-          const rows = publicScheduleRows.filter(function(row) {
-            return row.day.toLowerCase() === dayName.toLowerCase();
+          const dayName = publicDayName(dayIndex);
+          const rowsForDay = publicScheduleRows.filter(function (row) {
+            return row.day === dayName;
           });
-          const currentMinutes = hour * 60;
-          const current = rows.find(function(row) {
-            const end = row.end === 0 ? 1440 : row.end;
-            return currentMinutes >= row.start && currentMinutes < end;
+          const current = rowsForDay.find(function (row) {
+            return hour >= Number(row.start.split(":")[0]) + Number(row.start.split(":")[1]) / 60 &&
+                   hour < (row.end === "00:00" ? 24 : Number(row.end.split(":")[0]) + Number(row.end.split(":")[1]) / 60);
           });
           if (current) {
             return {
-              start: current.start / 60,
-              end: current.end === 0 ? 24 : current.end / 60,
+              start: Number(current.start.split(":")[0]) + Number(current.start.split(":")[1]) / 60,
+              end: current.end === "00:00" ? 24 : Number(current.end.split(":")[0]) + Number(current.end.split(":")[1]) / 60,
               name: current.name,
               genres: current.genres.join(" · ")
             };
@@ -7314,15 +7307,13 @@
       }
 
       updateTitles();
-      loadPublicScheduleForTargets();
+      loadPublicSchedule();
 
+      // Keep the public schedule and current-program display in sync with
+      // the Radio RRR scheduler without requiring a GitHub deployment.
+      setInterval(loadPublicSchedule, 60 * 1000);
       setInterval(
         updateTitles,
-        60 * 1000
-      );
-
-      setInterval(
-        loadPublicScheduleForTargets,
         60 * 1000
       );
 
