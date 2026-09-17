@@ -582,12 +582,8 @@ window.formspree =
 /*
  * RadioRRR SECONDARY LIVE DJ ORDER
  *
- * Keep ONLY the secondary LIVE DJ cards ordered by their current Program Match
- * percentage. The first card is therefore the highest-scoring live DJ and
- * the next candidate for the current programme.
- *
- * Important: only direct children of #liveDjsList are sorted. This prevents
- * the Discover DJs panel and its cards/search controls from being touched.
+ * Keep the secondary LIVE DJ cards ordered by Program Match percentage.
+ * The Discover DJs panel is deliberately kept AFTER all secondary LIVE cards.
  */
 (function () {
   "use strict";
@@ -604,44 +600,32 @@ window.formspree =
     const list = document.getElementById("liveDjsList");
     if (!list) return;
 
-    // CRITICAL: only sort direct children. Do not touch cards nested inside
-    // the Discover DJs section, which lives in the same parent container.
-    const cards = Array.from(list.children).filter(function (child) {
+    const children = Array.from(list.children);
+
+    // Only direct secondary LIVE DJ cards participate in the sort.
+    const liveCards = children.filter(function (child) {
       return child.matches(".dj-card.dj-live-switch-card");
     });
 
-    if (cards.length < 2) return;
+    if (liveCards.length < 2) return;
 
-    const sorted = cards.slice().sort(function (a, b) {
+    liveCards.sort(function (a, b) {
       const scoreDiff = getMatchScore(b) - getMatchScore(a);
       if (scoreDiff !== 0) return scoreDiff;
 
-      const aName =
-        (a.querySelector(".dj-secondary-name") || {}).textContent || "";
-      const bName =
-        (b.querySelector(".dj-secondary-name") || {}).textContent || "";
-
+      const aName = (a.querySelector(".dj-secondary-name") || {}).textContent || "";
+      const bName = (b.querySelector(".dj-secondary-name") || {}).textContent || "";
       return aName.trim().localeCompare(bName.trim());
     });
 
-    let changed = false;
-    for (let i = 0; i < sorted.length; i++) {
-      if (list.children[i] !== sorted[i]) {
-        changed = true;
-        break;
-      }
-    }
-
-    if (!changed) return;
-
-    // Insert before the first non-live direct child (normally Discover DJs)
-    // so the discovery panel remains exactly where script.js placed it.
-    const firstNonLiveChild = Array.from(list.children).find(function (child) {
+    // Keep every non-LIVE child intact, but place it after the LIVE cards.
+    // This specifically keeps Discover DJs below the LIVE DJ section.
+    const nonLiveChildren = children.filter(function (child) {
       return !child.matches(".dj-card.dj-live-switch-card");
-    }) || null;
+    });
 
-    sorted.forEach(function (card) {
-      list.insertBefore(card, firstNonLiveChild);
+    liveCards.concat(nonLiveChildren).forEach(function (child) {
+      list.appendChild(child);
     });
   }
 
@@ -649,8 +633,6 @@ window.formspree =
     const list = document.getElementById("liveDjsList");
     if (!list) return;
 
-    // Watch only direct child additions/removals. Do not observe the
-    // Discover panel's internal DOM.
     const observer = new MutationObserver(function () {
       sortSecondaryLiveDJs();
     });
@@ -662,24 +644,19 @@ window.formspree =
 
     sortSecondaryLiveDJs();
 
-    // Catch Program Match score refreshes without touching nested Discover
-    // content or the existing DJ selection logic.
+    // Re-sort when Program Match percentages refresh.
     window.setInterval(sortSecondaryLiveDJs, 2000);
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener(
-      "DOMContentLoaded",
-      startSecondaryDjSorter,
-      { once: true }
-    );
+    document.addEventListener("DOMContentLoaded", startSecondaryDjSorter, { once: true });
   } else {
     startSecondaryDjSorter();
   }
 })();
 </script>
 
-<script src="script.js?v=20260917.3"></script>
+<script src="script.js?v=20260917.4"></script>
 
 <script>
 /*
