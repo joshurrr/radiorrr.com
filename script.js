@@ -2377,6 +2377,33 @@ document.addEventListener("DOMContentLoaded", function () {
               })
             );
 
+            // Queue secondary LIVE DJs by PROGRAM MATCH score.
+            // Highest score renders first, ready to take over next.
+            secondaryLiveDJs.sort((a, b) => {
+              const aKey = getDJUsername(a).toLowerCase();
+              const bKey = getDJUsername(b).toLowerCase();
+
+              const aScore = Number(currentLiveMatchScores[aKey]);
+              const bScore = Number(currentLiveMatchScores[bKey]);
+
+              const safeAScore = Number.isFinite(aScore) ? aScore : -1;
+              const safeBScore = Number.isFinite(bScore) ? bScore : -1;
+
+              if (safeBScore !== safeAScore) {
+                return safeBScore - safeAScore;
+              }
+
+              const aName = String(
+                a.name || a.display_name || getDJUsername(a) || ""
+              );
+
+              const bName = String(
+                b.name || b.display_name || getDJUsername(b) || ""
+              );
+
+              return aName.localeCompare(bName);
+            });
+
             secondaryLiveDJs.forEach(dj => {
               appendDjCard(
                 dj,
