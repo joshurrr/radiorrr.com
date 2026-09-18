@@ -3040,6 +3040,230 @@ document.addEventListener("DOMContentLoaded", function () {
         60 * 1000
       );
 
+      /* RRR TOOLS — LIVE STATUS AND DIAGNOSTICS */
+      const refreshTools = document.getElementById("refreshTools");
+      const openScheduleTab = document.getElementById("openScheduleTab");
+      let toolsRefreshInProgress = false;
+
+      function setToolHealth(elementId, healthy, healthyText, unhealthyText) {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+        el.classList.remove("pending", "healthy", "unhealthy");
+        el.classList.add(healthy ? "healthy" : "unhealthy");
+        el.textContent = healthy ? healthyText : unhealthyText;
+      }
+
+      function renderToolPills(elementId, values) {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+        el.innerHTML = (Array.isArray(values) ? values : [])
+          .filter(Boolean)
+          .map(function (value) {
+            return '<span class="tool-inline-pill">' + escapeHtml(String(value)) + '</span>';
+          })
+          .join("");
+      }
+
+      function getToolsScheduleState() {
+        const now = new Date();
+        const dayIndex = now.getDay();
+        const dayName = publicDayName(dayIndex);
+        const currentMinute = now.getHours() * 60 + now.getMinutes();
+        const rowsToday = publicScheduleRows
+          .filter(function (row) { return row.day === dayName; })
+          .sort(function (a, b) {
+            return (Number(a.start.split(":")[0]) * 60 + Number(a.start.split(":")[1])) -
+                   (Number(b.start.split(":")[0]) * 60 + Number(b.start.split(":")[1]));
+          });
+
+        let current = null;
+        let next = null;
+
+        rowsToday.forEach(function (row) {
+          const start = Number(row.start.split(":")[0]) * 60 + Number(row.start.split(":")[1]);
+          let end = Number(row.end.split(":")[0]) * 60 + Number(row.end.split(":")[1]);
+          if (end === 0) end = 1440;
+          if (!current && currentMinute >= start && currentMinute < end) current = row;
+          if (!next && start > currentMinute) next = row;
+        });
+
+        if (!next) {
+          for (let offset = 1; offset <= 7 && !next; offset++) {
+            const targetDayIndex = (dayIndex + offset) % 7;
+            const targetDayName = publicDayName(targetDayIndex);
+            const rows = publicScheduleRows
+              .filter(function (row) { return row.day === targetDayName; })
+              .sort(function (a, b) { return a.start.localeCompare(b.start); });
+            if (rows.length) next = rows[0];
+          }
+        }
+
+        return { current: current, next: next };
+      }
+
+      async function copyToolValue(button) {
+        const value = button.getAttribute("data-copy-value") || "";
+        if (!value) return;
+        try {
+          await navigator.clipboard.writeText(value);
+        } catch (error) {
+          const input = document.createElement("textarea");
+          input.value = value;
+          document.body.appendChild(input);
+          input.select();
+          document.execCommand("copy");
+          input.remove();
+        }
+        const original = button.textContent;
+        button.textContent = "Copied!";
+        window.setTimeout(function () { button.textContent = original; }, 1200);
+      }
+
+      document.querySelectorAll(".tool-copy-button[data-copy-value]").forEach(function (button) {
+        button.addEventListener("click", function () { copyToolValue(button); });
+      });
+
+      if (openScheduleTab) {
+        openScheduleTab.addEventListener("click", function () {
+          switchTab("events-section");
+        });
+      }
+
+      async function refreshToolsPanel() {
+        if (toolsRefreshInProgress) return;
+        toolsRefreshInProgress = true;
+        if (refreshTools) refreshTools.disabled = true;
+
+        try {
+          const responses = await Promise.allSettled([
+            fetch(getFreshUrl("https://api.radiorrr.com/api/status"), { cache: "no-store" }),
+            fetch(getFreshUrl("https://api.radiorrr.com/api/live"), { cache: "no-store" }),
+            fetch(getFreshUrl("https://api.radiorrr.com/api/genre-match"), { cache: "no-store" })
+          ]);
+
+          let statusData = null;
+          let liveData = null;
+          let matchData = null;
+
+          if (responses[0].status === "fulfilled" && responses[0].value.ok) {
+            statusData = await responses[0].value.json();
+          }
+          if (responses[1].status === "fulfilled" && responses[1].value.ok) {
+            liveData = await responses[1].value.json();
+          }
+          if (responses[2].status === "fulfilled" && responses[2].value.ok) {
+            matchData = await responses[2].value.json();
+          }
+
+          setToolHealth("toolApiHealth", !!statusData, "Healthy", "Unavailable");
+
+          if (statusData) {
+            setToolHealth("toolVideoHealth", !!(statusData.video && statusData.video.healthy), "Healthy", "Offline");
+            setToolHealth("toolAudioHealth", !!(statusData.audio && statusData.audio.healthy), "Healthy", "Offline");
+
+            const listenerEl = document.getElementById("toolListenerCount");
+            if (listenerEl) listenerEl.textContent = String(statusData.audio && Number.isFinite(Number(statusData.audio.listeners)) ? Number(statusData.audio.listeners) : 0);
+
+            const relayEl = document.getElementById("toolRelayDj");
+            if (relayEl) relayEl.textContent = statusData.relay_username ? "@" + String(statusData.relay_username).replace(/^@/, "") : "—";
+          } else {
+            setToolHealth("toolVideoHealth", false, "Healthy", "Unavailable");
+            setToolHealth("toolAudioHealth", false, "Healthy", "Unavailable");
+          }
+
+          let relayUsername = statusData && statusData.relay_username ? String(statusData.relay_username).replace(/^@/, "") : "";
+
+          if (liveData) {
+            const live = Array.isArray(liveData.live) ? liveData.live : [];
+            const favourites = Array.isArray(liveData.favourites) ? liveData.favourites : [];
+            const liveCountEl = document.getElementById("toolLiveDjCount");
+            const favouriteCountEl = document.getElementById("toolFavouriteDjCount");
+            if (liveCountEl) liveCountEl.textContent = String(live.length);
+            if (favouriteCountEl) favouriteCountEl.textContent = String(favourites.length);
+
+            if (!relayUsername && liveData.relay) relayUsername = getDJUsername(liveData.relay);
+          }
+
+          const scheduleState = getToolsScheduleState();
+          const currentProgramEl = document.getElementById("toolCurrentProgram");
+          if (currentProgramEl) {
+            currentProgramEl.textContent = scheduleState.current
+              ? scheduleState.current.day + " · " + scheduleState.current.start + "–" + scheduleState.current.end + " · " + scheduleState.current.name
+              : "Current program unavailable";
+          }
+          renderToolPills("toolProgramGenres", scheduleState.current ? scheduleState.current.genres : []);
+
+          const nextProgramEl = document.getElementById("toolNextProgram");
+          if (nextProgramEl) {
+            nextProgramEl.textContent = scheduleState.next
+              ? "Next: " + scheduleState.next.day + " " + scheduleState.next.start + " · " + scheduleState.next.name
+              : "Next program unavailable";
+          }
+
+          const aiStatusEl = document.getElementById("toolAiGenreStatus");
+          if (relayUsername) {
+            try {
+              const aiResponse = await fetch(
+                getFreshUrl("https://api.radiorrr.com/api/ai-genre?username=" + encodeURIComponent(relayUsername)),
+                { cache: "no-store" }
+              );
+              if (aiResponse.ok) {
+                const aiData = await aiResponse.json();
+                const genres = Array.isArray(aiData.genres) ? aiData.genres.slice(0, 5) : [];
+                renderToolPills("toolAiGenres", genres.map(function (item) {
+                  const name = String(item && item.genre || "").split("---").pop();
+                  let confidence = Number(item && item.confidence);
+                  if (confidence > 0 && confidence <= 1) confidence *= 100;
+                  return name ? name + (Number.isFinite(confidence) ? " " + Math.round(confidence) + "%" : "") : "";
+                }));
+                if (aiStatusEl) aiStatusEl.textContent = "Latest live-audio detection for @" + relayUsername;
+              } else {
+                renderToolPills("toolAiGenres", []);
+                if (aiStatusEl) aiStatusEl.textContent = "No AI genre result available for @" + relayUsername;
+              }
+            } catch (error) {
+              renderToolPills("toolAiGenres", []);
+              if (aiStatusEl) aiStatusEl.textContent = "AI genre endpoint unavailable";
+            }
+          } else {
+            renderToolPills("toolAiGenres", []);
+            if (aiStatusEl) aiStatusEl.textContent = "No current relay";
+          }
+
+          const matchStatusEl = document.getElementById("toolGenreMatchStatus");
+          const matchCurrentEl = document.getElementById("toolMatchCurrent");
+          const matchBestEl = document.getElementById("toolMatchBest");
+
+          if (matchData && Array.isArray(matchData.ranked)) {
+            const ranked = matchData.ranked;
+            const best = ranked.length ? ranked[0] : null;
+            const current = ranked.find(function (item) {
+              return relayUsername && String(item.username || "").replace(/^@/, "").toLowerCase() === relayUsername.toLowerCase();
+            });
+            if (matchCurrentEl) matchCurrentEl.textContent = current ? "@" + String(current.username).replace(/^@/, "") + " · " + Number(current.score).toFixed(1) : (relayUsername ? "@" + relayUsername : "—");
+            if (matchBestEl) matchBestEl.textContent = best ? "@" + String(best.username).replace(/^@/, "") + " · " + Number(best.score).toFixed(1) : "—";
+            if (matchStatusEl) matchStatusEl.textContent = "Stage 3 ranking is available";
+          } else {
+            if (matchCurrentEl) matchCurrentEl.textContent = relayUsername ? "@" + relayUsername : "—";
+            if (matchBestEl) matchBestEl.textContent = "—";
+            if (matchStatusEl) matchStatusEl.textContent = "Stage 3 diagnostics endpoint unavailable";
+          }
+
+          const lastRefreshEl = document.getElementById("toolLastRefresh");
+          if (lastRefreshEl) lastRefreshEl.textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+        } catch (error) {
+          console.warn("Radio RRR tools refresh failed:", error);
+          setToolHealth("toolApiHealth", false, "Healthy", "Unavailable");
+        } finally {
+          toolsRefreshInProgress = false;
+          if (refreshTools) refreshTools.disabled = false;
+        }
+      }
+
+      if (refreshTools) refreshTools.addEventListener("click", refreshToolsPanel);
+      refreshToolsPanel();
+      setInterval(refreshToolsPanel, 30 * 1000);
+
       function setStatus(msg) {
 
         if (!statusEl) return;

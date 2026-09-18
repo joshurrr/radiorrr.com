@@ -2250,6 +2250,173 @@
       font-size: 0.85rem;
     }
 
+    .tools-header {
+      justify-content: space-between;
+    }
+
+    .tools-refresh-button {
+      flex: 0 0 auto;
+    }
+
+    .tools-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+
+    .tool-row {
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr);
+      gap: 0.8rem;
+      align-items: start;
+      padding: 0.9rem 1rem;
+      border-radius: 14px;
+      border: 1px solid rgba(129,140,248,0.34);
+      background: rgba(7,10,25,0.78);
+      box-shadow: 0 0 10px rgba(67,56,202,0.08);
+    }
+
+    .tool-row-icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 11px;
+      background: rgba(34,211,238,0.08);
+      border: 1px solid rgba(34,211,238,0.22);
+      font-size: 1.1rem;
+    }
+
+    .tool-row-main {
+      min-width: 0;
+    }
+
+    .tool-row-title {
+      color: #ffffff;
+      font-size: 0.96rem;
+      font-weight: 850;
+      margin-bottom: 0.2rem;
+    }
+
+    .tool-row-description {
+      color: #c7c7ff;
+      font-size: 0.8rem;
+      line-height: 1.4;
+    }
+
+    .tool-status-grid,
+    .tool-diagnostic-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.45rem 1rem;
+      margin-top: 0.65rem;
+    }
+
+    .tool-status-grid > div,
+    .tool-diagnostic-grid > div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.7rem;
+      min-width: 0;
+      padding: 0.45rem 0.55rem;
+      border-radius: 9px;
+      background: rgba(15,23,42,0.68);
+      border: 1px solid rgba(129,140,248,0.18);
+    }
+
+    .tool-status-label {
+      color: #a5b4fc;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .tool-status-grid strong,
+    .tool-diagnostic-grid strong {
+      color: #ffffff;
+      font-size: 0.76rem;
+      text-align: right;
+      overflow-wrap: anywhere;
+    }
+
+    .tool-health {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem !important;
+      font-weight: 800 !important;
+      white-space: nowrap;
+    }
+
+    .tool-health::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #94a3b8;
+      box-shadow: 0 0 6px rgba(148,163,184,0.5);
+    }
+
+    .tool-health.healthy { color: #86efac; }
+    .tool-health.healthy::before { background: #4ade80; box-shadow: 0 0 7px rgba(74,222,128,0.85); }
+    .tool-health.unhealthy { color: #fca5a5; }
+    .tool-health.unhealthy::before { background: #f87171; box-shadow: 0 0 7px rgba(248,113,113,0.85); }
+    .tool-health.pending { color: #cbd5e1; }
+
+    .tool-inline-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      margin-top: 0.55rem;
+    }
+
+    .tool-inline-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.2rem 0.48rem;
+      border-radius: 999px;
+      border: 1px solid rgba(34,211,238,0.4);
+      background: rgba(8,32,45,0.54);
+      color: #dffaff;
+      font-size: 0.67rem;
+      font-weight: 750;
+    }
+
+    .tools-actions.compact {
+      margin: 0.7rem 0 0;
+    }
+
+    .tool-small-button {
+      margin-top: 0.65rem;
+      padding: 0.4rem 0.72rem;
+      font-size: 0.75rem;
+    }
+
+    .tool-stream-url-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.55rem;
+      align-items: center;
+      margin-top: 0.55rem;
+    }
+
+    .tool-stream-url-row code {
+      min-width: 0;
+      overflow-x: auto;
+      padding: 0.5rem 0.6rem;
+      border-radius: 8px;
+      border: 1px solid rgba(129,140,248,0.24);
+      background: rgba(0,0,0,0.34);
+      color: #e0e7ff;
+      font-size: 0.72rem;
+      white-space: nowrap;
+    }
+
+    .tool-copy-button {
+      padding: 0.42rem 0.7rem;
+      font-size: 0.72rem;
+    }
+
     .tools-actions {
       display: flex;
       gap: 0.7rem;
@@ -2441,6 +2608,30 @@
     @media (max-width: 640px) {
       .tool-input-row {
         grid-template-columns: 1fr;
+      }
+
+      .tool-row {
+        grid-template-columns: 34px minmax(0, 1fr);
+        padding: 0.8rem;
+      }
+
+      .tool-row-icon {
+        width: 34px;
+        height: 34px;
+        font-size: 0.95rem;
+      }
+
+      .tool-status-grid,
+      .tool-diagnostic-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tool-stream-url-row {
+        grid-template-columns: 1fr;
+      }
+
+      .tool-copy-button {
+        width: 100%;
       }
     }
 
