@@ -4041,6 +4041,20 @@
     }
 
 
+/* Fit DJ columns to the actual container width, sharing any spare space.
+   Keep empty slots on partial rows so individual cards do not grow too wide. */
+#liveDjsList,
+#rrrDjDiscovery .dj-discovery-results {
+  grid-template-columns: repeat(auto-fill, minmax(min(176px, 100%), 1fr)) !important;
+}
+
+#liveDjsList .dj-card.dj-live-switch-card,
+#rrrDjDiscovery .dj-discovery-card {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+}
+
 /* RRR MOBILE LIVE VIDEO — use the full card width on phones.
    The 9:16 player matches the native portrait TikTok feed, so the video
    can fill the available width without side bars or distortion. Desktop
