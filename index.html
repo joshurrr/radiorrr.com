@@ -497,7 +497,8 @@ window.formspree =
 /* Secondary LIVE DJ cards: presentation only. The main/current DJ card is untouched. */
 #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-list {
   display: flex !important;
-  flex-direction: column !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
   align-items: flex-start !important;
   justify-content: flex-start !important;
   gap: 0.16rem !important;
@@ -508,6 +509,7 @@ window.formspree =
 
 #liveDjsList .dj-card.dj-live-switch-card .rrr-live-genre-bubble {
   display: inline-flex !important;
+  flex: 0 0 auto !important;
   align-items: center !important;
   align-self: flex-start !important;
   width: fit-content !important;
