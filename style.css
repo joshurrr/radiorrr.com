@@ -4297,6 +4297,20 @@
   flex-direction: column;
 }
 
+/* Keep the genre panel at the lower left, above the spectrum. */
+#randomLiveDj .current-dj-card > .random-live-dj-row {
+  margin-bottom: auto;
+  flex-shrink: 0;
+}
+
+#randomLiveDj .current-dj-card > .live-genres-detected {
+  width: min(100%, 32rem);
+  align-self: flex-start;
+  flex-shrink: 0;
+  margin: 0.75rem 0 0;
+  padding: 0.65rem 0.8rem;
+}
+
 #liveDjSpectrum {
   display: block;
   position: relative;
@@ -4305,7 +4319,7 @@
   min-width: 0;
   height: 72px;
   flex: 0 0 72px;
-  margin-top: auto;
+  margin-top: 0;
   padding-top: 12px;
   box-sizing: content-box;
   opacity: 0.8;
