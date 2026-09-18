@@ -2708,13 +2708,22 @@ document.addEventListener("DOMContentLoaded", function () {
       document.addEventListener("visibilitychange", function () {
         if (!document.hidden) {
           loadLiveDJs();
-          resumeLivePlayback();
+
+          // Returning to the RadioRRR tab must NOT change the user's
+          // existing mute/unmute state. Only resume playback if necessary.
+          if (liveDjVideo && liveDjVideo.paused) {
+            liveDjVideo.play().catch(() => {});
+          }
         }
       });
 
       window.addEventListener("pageshow", function () {
         loadLiveDJs();
-        resumeLivePlayback();
+
+        // pageshow must not re-apply a potentially stale mute state.
+        if (liveDjVideo && liveDjVideo.paused) {
+          liveDjVideo.play().catch(() => {});
+        }
       });
 
       // The scheduler API is the live source of truth for the public site.
