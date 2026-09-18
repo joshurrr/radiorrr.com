@@ -3536,7 +3536,7 @@
         display: flex;
         flex-direction: column;
         align-items: stretch;
-        align-self: start;
+        align-self: stretch;
         justify-content: flex-start;
         gap: 0.75rem;
         min-width: 0;
@@ -3557,6 +3557,7 @@
       }
 
       #randomLiveDj .live-router-side .current-dj-card {
+        flex: 1 0 auto;
         padding: 0.75rem 0.8rem;
       }
 
@@ -4288,4 +4289,26 @@
 
 #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-match-fill {
   height: 100% !important;
+}
+
+/* The spectrum occupies only the spare space below the existing DJ details. */
+#randomLiveDj .current-dj-card {
+  display: flex;
+  flex-direction: column;
+}
+
+#liveDjSpectrum {
+  display: block;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-width: 0;
+  height: 72px;
+  flex: 0 0 72px;
+  margin-top: auto;
+  padding-top: 12px;
+  box-sizing: content-box;
+  opacity: 0.8;
+  visibility: hidden;
+  pointer-events: none;
 }

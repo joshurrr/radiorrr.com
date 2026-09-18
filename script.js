@@ -3525,3 +3525,109 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
     });
+
+// Live DJ spectrum: observe the existing player; never set its playback state.
+document.addEventListener("DOMContentLoaded", function () {
+  const video = document.getElementById("liveDjVideo");
+  const canvas = document.getElementById("liveDjSpectrum");
+  const unmute = document.getElementById("liveDjUnmute");
+  const AC = window.AudioContext || window.webkitAudioContext;
+  const paint = canvas && canvas.getContext("2d");
+  if (!video || !paint || !AC) return;
+
+  let context, source, analyser, bins;
+  let attempted = false;
+  let busy = false;
+  let failed = false;
+  let visible = false;
+  let timer = 0;
+  const colors = paint.createLinearGradient(0, 0, canvas.width, 0);
+  colors.addColorStop(0, "#22d3ee");
+  colors.addColorStop(0.5, "#a855f7");
+  colors.addColorStop(1, "#ff0066");
+
+  function stop() {
+    clearTimeout(timer);
+    timer = 0;
+    canvas.style.visibility = "hidden";
+    paint.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function draw() {
+    stop();
+    if (failed || !analyser || !visible || document.hidden ||
+        context.state !== "running" || video.paused || video.ended ||
+        video.error || video.readyState < 3) return;
+    try {
+      analyser.getByteFrequencyData(bins);
+      paint.fillStyle = colors;
+      // Fixed-size canvas and 32 logarithmic bands; no per-frame allocation.
+      for (let bar = 0; bar < 32; bar++) {
+        const start = Math.floor(Math.pow(bins.length, bar / 32));
+        const end = Math.min(bins.length,
+          Math.max(start + 1, Math.floor(Math.pow(bins.length, (bar + 1) / 32))));
+        let level = 0;
+        for (let bin = start; bin < end; bin++) level = Math.max(level, bins[bin]);
+        const height = level / 255 * (canvas.height - 4);
+        paint.fillRect(bar * 20 + 3, canvas.height - height, 14, height);
+      }
+      canvas.style.visibility = "visible";
+      timer = window.setTimeout(draw, 40);
+    } catch (_) {
+      // Analysis failure must not disconnect the independent audible path.
+      failed = true;
+      stop();
+    }
+  }
+
+  async function activate(event) {
+    if (!event.isTrusted || busy || (failed && !source)) return;
+    busy = true;
+    try {
+      if (!context) {
+        context = new AC();
+        context.addEventListener("statechange", draw);
+      }
+      // Do not reroute native audio until a playback gesture unlocks Web Audio.
+      if (context.state !== "running") await context.resume();
+      if (context.state !== "running") return;
+      if (!attempted) {
+        analyser = context.createAnalyser();
+        analyser.fftSize = 256;
+        analyser.smoothingTimeConstant = 0.8;
+        bins = new Uint8Array(analyser.frequencyBinCount);
+        attempted = true;
+        source = context.createMediaElementSource(video);
+        // One unchanged-gain audible path; the analyser is a separate leaf.
+        source.connect(context.destination);
+        source.connect(analyser);
+      }
+      draw();
+    } catch (_) {
+      // A blocked resume remains retryable on the next playback gesture.
+      if (attempted) failed = true;
+      stop();
+    } finally {
+      busy = false;
+    }
+  }
+
+  if (unmute) unmute.addEventListener("click", activate);
+  video.addEventListener("click", activate);
+  video.addEventListener("keydown", function (event) {
+    if (event.key === " " || event.key === "Enter") activate(event);
+  });
+  ["playing", "canplay"].forEach(type => video.addEventListener(type, draw));
+  ["pause", "ended", "waiting", "emptied", "error"].forEach(type =>
+    video.addEventListener(type, stop));
+  document.addEventListener("visibilitychange", draw);
+  // Hiding the card stops drawing, never suspends the audible context.
+  if (window.IntersectionObserver) {
+    new IntersectionObserver(function (entries) {
+      visible = entries[0].isIntersecting;
+      draw();
+    }).observe(canvas);
+  } else {
+    visible = true;
+  }
+});
