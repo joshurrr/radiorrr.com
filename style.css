@@ -1110,6 +1110,70 @@
       background: #000;
     }
 
+    /* Decorative haze stays behind the unchanged video and its native controls. */
+    .radio-router-player .live-dj-ambient {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+      background: #020308;
+      display: none;
+    }
+
+    .radio-router-player.live-active .live-dj-ambient {
+      display: block;
+    }
+
+    .live-dj-ambient span {
+      position: absolute;
+      width: 85%;
+      height: 140%;
+      left: -42%;
+      top: -28%;
+      background: radial-gradient(ellipse, rgba(0, 210, 235, 0.19), rgba(0, 110, 180, 0.06) 38%, transparent 70%);
+      animation: rrr-ambient-drift 29s ease-in-out infinite alternate;
+    }
+
+    .live-dj-ambient span:nth-child(2) {
+      width: 95%;
+      height: 165%;
+      left: 55%;
+      top: -15%;
+      background: radial-gradient(ellipse, rgba(235, 20, 145, 0.17), rgba(115, 20, 160, 0.05) 42%, transparent 72%);
+      animation-duration: 37s;
+      animation-delay: -17s;
+      animation-direction: alternate-reverse;
+    }
+
+    .live-dj-ambient span:nth-child(3) {
+      width: 145%;
+      height: 110%;
+      left: -18%;
+      top: 35%;
+      background: radial-gradient(ellipse at 22% 65%, rgba(35, 55, 190, 0.12), transparent 55%),
+                  radial-gradient(ellipse at 90% 35%, rgba(115, 50, 210, 0.09), transparent 48%);
+      animation-duration: 43s;
+      animation-delay: -26s;
+    }
+
+    /* Dim the center while leaving the outer unused areas softly coloured. */
+    .live-dj-ambient::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(2, 3, 8, 0.8) 36%, rgba(2, 3, 8, 0.8) 64%, transparent);
+    }
+
+    @keyframes rrr-ambient-drift {
+      from { transform: translate(-3%, -2%) scale(1); }
+      to { transform: translate(4%, 3%) scale(1.06); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .live-dj-ambient span { animation: none; }
+    }
+
     /* Keeps the actual DJ feed sharp and at its original portrait aspect ratio. */
     .radio-router-player #liveDjVideo {
       position: relative;
