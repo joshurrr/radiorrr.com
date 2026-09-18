@@ -3252,720 +3252,137 @@ document.addEventListener("DOMContentLoaded", function () {
 
       }
 
+      // Capture is a passive tap: native station playback never enters this graph.
+      let capturedAudio = null;
+      let capturedSource = null;
+      let spectrumFrame = 0;
+      let spectrumVisible = false;
+      const reducedSpectrumMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const barLevels = new Float32Array(64);
+
       function initAudioAnalyser() {
-
-        /*
-         * IMPORTANT: Do NOT route the station <audio> element through a
-         * Web Audio MediaElementSource.  Doing that makes the AudioContext
-         * part of the radio playback path; if the browser suspends that
-         * context while the user changes the site's tabs, the stream can
-         * remain "playing" but become completely silent.
-         *
-         * Radio RRR playback is therefore deliberately native HTMLMedia
-         * playback.  The visualizer continues with its own animation below.
-         */
-        analyserReady = false;
-        analyser = null;
-        dataArray = null;
-
-        if (audio) {
-          audio.muted = false;
-          audio.volume = 1;
+        if (!audio || !ctx) return;
+        const capture = audio.captureStream || audio.mozCaptureStream;
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!capture || !AC) return;
+        try {
+          if (!audioCtx) {
+            audioCtx = new AC();
+            analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 2048;
+            analyser.smoothingTimeConstant = 0.86;
+            analyser.minDecibels = -85;
+            analyser.maxDecibels = -20;
+            dataArray = new Uint8Array(analyser.frequencyBinCount);
+            // A silent sink keeps analysis active without duplicating station sound.
+            const silentSink = audioCtx.createGain();
+            silentSink.gain.value = 0;
+            analyser.connect(silentSink);
+            silentSink.connect(audioCtx.destination);
+            audioCtx.addEventListener("statechange", updateSpectrum);
+          }
+          if (!capturedAudio) {
+            capturedAudio = capture.call(audio);
+            capturedAudio.addEventListener("addtrack", initAudioAnalyser);
+          }
+          if (!capturedSource && capturedAudio.getAudioTracks().length) {
+            capturedSource = audioCtx.createMediaStreamSource(capturedAudio);
+            capturedSource.connect(analyser);
+            analyserReady = true;
+          }
+          if (audioCtx.state === "suspended") audioCtx.resume().catch(updateSpectrum);
+          updateSpectrum();
+        } catch (error) {
+          analyserReady = false;
+          updateSpectrum();
         }
-
-        setStatus(
-          "visualizer active"
-        );
-
       }
 
       function resize() {
-
-        if (!canvas || !ctx)
-          return;
-
-        const dpr =
-          window.devicePixelRatio || 1;
-
-        const w =
-          canvas.clientWidth;
-
-        const h =
-          canvas.clientHeight;
-
-        canvas.width =
-          w * dpr;
-
-        canvas.height =
-          h * dpr;
-
-        ctx.setTransform(
-          dpr,
-          0,
-          0,
-          dpr,
-          0,
-          0
-        );
-
+        if (!canvas || !ctx) return;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(canvas.clientWidth * dpr);
+        canvas.height = Math.round(canvas.clientHeight * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       }
 
-      resize();
-
-      window.addEventListener(
-        "resize",
-        resize
-      );
-
-      const particles = [];
-
-      const maxParticles = 90;
-
-      class Particle {
-
-        constructor(
-          x,
-          y,
-          vx,
-          vy,
-          hue,
-          size
-        ) {
-
-          this.x = x;
-          this.y = y;
-          this.vx = vx;
-          this.vy = vy;
-          this.hue = hue;
-          this.size = size;
-          this.alpha = 1;
-          this.decay = 0.012;
-
+      function updateSpectrum() {
+        cancelAnimationFrame(spectrumFrame);
+        spectrumFrame = 0;
+        if (!ctx || !canvas) return;
+        ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+        barLevels.fill(0);
+        if (spectrumVisible && !document.hidden && !reducedSpectrumMotion.matches &&
+            audio && !audio.paused && !audio.ended && !audio.error && audio.readyState >= 3 &&
+            analyserReady && audioCtx.state === "running") {
+          spectrumFrame = requestAnimationFrame(drawFrame);
         }
-
-        update() {
-
-          this.x += this.vx;
-          this.y += this.vy;
-
-          this.vy += 0.08;
-
-          this.alpha -=
-            this.decay;
-
-        }
-
-        draw(ctx) {
-
-          ctx.save();
-
-          ctx.globalAlpha =
-            Math.max(
-              0,
-              this.alpha
-            );
-
-          const g =
-            ctx.createRadialGradient(
-              this.x,
-              this.y,
-              0,
-              this.x,
-              this.y,
-              this.size
-            );
-
-          g.addColorStop(
-            0,
-            `hsla(${this.hue}, 100%, 70%, 1)`
-          );
-
-          g.addColorStop(
-            1,
-            `hsla(${this.hue}, 100%, 50%, 0)`
-          );
-
-          ctx.fillStyle = g;
-
-          ctx.beginPath();
-
-          ctx.arc(
-            this.x,
-            this.y,
-            this.size,
-            0,
-            Math.PI * 2
-          );
-
-          ctx.fill();
-
-          ctx.restore();
-
-        }
-
       }
-
-      let prevBass = 0;
-      let prevMid = 0;
-      let prevTreble = 0;
-
-      const smoothing = 0.7;
 
       function drawFrame() {
-
-        if (!canvas || !ctx) {
-
-          requestAnimationFrame(
-            drawFrame
-          );
-
-          return;
-
-        }
-
-        const t =
-          performance.now() / 1000;
-
-        const w =
-          canvas.clientWidth;
-
-        const h =
-          canvas.clientHeight;
-
-        const cx =
-          w / 2;
-
-        const cy =
-          h / 2;
-
-        let bass =
-          0.25 +
-          0.15 *
-          Math.sin(t * 1.7);
-
-        let mid =
-          0.20 +
-          0.10 *
-          Math.sin(t * 2.1 + 1.0);
-
-        let treble =
-          0.18 +
-          0.08 *
-          Math.sin(t * 2.6 + 2.2);
-
-        let spectrum = null;
-
-        if (
-          analyserReady &&
-          analyser &&
-          dataArray
-        ) {
-
-          analyser.getByteFrequencyData(
-            dataArray
-          );
-
-          spectrum =
-            dataArray;
-
-          const bassEnd =
-            Math.floor(
-              dataArray.length * 0.10
-            );
-
-          const midEnd =
-            Math.floor(
-              dataArray.length * 0.40
-            );
-
-          let bassSum = 0;
-          let midSum = 0;
-          let trebleSum = 0;
-
-          for (
-            let i = 0;
-            i < bassEnd;
-            i++
-          ) {
-            bassSum +=
-              dataArray[i];
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight;
+        ctx.clearRect(0, 0, w, h);
+        try {
+          analyser.getByteFrequencyData(dataArray);
+          const left = w * 0.045;
+          const step = w * 0.91 / barLevels.length;
+          const baseline = h * 0.9;
+          const binHz = audioCtx.sampleRate / analyser.fftSize;
+          const highHz = Math.min(16000, audioCtx.sampleRate / 2);
+          const gradient = ctx.createLinearGradient(left, 0, w - left, 0);
+          gradient.addColorStop(0, "#22d3ee");
+          gradient.addColorStop(0.36, "#5876ff");
+          gradient.addColorStop(0.68, "#a56bfa");
+          gradient.addColorStop(1, "#f044bd");
+          ctx.fillStyle = gradient;
+          ctx.shadowColor = "rgba(130, 90, 255, 0.45)";
+          ctx.shadowBlur = 7;
+          for (let i = 0; i < barLevels.length; i++) {
+            const start = Math.max(1, Math.floor(40 * Math.pow(highHz / 40, i / 64) / binHz));
+            const end = Math.min(dataArray.length, Math.max(start + 1,
+              Math.ceil(40 * Math.pow(highHz / 40, (i + 1) / 64) / binHz)));
+            let energy = 0;
+            for (let j = start; j < end; j++) energy += dataArray[j];
+            const level = energy / Math.max(1, end - start) / 255;
+            barLevels[i] += (level - barLevels[i]) * 0.24;
+            const height = barLevels[i] * h * 0.8;
+            if (height > 0.5) ctx.fillRect(left + i * step, baseline - height,
+              Math.max(1, step * 0.7), height);
           }
-
-          for (
-            let i = bassEnd;
-            i < midEnd;
-            i++
-          ) {
-            midSum +=
-              dataArray[i];
-          }
-
-          for (
-            let i = midEnd;
-            i < dataArray.length * 0.80;
-            i++
-          ) {
-            trebleSum +=
-              dataArray[i];
-          }
-
-          bass =
-            (bassSum /
-              Math.max(
-                1,
-                bassEnd
-              )) / 255;
-
-          mid =
-            (midSum /
-              Math.max(
-                1,
-                midEnd - bassEnd
-              )) / 255;
-
-          treble =
-            (trebleSum /
-              Math.max(
-                1,
-                dataArray.length * 0.80 - midEnd
-              )) / 255;
-
-          bass =
-            prevBass *
-              smoothing +
-            bass *
-              (1 - smoothing);
-
-          mid =
-            prevMid *
-              smoothing +
-            mid *
-              (1 - smoothing);
-
-          treble =
-            prevTreble *
-              smoothing +
-            treble *
-              (1 - smoothing);
-
-          prevBass =
-            bass;
-
-          prevMid =
-            mid;
-
-          prevTreble =
-            treble;
-
+          ctx.shadowBlur = 0;
+          spectrumFrame = requestAnimationFrame(drawFrame);
+        } catch (error) {
+          analyserReady = false;
+          updateSpectrum();
         }
-
-        ctx.fillStyle =
-          "rgba(0, 0, 0, 0.30)";
-
-        ctx.fillRect(
-          0,
-          0,
-          w,
-          h
-        );
-
-        const bg =
-          ctx.createRadialGradient(
-            cx,
-            cy,
-            0,
-            cx,
-            cy,
-            Math.max(w, h) * 0.7
-          );
-
-        bg.addColorStop(
-          0,
-          `hsla(${(t * 20) % 360}, 75%, 18%, 0.14)`
-        );
-
-        bg.addColorStop(
-          0.5,
-          `hsla(${(t * 15 + 180) % 360}, 85%, 12%, 0.10)`
-        );
-
-        bg.addColorStop(
-          1,
-          "rgba(0, 0, 0, 0)"
-        );
-
-        ctx.fillStyle = bg;
-
-        ctx.fillRect(
-          0,
-          0,
-          w,
-          h
-        );
-
-        if (
-          bass > 0.35 &&
-          Math.random() > 0.55
-        ) {
-
-          const angle =
-            Math.random() *
-            Math.PI *
-            2;
-
-          const speed =
-            1.8 +
-            bass * 4.5;
-
-          const vx =
-            Math.cos(angle) *
-            speed;
-
-          const vy =
-            Math.sin(angle) *
-            speed -
-            1.8;
-
-          const hue =
-            (
-              t * 55 +
-              Math.random() * 70
-            ) % 360;
-
-          particles.push(
-            new Particle(
-              cx,
-              cy,
-              vx,
-              vy,
-              hue,
-              3 + bass * 9
-            )
-          );
-
-        }
-
-        for (
-          let i = particles.length - 1;
-          i >= 0;
-          i--
-        ) {
-
-          particles[i].update();
-
-          particles[i].draw(ctx);
-
-          if (
-            particles[i].alpha <= 0
-          ) {
-            particles.splice(
-              i,
-              1
-            );
-          }
-
-        }
-
-        if (
-          particles.length >
-          maxParticles
-        ) {
-
-          particles.splice(
-            0,
-            particles.length -
-              maxParticles
-          );
-
-        }
-
-        const ringCount = 5;
-
-        for (
-          let i = 0;
-          i < ringCount;
-          i++
-        ) {
-
-          const radius =
-            Math.min(w, h) *
-              (0.28 + i * 0.085) +
-            bass * 38;
-
-          const rotation =
-            t *
-              (0.18 + i * 0.11) +
-            i *
-              Math.PI /
-              3;
-
-          ctx.save();
-
-          ctx.translate(
-            cx,
-            cy
-          );
-
-          ctx.rotate(
-            rotation
-          );
-
-          ctx.beginPath();
-
-          const segments = 64;
-
-          for (
-            let j = 0;
-            j <= segments;
-            j++
-          ) {
-
-            const ang =
-              (j / segments) *
-              Math.PI *
-              2;
-
-            const r =
-              radius +
-              Math.sin(
-                j * 0.45 +
-                t * 2.0
-              ) *
-              12 *
-              mid;
-
-            const x =
-              Math.cos(ang) *
-              r;
-
-            const y =
-              Math.sin(ang) *
-              r;
-
-            if (j === 0)
-              ctx.moveTo(x, y);
-            else
-              ctx.lineTo(x, y);
-
-          }
-
-          ctx.closePath();
-
-          const hue =
-            (
-              t * 30 +
-              i * 60
-            ) % 360;
-
-          ctx.strokeStyle =
-            `hsla(${hue}, 100%, 62%, ${0.28 + bass * 0.35})`;
-
-          ctx.lineWidth =
-            2 +
-            bass * 3.2;
-
-          ctx.shadowBlur =
-            18 +
-            bass * 22;
-
-          ctx.shadowColor =
-            `hsla(${hue}, 100%, 60%, 1)`;
-
-          ctx.stroke();
-
-          ctx.restore();
-
-        }
-
-        ctx.shadowBlur = 0;
-
-        if (spectrum) {
-
-          const barCount = 120;
-
-          const barWidth = 3;
-
-          const innerRadius =
-            Math.min(w, h) *
-            0.12;
-
-          for (
-            let i = 0;
-            i < barCount;
-            i++
-          ) {
-
-            const angle =
-              (i / barCount) *
-              Math.PI *
-              2 -
-              Math.PI / 2;
-
-            const specIndex =
-              Math.floor(
-                (i / barCount) *
-                spectrum.length
-              );
-
-            let value =
-              (spectrum[specIndex] || 0) /
-              255;
-
-            const nextIndex =
-              Math.min(
-                specIndex + 1,
-                spectrum.length - 1
-              );
-
-            const nextValue =
-              (spectrum[nextIndex] || 0) /
-              255;
-
-            value =
-              value * 0.7 +
-              nextValue * 0.3;
-
-            const barHeight =
-              value *
-              Math.min(w, h) *
-              0.35;
-
-            const x1 =
-              cx +
-              Math.cos(angle) *
-              innerRadius;
-
-            const y1 =
-              cy +
-              Math.sin(angle) *
-              innerRadius;
-
-            const x2 =
-              cx +
-              Math.cos(angle) *
-              (
-                innerRadius +
-                barHeight
-              );
-
-            const y2 =
-              cy +
-              Math.sin(angle) *
-              (
-                innerRadius +
-                barHeight
-              );
-
-            const hue =
-              (
-                i * 3 +
-                t * 55
-              ) % 360;
-
-            const grad =
-              ctx.createLinearGradient(
-                x1,
-                y1,
-                x2,
-                y2
-              );
-
-            grad.addColorStop(
-              0,
-              `hsla(${hue}, 100%, 50%, 0.35)`
-            );
-
-            grad.addColorStop(
-              1,
-              `hsla(${hue}, 100%, 70%, ${0.75 + value * 0.25})`
-            );
-
-            ctx.beginPath();
-
-            ctx.moveTo(
-              x1,
-              y1
-            );
-
-            ctx.lineTo(
-              x2,
-              y2
-            );
-
-            ctx.strokeStyle =
-              grad;
-
-            ctx.lineWidth =
-              barWidth;
-
-            ctx.lineCap =
-              "round";
-
-            ctx.stroke();
-
-          }
-
-        }
-
-        const orbRadius =
-          18 +
-          bass * 40 +
-          Math.sin(t * 4) * 6;
-
-        const orb =
-          ctx.createRadialGradient(
-            cx,
-            cy,
-            0,
-            cx,
-            cy,
-            orbRadius * 2
-          );
-
-        orb.addColorStop(
-          0,
-          `hsla(${(t * 100) % 360}, 100%, 92%, 1)`
-        );
-
-        orb.addColorStop(
-          0.3,
-          `hsla(${(t * 100 + 60) % 360}, 100%, 70%, 0.85)`
-        );
-
-        orb.addColorStop(
-          0.6,
-          `hsla(${(t * 100 + 120) % 360}, 100%, 52%, 0.45)`
-        );
-
-        orb.addColorStop(
-          1,
-          "rgba(255, 0, 170, 0)"
-        );
-
-        ctx.fillStyle =
-          orb;
-
-        ctx.beginPath();
-
-        ctx.arc(
-          cx,
-          cy,
-          orbRadius * 1.5,
-          0,
-          Math.PI * 2
-        );
-
-        ctx.fill();
-
-        requestAnimationFrame(
-          drawFrame
-        );
-
       }
 
-      requestAnimationFrame(
-        drawFrame
-      );
+      if (canvas && ctx) {
+        resize();
+        if (window.ResizeObserver) {
+          new ResizeObserver(resize).observe(canvas);
+        } else {
+          window.addEventListener("resize", resize);
+        }
+        if (window.IntersectionObserver) {
+          new IntersectionObserver(function (entries) {
+            spectrumVisible = entries[0].isIntersecting;
+            resize();
+            updateSpectrum();
+          }).observe(canvas);
+        } else {
+          spectrumVisible = true;
+        }
+        document.addEventListener("visibilitychange", updateSpectrum);
+        reducedSpectrumMotion.addEventListener("change", updateSpectrum);
+        if (audio) {
+          audio.addEventListener("playing", initAudioAnalyser);
+          ["pause", "ended", "error", "waiting", "emptied"].forEach(function (event) {
+            audio.addEventListener(event, updateSpectrum);
+          });
+        }
+      }
 
       const kick =
         document.getElementById(
@@ -3993,7 +3410,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 audioCtx.state ===
                 "suspended"
               )
-                audioCtx.resume();
+                audioCtx.resume().catch(updateSpectrum);
 
               audio.play()
                 .then(function () {
@@ -4053,7 +3470,7 @@ document.addEventListener("DOMContentLoaded", function () {
               audioCtx.state ===
               "suspended"
             ) {
-              audioCtx.resume();
+              audioCtx.resume().catch(updateSpectrum);
             }
 
             if (!audioCtx) {
