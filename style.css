@@ -718,9 +718,8 @@
     }
 
     .random-live-now-playing {
-      flex: 1;
-      min-width: 240px;
-      text-align: right;
+      min-width: 0;
+      text-align: left;
       font-size: 1.248rem;
       font-weight: 700;
       color: #fde68a;
@@ -728,6 +727,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      margin-bottom: 0.48rem;
     }
 
     .random-live-now-playing strong {
@@ -737,20 +737,23 @@
 
     .random-live-program-target {
       margin-top: 0.55rem;
-      padding: 0.5rem 0.65rem 0.6rem;
-      border: 1px solid rgba(129, 140, 248, 0.34);
-      border-radius: 10px;
-      background: rgba(12, 15, 35, 0.68);
-      box-shadow: 0 0 10px rgba(34, 211, 238, 0.06);
+      padding: 0.62rem 0.72rem 0.68rem;
+      border: 1px solid rgba(129, 140, 248, 0.42);
+      border-radius: 11px;
+      background:
+        radial-gradient(circle at top left, rgba(34,211,238,0.07), transparent 58%),
+        rgba(12, 15, 35, 0.72);
+      box-shadow: 0 0 10px rgba(34, 211, 238, 0.07);
     }
 
     .random-live-program-target-label {
-      color: #c7c7ff;
-      font-size: 0.68rem;
+      color: #a5b4fc;
+      font-size: 0.64rem;
       font-weight: 800;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.08em;
       margin-bottom: 0.38rem;
-      text-shadow: 0 0 6px rgba(34, 211, 238, 0.35);
+      text-transform: uppercase;
+      text-shadow: 0 0 6px rgba(34, 211, 238, 0.28);
     }
 
     .random-live-program-target-list {
@@ -764,20 +767,39 @@
       display: inline-flex;
       align-items: center;
       min-width: 0;
-      padding: 0.22rem 0.48rem;
-      border: 1px solid rgba(129, 140, 248, 0.42);
+      padding: 0.22rem 0.5rem;
+      border: 1px solid rgba(34, 211, 238, 0.48);
       border-radius: 999px;
-      background: rgba(31, 25, 65, 0.62);
-      color: #d8d8f8;
+      background: rgba(8, 32, 45, 0.62);
+      color: #dffaff;
       font-size: 0.66rem;
       font-weight: 700;
       line-height: 1.1;
       white-space: nowrap;
+      box-shadow: 0 0 7px rgba(34,211,238,0.10);
+    }
+
+    .random-live-program-target-pill:nth-child(3n + 2) {
+      border-color: rgba(168, 85, 247, 0.5);
+      background: rgba(43, 22, 70, 0.58);
+      color: #eee4ff;
+      box-shadow: 0 0 7px rgba(168,85,247,0.10);
+    }
+
+    .random-live-program-target-pill:nth-child(3n) {
+      border-color: rgba(255, 23, 111, 0.48);
+      background: rgba(67, 15, 45, 0.55);
+      color: #ffe2ef;
+      box-shadow: 0 0 7px rgba(255,23,111,0.09);
     }
 
     @media (max-width: 720px) {
       .random-live-program-target {
         margin-top: 0.4rem;
+      }
+      .random-live-now-playing {
+        font-size: 1.05rem;
+        white-space: normal;
       }
       .random-live-program-target-pill {
         font-size: 0.64rem;
