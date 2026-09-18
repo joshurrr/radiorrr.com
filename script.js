@@ -3619,6 +3619,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (unmute) unmute.addEventListener("click", activate);
   video.addEventListener("click", activate);
+  // Native media controls can consume clicks; observe their unmute/volume change.
+  video.addEventListener("volumechange", function (event) {
+    if (!video.muted && video.volume > 0) activate(event);
+  });
   video.addEventListener("keydown", function (event) {
     if (event.key === " " || event.key === "Enter") activate(event);
   });
