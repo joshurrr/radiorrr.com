@@ -1458,6 +1458,7 @@ document.addEventListener("DOMContentLoaded", function () {
           // Record the state the user is explicitly requesting.
           const willUnmute = liveDjVideo.muted;
           userRequestedAudio = willUnmute;
+          liveDjVideo.dataset.rrrUserAudio = willUnmute ? "1" : "0";
           liveDjVideo.muted = !willUnmute;
           liveDjVideo.defaultMuted = !willUnmute;
           updateLiveDjMuteButton();

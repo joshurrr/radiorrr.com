@@ -545,7 +545,7 @@ window.formspree =
 })();
 </script>
 
-<script src="script.js?v=20260918.2"></script>
+<script src="script.js?v=20260918.3"></script>
 
 <script>
 /*
@@ -591,17 +591,13 @@ window.formspree =
        * This records the user's intent before any playback/recovery code runs.
        */
       unmuteButton.addEventListener("click", function () {
+        // Capture the intent only. Do NOT change video.muted here because
+        // script.js owns the actual toggle in the normal click phase.
+        // Mutating it here made script.js see the opposite state and record
+        // a stale mute preference, which was re-applied when the tab returned.
         const willUnmute = video.muted;
         userHasRequestedAudio = willUnmute;
         video.dataset.rrrUserAudio = willUnmute ? "1" : "0";
-
-        if (willUnmute) {
-          video.muted = false;
-          video.defaultMuted = false;
-        } else {
-          video.muted = true;
-          video.defaultMuted = true;
-        }
       }, true);
     }
 
