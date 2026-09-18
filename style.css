@@ -767,6 +767,16 @@
       min-width: 0;
     }
 
+    .random-live-program-match {
+      margin-top: 0.55rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(129, 140, 248, 0.22);
+    }
+
+    .random-live-program-match .main-dj-match-score {
+      margin: 0;
+    }
+
     .random-live-program-target-pill {
       display: inline-flex;
       align-items: center;
