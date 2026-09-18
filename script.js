@@ -3240,6 +3240,288 @@ document.addEventListener("DOMContentLoaded", function () {
       refreshToolsPanel();
       setInterval(refreshToolsPanel, 30 * 1000);
 
+      /* RRR TOOLS — PASSIVE STREAM HEALTH TEST
+         This observes the existing liveDjVideo/HLS instance only while the
+         user starts a test. It never creates another stream, media element,
+         analyser or network request. */
+      const streamHealthStart = document.getElementById("streamHealthStart");
+      const streamHealthStop = document.getElementById("streamHealthStop");
+      const streamHealthReset = document.getElementById("streamHealthReset");
+      const streamHealthLog = document.getElementById("streamHealthLog");
+
+      const STREAM_HEALTH_TEST_MS = 60 * 1000;
+      let streamHealthRunning = false;
+      let streamHealthStartedAt = 0;
+      let streamHealthTimer = null;
+      let streamHealthStopTimer = null;
+      let streamHealthBufferStartedAt = 0;
+      let streamHealthObservedHls = null;
+      let streamHealthFrameStart = null;
+      let streamHealthPendingSwitchAt = 0;
+      let streamHealthMetrics = null;
+
+      function newStreamHealthMetrics() {
+        return {
+          stalls: 0,
+          totalBufferMs: 0,
+          longestBufferMs: 0,
+          bufferAheadSamples: [],
+          hlsErrors: 0,
+          switches: 0,
+          switchTimes: []
+        };
+      }
+
+      function setStreamHealthText(id, value) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+      }
+
+      function streamHealthTimestamp() {
+        return new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit"
+        });
+      }
+
+      function logStreamHealth(message) {
+        if (!streamHealthLog) return;
+        const empty = streamHealthLog.querySelector(".stream-health-empty");
+        if (empty) empty.remove();
+        const row = document.createElement("div");
+        row.className = "stream-health-event";
+        row.textContent = streamHealthTimestamp() + "  " + message;
+        streamHealthLog.appendChild(row);
+        streamHealthLog.scrollTop = streamHealthLog.scrollHeight;
+      }
+
+      function getCurrentBufferAhead() {
+        if (!liveDjVideo || !liveDjVideo.buffered || !liveDjVideo.buffered.length) return null;
+        const current = Number(liveDjVideo.currentTime) || 0;
+        for (let i = 0; i < liveDjVideo.buffered.length; i++) {
+          const start = liveDjVideo.buffered.start(i);
+          const end = liveDjVideo.buffered.end(i);
+          if (current >= start && current <= end) {
+            return Math.max(0, end - current);
+          }
+        }
+        return 0;
+      }
+
+      function getVideoFrameSnapshot() {
+        if (!liveDjVideo || typeof liveDjVideo.getVideoPlaybackQuality !== "function") return null;
+        const quality = liveDjVideo.getVideoPlaybackQuality();
+        return {
+          dropped: Number(quality.droppedVideoFrames) || 0,
+          total: Number(quality.totalVideoFrames) || 0
+        };
+      }
+
+      function updateStreamHealthDisplay(finalState) {
+        if (!streamHealthMetrics) streamHealthMetrics = newStreamHealthMetrics();
+        const elapsedMs = streamHealthStartedAt
+          ? Math.min(Date.now() - streamHealthStartedAt, STREAM_HEALTH_TEST_MS)
+          : 0;
+        const samples = streamHealthMetrics.bufferAheadSamples;
+        const avgAhead = samples.length
+          ? samples.reduce(function (sum, value) { return sum + value; }, 0) / samples.length
+          : null;
+        const avgSwitch = streamHealthMetrics.switchTimes.length
+          ? streamHealthMetrics.switchTimes.reduce(function (sum, value) { return sum + value; }, 0) / streamHealthMetrics.switchTimes.length
+          : null;
+
+        let status = streamHealthRunning ? "Testing…" : (finalState || "Ready");
+        if (!streamHealthRunning && finalState === "Complete") {
+          if (streamHealthMetrics.totalBufferMs >= 5000 || streamHealthMetrics.hlsErrors >= 3) {
+            status = "Poor stability";
+          } else if (streamHealthMetrics.stalls > 0 || streamHealthMetrics.hlsErrors > 0) {
+            status = "Minor glitches";
+          } else {
+            status = "Stable";
+          }
+        }
+
+        setStreamHealthText("streamHealthStatus", status);
+        setStreamHealthText("streamHealthElapsed", Math.round(elapsedMs / 1000) + "s");
+        setStreamHealthText("streamHealthStalls", String(streamHealthMetrics.stalls));
+        setStreamHealthText("streamHealthBufferTime", (streamHealthMetrics.totalBufferMs / 1000).toFixed(1) + "s");
+        setStreamHealthText("streamHealthLongest", (streamHealthMetrics.longestBufferMs / 1000).toFixed(1) + "s");
+        setStreamHealthText("streamHealthAhead", avgAhead === null ? "—" : avgAhead.toFixed(1) + "s");
+        setStreamHealthText("streamHealthHlsErrors", String(streamHealthMetrics.hlsErrors));
+        setStreamHealthText("streamHealthSwitches", String(streamHealthMetrics.switches));
+        setStreamHealthText("streamHealthSwitchTime", avgSwitch === null ? "—" : (avgSwitch / 1000).toFixed(1) + "s");
+
+        const currentFrames = getVideoFrameSnapshot();
+        if (streamHealthFrameStart && currentFrames) {
+          const dropped = Math.max(0, currentFrames.dropped - streamHealthFrameStart.dropped);
+          const total = Math.max(0, currentFrames.total - streamHealthFrameStart.total);
+          setStreamHealthText("streamHealthDropped", dropped + " / " + total);
+        } else {
+          setStreamHealthText("streamHealthDropped", "—");
+        }
+      }
+
+      function finishStreamHealthBuffer() {
+        if (!streamHealthRunning || !streamHealthBufferStartedAt) return;
+        const duration = Math.max(0, Date.now() - streamHealthBufferStartedAt);
+        streamHealthBufferStartedAt = 0;
+        streamHealthMetrics.totalBufferMs += duration;
+        streamHealthMetrics.longestBufferMs = Math.max(streamHealthMetrics.longestBufferMs, duration);
+        logStreamHealth("Playback resumed after " + (duration / 1000).toFixed(2) + "s buffering");
+      }
+
+      function onStreamHealthWaiting() {
+        if (!streamHealthRunning || streamHealthBufferStartedAt) return;
+        streamHealthBufferStartedAt = Date.now();
+        streamHealthMetrics.stalls += 1;
+        logStreamHealth("Playback waiting / buffering");
+        updateStreamHealthDisplay();
+      }
+
+      function onStreamHealthStalled() {
+        if (!streamHealthRunning) return;
+        if (!streamHealthBufferStartedAt) {
+          streamHealthBufferStartedAt = Date.now();
+          streamHealthMetrics.stalls += 1;
+        }
+        logStreamHealth("Media stalled event");
+        updateStreamHealthDisplay();
+      }
+
+      function onStreamHealthPlaying() {
+        if (!streamHealthRunning) return;
+        finishStreamHealthBuffer();
+        if (streamHealthPendingSwitchAt) {
+          const duration = Date.now() - streamHealthPendingSwitchAt;
+          streamHealthPendingSwitchAt = 0;
+          streamHealthMetrics.switchTimes.push(duration);
+          logStreamHealth("DJ switch playing in " + (duration / 1000).toFixed(2) + "s");
+        }
+        updateStreamHealthDisplay();
+      }
+
+      function onStreamHealthMediaError() {
+        if (!streamHealthRunning) return;
+        logStreamHealth("HTML video error");
+      }
+
+      function onStreamHealthHlsError(event, data) {
+        if (!streamHealthRunning) return;
+        streamHealthMetrics.hlsErrors += 1;
+        const detail = data && (data.details || data.type)
+          ? String(data.details || data.type)
+          : "unknown";
+        logStreamHealth("HLS error: " + detail + (data && data.fatal ? " (fatal)" : ""));
+        updateStreamHealthDisplay();
+      }
+
+      function observeCurrentHlsForHealth() {
+        if (!streamHealthRunning || !window.Hls) return;
+        const current = window.radioRrrHls || null;
+        if (current === streamHealthObservedHls) return;
+        if (streamHealthObservedHls && typeof streamHealthObservedHls.off === "function") {
+          try { streamHealthObservedHls.off(Hls.Events.ERROR, onStreamHealthHlsError); } catch (e) {}
+        }
+        streamHealthObservedHls = current;
+        if (streamHealthObservedHls && typeof streamHealthObservedHls.on === "function") {
+          streamHealthObservedHls.on(Hls.Events.ERROR, onStreamHealthHlsError);
+        }
+      }
+
+      function onStreamHealthDjClick(event) {
+        if (!streamHealthRunning) return;
+        const card = event.target && event.target.closest
+          ? event.target.closest("#liveDjsList .dj-live-switch-card")
+          : null;
+        if (!card) return;
+        streamHealthMetrics.switches += 1;
+        streamHealthPendingSwitchAt = Date.now();
+        const name = card.querySelector(".dj-secondary-name");
+        logStreamHealth("DJ switch requested" + (name ? ": " + name.textContent.trim() : ""));
+        updateStreamHealthDisplay();
+      }
+
+      function streamHealthSample() {
+        if (!streamHealthRunning) return;
+        observeCurrentHlsForHealth();
+        const ahead = getCurrentBufferAhead();
+        if (ahead !== null && Number.isFinite(ahead)) {
+          streamHealthMetrics.bufferAheadSamples.push(ahead);
+        }
+        updateStreamHealthDisplay();
+      }
+
+      function stopStreamHealthTest(completed) {
+        if (!streamHealthRunning) return;
+        finishStreamHealthBuffer();
+        streamHealthRunning = false;
+        if (streamHealthTimer) {
+          clearInterval(streamHealthTimer);
+          streamHealthTimer = null;
+        }
+        if (streamHealthStopTimer) {
+          clearTimeout(streamHealthStopTimer);
+          streamHealthStopTimer = null;
+        }
+        if (liveDjVideo) {
+          liveDjVideo.removeEventListener("waiting", onStreamHealthWaiting);
+          liveDjVideo.removeEventListener("stalled", onStreamHealthStalled);
+          liveDjVideo.removeEventListener("playing", onStreamHealthPlaying);
+          liveDjVideo.removeEventListener("error", onStreamHealthMediaError);
+        }
+        document.removeEventListener("click", onStreamHealthDjClick, true);
+        if (streamHealthObservedHls && window.Hls && typeof streamHealthObservedHls.off === "function") {
+          try { streamHealthObservedHls.off(Hls.Events.ERROR, onStreamHealthHlsError); } catch (e) {}
+        }
+        streamHealthObservedHls = null;
+        if (streamHealthStart) streamHealthStart.disabled = false;
+        if (streamHealthStop) streamHealthStop.disabled = true;
+        updateStreamHealthDisplay(completed ? "Complete" : "Stopped");
+        logStreamHealth(completed ? "60-second test complete" : "Test stopped");
+      }
+
+      function resetStreamHealthTest() {
+        if (streamHealthRunning) stopStreamHealthTest(false);
+        streamHealthStartedAt = 0;
+        streamHealthBufferStartedAt = 0;
+        streamHealthPendingSwitchAt = 0;
+        streamHealthFrameStart = null;
+        streamHealthMetrics = newStreamHealthMetrics();
+        if (streamHealthLog) {
+          streamHealthLog.innerHTML = '<div class="stream-health-empty">Start the test, then use Radio RRR normally or switch DJs. Monitoring is inactive while the test is stopped.</div>';
+        }
+        updateStreamHealthDisplay("Ready");
+      }
+
+      function startStreamHealthTest() {
+        if (streamHealthRunning || !liveDjVideo) return;
+        resetStreamHealthTest();
+        streamHealthRunning = true;
+        streamHealthStartedAt = Date.now();
+        streamHealthFrameStart = getVideoFrameSnapshot();
+        if (streamHealthStart) streamHealthStart.disabled = true;
+        if (streamHealthStop) streamHealthStop.disabled = false;
+        liveDjVideo.addEventListener("waiting", onStreamHealthWaiting);
+        liveDjVideo.addEventListener("stalled", onStreamHealthStalled);
+        liveDjVideo.addEventListener("playing", onStreamHealthPlaying);
+        liveDjVideo.addEventListener("error", onStreamHealthMediaError);
+        document.addEventListener("click", onStreamHealthDjClick, true);
+        observeCurrentHlsForHealth();
+        logStreamHealth("Test started — passive monitoring only");
+        streamHealthSample();
+        streamHealthTimer = setInterval(streamHealthSample, 1000);
+        streamHealthStopTimer = setTimeout(function () {
+          stopStreamHealthTest(true);
+        }, STREAM_HEALTH_TEST_MS);
+      }
+
+      streamHealthMetrics = newStreamHealthMetrics();
+      if (streamHealthStart) streamHealthStart.addEventListener("click", startStreamHealthTest);
+      if (streamHealthStop) streamHealthStop.addEventListener("click", function () { stopStreamHealthTest(false); });
+      if (streamHealthReset) streamHealthReset.addEventListener("click", resetStreamHealthTest);
+      updateStreamHealthDisplay("Ready");
+
       function setStatus(msg) {
 
         if (!statusEl) return;

@@ -2586,6 +2586,74 @@
       transform: translateY(-1px);
     }
 
+    /* STREAM HEALTH TEST — passive diagnostics only while explicitly running. */
+    .tool-stream-health {
+      border-color: rgba(34,211,238,0.38) !important;
+    }
+
+    .stream-health-summary {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .stream-health-summary > div {
+      min-width: 0;
+      padding: 0.6rem 0.65rem;
+      border-radius: 9px;
+      background: rgba(15,23,42,0.68);
+      border: 1px solid rgba(129,140,248,0.18);
+    }
+
+    .stream-health-summary .tool-status-label {
+      display: block;
+      margin-bottom: 0.22rem;
+    }
+
+    .stream-health-summary strong {
+      display: block;
+      color: #ffffff;
+      font-size: 0.82rem;
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
+
+    .stream-health-log {
+      max-height: 190px;
+      overflow-y: auto;
+      margin-top: 0.75rem;
+      padding: 0.65rem 0.75rem;
+      border-radius: 10px;
+      border: 1px solid rgba(129,140,248,0.22);
+      background: rgba(2,6,18,0.62);
+      color: #cbd5e1;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.7rem;
+      line-height: 1.45;
+    }
+
+    .stream-health-event + .stream-health-event {
+      margin-top: 0.2rem;
+    }
+
+    .stream-health-empty {
+      color: #94a3b8;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    @media (max-width: 900px) {
+      .stream-health-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 520px) {
+      .stream-health-summary {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
     .tool-input-row {
       display: grid;
       grid-template-columns: 1fr auto;
