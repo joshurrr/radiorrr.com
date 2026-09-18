@@ -1544,7 +1544,9 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
         if (!Number.isFinite(score)) {
-          randomLiveDjMatch.textContent = "🎯 PROGRAM MATCH —";
+          randomLiveDjMatch.innerHTML =
+            '<span class="main-dj-match-label">🎯 PROGRAM MATCH</span>' +
+            '<span class="main-dj-match-value">—</span>';
           randomLiveDjMatch.className =
             "dj-match-score main-dj-match-score match-low";
           return;
@@ -1562,8 +1564,9 @@ document.addEventListener("DOMContentLoaded", function () {
               ? "match-mid"
               : "match-low";
 
-        randomLiveDjMatch.textContent =
-          "🎯 PROGRAM MATCH " + rounded + "%";
+        randomLiveDjMatch.innerHTML =
+          '<span class="main-dj-match-label">🎯 PROGRAM MATCH</span>' +
+          '<span class="main-dj-match-value">' + rounded + '%</span>';
         randomLiveDjMatch.className =
           "dj-match-score main-dj-match-score " + matchClass;
       }
