@@ -3958,6 +3958,12 @@
   white-space: nowrap !important;
 }
 
+#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-match-label > span:first-child {
+  font-size: 0.54rem !important;
+  line-height: 1 !important;
+  font-weight: 800 !important;
+}
+
 #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-match-value {
   flex: 0 0 auto !important;
   margin-left: auto !important;
