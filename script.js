@@ -3541,7 +3541,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let failed = false;
   let visible = false;
   let timer = 0;
-  const colors = paint.createLinearGradient(0, 0, canvas.width, 0);
+  const colors = paint.createLinearGradient(0, canvas.height, 0, 0);
   colors.addColorStop(0, "#22d3ee");
   colors.addColorStop(0.5, "#a855f7");
   colors.addColorStop(1, "#ff0066");
@@ -3568,9 +3568,14 @@ document.addEventListener("DOMContentLoaded", function () {
           Math.max(start + 1, Math.floor(Math.pow(bins.length, (bar + 1) / 32))));
         let level = 0;
         for (let bin = start; bin < end; bin++) level = Math.max(level, bins[bin]);
-        const height = level / 255 * (canvas.height - 4);
-        paint.fillRect(bar * 20 + 3, canvas.height - height, 14, height);
+        // Twelve discrete LEDs per band, with faint unlit segments like a mixer.
+        const litSegments = Math.round(level / 255 * 12);
+        for (let segment = 0; segment < 12; segment++) {
+          paint.globalAlpha = segment < litSegments ? 1 : 0.08;
+          paint.fillRect(bar * 20 + 3, canvas.height - (segment + 1) * 12, 14, 8);
+        }
       }
+      paint.globalAlpha = 1;
       canvas.style.visibility = "visible";
       timer = window.setTimeout(draw, 40);
     } catch (_) {
