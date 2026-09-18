@@ -3896,7 +3896,7 @@
 
 /* DJ information remains anchored at the bottom-left. */
 #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-name {
-  font-size: 0.78rem !important;
+  font-size: 0.84rem !important;
   line-height: 1.08 !important;
   margin: 0 !important;
 }
@@ -3947,7 +3947,7 @@
   margin: 0.06rem 0 0 !important;
   padding: 0 !important;
   color: #d7ddff !important;
-  font-size: 0.54rem !important;
+  font-size: 0.50rem !important;
   line-height: 1 !important;
   font-weight: 800 !important;
   letter-spacing: 0.02em !important;
@@ -3962,7 +3962,7 @@
   flex: 0 0 auto !important;
   margin-left: auto !important;
   color: #fff !important;
-  font-size: 0.58rem !important;
+  font-size: 0.54rem !important;
   font-weight: 900 !important;
 }
 
