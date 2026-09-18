@@ -1841,7 +1841,7 @@ document.addEventListener("DOMContentLoaded", function () {
         section.innerHTML =
           '<div class="dj-discovery-header">' +
             '<div class="dj-discovery-title">🎧 DISCOVER DJs</div>' +
-            '<div class="dj-discovery-subtitle">Search the RRR DJ catalogue by name, @username or AI-detected genre.</div>' +
+            '<div class="dj-discovery-subtitle">Discover DJs who are offline below. Search or choose a genre to browse all DJs, including those live now.</div>' +
           '</div>' +
           '<input class="dj-discovery-search" id="djDiscoverySearch" type="search" ' +
             'autocomplete="off" placeholder="Search DJ name, @username or genre…" aria-label="Search RRR DJs">' +
@@ -1967,7 +1967,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const query = djDiscoveryQuery.trim().toLowerCase();
         const genreFilter = djDiscoveryGenre.trim().toLowerCase();
 
+        // Keep live DJs in search/filter results, without repeating them in default discovery.
         const ranked = djDiscoveryDJs
+          .filter(dj => query || genreFilter || dj.live !== true)
           .map(dj => {
             const name = String(dj.name || dj.display_name || dj.username || "").trim();
             const username = getDJUsername(dj);
@@ -2024,7 +2026,9 @@ document.addEventListener("DOMContentLoaded", function () {
           resultsEl.innerHTML =
             '<div class="dj-discovery-empty">' +
             (djDiscoveryDJs.length
-              ? "No DJs match that search. Try another name or genre."
+              ? (query || genreFilter
+                ? "No DJs match that search. Try another name or genre."
+                : "All DJs in the catalogue are live now. Search or choose a genre to find them.")
               : "No DJs are currently available in the RRR catalogue.") +
             '</div>';
           return;
@@ -2040,9 +2044,13 @@ document.addEventListener("DOMContentLoaded", function () {
               ? "https://www.tiktok.com/@" + item.username
               : "#");
           const isLive = dj.live === true;
-          const status = isLive ? "🔴 LIVE NOW" : "OFFLINE";
+          const status = isLive ? "LIVE" : "OFFLINE";
           const genresHtml = item.genres.length
-            ? item.genres.slice(0, 5).map(getGenrePillHtml).join("")
+            ? item.genres.slice(0, 3).map(getGenrePillHtml).join("") +
+              (item.genres.length > 3
+                ? '<span class="dj-genre-pill" title="' + escapeAttr(item.genres.slice(3).join(", ")) +
+                  '" aria-label="' + (item.genres.length - 3) + ' more genres">+' + (item.genres.length - 3) + '</span>'
+                : "")
             : '';
 
           const photo = profilePic
@@ -2057,17 +2065,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 photo +
               '</div>' +
               '<div class="dj-discovery-overlay"></div>' +
-              '<div class="dj-discovery-content">' +
-                '<div class="dj-discovery-status ' + (isLive ? "live" : "offline") + '">' +
-                  '<span class="dj-discovery-status-dot"></span>' + status.replace('🔴 ', '') +
+              '<div class="dj-discovery-status ' + (isLive ? "live" : "offline") + '">' +
+                  '<span class="dj-discovery-status-dot"></span>' + status +
                 '</div>' +
+              '<div class="dj-discovery-content">' +
                 '<div class="dj-discovery-name" title="' + escapeAttr(String(item.name || "DJ")) + '">' +
                   escapeHtml(item.name || "DJ") +
                 '</div>' +
                 '<div class="dj-discovery-handle">@' + escapeHtml(item.username) + '</div>' +
                 '<div class="dj-discovery-genres" aria-label="DJ genres">' + genresHtml + '</div>' +
-                '<div class="dj-discovery-match-label"><span>PROGRAM MATCH</span><span>—</span></div>' +
-                '<div class="dj-discovery-match-bar"><div class="dj-discovery-match-fill"></div></div>' +
               '</div>' +
             '</a>';
         }).join("");

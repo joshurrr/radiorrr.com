@@ -3525,7 +3525,7 @@
 
 
 /* RRR OFFLINE DISCOVERY CARDS — match the secondary LIVE DJ cards exactly.
-       Presentation only: discovery/search/filter behaviour is unchanged. */
+       Shared photo-card presentation for offline discovery and filtered live results. */
     #rrrDjDiscovery .dj-discovery-results {
       display: grid !important;
       grid-template-columns: repeat(6, 176px) !important;
@@ -3588,23 +3588,27 @@
       position: relative !important;
       z-index: 2 !important;
       min-width: 0 !important;
-      padding: 0.65rem 0.7rem 0.7rem !important;
+      padding: 0.55rem 0.65rem 0.6rem !important;
       display: flex !important;
       flex-direction: column !important;
-      gap: 0.22rem !important;
+      gap: 0.16rem !important;
     }
 
     #rrrDjDiscovery .dj-discovery-status {
+      position: absolute !important;
+      top: 0.55rem !important;
+      left: 0.65rem !important;
+      z-index: 4 !important;
       align-self: flex-start !important;
       display: inline-flex !important;
       align-items: center !important;
       gap: 0.28rem !important;
-      margin: 0 0 0.12rem !important;
-      padding: 0.18rem 0.38rem !important;
+      margin: 0 !important;
+      padding: 0.16rem 0.34rem !important;
       border-radius: 5px !important;
       background: rgba(71,85,105,0.82) !important;
       color: #e2e8f0 !important;
-      font-size: 0.58rem !important;
+      font-size: 0.54rem !important;
       line-height: 1 !important;
       font-weight: 900 !important;
       letter-spacing: 0.06em !important;
@@ -3634,8 +3638,8 @@
     #rrrDjDiscovery .dj-discovery-name {
       min-width: 0 !important;
       color: #fff !important;
-      font-size: 0.82rem !important;
-      line-height: 1.12 !important;
+      font-size: 0.84rem !important;
+      line-height: 1.08 !important;
       font-weight: 900 !important;
       white-space: nowrap !important;
       overflow: hidden !important;
@@ -3657,8 +3661,8 @@
       min-height: 1.05rem !important;
       display: flex !important;
       align-items: center !important;
-      flex-wrap: nowrap !important;
-      gap: 0.22rem !important;
+      flex-wrap: wrap !important;
+      gap: 0.16rem !important;
       overflow: hidden !important;
       margin: 0.08rem 0 0 !important;
     }
@@ -3666,48 +3670,12 @@
     #rrrDjDiscovery .dj-discovery-genres .dj-genre-pill {
       flex: 0 0 auto !important;
       max-width: 100% !important;
-      padding: 0.16rem 0.32rem !important;
-      font-size: 0.48rem !important;
-      line-height: 1 !important;
-      white-space: nowrap !important;
-    }
-
-    #rrrDjDiscovery .dj-discovery-match-label {
-      display: flex !important;
-      align-items: center !important;
-      justify-content: flex-start !important;
-      gap: 0.35rem !important;
-      margin-top: 0.22rem !important;
-      color: #d7ddff !important;
-      font-size: 0.51rem !important;
-      line-height: 1.1 !important;
-      font-weight: 800 !important;
-      letter-spacing: 0.03em !important;
-      text-transform: uppercase !important;
-    }
-
-    #rrrDjDiscovery .dj-discovery-match-label span:last-child {
-      color: #fff !important;
+      box-sizing: border-box !important;
+      padding: 0.12rem 0.42rem !important;
       font-size: 0.54rem !important;
-      font-weight: 900 !important;
-    }
-
-    #rrrDjDiscovery .dj-discovery-match-bar {
-      width: 100% !important;
-      height: 4px !important;
-      margin-top: 0.08rem !important;
-      overflow: hidden !important;
-      border-radius: 999px !important;
-      background: rgba(148,163,184,0.26) !important;
-      box-shadow: inset 0 0 4px rgba(0,0,0,0.45) !important;
-    }
-
-    #rrrDjDiscovery .dj-discovery-match-fill {
-      width: 0 !important;
-      height: 100% !important;
-      border-radius: inherit !important;
-      background: #94a3b8 !important;
-      box-shadow: none !important;
+      line-height: 1 !important;
+      white-space: normal !important;
+      overflow-wrap: anywhere !important;
     }
 
     @media (min-width: 1400px) {
