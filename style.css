@@ -3870,34 +3870,35 @@
 /* RRR: FINAL SECONDARY LIVE DJ CARD POLISH
    Presentation only. The main/current DJ card, JS, HLS/audio and matching logic
    are intentionally untouched. */
+
 #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-content {
   padding: 0.55rem 0.65rem 0.6rem !important;
   gap: 0.16rem !important;
 }
 
+/* LIVE badge — fixed to the top-left of the card. */
 #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-live {
-  margin: 0 0 0.08rem !important;
+  position: absolute !important;
+  top: 0.55rem !important;
+  left: 0.65rem !important;
+  z-index: 4 !important;
+  align-self: auto !important;
+  margin: 0 !important;
   padding: 0.16rem 0.34rem !important;
   font-size: 0.54rem !important;
 }
 
+/* DJ information remains anchored at the bottom-left. */
 #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-name {
   font-size: 0.78rem !important;
   line-height: 1.08 !important;
   margin: 0 !important;
 }
 
+/* The genre bubbles already communicate that these are detected genres,
+   so the redundant LIVE DETECTED heading is hidden. */
 #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-title {
-  display: block !important;
-  margin: 0.1rem 0 0.04rem !important;
-  color: #fde68a !important;
-  font-size: 0.46rem !important;
-  line-height: 1 !important;
-  letter-spacing: 0.07em !important;
-}
-
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-title::after {
-  content: "";
+  display: none !important;
 }
 
 #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-list {
