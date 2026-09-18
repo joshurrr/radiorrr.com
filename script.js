@@ -2840,9 +2840,9 @@ document.addEventListener("DOMContentLoaded", function () {
           });
         }
 
-        byDay.Friday.forEach(function (r) { displayRows.push({ row: r, label: "FRIDAY · WEEKEND WARM-UP" }); });
-        byDay.Saturday.forEach(function (r) { displayRows.push({ row: r, label: "SATURDAY · WEEKEND" }); });
-        byDay.Sunday.forEach(function (r) { displayRows.push({ row: r, label: "SUNDAY · SUNDAY SESSIONS" }); });
+        byDay.Friday.forEach(function (r) { displayRows.push({ row: r, label: "FRIDAY" }); });
+        byDay.Saturday.forEach(function (r) { displayRows.push({ row: r, label: "SATURDAY" }); });
+        byDay.Sunday.forEach(function (r) { displayRows.push({ row: r, label: "SUNDAY" }); });
 
         if (!displayRows.length) {
           container.innerHTML = '<div class="schedule-row" role="row"><div role="cell">—</div><div role="cell">—</div><div role="cell"><strong>Schedule unavailable</strong></div><div role="cell"></div></div>';
