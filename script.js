@@ -2760,9 +2760,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
 
-      // The scheduler API is the live source of truth for the public site.
-      // The existing hard-coded arrays below remain only as a temporary
-      // fallback if the API is unavailable.
+      // The scheduler API is the single source of truth for the public site.
+      // If it is unavailable before any successful load, the schedule is shown
+      // as unavailable rather than falling back to duplicated hard-coded data.
       let publicScheduleRows = [];
       let publicScheduleLoaded = false;
 
@@ -2889,155 +2889,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
       function getCurrentScheduleBlock(hour, dayIndex) {
 
-        if (publicScheduleRows.length) {
-          const dayName = publicDayName(dayIndex);
-          const rowsForDay = publicScheduleRows.filter(function (row) {
-            return row.day === dayName;
-          });
-          const current = rowsForDay.find(function (row) {
-            return hour >= Number(row.start.split(":")[0]) + Number(row.start.split(":")[1]) / 60 &&
-                   hour < (row.end === "00:00" ? 24 : Number(row.end.split(":")[0]) + Number(row.end.split(":")[1]) / 60);
-          });
-          if (current) {
-            return {
-              start: Number(current.start.split(":")[0]) + Number(current.start.split(":")[1]) / 60,
-              end: current.end === "00:00" ? 24 : Number(current.end.split(":")[0]) + Number(current.end.split(":")[1]) / 60,
-              name: current.name,
-              genres: current.genres.join(" · ")
-            };
-          }
-        }
+        if (!publicScheduleRows.length) return null;
 
-        const weekdayBlocks = [
-          {
-            start: 0,
-            end: 4,
-            name: "Late Nights Insomnia",
-            genres: "Chill · Deep House · Melodic · Progressive"
-          },
-          {
-            start: 4,
-            end: 8,
-            name: "Sunrise Sessions",
-            genres: "Chill · Downtempo · Ambient · Deep House"
-          },
-          {
-            start: 8,
-            end: 12,
-            name: "Day Drive",
-            genres: "80s · Synthwave · Chill Electro · Nu-Disco"
-          },
-          {
-            start: 12,
-            end: 16,
-            name: "Afternoon Beats",
-            genres: "House · Deep House · Progressive · Funky House"
-          },
-          {
-            start: 16,
-            end: 20,
-            name: "Dinner Warm ups",
-            genres: "House · Tech House · Trance · Progressive"
-          },
-          {
-            start: 20,
-            end: 24,
-            name: "Prime Time",
-            genres: "Electro · Techno · Trance · Progressive"
-          }
-        ];
+        const dayName = publicDayName(dayIndex);
+        const rowsForDay = publicScheduleRows.filter(function (row) {
+          return row.day === dayName;
+        });
+        const current = rowsForDay.find(function (row) {
+          return hour >= Number(row.start.split(":")[0]) + Number(row.start.split(":")[1]) / 60 &&
+                 hour < (row.end === "00:00" ? 24 : Number(row.end.split(":")[0]) + Number(row.end.split(":")[1]) / 60);
+        });
 
-        const fridaySaturdayBlocks = [
-          {
-            start: 0,
-            end: 4,
-            name: "After Dark",
-            genres: "Techno · Hard Techno · Trance · Psy-Trance"
-          },
-          {
-            start: 4,
-            end: 8,
-            name: "Late Mornings",
-            genres: "Techno · Trance · Progressive · Psy-Trance"
-          },
-          {
-            start: 8,
-            end: 12,
-            name: "Morning",
-            genres: "Chill · House · Progressive · Melodic"
-          },
-          {
-            start: 12,
-            end: 16,
-            name: "Day Party",
-            genres: "House · Tech House · Progressive · Electro"
-          },
-          {
-            start: 16,
-            end: 20,
-            name: "Prime Time",
-            genres: "Tech House · Techno · Trance · Progressive"
-          },
-          {
-            start: 20,
-            end: 24,
-            name: "Party Night",
-            genres: "Techno · Trance · BASSLINE · Drum & Bass"
-          }
-        ];
+        if (!current) return null;
 
-        const sundayBlocks = [
-          {
-            start: 0,
-            end: 4,
-            name: "Late Night",
-            genres: "Techno · Trance · Progressive · Psy-Trance"
-          },
-          {
-            start: 4,
-            end: 8,
-            name: "After Hours",
-            genres: "Deep House · Progressive · Melodic · Chill"
-          },
-          {
-            start: 8,
-            end: 12,
-            name: "Sunday Morning",
-            genres: "Chill · Downtempo · Deep House · Ambient"
-          },
-          {
-            start: 12,
-            end: 16,
-            name: "Sunday Session",
-            genres: "House · Deep House · Progressive · Organic House"
-          },
-          {
-            start: 16,
-            end: 20,
-            name: "Sunday Sunset",
-            genres: "Melodic · Progressive · Deep House · Chill"
-          },
-          {
-            start: 20,
-            end: 24,
-            name: "Sunday Night",
-            genres: "Chill · Deep House · Progressive · Trance"
-          }
-        ];
-
-        let blocks = weekdayBlocks;
-
-        if (dayIndex === 5 || dayIndex === 6) {
-          blocks = fridaySaturdayBlocks;
-        } else if (dayIndex === 0) {
-          blocks = sundayBlocks;
-        }
-
-        return (
-          blocks.find(function (block) {
-            return hour >= block.start && hour < block.end;
-          }) || blocks[0]
-        );
+        return {
+          start: Number(current.start.split(":")[0]) + Number(current.start.split(":")[1]) / 60,
+          end: current.end === "00:00" ? 24 : Number(current.end.split(":")[0]) + Number(current.end.split(":")[1]) / 60,
+          name: current.name,
+          genres: current.genres.join(" · ")
+        };
 
       }
 
@@ -3116,6 +2986,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
         updateActiveScheduleRow(now);
 
+        if (!block) {
+          if (heroNowEl) {
+            heroNowEl.textContent =
+              "Schedule unavailable";
+          }
+
+          if (liveProgramTargetGenres) {
+            liveProgramTargetGenres.innerHTML = "";
+          }
+
+          return;
+        }
+
         const blockLabel =
           dayName +
           " – " +
@@ -3144,6 +3027,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
       }
+
 
       updateTitles();
       loadPublicSchedule();
