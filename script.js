@@ -1720,37 +1720,33 @@ document.addEventListener("DOMContentLoaded", function () {
       let djDiscoveryRenderId = 0;
 
       function getDiscoveryGenres(dj) {
-        // The /api/live favourite records can expose genres under several
-        // field names depending on how the DJ was learned. Use all of them
-        // so genre search works for both older and newer catalogue records.
-        const rawSources = [
-          dj && dj.rrr_learned_genres,
-          dj && dj.ai_genres,
-          dj && dj.genres,
-          dj && dj.genre,
-          dj && dj.detected_genres,
-          dj && dj.current_genres,
-          dj && dj.rrr_genres
-        ];
+        // Once detector history exists it becomes the DJ's Radio RRR profile.
+        // TikTok/profile-text genres are only bootstrap data for DJs that have
+        // not yet accumulated any learned detector observations.
+        const learnedGenres = Array.isArray(dj && dj.rrr_learned_genres)
+          ? dj.rrr_learned_genres
+          : [];
+
+        const rawSources = learnedGenres.length
+          ? [learnedGenres]
+          : [
+              dj && dj.genre,
+              dj && dj.genre_keywords,
+              dj && dj.genres,
+              dj && dj.rrr_genres
+            ];
 
         const raw = [];
         rawSources.forEach(source => {
           if (Array.isArray(source)) {
             raw.push(...source);
           } else if (source && typeof source === "object") {
-            // Handle simple keyed genre maps as well as { genre: ... }.
             if (source.genre) raw.push(source.genre);
             else raw.push(...Object.values(source));
           } else if (source) {
-            // A comma/pipe separated string is common in older records.
             raw.push(...String(source).split(/[,|]/));
           }
         });
-
-        // Keep the existing LIVE AI parser as a final fallback.
-        if (!raw.length) {
-          raw.push(...getLiveAIGenres(dj));
-        }
 
         const out = [];
         const seen = new Set();
@@ -1800,29 +1796,9 @@ document.addEventListener("DOMContentLoaded", function () {
           return merged;
         });
 
-        // A live DJ's rolling AI genre profile is fetched by
-        // getLearnedDJGenres(), which is already cached for two minutes.
-        // Populate that profile here so a genre such as TRANCE is immediately
-        // available to Discover even when the older favourite record has
-        // genre: null. This fixes the mismatch between the LIVE card and the
-        // Discover filter without adding another backend data source.
-        await Promise.all(
-          liveList.map(async live => {
-            const identity = getDJIdentity(live);
-            if (!identity) return;
-
-            const merged = djDiscoveryDJs.find(
-              dj => getDJIdentity(dj) === identity
-            );
-            if (!merged) return;
-
-            const learnedGenres = await getLearnedDJGenres(live);
-            if (learnedGenres.length) {
-              merged.rrr_learned_genres = learnedGenres;
-            }
-            merged.live = true;
-          })
-        );
+        // /api/live now supplies the persistent learned genre profile on
+        // every favourite record, including OFFLINE DJs. No per-DJ profile
+        // requests are needed here.
 
         // A newer 30-second /api/live refresh may have started while the
         // profile requests above were in flight. Never let an older render
