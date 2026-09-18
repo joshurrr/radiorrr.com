@@ -2327,9 +2327,70 @@
     }
 
     .tools-list {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .tools-list > .tool-wide,
+    .tools-list > .tool-system-overview {
+      grid-column: 1 / -1;
+    }
+
+    .tools-list > .tool-row {
+      min-width: 0;
+      padding: 1.2rem;
+      background: linear-gradient(135deg, rgba(22,27,53,0.88), rgba(7,10,25,0.94));
+    }
+
+    .tools-list > .tool-system-overview {
+      border-color: rgba(34,211,238,0.4);
+      background: linear-gradient(115deg, rgba(15,49,62,0.65), rgba(30,22,63,0.8));
+      box-shadow: 0 8px 28px rgba(0,0,0,0.18);
+    }
+
+    .tool-system-overview .tool-status-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .tool-system-overview .tool-status-grid > div {
       flex-direction: column;
-      gap: 0.7rem;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 0.75rem;
+      padding: 1rem;
+      border-radius: 12px;
+      border-top: 2px solid rgba(34,211,238,0.65);
+      background: rgba(7,12,29,0.65);
+    }
+
+    .tool-system-overview .tool-status-grid > div:nth-child(2) { border-top-color: #a78bfa; }
+    .tool-system-overview .tool-status-grid > div:nth-child(3) { border-top-color: #f472b6; }
+    .tool-system-overview .tool-status-grid > div:nth-child(4) { border-top-color: #818cf8; }
+
+    .tool-system-overview .tool-status-grid strong {
+      font-size: 1.65rem;
+      line-height: 1.2;
+      text-align: left;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tool-system-overview #toolLastRefresh { font-size: 1.2rem; }
+    .tool-system-overview .tool-health { min-height: 1.98rem; }
+
+    @media (max-width: 1000px) {
+      .tool-system-overview .tool-status-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 760px) {
+      .tools-list { grid-template-columns: minmax(0, 1fr); }
+      .tools-list > .tool-row { padding: 0.85rem; }
+    }
+
+    @media (max-width: 420px) {
+      .tool-system-overview .tool-status-grid { grid-template-columns: minmax(0, 1fr); }
     }
 
     .tool-row {
