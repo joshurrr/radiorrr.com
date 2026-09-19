@@ -3136,21 +3136,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
 
-      async function refreshToolsPanel() {
-        if (toolsRefreshInProgress) return;
-        toolsRefreshInProgress = true;
-        if (refreshTools) refreshTools.disabled = true;
-
+      async function refreshToolsData() {
+        const controller = new AbortController();
+        const timeout = setTimeout(function () { controller.abort(); }, 8000);
         try {
           const responses = await Promise.allSettled([
-            fetch(getFreshUrl("https://api.radiorrr.com/api/status"), { cache: "no-store" }),
-            fetch(getFreshUrl("https://api.radiorrr.com/api/live"), { cache: "no-store" }),
-            fetch(getFreshUrl("https://api.radiorrr.com/api/genre-match"), { cache: "no-store" })
+            fetch(getFreshUrl("https://api.radiorrr.com/api/status"), { cache: "no-store", signal: controller.signal }),
+            fetch(getFreshUrl("https://api.radiorrr.com/api/live"), { cache: "no-store", signal: controller.signal })
           ]);
 
           let statusData = null;
           let liveData = null;
-          let matchData = null;
 
           if (responses[0].status === "fulfilled" && responses[0].value.ok) {
             statusData = await responses[0].value.json();
@@ -3158,14 +3154,10 @@ document.addEventListener("DOMContentLoaded", function () {
           if (responses[1].status === "fulfilled" && responses[1].value.ok) {
             liveData = await responses[1].value.json();
           }
-          if (responses[2].status === "fulfilled" && responses[2].value.ok) {
-            matchData = await responses[2].value.json();
-          }
-
           setToolHealth("toolApiHealth", !!statusData, "Healthy", "Unavailable");
 
-          setToolHealth("toolVideoHealth", !!(statusData && statusData.video && statusData.video.healthy), "Healthy", statusData ? "Offline" : "Unavailable");
-          setToolHealth("toolAudioHealth", !!(statusData && statusData.audio && statusData.audio.healthy), "Healthy", statusData ? "Offline" : "Unavailable");
+          setToolHealth("toolVideoHealth", !!(statusData && statusData.video && statusData.video.healthy), "Healthy", statusData && statusData.video && typeof statusData.video.healthy === "boolean" ? "Offline" : "Unavailable");
+          setToolHealth("toolAudioHealth", !!(statusData && statusData.audio && statusData.audio.healthy), "Healthy", statusData && statusData.audio && typeof statusData.audio.healthy === "boolean" ? "Offline" : "Unavailable");
 
           const audioStatus = statusData && statusData.audio;
           const videoStatus = statusData && statusData.video;
@@ -3185,8 +3177,6 @@ document.addEventListener("DOMContentLoaded", function () {
           const relayEl = document.getElementById("toolRelayDj");
           if (relayEl) relayEl.textContent = statusData && statusData.relay_username ? "@" + String(statusData.relay_username).replace(/^@/, "") : "—";
 
-          let relayUsername = statusData && statusData.relay_username ? String(statusData.relay_username).replace(/^@/, "") : "";
-
           if (liveData) {
             const live = Array.isArray(liveData.live) ? liveData.live : [];
             const favourites = Array.isArray(liveData.favourites) ? liveData.favourites : [];
@@ -3195,88 +3185,61 @@ document.addEventListener("DOMContentLoaded", function () {
             if (liveCountEl) liveCountEl.textContent = String(live.length);
             if (favouriteCountEl) favouriteCountEl.textContent = String(favourites.length);
 
-            if (!relayUsername && liveData.relay) relayUsername = getDJUsername(liveData.relay);
-          }
-
-          const scheduleState = getToolsScheduleState();
-          const currentProgramEl = document.getElementById("toolCurrentProgram");
-          if (currentProgramEl) {
-            currentProgramEl.textContent = scheduleState.current
-              ? scheduleState.current.day + " · " + scheduleState.current.start + "–" + scheduleState.current.end + " · " + scheduleState.current.name
-              : "Current program unavailable";
-          }
-          renderToolPills("toolProgramGenres", scheduleState.current ? scheduleState.current.genres : []);
-
-          const nextProgramEl = document.getElementById("toolNextProgram");
-          if (nextProgramEl) {
-            nextProgramEl.textContent = scheduleState.next
-              ? "Next: " + scheduleState.next.day + " " + scheduleState.next.start + " · " + scheduleState.next.name
-              : "Next program unavailable";
-          }
-
-          const aiStatusEl = document.getElementById("toolAiGenreStatus");
-          if (relayUsername) {
-            try {
-              const aiResponse = await fetch(
-                getFreshUrl("https://api.radiorrr.com/api/ai-genre?username=" + encodeURIComponent(relayUsername)),
-                { cache: "no-store" }
-              );
-              if (aiResponse.ok) {
-                const aiData = await aiResponse.json();
-                const genres = Array.isArray(aiData.genres) ? aiData.genres.slice(0, 5) : [];
-                renderToolPills("toolAiGenres", genres.map(function (item) {
-                  const name = String(item && item.genre || "").split("---").pop();
-                  let confidence = Number(item && item.confidence);
-                  if (confidence > 0 && confidence <= 1) confidence *= 100;
-                  return name ? name + (Number.isFinite(confidence) ? " " + Math.round(confidence) + "%" : "") : "";
-                }));
-                if (aiStatusEl) aiStatusEl.textContent = "Latest live-audio detection for @" + relayUsername;
-              } else {
-                renderToolPills("toolAiGenres", []);
-                if (aiStatusEl) aiStatusEl.textContent = "No AI genre result available for @" + relayUsername;
-              }
-            } catch (error) {
-              renderToolPills("toolAiGenres", []);
-              if (aiStatusEl) aiStatusEl.textContent = "AI genre endpoint unavailable";
+            if (relayEl && !(statusData && statusData.relay_username) && liveData.relay) {
+              const relayUsername = getDJUsername(liveData.relay);
+              if (relayUsername) relayEl.textContent = "@" + relayUsername.replace(/^@/, "");
             }
-          } else {
-            renderToolPills("toolAiGenres", []);
-            if (aiStatusEl) aiStatusEl.textContent = "No current relay";
           }
 
-          const matchStatusEl = document.getElementById("toolGenreMatchStatus");
-          const matchCurrentEl = document.getElementById("toolMatchCurrent");
-          const matchBestEl = document.getElementById("toolMatchBest");
-
-          if (matchData && Array.isArray(matchData.ranked)) {
-            const ranked = matchData.ranked;
-            const best = ranked.length ? ranked[0] : null;
-            const current = ranked.find(function (item) {
-              return relayUsername && String(item.username || "").replace(/^@/, "").toLowerCase() === relayUsername.toLowerCase();
-            });
-            if (matchCurrentEl) matchCurrentEl.textContent = current ? "@" + String(current.username).replace(/^@/, "") + " · " + Number(current.score).toFixed(1) : (relayUsername ? "@" + relayUsername : "—");
-            if (matchBestEl) matchBestEl.textContent = best ? "@" + String(best.username).replace(/^@/, "") + " · " + Number(best.score).toFixed(1) : "—";
-            if (matchStatusEl) matchStatusEl.textContent = "Stage 3 ranking is available";
-          } else {
-            if (matchCurrentEl) matchCurrentEl.textContent = relayUsername ? "@" + relayUsername : "—";
-            if (matchBestEl) matchBestEl.textContent = "—";
-            if (matchStatusEl) matchStatusEl.textContent = "Stage 3 diagnostics endpoint unavailable";
-          }
-
-          const lastRefreshEl = document.getElementById("toolLastRefresh");
-          if (lastRefreshEl) lastRefreshEl.textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
         } catch (error) {
           console.warn("Radio RRR tools refresh failed:", error);
           setToolHealth("toolApiHealth", false, "Healthy", "Unavailable");
+          setToolHealth("toolAudioHealth", false, "Healthy", "Unavailable");
+          setToolHealth("toolVideoHealth", false, "Healthy", "Unavailable");
+        } finally {
+          clearTimeout(timeout);
+        }
+      }
+
+      const monitoredHealthIds = ["toolApiHealth", "toolRouterEngine", "toolDetectorEngine", "toolScoutEngine", "toolAudioHealth", "toolVideoHealth"];
+
+      function updateOverallHealth() {
+        const checks = monitoredHealthIds.map(function (id) { return document.getElementById(id); });
+        const allHealthy = checks.every(function (el) { return el && el.classList.contains("healthy"); });
+        const problem = checks.some(function (el) { return el && ["Offline", "Not reporting"].includes(el.textContent); });
+        const summary = document.getElementById("toolOverallHealth");
+        if (!summary) return;
+        summary.className = "tool-health " + (allHealthy ? "healthy" : problem ? "unhealthy" : "pending");
+        summary.textContent = allHealthy ? "All monitored services healthy" : problem ? "Attention needed — one or more services report a problem" : "System health unknown — one or more checks unavailable";
+      }
+
+      async function refreshToolsPanel() {
+        if (toolsRefreshInProgress) return;
+        toolsRefreshInProgress = true;
+        if (refreshTools) refreshTools.disabled = true;
+        const summary = document.getElementById("toolOverallHealth");
+        if (summary) {
+          summary.className = "tool-health pending";
+          summary.textContent = "Checking monitored services…";
+        }
+        monitoredHealthIds.forEach(function (id) {
+          const el = document.getElementById(id);
+          if (el) { el.className = "tool-health pending"; el.textContent = "Checking…"; }
+        });
+        ["toolLiveDjCount", "toolFavouriteDjCount", "toolListenerCount", "toolVideoViewerCount", "toolAudioDetails", "toolVideoDetails", "toolRelayDj"].forEach(function (id) {
+          const el = document.getElementById(id);
+          if (el) el.textContent = "—";
+        });
+        try {
+          await Promise.allSettled([refreshEngineStatus(), refreshToolsData()]);
+          updateOverallHealth();
+          const updated = document.getElementById("toolLastRefresh");
+          if (updated) updated.textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
         } finally {
           toolsRefreshInProgress = false;
           if (refreshTools) refreshTools.disabled = false;
         }
       }
-
-      if (refreshTools) refreshTools.addEventListener("click", refreshEngineStatus);
-      refreshEngineStatus();
-      setInterval(refreshEngineStatus, 30 * 1000);
 
       if (refreshTools) refreshTools.addEventListener("click", refreshToolsPanel);
       refreshToolsPanel();

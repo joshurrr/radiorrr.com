@@ -4506,3 +4506,43 @@
   visibility: hidden;
   pointer-events: none;
 }
+
+/* Unified Tools dashboard */
+.system-health-dashboard {
+  padding: 1.2rem;
+  border: 1px solid rgba(34,211,238,0.4);
+  border-radius: 14px;
+  background: linear-gradient(115deg, rgba(15,49,62,0.65), rgba(30,22,63,0.8));
+}
+.system-health-dashboard h2, .tools-section-heading { margin: 0; font-size: 1rem; color: #fff; letter-spacing: .06em; }
+.system-health-dashboard .tools-header { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; margin-bottom: .65rem; }
+.health-refresh { display: flex; align-items: center; gap: 1rem; color: #c7c7ff; font-size: .8rem; }
+.health-group-title { margin: 1.5rem 0 .65rem; color: #a5b4fc; font-size: .78rem; letter-spacing: .08em; }
+.health-services { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem 1.5rem; }
+.health-services > div { display: flex; justify-content: space-between; align-items: center; gap: .75rem; padding: .7rem; border-radius: 9px; background: rgba(7,12,29,.5); font-size: .9rem; }
+.health-streams { border: 1px solid rgba(129,140,248,.22); border-radius: 10px; overflow: hidden; background: rgba(7,12,29,.5); }
+.health-stream { display: grid; grid-template-columns: 1fr 1fr 1fr 1.3fr; gap: .75rem; align-items: center; padding: .8rem; font-size: .85rem; }
+.health-stream + .health-stream, .health-stream-links { border-top: 1px solid rgba(129,140,248,.18); }
+.health-stream-links { display: flex; justify-content: space-between; gap: 1rem; align-items: center; padding: .75rem .8rem; font-size: .85rem; }
+.health-stream-links .tools-actions { margin: 0; }
+.health-note { font-size: .72rem; color: #a5b4fc; margin: .5rem 0 1rem; }
+.health-station { color: #c7c7ff; font-size: .9rem; overflow-wrap: anywhere; }
+.health-station strong { color: #fff; }
+.health-counts { display: flex; flex-wrap: wrap; gap: .75rem 3rem; margin-top: .7rem; }
+.tools-section-heading { margin: 1.5rem 0 1rem; padding-top: 1.25rem; border-top: 1px solid rgba(129,140,248,.3); }
+.tools-action-list { grid-template-columns: minmax(0, 1fr); }
+.tools-action-list .tool-row-main { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .5rem 1rem; }
+.tools-action-list .tool-row-title { grid-column: 1; grid-row: 1; }
+.tools-action-list .tool-row-description { grid-column: 1; grid-row: 2; }
+.tools-action-list .tools-actions, .tools-action-list .tool-input-row { grid-column: 2; grid-row: 1 / 3; margin: 0; }
+.tools-action-list .stream-health-summary, .tools-action-list .stream-health-log, .tools-action-list .scanner-note { grid-column: 1 / -1; }
+.scanner-output { padding: 0 1.2rem; min-width: 0; }
+.scanner-output-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.scanner-output-header h3 { font-size: .9rem; }
+@media (max-width: 760px) {
+  .health-services { grid-template-columns: minmax(0, 1fr); }
+  .health-stream { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tools-action-list .tool-row-main { display: block; }
+  .tools-action-list .tools-actions, .tools-action-list .tool-input-row { margin-top: .75rem; }
+  .health-stream-links { flex-wrap: wrap; }
+}
