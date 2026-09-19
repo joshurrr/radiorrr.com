@@ -323,14 +323,14 @@
 <div class="tool-row-description">Health of the station-wide video and MP3 relays.</div>
 <div class="tool-stream-table-wrap" role="region" aria-label="Stream status comparison" tabindex="0">
 <table class="tool-stream-table" aria-labelledby="toolStreamStatusTitle" aria-describedby="toolStreamUptimeNote">
-<thead><tr><th scope="col">Stream</th><th scope="col">Health status</th><th scope="col">Uptime</th><th scope="col">Listeners</th><th scope="col">Details</th></tr></thead>
+<thead><tr><th scope="col">Stream</th><th scope="col">Health status</th><th scope="col">Uptime</th><th scope="col">Listeners / viewers</th><th scope="col">Details</th></tr></thead>
 <tbody>
 <tr><th scope="row">MP3 audio</th><td><span class="tool-health pending" id="toolAudioHealth">Checking…</span></td><td>Not reported</td><td id="toolListenerCount">—</td><td id="toolAudioDetails">—</td></tr>
-<tr><th scope="row">Video</th><td><span class="tool-health pending" id="toolVideoHealth">Checking…</span></td><td>Not reported</td><td>Not reported</td><td id="toolVideoDetails">—</td></tr>
+<tr><th scope="row">Video</th><td><span class="tool-health pending" id="toolVideoHealth">Checking…</span></td><td>Not reported</td><td id="toolVideoViewerCount">—</td><td id="toolVideoDetails">—</td></tr>
 </tbody>
 </table>
 </div>
-<div class="tool-stream-footer"><span>Current relay: <strong id="toolRelayDj">—</strong></span><span id="toolStreamUptimeNote">Stream uptime and video audience are not reported by the service.</span></div>
+<div class="tool-stream-footer"><span>Current relay: <strong id="toolRelayDj">—</strong></span><span id="toolStreamUptimeNote">Video viewers: active website playback, including muted video; updates on refresh. Uptime is not reported.</span></div>
 </div>
 </section>
 
@@ -664,7 +664,7 @@ window.formspree =
 })();
 </script>
 
-<script src="script.js?v=20260919.4"></script>
+<script src="script.js?v=20260919.5"></script>
 
 <script>
 /*

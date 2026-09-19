@@ -3148,6 +3148,9 @@ document.addEventListener("DOMContentLoaded", function () {
           const audioDetails = document.getElementById("toolAudioDetails");
           const bitrate = audioStatus && audioStatus.bitrate_kbps;
           if (audioDetails) audioDetails.textContent = bitrate != null && Number.isFinite(Number(bitrate)) && Number(bitrate) > 0 ? Number(bitrate) + " kbps · MP3" : "—";
+          const viewerEl = document.getElementById("toolVideoViewerCount");
+          const viewers = videoStatus && videoStatus.website_viewers;
+          if (viewerEl) viewerEl.textContent = Number.isInteger(viewers) && viewers >= 0 ? String(viewers) : "Not available";
           const videoDetails = document.getElementById("toolVideoDetails");
           if (videoDetails) videoDetails.textContent = videoStatus && typeof videoStatus.playlist_ready === "boolean" ? (videoStatus.playlist_ready ? "Playlist ready" : "Playlist not ready") : "—";
 
@@ -3928,4 +3931,57 @@ document.addEventListener("DOMContentLoaded", function () {
   } else {
     visible = true;
   }
+});
+
+// Count primary-player playback only; the decorative background is excluded.
+document.addEventListener("DOMContentLoaded", function () {
+  const video = document.getElementById("liveDjVideo");
+  if (!video || !window.crypto || !window.crypto.randomUUID) return;
+  let viewerId = crypto.randomUUID();
+  try {
+    const saved = localStorage.getItem("rrrVideoViewerId");
+    if (saved && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(saved)) viewerId = saved;
+    else localStorage.setItem("rrrVideoViewerId", viewerId);
+  } catch (_) { /* Storage-blocked browsers count per page. */ }
+  const sessionId = crypto.randomUUID();
+  let lastTime = video.currentTime;
+  let active = false;
+  let leaving = false;
+  let queue = Promise.resolve();
+
+  function report(playing) {
+    if (!playing && !active) return;
+    active = playing;
+    const body = JSON.stringify({ viewer_id: viewerId, session_id: sessionId, active: playing });
+    // Preserve start/stop ordering so a late start cannot undo a pause.
+    queue = queue.then(function () {
+      return fetch("https://api.radiorrr.com/api/video-viewers/heartbeat", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: body, credentials: "omit", keepalive: true,
+        signal: AbortSignal.timeout(10000)
+      });
+    }).catch(function () { /* Counting must never affect playback. */ });
+  }
+
+  function canCount() {
+    return !leaving && !video.paused && !video.ended && !video.error && video.readyState >= 3;
+  }
+  video.addEventListener("playing", function () {
+    lastTime = video.currentTime;
+    if (canCount()) report(true);
+  });
+  ["pause", "ended", "waiting", "emptied", "error"].forEach(function (event) {
+    video.addEventListener(event, function () { report(false); });
+  });
+  window.setInterval(function () {
+    const progressed = video.currentTime !== lastTime;
+    lastTime = video.currentTime;
+    report(canCount() && progressed);
+  }, 20000);
+  window.addEventListener("pagehide", function () { leaving = true; report(false); });
+  window.addEventListener("pageshow", function () {
+    leaving = false;
+    lastTime = video.currentTime;
+    if (canCount()) report(true);
+  });
 });
