@@ -988,10 +988,10 @@
 
     .random-live-audio-toggle {
       width: auto;
-      min-width: 142px;
-      min-height: 36px;
-      padding: 0.55rem 0.8rem;
-      font-size: 0.9rem;
+      min-width: 105px;
+      min-height: 31px;
+      padding: 0.38rem 0.62rem;
+      font-size: 0.82rem;
       font-weight: 900;
       line-height: 1;
       white-space: nowrap;
