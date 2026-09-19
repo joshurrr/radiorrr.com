@@ -3108,6 +3108,34 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       }
 
+      async function refreshEngineStatus() {
+        const entries = [
+          ["radiorouter", "toolRouterEngine"],
+          ["genre-detector", "toolDetectorEngine"],
+          ["genre-candidate-scout", "toolScoutEngine"]
+        ];
+        const controller = new AbortController();
+        const timeout = setTimeout(function () { controller.abort(); }, 8000);
+        try {
+          const response = await fetch(getFreshUrl("https://api.radiorrr.com/api/engines"), {
+            cache: "no-store", signal: controller.signal
+          });
+          if (!response.ok) throw new Error("Engine status unavailable");
+          const data = await response.json();
+          entries.forEach(function (entry) {
+            const state = data.engines && data.engines[entry[0]];
+            const known = state && typeof state.running === "boolean";
+            setToolHealth(entry[1], known && state.running, "Running", known ? "Not reporting" : "Unavailable");
+          });
+        } catch (error) {
+          entries.forEach(function (entry) {
+            setToolHealth(entry[1], false, "Running", "Unavailable");
+          });
+        } finally {
+          clearTimeout(timeout);
+        }
+      }
+
       async function refreshToolsPanel() {
         if (toolsRefreshInProgress) return;
         toolsRefreshInProgress = true;
@@ -3245,6 +3273,10 @@ document.addEventListener("DOMContentLoaded", function () {
           if (refreshTools) refreshTools.disabled = false;
         }
       }
+
+      if (refreshTools) refreshTools.addEventListener("click", refreshEngineStatus);
+      refreshEngineStatus();
+      setInterval(refreshEngineStatus, 30 * 1000);
 
       if (refreshTools) refreshTools.addEventListener("click", refreshToolsPanel);
       refreshToolsPanel();
