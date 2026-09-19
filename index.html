@@ -376,59 +376,46 @@
 
 
 <!-- FOOTER LINKS -->
-<div class="links">
-<a href="https://www.tiktok.com/@josh.u.rrr" rel="noopener" target="_blank">
-        TikTok
-      </a>
-
-      ·
-
-      <a href="https://www.youtube.com/@RADIO_RRR" rel="noopener" target="_blank">
-        YouTube
-      </a>
-
-      ·
-
-      <a href="https://www.instagram.com/radio.rrr/" rel="noopener" target="_blank">
-        Instagram
-      </a>
-
-      ·
-
-      <a href="https://www.twitch.tv/radiorrr" rel="noopener" target="_blank">
-        Twitch
-      </a>
-
-      ·
-
-      <a href="https://github.com/joshurrr" rel="noopener" target="_blank">
-        GitHub
-      </a>
-
-      ·
-
-      <a href="https://www.reddit.com/user/radio_rrr/" rel="noopener" target="_blank">
-        Reddit
-      </a>
+<footer class="rrr-footer">
+<div class="links rrr-footer-links">
+<a href="https://www.tiktok.com/@josh.u.rrr" rel="noopener" target="_blank">TikTok</a>
+<span>·</span>
+<a href="https://www.youtube.com/@RADIO_RRR" rel="noopener" target="_blank">YouTube</a>
+<span>·</span>
+<a href="https://www.instagram.com/radio.rrr/" rel="noopener" target="_blank">Instagram</a>
+<span>·</span>
+<a href="https://www.twitch.tv/radiorrr" rel="noopener" target="_blank">Twitch</a>
+<span>·</span>
+<a href="https://github.com/joshurrr" rel="noopener" target="_blank">GitHub</a>
+<span>·</span>
+<a href="https://www.reddit.com/user/radio_rrr/" rel="noopener" target="_blank">Reddit</a>
 </div>
-<p class="footer-description">
-      Radio RRR is a live electronic music station that discovers DJs broadcasting across social platforms and brings them together into one continuous radio stream. We’re building toward a more personalised way to discover and listen to live music.
-    </p>
-<p class="footnote">
-<span class="genre-tagline">
-        DEEP HOUSE · HOUSE · PROGRESSIVE · TECH HOUSE · CHILL · PROGRESSIVE HOUSE · 80S · TECHNO · MELODIC · FUNKY HOUSE
-      </span>
 
-      Streaming 24/7<br/>
+<p class="footer-description rrr-footer-description">
+  Radio RRR is a live electronic music station that discovers DJs broadcasting across social platforms and brings them together into one continuous radio stream. We’re building toward a more personalised way to discover and listen to live music.
+</p>
 
-      Contact:
-      <a href="mailto:admin@radiorrr.com" style="color:#a5b4fc;">
-        admin@radiorrr.com
-      </a>
-<br/>
-      Powered by RadioRouter
+<div class="rrr-footer-genres" aria-label="Radio RRR top scheduled genres">
+  <span>DEEP HOUSE</span>
+  <span>HOUSE</span>
+  <span>PROGRESSIVE</span>
+  <span>TECH HOUSE</span>
+  <span>CHILL</span>
+  <span>PROGRESSIVE HOUSE</span>
+  <span>80S</span>
+  <span>TECHNO</span>
+  <span>MELODIC</span>
+  <span>FUNKY HOUSE</span>
+</div>
 
-    </p>
+<div class="rrr-footer-meta">
+  <strong>STREAMING 24/7</strong>
+  <span>·</span>
+  <a href="mailto:admin@radiorrr.com">admin@radiorrr.com</a>
+  <span>·</span>
+  <span>Powered by RadioRouter</span>
+</div>
+</footer>
 </main>
 <script src="genre-detection.js"></script>
 <script>
@@ -458,6 +445,112 @@ window.formspree =
 </script>
 
 <script defer="" src="https://unpkg.com/@formspree/ajax@1"></script>
+
+
+<style id="rrr-footer-layout">
+.rrr-footer {
+  padding: 0.95rem 1rem 1.1rem;
+  text-align: center;
+}
+
+.rrr-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.28rem 0.5rem;
+  margin: 0;
+}
+
+.rrr-footer-description {
+  max-width: 860px;
+  margin: 0.45rem auto 0.8rem;
+  line-height: 1.45;
+}
+
+.rrr-footer-genres {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.34rem;
+  max-width: 980px;
+  margin: 0 auto 0.72rem;
+}
+
+.rrr-footer-genres span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.45rem;
+  padding: 0.18rem 0.48rem;
+  border: 1px solid rgba(255, 77, 171, 0.72);
+  border-radius: 999px;
+  background: rgba(20, 8, 30, 0.72);
+  color: #ff5ca8;
+  font-size: 0.67rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.025em;
+  box-shadow: 0 0 7px rgba(255, 0, 102, 0.16);
+}
+
+.rrr-footer-genres span:nth-child(2n) {
+  border-color: rgba(103, 232, 249, 0.68);
+  color: #a5f3fc;
+  box-shadow: 0 0 7px rgba(56, 189, 248, 0.14);
+}
+
+.rrr-footer-genres span:nth-child(3n) {
+  border-color: rgba(167, 139, 250, 0.72);
+  color: #c4b5fd;
+  box-shadow: 0 0 7px rgba(139, 92, 246, 0.14);
+}
+
+.rrr-footer-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.3rem 0.55rem;
+  font-size: 0.68rem;
+  color: rgba(209, 213, 219, 0.72);
+}
+
+.rrr-footer-meta strong {
+  color: #e5e7eb;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+}
+
+.rrr-footer-meta a {
+  color: #a5b4fc;
+  text-decoration: none;
+}
+
+.rrr-footer-meta a:hover,
+.rrr-footer-links a:hover {
+  color: #ffffff;
+}
+
+@media (max-width: 640px) {
+  .rrr-footer {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .rrr-footer-description {
+    max-width: 100%;
+  }
+
+  .rrr-footer-genres {
+    gap: 0.28rem;
+  }
+
+  .rrr-footer-genres span {
+    font-size: 0.62rem;
+    padding: 0.16rem 0.42rem;
+  }
+}
+</style>
 
 <style id="rrr-secondary-live-genre-bubbles">
 /* Secondary LIVE DJ cards: presentation only. The main/current DJ card is untouched. */
