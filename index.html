@@ -6,7 +6,7 @@
 <title>RadioRRR | Online Radio &amp; Live DJ Discovery</title>
 <link href="favicon.ico" rel="icon" type="image/x-icon"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<link rel="stylesheet" href="style.css?v=20260920.3">
+<link rel="stylesheet" href="style.css?v=20260920.2">
 <meta content="RadioRRR is an online radio station and live DJ discovery platform. Listen to RadioRRR and discover DJs broadcasting live across social platforms." name="description"/>
 <meta content="index, follow, max-image-preview:large" name="robots"/>
 <meta content="#070818" name="theme-color"/>
@@ -65,22 +65,7 @@
   }
   </script>
 
-
-
-
-
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
-
-
-
-
-
-
-
-
-
-
 </head>
 <body>
 <main class="wrapper">
@@ -294,68 +279,28 @@
 <div class="content-pane hidden-pane" id="tools-section">
 <div class="channel tools-card">
 <section class="system-health-dashboard" aria-labelledby="systemHealthTitle">
-<div class="tools-header health-dashboard-header">
-<div>
+<div class="tools-header">
 <h2 id="systemHealthTitle">SYSTEM HEALTH</h2>
-<p class="health-dashboard-subtitle">Radio RRR · Service Status &amp; Monitoring</p>
-</div>
 <div class="health-refresh"><span>Updated <span id="toolLastRefresh">—</span></span><button class="tool-button secondary tools-refresh-button" id="refreshTools" type="button">↻ Refresh</button></div>
 </div>
-
-<div class="health-overall-card">
-<div class="health-overall-icon" aria-hidden="true">●</div>
-<div class="health-overall-copy">
 <div class="tool-health pending" id="toolOverallHealth" role="status">Checking monitored services…</div>
-</div>
-<div class="health-overall-wave" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-</div>
-
 <h3 class="health-group-title">SERVICES</h3>
 <div class="health-services">
-<div class="health-service-card">
-<div class="health-service-icon" aria-hidden="true">⚙</div>
-<div class="health-service-copy"><strong>RadioRouter API</strong><small>API &amp; web services</small><span class="tool-health pending" id="toolApiHealth">Checking…</span></div>
+<div><span>RadioRouter API</span><span class="tool-health pending" id="toolApiHealth">Checking…</span></div>
+<div><span>RadioRouter engine</span><span class="tool-health pending" id="toolRouterEngine">Checking…</span></div>
+<div><span>Genre detection</span><span class="tool-health pending" id="toolDetectorEngine">Checking…</span></div>
+<div><span>Genre detection scout</span><span class="tool-health pending" id="toolScoutEngine">Checking…</span></div>
 </div>
-<div class="health-service-card">
-<div class="health-service-icon" aria-hidden="true">▤</div>
-<div class="health-service-copy"><strong>RadioRouter engine</strong><small>Stream relay &amp; routing</small><span class="tool-health pending" id="toolRouterEngine">Checking…</span></div>
-</div>
-<div class="health-service-card">
-<div class="health-service-icon" aria-hidden="true">≋</div>
-<div class="health-service-copy"><strong>Genre detection</strong><small>AI genre analysis</small><span class="tool-health pending" id="toolDetectorEngine">Checking…</span></div>
-</div>
-<div class="health-service-card">
-<div class="health-service-icon" aria-hidden="true">◉</div>
-<div class="health-service-copy"><strong>Genre detection scout</strong><small>DJ discovery &amp; learning</small><span class="tool-health pending" id="toolScoutEngine">Checking…</span></div>
-</div>
-</div>
-
 <h3 class="health-group-title" id="toolStreamStatusTitle">STREAMS</h3>
 <div class="health-streams" aria-labelledby="toolStreamStatusTitle" aria-describedby="toolStreamUptimeNote">
-<div class="health-stream health-stream-audio">
-<div class="health-stream-identity"><span class="health-stream-icon" aria-hidden="true">♫</span><div><strong>MP3 AUDIO</strong><small>Main Radio RRR audio stream</small></div></div>
-<div class="health-stream-stat"><span class="tool-health pending" id="toolAudioHealth">Checking…</span><small>Stream status</small></div>
-<div class="health-stream-stat"><strong><span id="toolListenerCount">—</span> <span class="health-unit">listeners</span></strong><small>Currently tuned in</small></div>
-<div class="health-stream-stat"><strong id="toolAudioDetails">—</strong><small>Audio format</small></div>
-<button class="tool-button secondary tool-copy-button health-stream-copy" type="button" data-copy-value="https://stream.radiorrr.com/radio.mp3">Copy MP3</button>
-</div>
-<div class="health-stream health-stream-video">
-<div class="health-stream-identity"><span class="health-stream-icon" aria-hidden="true">▶</span><div><strong>LIVE VIDEO</strong><small>Live DJ video stream (HLS)</small></div></div>
-<div class="health-stream-stat"><span class="tool-health pending" id="toolVideoHealth">Checking…</span><small>Stream status</small></div>
-<div class="health-stream-stat"><strong><span id="toolVideoViewerCount">—</span> <span class="health-unit">viewers</span></strong><small>Currently watching</small></div>
-<div class="health-stream-stat"><strong id="toolVideoDetails">—</strong><small>HLS stream</small></div>
-<button class="tool-button secondary tool-copy-button health-stream-copy" type="button" data-copy-value="https://stream.radiorrr.com/api/live-stream">Copy HLS</button>
-</div>
+<div class="health-stream"><strong>MP3 audio</strong><span class="tool-health pending" id="toolAudioHealth">Checking…</span><span><span id="toolListenerCount">—</span> listeners</span><span id="toolAudioDetails">—</span></div>
+<div class="health-stream"><strong>Video</strong><span class="tool-health pending" id="toolVideoHealth">Checking…</span><span><span id="toolVideoViewerCount">—</span> viewers</span><span id="toolVideoDetails">—</span></div>
+<div class="health-stream-links"><strong>Stream URLs</strong><div class="tools-actions compact"><button class="tool-button secondary tool-copy-button" type="button" data-copy-value="https://stream.radiorrr.com/radio.mp3">Copy MP3</button><button class="tool-button secondary tool-copy-button" type="button" data-copy-value="https://stream.radiorrr.com/api/live-stream">Copy HLS</button></div></div>
 </div>
 <p class="health-note" id="toolStreamUptimeNote">Video viewers count active website playback, including muted video.</p>
-
-<div class="health-station-grid">
-<div class="health-relay-card">
-<div class="health-relay-icon" aria-hidden="true">◉</div>
-<div><span class="health-card-label">CURRENT RELAY</span><div class="health-relay-value"><strong id="toolRelayDj">—</strong><span class="health-live-chip">LIVE</span></div><small>Currently relaying to Radio RRR</small></div>
-</div>
-<div class="health-count-card"><span class="health-count-icon" aria-hidden="true">♬</span><div><strong id="toolLiveDjCount">—</strong><span>Live DJs</span><small>Currently online</small></div></div>
-<div class="health-count-card"><span class="health-count-icon" aria-hidden="true">★</span><div><strong id="toolFavouriteDjCount">—</strong><span>Favourite DJs</span><small>In the Radio RRR list</small></div></div>
+<div class="health-station">
+<div>Current relay: <strong id="toolRelayDj">—</strong></div>
+<div class="health-counts"><span>Live DJs: <strong id="toolLiveDjCount">—</strong></span><span>Favourite DJs: <strong id="toolFavouriteDjCount">—</strong></span></div>
 </div>
 </section>
 <h2 class="tools-section-heading">TOOLS</h2>
@@ -404,7 +349,6 @@
 <div class="tool-row-description">Scan the current Radio RRR favourite DJ list.</div>
 <div class="tools-actions compact">
 <button class="tool-button" id="scanRrrDjs" type="button">Scan DJ List</button>
-
 </div>
 <div class="scanner-note">
 <strong>DJ scanner:</strong> checks publicly observable account signals. A high score is a removal suggestion, not proof that an account is fake.
@@ -429,6 +373,8 @@
 </div>
 </div>
 </div>
+
+
 <!-- FOOTER LINKS -->
 <div class="links">
 <a href="https://www.tiktok.com/@josh.u.rrr" rel="noopener" target="_blank">
@@ -466,9 +412,7 @@
       </a>
 </div>
 <p class="footer-description">
-      RadioRRR is an online radio station built for electronic music lovers.
-      Listen to the RadioRRR broadcast, or discover live DJs curated from
-      social platforms and find someone new to listen to right now.
+      Radio RRR is a live electronic music station that discovers DJs broadcasting across social platforms and brings them together into one continuous radio stream. We’re building toward a more personalised way to discover and listen to live music.
     </p>
 <p class="footnote">
 <span class="genre-tagline">
@@ -512,7 +456,6 @@ window.formspree =
       },
     });
 </script>
-
 
 <script defer="" src="https://unpkg.com/@formspree/ajax@1"></script>
 
