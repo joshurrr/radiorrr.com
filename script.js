@@ -3136,19 +3136,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
           setToolHealth("toolApiHealth", !!statusData, "Healthy", "Unavailable");
 
-          if (statusData) {
-            setToolHealth("toolVideoHealth", !!(statusData.video && statusData.video.healthy), "Healthy", "Offline");
-            setToolHealth("toolAudioHealth", !!(statusData.audio && statusData.audio.healthy), "Healthy", "Offline");
+          setToolHealth("toolVideoHealth", !!(statusData && statusData.video && statusData.video.healthy), "Healthy", statusData ? "Offline" : "Unavailable");
+          setToolHealth("toolAudioHealth", !!(statusData && statusData.audio && statusData.audio.healthy), "Healthy", statusData ? "Offline" : "Unavailable");
 
-            const listenerEl = document.getElementById("toolListenerCount");
-            if (listenerEl) listenerEl.textContent = String(statusData.audio && Number.isFinite(Number(statusData.audio.listeners)) ? Number(statusData.audio.listeners) : 0);
+          const audioStatus = statusData && statusData.audio;
+          const videoStatus = statusData && statusData.video;
+          const listenerEl = document.getElementById("toolListenerCount");
+          const listeners = audioStatus && audioStatus.listeners;
+          if (listenerEl) listenerEl.textContent = listeners != null && listeners !== "" && Number.isFinite(Number(listeners)) && Number(listeners) >= 0 ? String(Number(listeners)) : "—";
 
-            const relayEl = document.getElementById("toolRelayDj");
-            if (relayEl) relayEl.textContent = statusData.relay_username ? "@" + String(statusData.relay_username).replace(/^@/, "") : "—";
-          } else {
-            setToolHealth("toolVideoHealth", false, "Healthy", "Unavailable");
-            setToolHealth("toolAudioHealth", false, "Healthy", "Unavailable");
-          }
+          const audioDetails = document.getElementById("toolAudioDetails");
+          const bitrate = audioStatus && audioStatus.bitrate_kbps;
+          if (audioDetails) audioDetails.textContent = bitrate != null && Number.isFinite(Number(bitrate)) && Number(bitrate) > 0 ? Number(bitrate) + " kbps · MP3" : "—";
+          const videoDetails = document.getElementById("toolVideoDetails");
+          if (videoDetails) videoDetails.textContent = videoStatus && typeof videoStatus.playlist_ready === "boolean" ? (videoStatus.playlist_ready ? "Playlist ready" : "Playlist not ready") : "—";
+
+          const relayEl = document.getElementById("toolRelayDj");
+          if (relayEl) relayEl.textContent = statusData && statusData.relay_username ? "@" + String(statusData.relay_username).replace(/^@/, "") : "—";
 
           let relayUsername = statusData && statusData.relay_username ? String(statusData.relay_username).replace(/^@/, "") : "";
 

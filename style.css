@@ -2524,6 +2524,48 @@
       overflow-wrap: anywhere;
     }
 
+    .tool-stream-table-wrap {
+      margin-top: 0.65rem;
+      overflow-x: auto;
+      border: 1px solid rgba(129,140,248,0.22);
+      border-radius: 9px;
+      background: rgba(15,23,42,0.68);
+    }
+
+    .tool-stream-table-wrap:focus-visible {
+      outline: 2px solid #22d3ee;
+      outline-offset: 3px;
+    }
+
+    .tool-stream-table {
+      width: 100%;
+      min-width: 580px;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.76rem;
+      color: #e2e8f0;
+    }
+
+    .tool-stream-table th,
+    .tool-stream-table td { padding: 0.7rem 0.8rem; }
+    .tool-stream-table thead { background: rgba(129,140,248,0.08); }
+    .tool-stream-table thead th { color: #a5b4fc; font-size: 0.72rem; }
+    .tool-stream-table tbody th { color: #ffffff; white-space: nowrap; }
+    .tool-stream-table tbody tr { border-top: 1px solid rgba(129,140,248,0.18); }
+    .tool-stream-table td { font-variant-numeric: tabular-nums; }
+
+    .tool-stream-footer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.4rem 1rem;
+      margin-top: 0.6rem;
+      color: #a5b4fc;
+      font-size: 0.72rem;
+      overflow-wrap: anywhere;
+    }
+    .tool-stream-footer strong { color: #e2e8f0; }
+
     .tool-health {
       display: inline-flex;
       align-items: center;
