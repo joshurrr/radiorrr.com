@@ -751,7 +751,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!liveDjUnmute || !liveDjVideo) return;
 
         const isMuted = liveDjVideo.muted;
-        liveDjUnmute.textContent = isMuted ? "🔊 UNMUTE LIVE" : "🔇 MUTE";
+        liveDjUnmute.textContent = isMuted ? "🔊 UNMUTE" : "🔇 MUTE";
         liveDjUnmute.setAttribute("aria-label", isMuted ? "Unmute live DJ" : "Mute live DJ");
         liveDjUnmute.setAttribute("aria-pressed", String(!isMuted));
       }
