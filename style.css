@@ -3707,23 +3707,25 @@
         gap: 0.75rem;
         min-width: 0;
         min-height: 0;
+        height: 100%;
+        overflow: hidden;
       }
 
-      #randomLiveDj .live-router-side .random-live-header,
+      #randomLiveDj .live-router-side .random-live-program-target,
       #randomLiveDj .live-router-side .current-dj-card {
         grid-area: auto;
         align-self: stretch;
-        flex: 0 0 auto;
-        margin-top: 0;
         margin-bottom: 0;
       }
 
-      #randomLiveDj .live-router-side .random-live-header {
-        padding: 0.15rem 0.2rem 0;
+      #randomLiveDj .live-router-side .random-live-program-target {
+        flex: 0 0 auto;
+        margin-top: 0;
       }
 
       #randomLiveDj .live-router-side .current-dj-card {
-        flex: 1 0 auto;
+        flex: 1 1 0;
+        min-height: 0;
         padding: 0.75rem 0.8rem;
       }
 
