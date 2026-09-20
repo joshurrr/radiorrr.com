@@ -712,8 +712,25 @@ window.formspree =
     return normaliseUsername(data && data.current_relay);
   }
 
+  let latestBpmText = "";
+
+  function ensureBpmElement() {
+    const matchEl = document.getElementById("randomLiveDjMatch");
+    if (!matchEl) return null;
+
+    let bpmEl = document.getElementById("randomLiveDjBpm");
+    if (!bpmEl) {
+      bpmEl = document.createElement("span");
+      bpmEl.id = "randomLiveDjBpm";
+      matchEl.appendChild(bpmEl);
+    }
+
+    bpmEl.textContent = latestBpmText;
+    return bpmEl;
+  }
+
   async function refreshProgramMatchBpm() {
-    const bpmEl = document.getElementById("randomLiveDjBpm");
+    const bpmEl = ensureBpmElement();
     if (!bpmEl) return;
 
     try {
@@ -734,7 +751,8 @@ window.formspree =
         !item ||
         !Number.isFinite(Number(item.bpm))
       ) {
-        bpmEl.textContent = "";
+        latestBpmText = "";
+        bpmEl.textContent = latestBpmText;
         if (bpmHealthEl) {
           bpmHealthEl.className = "tool-health pending";
           bpmHealthEl.textContent = "No reading";
@@ -752,7 +770,8 @@ window.formspree =
         !Number.isFinite(Number(item.bpm_target.min)) ||
         !Number.isFinite(Number(item.bpm_target.max))
       ) {
-        bpmEl.textContent = " · BPM " + formatBpm(item.bpm);
+        latestBpmText = " · BPM " + formatBpm(item.bpm);
+        bpmEl.textContent = latestBpmText;
         return;
       }
 
@@ -760,10 +779,12 @@ window.formspree =
       const min = formatBpm(item.bpm_target.min);
       const max = formatBpm(item.bpm_target.max);
 
-      bpmEl.textContent = " · BPM " + bpm + " {" + min + "–" + max + "}";
+      latestBpmText = " · BPM " + bpm + " {" + min + "–" + max + "}";
+      bpmEl.textContent = latestBpmText;
     } catch (error) {
       console.warn("Radio RRR BPM display warning:", error);
-      bpmEl.textContent = "";
+      latestBpmText = "";
+      bpmEl.textContent = latestBpmText;
       const bpmHealthEl = document.getElementById("toolBpmDetector");
       if (bpmHealthEl) {
         bpmHealthEl.className = "tool-health unhealthy";
@@ -772,14 +793,35 @@ window.formspree =
     }
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", function () {
-      refreshProgramMatchBpm();
-      window.setInterval(refreshProgramMatchBpm, REFRESH_MS);
-    }, { once: true });
-  } else {
+  function startProgramMatchBpm() {
+    const matchEl = document.getElementById("randomLiveDjMatch");
+
+    /*
+     * script.js updates Program Match with textContent, which replaces all
+     * child nodes. Watch that element and restore the BPM span immediately
+     * whenever the normal match-score refresh rewrites it.
+     */
+    if (matchEl) {
+      const observer = new MutationObserver(function () {
+        if (!document.getElementById("randomLiveDjBpm")) {
+          ensureBpmElement();
+        }
+      });
+
+      observer.observe(matchEl, {
+        childList: true
+      });
+    }
+
+    ensureBpmElement();
     refreshProgramMatchBpm();
     window.setInterval(refreshProgramMatchBpm, REFRESH_MS);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", startProgramMatchBpm, { once: true });
+  } else {
+    startProgramMatchBpm();
   }
 })();
 </script>
