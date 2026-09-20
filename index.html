@@ -293,6 +293,7 @@
   <div class="health-service-compact"><span>RadioRouter engine</span><span class="tool-health pending" id="toolRouterEngine">Checking…</span></div>
   <div class="health-service-compact"><span>Genre detection</span><span class="tool-health pending" id="toolDetectorEngine">Checking…</span></div>
   <div class="health-service-compact"><span>Genre detection scout</span><span class="tool-health pending" id="toolScoutEngine">Checking…</span></div>
+  <div class="health-service-compact"><span>BPM detection</span><span class="tool-health pending" id="toolBpmDetector">Checking…</span></div>
 </div>
 
 <h3 class="health-group-title" id="toolStreamStatusTitle">STREAMS</h3>
@@ -435,6 +436,14 @@ window.formspree =
 
 <script defer="" src="https://unpkg.com/@formspree/ajax@1"></script>
 
+
+<style id="rrr-bpm-health-layout">
+@media (min-width: 1000px) {
+  .health-services.health-services-compact {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+</style>
 
 <style id="rrr-footer-layout">
 .rrr-footer {
@@ -719,14 +728,31 @@ window.formspree =
         return normaliseUsername(entry && entry.username) === username;
       });
 
+      const bpmHealthEl = document.getElementById("toolBpmDetector");
+
       if (
         !item ||
-        !Number.isFinite(Number(item.bpm)) ||
+        !Number.isFinite(Number(item.bpm))
+      ) {
+        bpmEl.textContent = "";
+        if (bpmHealthEl) {
+          bpmHealthEl.className = "tool-health pending";
+          bpmHealthEl.textContent = "No reading";
+        }
+        return;
+      }
+
+      if (bpmHealthEl) {
+        bpmHealthEl.className = "tool-health healthy";
+        bpmHealthEl.textContent = "Running";
+      }
+
+      if (
         !item.bpm_target ||
         !Number.isFinite(Number(item.bpm_target.min)) ||
         !Number.isFinite(Number(item.bpm_target.max))
       ) {
-        bpmEl.textContent = "";
+        bpmEl.textContent = " · BPM " + formatBpm(item.bpm);
         return;
       }
 
@@ -738,6 +764,11 @@ window.formspree =
     } catch (error) {
       console.warn("Radio RRR BPM display warning:", error);
       bpmEl.textContent = "";
+      const bpmHealthEl = document.getElementById("toolBpmDetector");
+      if (bpmHealthEl) {
+        bpmHealthEl.className = "tool-health unhealthy";
+        bpmHealthEl.textContent = "Unavailable";
+      }
     }
   }
 
