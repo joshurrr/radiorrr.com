@@ -446,43 +446,27 @@ window.formspree =
 </style>
 
 <style id="rrr-program-match-bpm-layout">
-/* Keep Program Match + BPM on one clean line in the current-DJ card. */
+/* Compact single-line Program Match + BPM display. */
 #randomLiveDjMatch.main-dj-match-score {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  flex-wrap: nowrap !important;
-  gap: 0.42rem !important;
+  display: block !important;
   white-space: nowrap !important;
+  overflow: hidden !important;
 }
 
-#randomLiveDjMatch .main-dj-match-label {
-  flex: 0 0 auto !important;
+#randomLiveDjMatch .rrr-program-match-line {
+  display: block !important;
+  width: 100% !important;
   white-space: nowrap !important;
-}
-
-#randomLiveDjMatch .main-dj-match-value {
-  flex: 0 0 auto !important;
-  margin-left: auto !important;
-  white-space: nowrap !important;
-}
-
-#randomLiveDjBpm {
-  flex: 0 0 auto !important;
-  white-space: nowrap !important;
-  font-size: 0.78rem !important;
-  opacity: 0.9;
+  overflow: hidden !important;
+  text-overflow: clip !important;
+  font-size: 0.76rem !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0 !important;
 }
 
 @media (max-width: 640px) {
-  #randomLiveDjMatch.main-dj-match-score {
-    gap: 0.28rem !important;
-  }
-
-  #randomLiveDjMatch .main-dj-match-label,
-  #randomLiveDjMatch .main-dj-match-value,
-  #randomLiveDjBpm {
-    font-size: 0.68rem !important;
+  #randomLiveDjMatch .rrr-program-match-line {
+    font-size: 0.66rem !important;
   }
 }
 </style>
@@ -722,14 +706,20 @@ window.formspree =
 <script>
 /*
  * PROGRAM MATCH BPM DISPLAY
- * Adds the current detected BPM and the program's target BPM range to the
- * existing main Program Match bar without changing matcher or playback logic.
+ * Combines the existing Program Match score with live BPM and the program
+ * target BPM range in one compact line.
  */
 (function () {
   "use strict";
 
   const GENRE_MATCH_URL = "https://stream.radiorrr.com/api/genre-match";
   const REFRESH_MS = 30000;
+
+  let latestScoreText = "—";
+  let latestBpm = "";
+  let latestBpmMin = "";
+  let latestBpmMax = "";
+  let rendering = false;
 
   function normaliseUsername(value) {
     return String(value || "")
@@ -750,30 +740,45 @@ window.formspree =
     const params = new URLSearchParams(window.location.search);
     const manualDj = normaliseUsername(params.get("dj"));
     if (manualDj) return manualDj;
-
     return normaliseUsername(data && data.current_relay);
   }
 
-  let latestBpmText = "";
-
-  function ensureBpmElement() {
+  function renderProgramMatchLine() {
     const matchEl = document.getElementById("randomLiveDjMatch");
-    if (!matchEl) return null;
+    if (!matchEl || rendering) return;
 
-    let bpmEl = document.getElementById("randomLiveDjBpm");
-    if (!bpmEl) {
-      bpmEl = document.createElement("span");
-      bpmEl.id = "randomLiveDjBpm";
-      matchEl.appendChild(bpmEl);
+    rendering = true;
+
+    let text = "🎯 PROGRAM MATCH " + latestScoreText;
+
+    if (latestBpm) {
+      text += " · BPM " + latestBpm;
+      if (latestBpmMin && latestBpmMax) {
+        text += " {" + latestBpmMin + "–" + latestBpmMax + "}";
+      }
     }
 
-    bpmEl.textContent = latestBpmText;
-    return bpmEl;
+    matchEl.innerHTML =
+      '<span class="rrr-program-match-line">' + text + '</span>';
+
+    rendering = false;
+  }
+
+  function captureScoreFromNormalUpdate() {
+    const matchEl = document.getElementById("randomLiveDjMatch");
+    if (!matchEl || rendering) return;
+
+    const valueEl = matchEl.querySelector(".main-dj-match-value");
+    if (!valueEl) return;
+
+    const value = valueEl.textContent.trim();
+    if (value) latestScoreText = value;
+
+    renderProgramMatchLine();
   }
 
   async function refreshProgramMatchBpm() {
-    const bpmEl = ensureBpmElement();
-    if (!bpmEl) return;
+    const bpmHealthEl = document.getElementById("toolBpmDetector");
 
     try {
       const response = await fetch(GENRE_MATCH_URL, { cache: "no-store" });
@@ -787,75 +792,78 @@ window.formspree =
         return normaliseUsername(entry && entry.username) === username;
       });
 
-      const bpmHealthEl = document.getElementById("toolBpmDetector");
+      if (!item || !Number.isFinite(Number(item.bpm))) {
+        latestBpm = "";
+        latestBpmMin = "";
+        latestBpmMax = "";
 
-      if (
-        !item ||
-        !Number.isFinite(Number(item.bpm))
-      ) {
-        latestBpmText = "";
-        bpmEl.textContent = latestBpmText;
         if (bpmHealthEl) {
           bpmHealthEl.className = "tool-health pending";
           bpmHealthEl.textContent = "No reading";
         }
+
+        renderProgramMatchLine();
         return;
       }
+
+      latestBpm = formatBpm(item.bpm);
+      latestBpmMin =
+        item.bpm_target && Number.isFinite(Number(item.bpm_target.min))
+          ? formatBpm(item.bpm_target.min)
+          : "";
+      latestBpmMax =
+        item.bpm_target && Number.isFinite(Number(item.bpm_target.max))
+          ? formatBpm(item.bpm_target.max)
+          : "";
 
       if (bpmHealthEl) {
         bpmHealthEl.className = "tool-health healthy";
         bpmHealthEl.textContent = "Running";
       }
 
-      if (
-        !item.bpm_target ||
-        !Number.isFinite(Number(item.bpm_target.min)) ||
-        !Number.isFinite(Number(item.bpm_target.max))
-      ) {
-        latestBpmText = " · BPM " + formatBpm(item.bpm);
-        bpmEl.textContent = latestBpmText;
-        return;
-      }
-
-      const bpm = formatBpm(item.bpm);
-      const min = formatBpm(item.bpm_target.min);
-      const max = formatBpm(item.bpm_target.max);
-
-      latestBpmText = " · BPM " + bpm + " {" + min + "–" + max + "}";
-      bpmEl.textContent = latestBpmText;
+      renderProgramMatchLine();
     } catch (error) {
       console.warn("Radio RRR BPM display warning:", error);
-      latestBpmText = "";
-      bpmEl.textContent = latestBpmText;
-      const bpmHealthEl = document.getElementById("toolBpmDetector");
+
+      latestBpm = "";
+      latestBpmMin = "";
+      latestBpmMax = "";
+
       if (bpmHealthEl) {
         bpmHealthEl.className = "tool-health unhealthy";
         bpmHealthEl.textContent = "Unavailable";
       }
+
+      renderProgramMatchLine();
     }
   }
 
   function startProgramMatchBpm() {
     const matchEl = document.getElementById("randomLiveDjMatch");
+    if (!matchEl) return;
 
     /*
-     * script.js updates Program Match with textContent, which replaces all
-     * child nodes. Watch that element and restore the BPM span immediately
-     * whenever the normal match-score refresh rewrites it.
+     * script.js owns the normal Program Match score and periodically rewrites
+     * this element. Capture its score, then immediately render the compact
+     * combined line again.
      */
-    if (matchEl) {
-      const observer = new MutationObserver(function () {
-        if (!document.getElementById("randomLiveDjBpm")) {
-          ensureBpmElement();
-        }
-      });
+    const observer = new MutationObserver(function () {
+      if (rendering) return;
 
-      observer.observe(matchEl, {
-        childList: true
-      });
-    }
+      const valueEl = matchEl.querySelector(".main-dj-match-value");
+      if (valueEl) {
+        const value = valueEl.textContent.trim();
+        if (value) latestScoreText = value;
+        renderProgramMatchLine();
+      }
+    });
 
-    ensureBpmElement();
+    observer.observe(matchEl, {
+      childList: true,
+      subtree: true
+    });
+
+    captureScoreFromNormalUpdate();
     refreshProgramMatchBpm();
     window.setInterval(refreshProgramMatchBpm, REFRESH_MS);
   }
