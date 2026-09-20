@@ -4747,3 +4747,337 @@
   .tools-action-list .tools-actions, .tools-action-list .tool-input-row { margin-top: .75rem; }
   .health-stream-links { flex-wrap: wrap; }
 }
+
+/* RRR TOOLS PAGE — compact public System Health redesign.
+   Presentation only: existing health IDs, refresh/copy actions and Stream Health Test logic are unchanged. */
+#tools-section .tools-card {
+  padding: 1rem;
+}
+
+#tools-section .system-health-dashboard.health-dashboard-compact {
+  padding: 1rem;
+  border-color: rgba(34,211,238,0.42);
+  background:
+    radial-gradient(circle at 0 0, rgba(34,211,238,0.07), transparent 34%),
+    radial-gradient(circle at 100% 100%, rgba(168,85,247,0.08), transparent 38%),
+    linear-gradient(135deg, rgba(8,18,38,0.93), rgba(12,11,38,0.95));
+}
+
+.health-compact-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: .85rem;
+}
+
+.health-compact-heading {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  min-width: 0;
+}
+
+.health-overall-inline {
+  padding: .24rem .52rem;
+  border-radius: 999px;
+  border: 1px solid rgba(129,140,248,.28);
+  background: rgba(7,12,29,.62);
+  font-size: .68rem !important;
+  line-height: 1;
+}
+
+.health-overall-inline.healthy {
+  border-color: rgba(74,222,128,.42);
+  background: rgba(34,197,94,.08);
+}
+
+.health-overall-inline.unhealthy {
+  border-color: rgba(248,113,113,.48);
+  background: rgba(248,113,113,.08);
+}
+
+.health-dashboard-compact .health-refresh {
+  flex: 0 0 auto;
+  gap: .7rem;
+  font-size: .72rem;
+}
+
+.health-dashboard-compact .tools-refresh-button {
+  min-height: 0;
+  padding: .36rem .68rem;
+  font-size: .7rem;
+}
+
+.health-dashboard-compact .health-group-title {
+  margin: .8rem 0 .42rem;
+  color: #9fb3ff;
+  font-size: .66rem;
+  letter-spacing: .1em;
+}
+
+.health-services.health-services-compact {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .5rem;
+}
+
+.health-service-compact {
+  min-width: 0;
+  display: flex !important;
+  flex-direction: column;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  gap: .28rem !important;
+  min-height: 58px;
+  padding: .58rem .65rem !important;
+  border: 1px solid rgba(129,140,248,.23);
+  border-radius: 9px !important;
+  background: rgba(7,12,29,.56) !important;
+  font-size: .76rem !important;
+}
+
+.health-service-compact > span:first-child {
+  min-width: 0;
+  color: #eef2ff;
+  font-weight: 750;
+  line-height: 1.15;
+}
+
+.health-service-compact .tool-health {
+  font-size: .66rem !important;
+}
+
+.health-streams.health-streams-compact {
+  display: grid;
+  gap: .45rem;
+  border: 0;
+  border-radius: 0;
+  overflow: visible;
+  background: transparent;
+}
+
+.health-stream.health-stream-compact {
+  display: grid;
+  grid-template-columns: minmax(140px, 1.15fr) .72fr .72fr .95fr auto;
+  gap: .7rem;
+  align-items: center;
+  min-width: 0;
+  padding: .62rem .72rem;
+  border: 1px solid rgba(129,140,248,.3);
+  border-radius: 9px;
+  background: rgba(7,12,29,.62);
+  font-size: .76rem;
+}
+
+.health-stream.health-stream-compact + .health-stream.health-stream-compact {
+  border-top: 1px solid rgba(129,140,248,.3);
+}
+
+.health-stream-compact > strong {
+  color: #fff;
+  font-size: .78rem;
+}
+
+.health-stream-compact .tool-health {
+  font-size: .66rem !important;
+}
+
+.health-stream-count,
+.health-stream-detail {
+  min-width: 0;
+  color: #dbe2ff;
+  font-size: .72rem;
+}
+
+.health-stream-detail {
+  color: #aeb9e9;
+}
+
+.health-stream-copy {
+  min-height: 0;
+  margin: 0;
+  padding: .34rem .62rem;
+  font-size: .66rem;
+  white-space: nowrap;
+}
+
+.health-dashboard-compact .health-note {
+  margin: .32rem 0 .72rem;
+  color: #8792c3;
+  font-size: .63rem;
+}
+
+.health-station.health-station-compact {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) .55fr .72fr;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid rgba(129,140,248,.24);
+  border-radius: 9px;
+  background: rgba(7,12,29,.5);
+}
+
+.health-relay-compact,
+.health-count-compact {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: .5rem;
+  padding: .58rem .68rem;
+}
+
+.health-count-compact {
+  border-left: 1px solid rgba(129,140,248,.18);
+}
+
+.health-station-label {
+  color: #8f9bd0;
+  font-size: .58rem !important;
+  font-weight: 850 !important;
+  letter-spacing: .08em;
+  white-space: nowrap;
+}
+
+.health-station-compact strong {
+  min-width: 0;
+  color: #fff;
+  font-size: .78rem;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+#tools-section .tools-section-heading {
+  margin: 1.15rem 0 .7rem;
+  padding-top: 1rem;
+}
+
+#tools-section .tools-action-list {
+  gap: .7rem;
+}
+
+#tools-section .tools-action-list > .tool-row {
+  padding: .82rem .9rem;
+}
+
+#tools-section .tools-action-list .tool-row-icon {
+  align-self: center;
+}
+
+#tools-section .tools-action-list .tool-row-description {
+  color: #aeb9e9;
+}
+
+#tools-section .tools-action-list .tools-actions.compact {
+  align-self: center;
+}
+
+@media (max-width: 1050px) {
+  .health-services.health-services-compact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .health-stream.health-stream-compact {
+    grid-template-columns: minmax(140px, 1fr) .72fr .72fr auto;
+  }
+
+  .health-stream-compact .health-stream-detail {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .health-compact-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: .55rem;
+  }
+
+  .health-dashboard-compact .health-refresh {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .health-stream.health-stream-compact {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: .42rem .65rem;
+  }
+
+  .health-stream-compact > strong {
+    grid-column: 1;
+  }
+
+  .health-stream-compact .tool-health {
+    grid-column: 2;
+    justify-self: end;
+  }
+
+  .health-stream-count {
+    grid-column: 1;
+  }
+
+  .health-stream-compact .health-stream-detail {
+    display: block;
+    grid-column: 1;
+  }
+
+  .health-stream-copy {
+    grid-column: 2;
+    grid-row: 2 / span 2;
+    align-self: stretch;
+  }
+
+  .health-station.health-station-compact {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .health-relay-compact {
+    grid-column: 1 / -1;
+    border-bottom: 1px solid rgba(129,140,248,.18);
+  }
+
+  .health-count-compact:first-of-type {
+    border-left: 0;
+  }
+}
+
+@media (max-width: 520px) {
+  #tools-section .tools-card {
+    padding: .7rem;
+  }
+
+  #tools-section .system-health-dashboard.health-dashboard-compact {
+    padding: .75rem;
+  }
+
+  .health-compact-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: .42rem;
+  }
+
+  .health-services.health-services-compact {
+    grid-template-columns: 1fr;
+  }
+
+  .health-service-compact {
+    min-height: 0;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+
+  .health-station.health-station-compact {
+    grid-template-columns: 1fr;
+  }
+
+  .health-relay-compact,
+  .health-count-compact {
+    border-left: 0;
+  }
+
+  .health-count-compact + .health-count-compact {
+    border-top: 1px solid rgba(129,140,248,.18);
+  }
+}
+
