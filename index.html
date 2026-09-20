@@ -445,6 +445,48 @@ window.formspree =
 }
 </style>
 
+<style id="rrr-program-match-bpm-layout">
+/* Keep Program Match + BPM on one clean line in the current-DJ card. */
+#randomLiveDjMatch.main-dj-match-score {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  flex-wrap: nowrap !important;
+  gap: 0.42rem !important;
+  white-space: nowrap !important;
+}
+
+#randomLiveDjMatch .main-dj-match-label {
+  flex: 0 0 auto !important;
+  white-space: nowrap !important;
+}
+
+#randomLiveDjMatch .main-dj-match-value {
+  flex: 0 0 auto !important;
+  margin-left: auto !important;
+  white-space: nowrap !important;
+}
+
+#randomLiveDjBpm {
+  flex: 0 0 auto !important;
+  white-space: nowrap !important;
+  font-size: 0.78rem !important;
+  opacity: 0.9;
+}
+
+@media (max-width: 640px) {
+  #randomLiveDjMatch.main-dj-match-score {
+    gap: 0.28rem !important;
+  }
+
+  #randomLiveDjMatch .main-dj-match-label,
+  #randomLiveDjMatch .main-dj-match-value,
+  #randomLiveDjBpm {
+    font-size: 0.68rem !important;
+  }
+}
+</style>
+
 <style id="rrr-footer-layout">
 .rrr-footer {
   padding: 0.95rem 1rem 1.1rem;
