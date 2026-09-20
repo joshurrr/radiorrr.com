@@ -212,7 +212,7 @@
           </div>
           <div id="liveGenresDetectedList" class="live-genres-detected-list"></div>
         </section>
-<div class="dj-match-score main-dj-match-score match-low" id="randomLiveDjMatch" title="RRR genre compatibility score out of 100"><span class="main-dj-match-label">🎯 PROGRAM MATCH</span><span class="main-dj-match-value">—</span></div>
+<div class="dj-match-score main-dj-match-score match-low" id="randomLiveDjMatch" title="RRR genre compatibility score out of 100"><span class="main-dj-match-label">🎯 PROGRAM MATCH</span><span class="main-dj-match-value">—</span><span id="randomLiveDjBpm"></span></div>
 </section>
 </div><div class="radio-router-player">
 <video aria-hidden="true" autoplay="" class="live-dj-background" crossorigin="anonymous" id="liveDjBackground" muted="" playsinline="" preload="none" webkit-playsinline="">
@@ -667,6 +667,91 @@ window.formspree =
 </script>
 
 <script src="script.js?v=20260920.3"></script>
+
+<script>
+/*
+ * PROGRAM MATCH BPM DISPLAY
+ * Adds the current detected BPM and the program's target BPM range to the
+ * existing main Program Match bar without changing matcher or playback logic.
+ */
+(function () {
+  "use strict";
+
+  const GENRE_MATCH_URL = "https://api.radiorrr.com/api/genre-match";
+  const REFRESH_MS = 30000;
+
+  function normaliseUsername(value) {
+    return String(value || "")
+      .replace(/^@/, "")
+      .trim()
+      .toLowerCase();
+  }
+
+  function formatBpm(value) {
+    const number = Number(value);
+    if (!Number.isFinite(number)) return "";
+    return Math.abs(number - Math.round(number)) < 0.05
+      ? String(Math.round(number))
+      : number.toFixed(1);
+  }
+
+  function selectedUsername(data) {
+    const params = new URLSearchParams(window.location.search);
+    const manualDj = normaliseUsername(params.get("dj"));
+    if (manualDj) return manualDj;
+
+    return normaliseUsername(data && data.current_relay);
+  }
+
+  async function refreshProgramMatchBpm() {
+    const bpmEl = document.getElementById("randomLiveDjBpm");
+    if (!bpmEl) return;
+
+    try {
+      const response = await fetch(GENRE_MATCH_URL, { cache: "no-store" });
+      if (!response.ok) throw new Error("Genre match API returned " + response.status);
+
+      const data = await response.json();
+      const username = selectedUsername(data);
+      const ranked = Array.isArray(data.ranked) ? data.ranked : [];
+
+      const item = ranked.find(function (entry) {
+        return normaliseUsername(entry && entry.username) === username;
+      });
+
+      if (
+        !item ||
+        !Number.isFinite(Number(item.bpm)) ||
+        !item.bpm_target ||
+        !Number.isFinite(Number(item.bpm_target.min)) ||
+        !Number.isFinite(Number(item.bpm_target.max))
+      ) {
+        bpmEl.textContent = "";
+        return;
+      }
+
+      const bpm = formatBpm(item.bpm);
+      const min = formatBpm(item.bpm_target.min);
+      const max = formatBpm(item.bpm_target.max);
+
+      bpmEl.textContent = " · BPM " + bpm + " {" + min + "–" + max + "}";
+    } catch (error) {
+      console.warn("Radio RRR BPM display warning:", error);
+      bpmEl.textContent = "";
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () {
+      refreshProgramMatchBpm();
+      window.setInterval(refreshProgramMatchBpm, REFRESH_MS);
+    }, { once: true });
+  } else {
+    refreshProgramMatchBpm();
+    window.setInterval(refreshProgramMatchBpm, REFRESH_MS);
+  }
+})();
+</script>
 
 <script>
 /*
