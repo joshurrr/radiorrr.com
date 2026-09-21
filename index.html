@@ -212,7 +212,7 @@
           </div>
           <div id="liveGenresDetectedList" class="live-genres-detected-list"></div>
         </section>
-<div class="dj-match-score main-dj-match-score match-low" id="randomLiveDjMatch" title="RRR genre compatibility score out of 100"><span class="main-dj-match-label">🎯 PROGRAM MATCH</span><span class="main-dj-match-value">—</span><span id="randomLiveDjBpm"></span></div>
+<div class="dj-match-score main-dj-match-score match-low" id="randomLiveDjMatch" title="RRR genre compatibility score out of 100"><span class="rrr-program-match-left"><span class="main-dj-match-label">🎯 PROGRAM MATCH</span> <span class="main-dj-match-value">—</span></span><span class="rrr-program-match-right" id="randomLiveDjBpm"></span></div>
 </section>
 </div><div class="radio-router-player">
 <video aria-hidden="true" autoplay="" class="live-dj-background" crossorigin="anonymous" id="liveDjBackground" muted="" playsinline="" preload="none" webkit-playsinline="">
@@ -446,40 +446,34 @@ window.formspree =
 </style>
 
 <style id="rrr-program-match-bpm-layout">
-/* Compact single-line Program Match + BPM display. */
+/* Keep script.js-owned Program Match markup intact; BPM is a separate right-aligned field. */
 #randomLiveDjMatch.main-dj-match-score {
-  display: block !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-}
-
-#randomLiveDjMatch .rrr-program-match-line {
   display: flex !important;
-  width: 100% !important;
   align-items: center !important;
   justify-content: space-between !important;
   gap: 0.75rem !important;
+  width: 100% !important;
   white-space: nowrap !important;
   overflow: hidden !important;
-  text-overflow: clip !important;
   font-size: 0.76rem !important;
   line-height: 1.2 !important;
   letter-spacing: 0 !important;
 }
 
 #randomLiveDjMatch .rrr-program-match-left {
-  text-align: left !important;
   min-width: 0 !important;
+  text-align: left !important;
 }
 
-#randomLiveDjMatch .rrr-program-match-bpm {
+#randomLiveDjMatch .rrr-program-match-right {
+  flex: 0 0 auto !important;
   margin-left: auto !important;
   text-align: right !important;
-  flex: 0 0 auto !important;
 }
 
 @media (max-width: 640px) {
-  #randomLiveDjMatch .rrr-program-match-line {
+  #randomLiveDjMatch.main-dj-match-score {
+    gap: 0.45rem !important;
     font-size: 0.66rem !important;
   }
 }
@@ -720,20 +714,14 @@ window.formspree =
 <script>
 /*
  * PROGRAM MATCH BPM DISPLAY
- * Combines the existing Program Match score with live BPM and the program
- * target BPM range in one compact line.
+ * Leaves script.js's Program Match DOM intact and updates only the dedicated
+ * right-aligned BPM field.
  */
 (function () {
   "use strict";
 
   const GENRE_MATCH_URL = "https://stream.radiorrr.com/api/genre-match";
   const REFRESH_MS = 30000;
-
-  let latestScoreText = "—";
-  let latestBpm = "";
-  let latestBpmMin = "";
-  let latestBpmMax = "";
-  let rendering = false;
 
   function normaliseUsername(value) {
     return String(value || "")
@@ -757,46 +745,33 @@ window.formspree =
     return normaliseUsername(data && data.current_relay);
   }
 
-  function renderProgramMatchLine() {
-    const matchEl = document.getElementById("randomLiveDjMatch");
-    if (!matchEl || rendering) return;
-
-    rendering = true;
-
-    const leftText = "🎯 PROGRAM MATCH " + latestScoreText;
-    let bpmText = "";
-
-    if (latestBpm) {
-      bpmText = "BPM " + latestBpm;
-      if (latestBpmMin && latestBpmMax) {
-        bpmText += " {" + latestBpmMin + "–" + latestBpmMax + "}";
-      }
+  function scheduleBounds(data, item) {
+    const itemMin = Number(item && item.bpm_min);
+    const itemMax = Number(item && item.bpm_max);
+    if (Number.isFinite(itemMin) && Number.isFinite(itemMax)) {
+      return { min: itemMin, max: itemMax };
     }
 
-    matchEl.innerHTML =
-      '<span class="rrr-program-match-line">' +
-        '<span class="rrr-program-match-left">' + leftText + '</span>' +
-        '<span class="rrr-program-match-bpm">' + bpmText + '</span>' +
-      '</span>';
+    const program = data && data.current_program;
+    const programMin = Number(program && program.bpm_min);
+    const programMax = Number(program && program.bpm_max);
+    if (Number.isFinite(programMin) && Number.isFinite(programMax)) {
+      return { min: programMin, max: programMax };
+    }
 
-    rendering = false;
-  }
+    const inferredMin = Number(item && item.bpm_target && item.bpm_target.min);
+    const inferredMax = Number(item && item.bpm_target && item.bpm_target.max);
+    if (Number.isFinite(inferredMin) && Number.isFinite(inferredMax)) {
+      return { min: inferredMin, max: inferredMax };
+    }
 
-  function captureScoreFromNormalUpdate() {
-    const matchEl = document.getElementById("randomLiveDjMatch");
-    if (!matchEl || rendering) return;
-
-    const valueEl = matchEl.querySelector(".main-dj-match-value");
-    if (!valueEl) return;
-
-    const value = valueEl.textContent.trim();
-    if (value) latestScoreText = value;
-
-    renderProgramMatchLine();
+    return null;
   }
 
   async function refreshProgramMatchBpm() {
+    const bpmEl = document.getElementById("randomLiveDjBpm");
     const bpmHealthEl = document.getElementById("toolBpmDetector");
+    if (!bpmEl) return;
 
     try {
       const response = await fetch(GENRE_MATCH_URL, { cache: "no-store" });
@@ -811,90 +786,38 @@ window.formspree =
       });
 
       if (!item || !Number.isFinite(Number(item.bpm))) {
-        latestBpm = "";
-        latestBpmMin = "";
-        latestBpmMax = "";
+        bpmEl.textContent = "";
 
         if (bpmHealthEl) {
           bpmHealthEl.className = "tool-health pending";
           bpmHealthEl.textContent = "No reading";
         }
-
-        renderProgramMatchLine();
         return;
       }
 
-      latestBpm = formatBpm(item.bpm);
+      const bpm = formatBpm(item.bpm);
+      const bounds = scheduleBounds(data, item);
 
-      const currentProgram = data && data.current_program ? data.current_program : null;
-      const targetMin =
-        item && Number.isFinite(Number(item.bpm_min))
-          ? item.bpm_min
-          : currentProgram && Number.isFinite(Number(currentProgram.bpm_min))
-            ? currentProgram.bpm_min
-            : item.bpm_target && Number.isFinite(Number(item.bpm_target.min))
-              ? item.bpm_target.min
-              : null;
-      const targetMax =
-        item && Number.isFinite(Number(item.bpm_max))
-          ? item.bpm_max
-          : currentProgram && Number.isFinite(Number(currentProgram.bpm_max))
-            ? currentProgram.bpm_max
-            : item.bpm_target && Number.isFinite(Number(item.bpm_target.max))
-              ? item.bpm_target.max
-              : null;
-
-      latestBpmMin = targetMin !== null ? formatBpm(targetMin) : "";
-      latestBpmMax = targetMax !== null ? formatBpm(targetMax) : "";
+      bpmEl.textContent = bounds
+        ? "BPM " + bpm + " {" + formatBpm(bounds.min) + "–" + formatBpm(bounds.max) + "}"
+        : "BPM " + bpm;
 
       if (bpmHealthEl) {
         bpmHealthEl.className = "tool-health healthy";
         bpmHealthEl.textContent = "Running";
       }
-
-      renderProgramMatchLine();
     } catch (error) {
       console.warn("Radio RRR BPM display warning:", error);
-
-      latestBpm = "";
-      latestBpmMin = "";
-      latestBpmMax = "";
+      bpmEl.textContent = "";
 
       if (bpmHealthEl) {
         bpmHealthEl.className = "tool-health unhealthy";
         bpmHealthEl.textContent = "Unavailable";
       }
-
-      renderProgramMatchLine();
     }
   }
 
   function startProgramMatchBpm() {
-    const matchEl = document.getElementById("randomLiveDjMatch");
-    if (!matchEl) return;
-
-    /*
-     * script.js owns the normal Program Match score and periodically rewrites
-     * this element. Capture its score, then immediately render the compact
-     * combined line again.
-     */
-    const observer = new MutationObserver(function () {
-      if (rendering) return;
-
-      const valueEl = matchEl.querySelector(".main-dj-match-value");
-      if (valueEl) {
-        const value = valueEl.textContent.trim();
-        if (value) latestScoreText = value;
-        renderProgramMatchLine();
-      }
-    });
-
-    observer.observe(matchEl, {
-      childList: true,
-      subtree: true
-    });
-
-    captureScoreFromNormalUpdate();
     refreshProgramMatchBpm();
     window.setInterval(refreshProgramMatchBpm, REFRESH_MS);
   }
