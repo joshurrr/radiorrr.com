@@ -1961,7 +1961,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (previous) previous.addEventListener("click", function () { scrollDiscovery(-1); });
         if (next) next.addEventListener("click", function () { scrollDiscovery(1); });
-        if (results) results.addEventListener("scroll", updateDiscoveryScrollButtons, { passive: true });
+        if (results) {
+          results.addEventListener("scroll", updateDiscoveryScrollButtons, { passive: true });
+          results.addEventListener("keydown", function (event) {
+            if (event.key === "ArrowLeft") {
+              event.preventDefault();
+              scrollDiscovery(-1);
+            } else if (event.key === "ArrowRight") {
+              event.preventDefault();
+              scrollDiscovery(1);
+            } else if (event.key === "Home") {
+              event.preventDefault();
+              results.scrollTo({ left: 0, behavior: "smooth" });
+            } else if (event.key === "End") {
+              event.preventDefault();
+              results.scrollTo({ left: results.scrollWidth, behavior: "smooth" });
+            }
+          });
+        }
         window.addEventListener("resize", updateDiscoveryScrollButtons, { passive: true });
         section.rrrUpdateDiscoveryScrollButtons = updateDiscoveryScrollButtons;
 
