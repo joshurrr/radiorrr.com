@@ -5117,6 +5117,10 @@
 
 /* Current DJ: small platform mark sits directly beside the DJ name. */
 #randomLiveDj .current-dj-platform {
+  position: absolute;
+  top: 0.9rem;
+  right: 1rem;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   flex: 0 0 auto;
