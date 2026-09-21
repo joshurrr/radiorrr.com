@@ -713,15 +713,17 @@ window.formspree =
 
 <script>
 /*
- * PROGRAM MATCH BPM DISPLAY
- * Leaves script.js's Program Match DOM intact and updates only the dedicated
- * right-aligned BPM field.
+ * PROGRAM MATCH + BPM DISPLAY
+ * Keeps script.js-owned markup intact, but fills the current DJ's match/BPM
+ * immediately from /api/genre-match and refreshes when the displayed DJ changes.
  */
 (function () {
   "use strict";
 
   const GENRE_MATCH_URL = "https://stream.radiorrr.com/api/genre-match";
   const REFRESH_MS = 30000;
+  let refreshTimer = null;
+  let refreshInFlight = false;
 
   function normaliseUsername(value) {
     return String(value || "")
@@ -738,11 +740,58 @@ window.formspree =
       : number.toFixed(1);
   }
 
-  function selectedUsername(data) {
+  function displayedUsername() {
     const params = new URLSearchParams(window.location.search);
     const manualDj = normaliseUsername(params.get("dj"));
     if (manualDj) return manualDj;
-    return normaliseUsername(data && data.current_relay);
+
+    const meta = document.getElementById("randomLiveDjMeta");
+    const metaText = meta ? meta.textContent : "";
+    const metaMatch = metaText.match(/@([A-Za-z0-9._-]+)/);
+    if (metaMatch) return normaliseUsername(metaMatch[1]);
+
+    const card = document.getElementById("randomLiveDj");
+    if (card) {
+      const datasetUser = normaliseUsername(
+        card.dataset.username ||
+        card.dataset.dj ||
+        card.dataset.currentDj ||
+        ""
+      );
+      if (datasetUser) return datasetUser;
+    }
+
+    return "";
+  }
+
+  function findDisplayedItem(data) {
+    const ranked = Array.isArray(data && data.ranked) ? data.ranked : [];
+    const username = displayedUsername();
+
+    if (username) {
+      const byUsername = ranked.find(function (entry) {
+        return normaliseUsername(entry && entry.username) === username;
+      });
+      if (byUsername) return byUsername;
+    }
+
+    const nameEl = document.getElementById("randomLiveDjName");
+    const displayedName = nameEl ? nameEl.textContent.trim() : "";
+    if (displayedName) {
+      const byName = ranked.find(function (entry) {
+        return String(entry && entry.name || "").trim() === displayedName;
+      });
+      if (byName) return byName;
+    }
+
+    const relay = normaliseUsername(data && data.current_relay);
+    if (relay) {
+      return ranked.find(function (entry) {
+        return normaliseUsername(entry && entry.username) === relay;
+      }) || null;
+    }
+
+    return null;
   }
 
   function scheduleBounds(data, item) {
@@ -768,26 +817,34 @@ window.formspree =
     return null;
   }
 
+  function updateMatchClass(matchEl, percent) {
+    if (!matchEl || !Number.isFinite(percent)) return;
+    matchEl.classList.remove("match-low", "match-medium", "match-high");
+    if (percent >= 60) matchEl.classList.add("match-high");
+    else if (percent >= 30) matchEl.classList.add("match-medium");
+    else matchEl.classList.add("match-low");
+  }
+
   async function refreshProgramMatchBpm() {
+    if (refreshInFlight) return;
+
+    const matchEl = document.getElementById("randomLiveDjMatch");
+    const matchValueEl = matchEl && matchEl.querySelector(".main-dj-match-value");
     const bpmEl = document.getElementById("randomLiveDjBpm");
     const bpmHealthEl = document.getElementById("toolBpmDetector");
-    if (!bpmEl) return;
+    if (!matchEl || !matchValueEl || !bpmEl) return;
+
+    refreshInFlight = true;
 
     try {
       const response = await fetch(GENRE_MATCH_URL, { cache: "no-store" });
       if (!response.ok) throw new Error("Genre match API returned " + response.status);
 
       const data = await response.json();
-      const username = selectedUsername(data);
-      const ranked = Array.isArray(data.ranked) ? data.ranked : [];
+      const item = findDisplayedItem(data);
 
-      const item = ranked.find(function (entry) {
-        return normaliseUsername(entry && entry.username) === username;
-      });
-
-      if (!item || !Number.isFinite(Number(item.bpm))) {
+      if (!item) {
         bpmEl.textContent = "";
-
         if (bpmHealthEl) {
           bpmHealthEl.className = "tool-health pending";
           bpmHealthEl.textContent = "No reading";
@@ -795,31 +852,62 @@ window.formspree =
         return;
       }
 
-      const bpm = formatBpm(item.bpm);
-      const bounds = scheduleBounds(data, item);
+      const matchScore = Number(item.raw_score);
+      if (Number.isFinite(matchScore)) {
+        const percent = Math.max(0, Math.min(100, Math.round(matchScore)));
+        matchValueEl.textContent = percent + "%";
+        updateMatchClass(matchEl, percent);
+      }
 
-      bpmEl.textContent = bounds
-        ? "BPM " + bpm + " {" + formatBpm(bounds.min) + "–" + formatBpm(bounds.max) + "}"
-        : "BPM " + bpm;
+      if (Number.isFinite(Number(item.bpm))) {
+        const bpm = formatBpm(item.bpm);
+        const bounds = scheduleBounds(data, item);
 
-      if (bpmHealthEl) {
-        bpmHealthEl.className = "tool-health healthy";
-        bpmHealthEl.textContent = "Running";
+        bpmEl.textContent = bounds
+          ? "BPM " + bpm + " {" + formatBpm(bounds.min) + "–" + formatBpm(bounds.max) + "}"
+          : "BPM " + bpm;
+
+        if (bpmHealthEl) {
+          bpmHealthEl.className = "tool-health healthy";
+          bpmHealthEl.textContent = "Running";
+        }
+      } else {
+        bpmEl.textContent = "";
+        if (bpmHealthEl) {
+          bpmHealthEl.className = "tool-health pending";
+          bpmHealthEl.textContent = "No reading";
+        }
       }
     } catch (error) {
-      console.warn("Radio RRR BPM display warning:", error);
-      bpmEl.textContent = "";
-
+      console.warn("Radio RRR Program Match/BPM display warning:", error);
       if (bpmHealthEl) {
         bpmHealthEl.className = "tool-health unhealthy";
         bpmHealthEl.textContent = "Unavailable";
       }
+    } finally {
+      refreshInFlight = false;
     }
+  }
+
+  function queueRefresh() {
+    window.clearTimeout(refreshTimer);
+    refreshTimer = window.setTimeout(refreshProgramMatchBpm, 120);
   }
 
   function startProgramMatchBpm() {
     refreshProgramMatchBpm();
     window.setInterval(refreshProgramMatchBpm, REFRESH_MS);
+
+    ["randomLiveDjName", "randomLiveDjMeta"].forEach(function (id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      new MutationObserver(queueRefresh).observe(el, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+        attributes: true
+      });
+    });
   }
 
   if (document.readyState === "loading") {
