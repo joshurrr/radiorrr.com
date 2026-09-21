@@ -709,7 +709,7 @@ window.formspree =
 })();
 </script>
 
-<script src="script.js?v=20260921.1"></script>
+<script src="script.js?v=20260921.2"></script>
 
 <script>
 /*
@@ -795,15 +795,19 @@ window.formspree =
   }
 
   function scheduleBounds(data, item) {
-    const itemMin = Number(item && item.bpm_min);
-    const itemMax = Number(item && item.bpm_max);
+    const itemHasBounds =
+      item && item.bpm_min != null && item.bpm_max != null;
+    const itemMin = itemHasBounds ? Number(item.bpm_min) : NaN;
+    const itemMax = itemHasBounds ? Number(item.bpm_max) : NaN;
     if (Number.isFinite(itemMin) && Number.isFinite(itemMax)) {
       return { min: itemMin, max: itemMax };
     }
 
     const program = data && data.current_program;
-    const programMin = Number(program && program.bpm_min);
-    const programMax = Number(program && program.bpm_max);
+    const programHasBounds =
+      program && program.bpm_min != null && program.bpm_max != null;
+    const programMin = programHasBounds ? Number(program.bpm_min) : NaN;
+    const programMax = programHasBounds ? Number(program.bpm_max) : NaN;
     if (Number.isFinite(programMin) && Number.isFinite(programMax)) {
       return { min: programMin, max: programMax };
     }

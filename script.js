@@ -795,7 +795,7 @@ document.addEventListener("DOMContentLoaded", function () {
           .replace(/\s+/g, " ");
       }
 
-      async function updateLiveGenresDetected(aiGenre, featuredIdentity, relayIdentity) {
+      async function updateLiveGenresDetected(aiGenre, featuredIdentity, relayIdentity, featuredPlatform) {
         if (!liveGenresDetected || !liveGenresDetectedList) return;
 
         const requestId = ++liveGenreRequestId;
@@ -835,10 +835,12 @@ document.addEventListener("DOMContentLoaded", function () {
           // only has the short ai_genre display string.
           try {
             const username = selectedIdentity.replace(/^username:/i, "").replace(/^@/, "");
+            const platform = String(featuredPlatform || "TikTok").trim() || "TikTok";
             const response = await fetch(
               getFreshUrl(
                 "https://api.radiorrr.com/api/ai-genre?username=" +
-                encodeURIComponent(username)
+                encodeURIComponent(username) +
+                "&platform=" + encodeURIComponent(platform)
               ),
               {
                 cache: "no-store",
@@ -2352,7 +2354,8 @@ document.addEventListener("DOMContentLoaded", function () {
           await updateLiveGenresDetected(
             aiGenre,
             featuredIdentity,
-            routerIdentity
+            routerIdentity,
+            selectedFeaturedDj && selectedFeaturedDj.platform
           );
 
           if (hasRelay) {
@@ -2695,7 +2698,8 @@ document.addEventListener("DOMContentLoaded", function () {
               await updateLiveGenresDetected(
                 null,
                 manualFeaturedDJIdentity,
-                ""
+                "",
+                dj && dj.platform
               );
               await loadLiveDJs();
             } catch (error) {
