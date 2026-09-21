@@ -709,7 +709,7 @@ window.formspree =
 })();
 </script>
 
-<script src="script.js?v=20260921.2"></script>
+<script src="script.js?v=20260921.3"></script>
 
 <script>
 /*
@@ -745,11 +745,6 @@ window.formspree =
     const manualDj = normaliseUsername(params.get("dj"));
     if (manualDj) return manualDj;
 
-    const meta = document.getElementById("randomLiveDjMeta");
-    const metaText = meta ? meta.textContent : "";
-    const metaMatch = metaText.match(/@([A-Za-z0-9._-]+)/);
-    if (metaMatch) return normaliseUsername(metaMatch[1]);
-
     const card = document.getElementById("randomLiveDj");
     if (card) {
       const datasetUser = normaliseUsername(
@@ -761,16 +756,25 @@ window.formspree =
       if (datasetUser) return datasetUser;
     }
 
+    const meta = document.getElementById("randomLiveDjMeta");
+    const metaText = meta ? meta.textContent : "";
+    const metaMatch = metaText.match(/@([A-Za-z0-9._-]+)/);
+    if (metaMatch) return normaliseUsername(metaMatch[1]);
+
     return "";
   }
 
   function findDisplayedItem(data) {
     const ranked = Array.isArray(data && data.ranked) ? data.ranked : [];
     const username = displayedUsername();
+    const card = document.getElementById("randomLiveDj");
+    const platform = String(card && card.dataset.platform || "").trim().toLowerCase();
 
     if (username) {
       const byUsername = ranked.find(function (entry) {
-        return normaliseUsername(entry && entry.username) === username;
+        const entryPlatform = String(entry && entry.platform || "TikTok").trim().toLowerCase();
+        return normaliseUsername(entry && entry.username) === username &&
+          (!platform || entryPlatform === platform);
       });
       if (byUsername) return byUsername;
     }

@@ -834,7 +834,10 @@ document.addEventListener("DOMContentLoaded", function () {
           // Fetch the latest stored AI result when the selected/default DJ
           // only has the short ai_genre display string.
           try {
-            const username = selectedIdentity.replace(/^username:/i, "").replace(/^@/, "");
+            const identityUsernameMatch = selectedIdentity.match(/(?:^|:)username:([^:]+)$/i);
+            const username = identityUsernameMatch
+              ? identityUsernameMatch[1]
+              : selectedIdentity.replace(/^username:/i, "").replace(/^@/, "");
             const platform = String(featuredPlatform || "TikTok").trim() || "TikTok";
             const response = await fetch(
               getFreshUrl(
@@ -1098,7 +1101,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const username = getDJUsername(dj);
         if (!username) return [];
 
-        const cacheKey = username.toLowerCase();
+        const platform = getDJPlatform(dj);
+        const cacheKey = platform.toLowerCase() + ":" + username.toLowerCase();
         const cached = liveDetectedGenreCache.get(cacheKey);
         const now = Date.now();
         if (cached && (now - cached.timestamp) < LIVE_DETECTED_GENRE_CACHE_TTL) {
@@ -1115,7 +1119,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const response = await fetch(
               getFreshUrl(
                 "https://api.radiorrr.com/api/ai-genre?username=" +
-                encodeURIComponent(username)
+                encodeURIComponent(username) +
+                "&platform=" + encodeURIComponent(platform)
               ),
               {
                 cache: "no-store",
@@ -1309,12 +1314,19 @@ document.addEventListener("DOMContentLoaded", function () {
         const isManualSelection =
           Boolean(manualFeaturedDJIdentity) &&
           getDJIdentity(dj) === manualFeaturedDJIdentity;
+        const platform = getDJPlatform(dj);
         const streamUrl = isManualSelection && username
-          ? RADIO_ROUTER_STREAM_URL + "?dj=" + encodeURIComponent(username)
+          ? RADIO_ROUTER_STREAM_URL + "?dj=" + encodeURIComponent(username) +
+            "&platform=" + encodeURIComponent(platform)
           : RADIO_ROUTER_STREAM_URL;
 
         activeLiveUsername = username;
-        activeLiveStreamKey = (isManualSelection ? "manual:" : "default:") + (username || String(name));
+        activeLiveStreamKey = (isManualSelection ? "manual:" : "default:") +
+          (getDJIdentity(dj) || String(name));
+        if (randomLiveDj) {
+          randomLiveDj.dataset.username = username;
+          randomLiveDj.dataset.platform = platform;
+        }
         activeLiveStreamUrl = streamUrl;
         liveDjVideo.autoplay = true;
         liveDjVideo.playsInline = true;
@@ -1542,16 +1554,29 @@ document.addEventListener("DOMContentLoaded", function () {
         ).replace(/^@/, "").trim();
       }
 
+      function getDJPlatform(dj) {
+        return String(
+          dj && dj.platform || "TikTok"
+        ).trim() || "TikTok";
+      }
+
       function getDJIdentity(dj) {
+        const platform = getDJPlatform(dj).toLowerCase();
         const username = getDJUsername(dj).toLowerCase();
 
-        if (username) return "username:" + username;
+        if (username) return "platform:" + platform + ":username:" + username;
 
         const name = String(
           dj && (dj.name || dj.display_name || "")
         ).trim().toLowerCase().replace(/\s+/g, " ");
 
-        return name ? "name:" + name : "";
+        return name ? "platform:" + platform + ":name:" + name : "";
+      }
+
+      function getDJMatchKey(dj) {
+        const username = getDJUsername(dj).toLowerCase();
+        if (!username) return "";
+        return getDJPlatform(dj).toLowerCase() + ":" + username;
       }
 
       function updateMainDJMatchScore(dj) {
@@ -1571,11 +1596,7 @@ document.addEventListener("DOMContentLoaded", function () {
           valueEl = left.querySelector(".main-dj-match-value");
         }
 
-        const username = getDJUsername(dj || {});
-        const key = String(username || "")
-          .replace(/^@/, "")
-          .trim()
-          .toLowerCase();
+        const key = getDJMatchKey(dj || {});
 
         const score = Number(
           key ? currentLiveMatchScores[key] : NaN
@@ -1698,12 +1719,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
       function getDJLiveUrl(dj) {
         const username = getDJUsername(dj);
+        const platform = getDJPlatform(dj).toLowerCase();
 
         return (
           dj.live_url ||
           dj.url ||
           (username
-            ? "https://www.tiktok.com/@" + username + "/live"
+            ? (platform === "twitch"
+              ? "https://www.twitch.tv/" + username
+              : "https://www.tiktok.com/@" + username + "/live")
             : "#")
         );
       }
@@ -2107,7 +2131,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         try {
           const response = await fetch(
-            getFreshUrl("https://api.radiorrr.com/api/live"),
+            getFreshUrl("https://api.radiorrr.com/api/live?all_platforms=true"),
             {
               cache: "no-store",
               headers: {
@@ -2164,10 +2188,14 @@ document.addEventListener("DOMContentLoaded", function () {
             Array.isArray(genreMatchData.ranked)
           ) {
             genreMatchData.ranked.forEach(item => {
-              const key = String(item.username || "")
+              const username = String(item.username || "")
                 .replace(/^@/, "")
                 .trim()
                 .toLowerCase();
+              const platform = String(item.platform || "TikTok")
+                .trim()
+                .toLowerCase() || "tiktok";
+              const key = username ? platform + ":" + username : "";
 
               if (!key) return;
 
@@ -2230,7 +2258,7 @@ document.addEventListener("DOMContentLoaded", function () {
           const routerUsername = relayDj ? getDJUsername(relayDj) : "";
           const routerIdentity = relayDj ? getDJIdentity(relayDj) : "";
           const routerKey = relayDj
-            ? routerUsername ||
+            ? getDJIdentity(relayDj) ||
               String(
                 relayDj.name ||
                 relayDj.display_name ||
@@ -2242,9 +2270,7 @@ document.addEventListener("DOMContentLoaded", function () {
           currentLiveDJs = live;
 
           const liveKeys = new Set(
-            live.map(dj =>
-              getDJUsername(dj).toLowerCase()
-            ).filter(Boolean)
+            live.map(dj => getDJMatchKey(dj)).filter(Boolean)
           );
 
           Object.keys(currentLiveMatchScores).forEach(key => {
@@ -2284,7 +2310,7 @@ document.addEventListener("DOMContentLoaded", function () {
               if (manualFeaturedDJIdentity && liveFeaturedOverride) {
                 if (
                   activeLiveStreamKey !==
-                  "manual:" + getDJUsername(liveFeaturedOverride)
+                  "manual:" + getDJIdentity(liveFeaturedOverride)
                 ) {
                   showLiveDjPlayer(liveFeaturedOverride);
                 }
@@ -2400,8 +2426,8 @@ document.addEventListener("DOMContentLoaded", function () {
             // Queue secondary LIVE DJs by PROGRAM MATCH score.
             // Highest score renders first, ready to take over next.
             secondaryLiveDJs.sort((a, b) => {
-              const aKey = getDJUsername(a).toLowerCase();
-              const bKey = getDJUsername(b).toLowerCase();
+              const aKey = getDJMatchKey(a);
+              const bKey = getDJMatchKey(b);
 
               const aScore = Number(currentLiveMatchScores[aKey]);
               const bScore = Number(currentLiveMatchScores[bKey]);
@@ -2469,10 +2495,13 @@ document.addEventListener("DOMContentLoaded", function () {
         const title =
           dj.title || dj.room_title || dj.description || "";
 
+        const platform = getDJPlatform(dj);
         const profileUrl =
           dj.profile_url ||
           (username
-            ? "https://www.tiktok.com/@" + String(username).replace(/^@/, "")
+            ? (platform.toLowerCase() === "twitch"
+              ? "https://www.twitch.tv/" + String(username).replace(/^@/, "")
+              : "https://www.tiktok.com/@" + String(username).replace(/^@/, ""))
             : "#");
 
         const isFavourite = !isLive;
@@ -2489,7 +2518,9 @@ document.addEventListener("DOMContentLoaded", function () {
           dj.live_url ||
           dj.url ||
           (username
-            ? "https://www.tiktok.com/@" + String(username).replace(/^@/, "") + "/live"
+            ? (platform.toLowerCase() === "twitch"
+              ? "https://www.twitch.tv/" + String(username).replace(/^@/, "")
+              : "https://www.tiktok.com/@" + String(username).replace(/^@/, "") + "/live")
             : profileUrl);
 
         const isRouted =
@@ -2499,10 +2530,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const isActuallyLive = isLive || dj.live === true;
 
-        const matchKey = String(username || "")
-          .replace(/^@/, "")
-          .trim()
-          .toLowerCase();
+        const matchKey = getDJMatchKey(dj);
 
         const matchScore = isActuallyLive
           ? currentLiveMatchScores[matchKey]
