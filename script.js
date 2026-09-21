@@ -1568,21 +1568,23 @@ document.addEventListener("DOMContentLoaded", function () {
       function getDJPlatformBadgeHtml(dj, extraClass) {
         const platform = getDJPlatform(dj);
         const normalized = platform.toLowerCase();
-        const iconUrl = normalized === "twitch"
-          ? "https://cdn.simpleicons.org/twitch/FFFFFF"
-          : normalized === "tiktok"
-            ? "https://cdn.simpleicons.org/tiktok/FFFFFF"
-            : "";
+        const iconUrl = normalized === "tiktok"
+          ? "https://cdn.simpleicons.org/tiktok/FFFFFF"
+          : "";
 
-        if (!iconUrl) return "";
+        if (normalized !== "twitch" && !iconUrl) return "";
 
         const className = "dj-platform-badge" +
           (extraClass ? " " + extraClass : "") +
           " platform-" + normalized;
 
+        const badgeContent = normalized === "twitch"
+          ? '<span class="dj-platform-wordmark" aria-hidden="true">twitch</span>'
+          : '<img src="' + escapeAttr(iconUrl) + '" alt="" aria-hidden="true">';
+
         return '<span class="' + escapeAttr(className) + '" title="' +
           escapeAttr(platform) + '" aria-label="' + escapeAttr(platform) + '">' +
-          '<img src="' + escapeAttr(iconUrl) + '" alt="" aria-hidden="true">' +
+          badgeContent +
         '</span>';
       }
 
