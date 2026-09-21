@@ -5193,3 +5193,133 @@
   width: 0.8rem;
   height: 0.8rem;
 }
+
+/* RRR DISCOVER DJs — compact single-row horizontal discovery strip. */
+#rrrDjDiscovery {
+  padding: 0.85rem 1rem 1rem !important;
+}
+
+#rrrDjDiscovery .dj-discovery-header {
+  margin-bottom: 0.6rem !important;
+}
+
+#rrrDjDiscovery .dj-discovery-title {
+  font-size: 1.05rem !important;
+}
+
+#rrrDjDiscovery .dj-discovery-subtitle {
+  display: none !important;
+}
+
+#rrrDjDiscovery .dj-discovery-search {
+  padding: 0.62rem 0.78rem !important;
+  font-size: 0.82rem !important;
+}
+
+#rrrDjDiscovery .dj-discovery-chips {
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  gap: 0.35rem !important;
+  margin: 0.55rem 0 0.65rem !important;
+  padding: 0 0 0.15rem !important;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+#rrrDjDiscovery .dj-discovery-chip {
+  flex: 0 0 auto !important;
+  white-space: nowrap !important;
+}
+
+#rrrDjDiscovery .dj-discovery-scroll-shell {
+  position: relative;
+  min-width: 0;
+}
+
+#rrrDjDiscovery .dj-discovery-results {
+  display: flex !important;
+  grid-template-columns: none !important;
+  grid-auto-columns: unset !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  gap: 14px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 0 0.35rem !important;
+}
+
+#rrrDjDiscovery .dj-discovery-card {
+  flex: 0 0 176px !important;
+  width: 176px !important;
+  min-width: 176px !important;
+  max-width: 176px !important;
+  height: 264px !important;
+  min-height: 264px !important;
+  max-height: 264px !important;
+  scroll-snap-align: start;
+}
+
+#rrrDjDiscovery .dj-discovery-scroll-button {
+  position: absolute;
+  top: 50%;
+  z-index: 8;
+  width: 34px;
+  height: 58px;
+  transform: translateY(-50%);
+  border: 1px solid rgba(129,140,248,0.58);
+  border-radius: 10px;
+  background: rgba(5,7,20,0.9);
+  color: #ffffff;
+  font-size: 1.45rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(34,211,238,0.15);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+#rrrDjDiscovery .dj-discovery-scroll-button.previous {
+  left: 0.35rem;
+}
+
+#rrrDjDiscovery .dj-discovery-scroll-button.next {
+  right: 0.35rem;
+}
+
+#rrrDjDiscovery .dj-discovery-scroll-button:hover,
+#rrrDjDiscovery .dj-discovery-scroll-button:focus-visible {
+  border-color: #22d3ee;
+  box-shadow: 0 0 14px rgba(34,211,238,0.35);
+  outline: none;
+}
+
+#rrrDjDiscovery .dj-discovery-scroll-button:disabled,
+#rrrDjDiscovery .dj-discovery-scroll-button[hidden] {
+  display: none;
+}
+
+#rrrDjDiscovery .dj-discovery-empty {
+  flex: 1 0 100%;
+  min-width: 100%;
+}
+
+@media (max-width: 767px) {
+  #rrrDjDiscovery {
+    padding: 0.8rem !important;
+  }
+
+  #rrrDjDiscovery .dj-discovery-results {
+    gap: 12px !important;
+  }
+
+  #rrrDjDiscovery .dj-discovery-scroll-button {
+    display: none !important;
+  }
+}
+

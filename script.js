@@ -1914,12 +1914,15 @@ document.addEventListener("DOMContentLoaded", function () {
         section.innerHTML =
           '<div class="dj-discovery-header">' +
             '<div class="dj-discovery-title">🎧 DISCOVER DJs</div>' +
-            '<div class="dj-discovery-subtitle">Discover DJs who are offline below. Search or choose a genre to browse all DJs, including those live now.</div>' +
           '</div>' +
           '<input class="dj-discovery-search" id="djDiscoverySearch" type="search" ' +
             'autocomplete="off" placeholder="Search DJ name, @username or genre…" aria-label="Search RRR DJs">' +
           '<div class="dj-discovery-chips" id="djDiscoveryChips"></div>' +
-          '<div class="dj-discovery-results" id="djDiscoveryResults"></div>';
+          '<div class="dj-discovery-scroll-shell">' +
+            '<button class="dj-discovery-scroll-button previous" id="djDiscoveryPrevious" type="button" aria-label="Scroll DJs left">‹</button>' +
+            '<div class="dj-discovery-results" id="djDiscoveryResults" tabindex="0" aria-label="DJ discovery results"></div>' +
+            '<button class="dj-discovery-scroll-button next" id="djDiscoveryNext" type="button" aria-label="Scroll DJs right">›</button>' +
+          '</div>';
 
         const search = section.querySelector("#djDiscoverySearch");
         search.value = djDiscoveryQuery;
@@ -1928,6 +1931,39 @@ document.addEventListener("DOMContentLoaded", function () {
           djDiscoveryQuery = this.value;
           renderDjDiscoveryResults();
         });
+
+        const results = section.querySelector("#djDiscoveryResults");
+        const previous = section.querySelector("#djDiscoveryPrevious");
+        const next = section.querySelector("#djDiscoveryNext");
+
+        function updateDiscoveryScrollButtons() {
+          if (!results || !previous || !next) return;
+          const maxScrollLeft = Math.max(0, results.scrollWidth - results.clientWidth);
+          previous.disabled = results.scrollLeft <= 2;
+          next.disabled = results.scrollLeft >= maxScrollLeft - 2;
+          const hasOverflow = maxScrollLeft > 2;
+          previous.hidden = !hasOverflow;
+          next.hidden = !hasOverflow;
+        }
+
+        function scrollDiscovery(direction) {
+          if (!results) return;
+          const card = results.querySelector(".dj-discovery-card");
+          const styles = window.getComputedStyle(results);
+          const gap = parseFloat(styles.columnGap || styles.gap || "0") || 0;
+          const cardWidth = card ? card.getBoundingClientRect().width : 176;
+          const visibleCards = Math.max(1, Math.floor(results.clientWidth / Math.max(1, cardWidth + gap)));
+          results.scrollBy({
+            left: direction * (cardWidth + gap) * visibleCards,
+            behavior: "smooth"
+          });
+        }
+
+        if (previous) previous.addEventListener("click", function () { scrollDiscovery(-1); });
+        if (next) next.addEventListener("click", function () { scrollDiscovery(1); });
+        if (results) results.addEventListener("scroll", updateDiscoveryScrollButtons, { passive: true });
+        window.addEventListener("resize", updateDiscoveryScrollButtons, { passive: true });
+        section.rrrUpdateDiscoveryScrollButtons = updateDiscoveryScrollButtons;
 
         renderDjDiscoveryChips();
         renderDjDiscoveryResults();
@@ -2104,6 +2140,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 : "All DJs in the catalogue are live now. Search or choose a genre to find them.")
               : "No DJs are currently available in the RRR catalogue.") +
             '</div>';
+          resultsEl.scrollLeft = 0;
+          const section = document.getElementById("rrrDjDiscovery");
+          if (section && typeof section.rrrUpdateDiscoveryScrollButtons === "function") {
+            window.requestAnimationFrame(section.rrrUpdateDiscoveryScrollButtons);
+          }
           return;
         }
 
@@ -2150,6 +2191,14 @@ document.addEventListener("DOMContentLoaded", function () {
               '</div>' +
             '</a>';
         }).join("");
+
+        // Filtering/search can change the width of the result strip. Return
+        // to the start and refresh the arrow state after each result update.
+        resultsEl.scrollLeft = 0;
+        const section = document.getElementById("rrrDjDiscovery");
+        if (section && typeof section.rrrUpdateDiscoveryScrollButtons === "function") {
+          window.requestAnimationFrame(section.rrrUpdateDiscoveryScrollButtons);
+        }
       }
 
       /* LIVE DJs API */
