@@ -5081,3 +5081,73 @@
   }
 }
 
+
+
+/* RRR DJ PLATFORM IDENTIFIERS — TikTok / Twitch */
+.dj-platform-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.45rem;
+  height: 1.45rem;
+  box-sizing: border-box;
+  border: 1px solid rgba(255,255,255,0.24);
+  border-radius: 7px;
+  background: rgba(3,7,18,0.78);
+  box-shadow: 0 0 8px rgba(0,0,0,0.42);
+  flex: 0 0 auto;
+}
+
+.dj-platform-badge img {
+  display: block;
+  width: 0.88rem;
+  height: 0.88rem;
+  object-fit: contain;
+}
+
+.dj-platform-badge.platform-twitch {
+  border-color: rgba(145,70,255,0.72);
+  box-shadow: 0 0 9px rgba(145,70,255,0.28);
+}
+
+.dj-platform-badge.platform-tiktok {
+  border-color: rgba(37,244,238,0.62);
+  box-shadow: 0 0 9px rgba(37,244,238,0.20);
+}
+
+/* Current DJ: small platform mark sits directly beside the DJ name. */
+#randomLiveDj .current-dj-platform {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+#randomLiveDj .current-dj-platform[hidden] {
+  display: none !important;
+}
+
+#randomLiveDj .current-dj-platform-badge {
+  width: 1.55rem;
+  height: 1.55rem;
+}
+
+#randomLiveDj .current-dj-platform-badge img {
+  width: 0.94rem;
+  height: 0.94rem;
+}
+
+/* Secondary LIVE cards: opposite the existing LIVE badge. */
+#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-platform {
+  position: absolute !important;
+  top: 0.55rem !important;
+  right: 0.65rem !important;
+  z-index: 5 !important;
+  width: 1.35rem;
+  height: 1.35rem;
+  pointer-events: none;
+}
+
+#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-platform img {
+  width: 0.8rem;
+  height: 0.8rem;
+}

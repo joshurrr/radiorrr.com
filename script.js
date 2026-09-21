@@ -452,6 +452,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const randomLiveDjName =
         document.getElementById("randomLiveDjName");
+      const randomLiveDjPlatform =
+        document.getElementById("randomLiveDjPlatform");
       const randomLiveDjMatch =
         document.getElementById("randomLiveDjMatch");
 
@@ -1338,6 +1340,7 @@ document.addEventListener("DOMContentLoaded", function () {
           liveDjBackground.muted = true;
         }
         randomLiveDjName.textContent = "🎧 " + String(name);
+        updateCurrentDJPlatform(dj);
         updateMainDJMatchScore(dj);
         updateLiveDjGenres(dj);
         updateLiveDjProfile(dj);
@@ -1472,6 +1475,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (liveCandidatesAvailable) {
           if (randomLiveDjName) {
             randomLiveDjName.textContent = "🎧 Waiting for station relay…";
+            updateCurrentDJPlatform(null);
           }
 
           if (liveDjPlaceholder) {
@@ -1485,6 +1489,7 @@ document.addEventListener("DOMContentLoaded", function () {
           if (player) player.classList.remove("live-active");
         }
 
+        updateCurrentDJPlatform(null);
         updateMainDJMatchScore(null);
         updateLiveDjProfile(null);
       }
@@ -1558,6 +1563,35 @@ document.addEventListener("DOMContentLoaded", function () {
         return String(
           dj && dj.platform || "TikTok"
         ).trim() || "TikTok";
+      }
+
+      function getDJPlatformBadgeHtml(dj, extraClass) {
+        const platform = getDJPlatform(dj);
+        const normalized = platform.toLowerCase();
+        const iconUrl = normalized === "twitch"
+          ? "https://cdn.simpleicons.org/twitch/FFFFFF"
+          : normalized === "tiktok"
+            ? "https://cdn.simpleicons.org/tiktok/FFFFFF"
+            : "";
+
+        if (!iconUrl) return "";
+
+        const className = "dj-platform-badge" +
+          (extraClass ? " " + extraClass : "") +
+          " platform-" + normalized;
+
+        return '<span class="' + escapeAttr(className) + '" title="' +
+          escapeAttr(platform) + '" aria-label="' + escapeAttr(platform) + '">' +
+          '<img src="' + escapeAttr(iconUrl) + '" alt="" aria-hidden="true">' +
+        '</span>';
+      }
+
+      function updateCurrentDJPlatform(dj) {
+        if (!randomLiveDjPlatform) return;
+
+        const badge = dj ? getDJPlatformBadgeHtml(dj, "current-dj-platform-badge") : "";
+        randomLiveDjPlatform.innerHTML = badge;
+        randomLiveDjPlatform.hidden = !badge;
       }
 
       function getDJIdentity(dj) {
@@ -2130,8 +2164,11 @@ document.addEventListener("DOMContentLoaded", function () {
         liveDjRequestController = new AbortController();
 
         try {
+          // Keep the station relay/current-DJ lookup on the established
+          // /api/live response. Fetch the cross-platform live pool separately
+          // so adding Twitch cards cannot affect main relay startup.
           const response = await fetch(
-            getFreshUrl("https://api.radiorrr.com/api/live?all_platforms=true"),
+            getFreshUrl("https://api.radiorrr.com/api/live"),
             {
               cache: "no-store",
               headers: {
@@ -2150,6 +2187,34 @@ document.addEventListener("DOMContentLoaded", function () {
 
           if (requestId !== liveDjRequestId || !data || typeof data !== "object") {
             return;
+          }
+
+          // Fetch the complete TikTok + Twitch live pool only for the
+          // secondary LIVE DJ cards. If this request fails, retain the
+          // established TikTok list from /api/live rather than disturbing
+          // the main station player.
+          let allPlatformsData = null;
+          try {
+            const allPlatformsResponse = await fetch(
+              getFreshUrl("https://api.radiorrr.com/api/live?all_platforms=true"),
+              {
+                cache: "no-store",
+                headers: {
+                  "Cache-Control": "no-cache",
+                  "Pragma": "no-cache"
+                },
+                signal: liveDjRequestController.signal
+              }
+            );
+
+            if (allPlatformsResponse.ok) {
+              allPlatformsData = await allPlatformsResponse.json();
+            }
+          } catch (allPlatformsError) {
+            if (allPlatformsError && allPlatformsError.name === "AbortError") {
+              return;
+            }
+            console.warn("Radio RRR cross-platform live list unavailable:", allPlatformsError);
           }
 
           // Stage 3 exposes the same ranking used by the automatic relay
@@ -2180,7 +2245,9 @@ document.addEventListener("DOMContentLoaded", function () {
             console.warn("Radio RRR genre-match display unavailable:", matchError);
           }
 
-          const live = Array.isArray(data.live) ? data.live : [];
+          const live = Array.isArray(allPlatformsData && allPlatformsData.live)
+            ? allPlatformsData.live
+            : (Array.isArray(data.live) ? data.live : []);
 
           currentLiveMatchScores = {};
           if (
@@ -2330,6 +2397,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     relayDj.display_name ||
                     "LIVE DJ"
                   );
+                updateCurrentDJPlatform(relayDj);
                 updateMainDJMatchScore(relayDj);
                 updateLiveDjGenres(relayDj);
                 updateLiveDjProfile(relayDj);
@@ -2671,6 +2739,7 @@ document.addEventListener("DOMContentLoaded", function () {
           card.innerHTML =
             secondaryPhoto +
             '<div class="dj-secondary-overlay"></div>' +
+            getDJPlatformBadgeHtml(dj, "dj-secondary-platform") +
             '<div class="dj-secondary-content">' +
               '<div class="dj-secondary-live"><span class="dj-secondary-live-dot"></span>LIVE</div>' +
               '<div class="dj-secondary-name" title="' + escapeAttr(String(name)) + '">' + escapeHtml(String(name)) + '</div>' +
