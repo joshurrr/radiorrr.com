@@ -1,0 +1,135 @@
+--- original/main.py
++++ updated/main.py
+@@ -1,4 +1,5 @@
+ import os
++import math
+ from contextlib import asynccontextmanager, closing
+ import asyncio
+ import httpx
+@@ -1843,10 +1844,13 @@
+     finally:
+         ai_conn.close()
+ 
++    active_program = await get_active_schedule_block() or {}
+     enriched_live_djs = []
+ 
+     for dj in live_djs:
+         enriched = dict(dj)
++        enriched["bpm_min"] = active_program.get("bpm_min")
++        enriched["bpm_max"] = active_program.get("bpm_max")
+ 
+         username = (
+             str(dj.get("username") or "")
+@@ -1961,6 +1965,42 @@
+         enriched_live_djs,
+         ranked,
+     )
++
++
++def _positive_bpm_value(value):
++    try:
++        value = float(value)
++    except (TypeError, ValueError):
++        return None
++    return value if math.isfinite(value) and value > 0 else None
++
++
++def stage3_bpm_details(item, dj, freshness):
++    low = _positive_bpm_value(dj.get("bpm_min"))
++    high = _positive_bpm_value(dj.get("bpm_max"))
++    if low is not None and high is not None and low > high:
++        low, high = high, low
++    enabled = low is not None or high is not None
++    bpm = _positive_bpm_value(item.get("bpm"))
++    confidence = min(1.0, _positive_bpm_value(item.get("bpm_confidence")) or 0.0)
++    reliable = bpm is not None and confidence > 0.0 and freshness > 0.0
++    distance = None
++    adjustment = 0.0
++    if enabled and reliable:
++        distance = max(0.0, low - bpm if low is not None else 0.0,
++                       bpm - high if high is not None else 0.0)
++        # A small miss costs little; large misses cost up to 60 score points.
++        # Reuse detector confidence and AI age decay; never reward unknown BPM.
++        adjustment = -round(min(60.0, 0.1 * distance ** 2) * confidence * freshness, 2)
++    return {
++        "bpm": bpm,
++        "bpm_min": low,
++        "bpm_max": high,
++        "bpm_distance": distance,
++        "bpm_adjustment": adjustment,
++        "bpm_matching_enabled": enabled,
++        "bpm_status": "known" if reliable else "unknown",
++    }
+ 
+ 
+ def stage3_adjusted_ranking(ranked, enriched_live_djs, now=None):
+@@ -1977,16 +2017,23 @@
+         if not dj:
+             continue
+         freshness = ai_freshness_factor(dj, now)
++        bpm_details = stage3_bpm_details(item, dj, freshness)
++        # Explicit schedule bounds replace the matcher's inferred BPM blend.
++        # Without bounds, keep the original score path exactly as it was.
++        ai_score = item.get("ai_score")
++        if bpm_details["bpm_matching_enabled"]:
++            ai_score = item.get("genre_ai_score", ai_score)
+         profile_weight = 0.20 + 0.25 * (1.0 - freshness)
+         ai_weight = 0.70
+         viewer_weight = max(0.0, 1.0 - ai_weight - profile_weight)
+         score = round(
+-            float(item.get("ai_score") or 0.0) * freshness * ai_weight
++            float(ai_score or 0.0) * freshness * ai_weight
+             + float(item.get("profile_score") or 0.0) * profile_weight
+             + float(item.get("viewer_bonus") or 0.0) * viewer_weight,
+             2,
+         )
+         adjusted = dict(item)
++        adjusted.update(bpm_details)
+         adjusted["raw_score"] = round(float(item.get("score") or 0.0), 2)
+         adjusted["ai_freshness"] = round(freshness, 3)
+         adjusted["profile_driven"] = (
+@@ -2000,7 +2047,8 @@
+                     0.0,
+                     score
+                     - float(item.get("anti_genre_penalty") or 0.0)
+-                    - float(item.get("speech_penalty") or 0.0),
++                    - float(item.get("speech_penalty") or 0.0)
++                    + bpm_details["bpm_adjustment"],
+                 ),
+                 2,
+             )
+@@ -3049,7 +3097,7 @@
+ def _db_schedule():
+     conn = get_db()
+     rows = conn.execute("""
+-        SELECT id, day, start_minutes, end_minutes, name, genres_json, genre_weights_json, anti_genres_json, enabled
++        SELECT *
+         FROM schedule
+         WHERE enabled = 1
+         ORDER BY CASE day
+@@ -3068,6 +3116,8 @@
+             "genres": json.loads(row["genres_json"] or "[]"),
+             "genre_weights": json.loads(row["genre_weights_json"] or "{}"),
+             "anti_genres": json.loads(row["anti_genres_json"] or "[]"),
++            "bpm_min": row["bpm_min"] if "bpm_min" in row.keys() else None,
++            "bpm_max": row["bpm_max"] if "bpm_max" in row.keys() else None,
+             "enabled": bool(row["enabled"]),
+         }
+         for row in rows
+@@ -3085,6 +3135,8 @@
+             "genres": row["genres"],
+             "genre_weights": row.get("genre_weights", {}),
+             "anti_genres": row.get("anti_genres", []),
++            "bpm_min": row.get("bpm_min"),
++            "bpm_max": row.get("bpm_max"),
+         }
+         if row["day"] == "Sunday":
+             profiles["sunday"].append(block)
+@@ -6078,6 +6130,7 @@
+             for genre, weight in await get_schedule_targets()
+         ],
+         "anti_genres": await get_schedule_anti_genres(),
++        "current_program": await get_active_schedule_block(),
+         "current_relay": current_username or None,
+         "proposed_relay": candidate,
+         "decision_reason": reason,
