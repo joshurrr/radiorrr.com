@@ -1446,10 +1446,32 @@ document.addEventListener("DOMContentLoaded", function () {
           liveDjBackground.load();
         }
 
+        const liveCandidatesAvailable = currentLiveDJs.length > 0;
+
         if (randomLiveDj) {
-          randomLiveDj.style.display = "none";
+          // /api/live can briefly return live DJs before the backend relay has
+          // finished resolving. Keep the main station panel visible in that
+          // state instead of making the whole Current DJ section disappear.
+          randomLiveDj.style.display = liveCandidatesAvailable ? "block" : "none";
         }
 
+        if (liveCandidatesAvailable) {
+          if (randomLiveDjName) {
+            randomLiveDjName.textContent = "🎧 Waiting for station relay…";
+          }
+
+          if (liveDjPlaceholder) {
+            const placeholderText = liveDjPlaceholder.querySelector("span");
+            if (placeholderText) {
+              placeholderText.textContent = "Station relay is connecting…";
+            }
+          }
+
+          const player = liveDjVideo && liveDjVideo.closest(".radio-router-player");
+          if (player) player.classList.remove("live-active");
+        }
+
+        updateMainDJMatchScore(null);
         updateLiveDjProfile(null);
       }
 
@@ -1533,7 +1555,21 @@ document.addEventListener("DOMContentLoaded", function () {
       function updateMainDJMatchScore(dj) {
         if (!randomLiveDjMatch) return;
 
-        const username = getDJUsername(dj);
+        // Do not replace randomLiveDjMatch.innerHTML here. index.html owns the
+        // dedicated #randomLiveDjBpm field, so rebuilding this container was
+        // deleting the BPM element every time the current DJ refreshed.
+        let valueEl = randomLiveDjMatch.querySelector(".main-dj-match-value");
+        if (!valueEl) {
+          const left = document.createElement("span");
+          left.className = "rrr-program-match-left";
+          left.innerHTML =
+            '<span class="main-dj-match-label">🎯 PROGRAM MATCH</span> ' +
+            '<span class="main-dj-match-value">—</span>';
+          randomLiveDjMatch.prepend(left);
+          valueEl = left.querySelector(".main-dj-match-value");
+        }
+
+        const username = getDJUsername(dj || {});
         const key = String(username || "")
           .replace(/^@/, "")
           .trim()
@@ -1544,9 +1580,7 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
         if (!Number.isFinite(score)) {
-          randomLiveDjMatch.innerHTML =
-            '<span class="main-dj-match-label">🎯 PROGRAM MATCH</span>' +
-            '<span class="main-dj-match-value">—</span>';
+          valueEl.textContent = "—";
           randomLiveDjMatch.className =
             "dj-match-score main-dj-match-score match-low";
           return;
@@ -1564,9 +1598,7 @@ document.addEventListener("DOMContentLoaded", function () {
               ? "match-mid"
               : "match-low";
 
-        randomLiveDjMatch.innerHTML =
-          '<span class="main-dj-match-label">🎯 PROGRAM MATCH</span>' +
-          '<span class="main-dj-match-value">' + rounded + '%</span>';
+        valueEl.textContent = rounded + "%";
         randomLiveDjMatch.className =
           "dj-match-score main-dj-match-score " + matchClass;
       }
