@@ -5114,15 +5114,12 @@
   box-shadow: 0 0 9px rgba(145,70,255,0.32);
 }
 
-.dj-platform-badge.platform-twitch .dj-platform-wordmark {
+.dj-platform-badge.platform-twitch img {
   display: block;
-  color: #ffffff;
-  font-size: 0.64rem;
-  line-height: 1;
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  text-transform: lowercase;
-  text-shadow: 0 0 5px rgba(145,70,255,0.55);
+  width: 2.65rem;
+  height: auto;
+  max-height: 0.86rem;
+  object-fit: contain;
 }
 
 .dj-platform-badge.platform-tiktok {
@@ -5152,12 +5149,16 @@
 
 #randomLiveDj .current-dj-platform-badge.platform-twitch {
   width: auto;
-  min-width: 3.6rem;
-  padding: 0 0.48rem;
+  min-width: 4rem;
+  height: 1.55rem;
+  padding: 0 0.56rem;
+  border-radius: 999px;
 }
 
-#randomLiveDj .current-dj-platform-badge.platform-twitch .dj-platform-wordmark {
-  font-size: 0.7rem;
+#randomLiveDj .current-dj-platform-badge.platform-twitch img {
+  width: 3rem;
+  height: auto;
+  max-height: 0.94rem;
 }
 
 #randomLiveDj .current-dj-platform-badge img {
@@ -5182,8 +5183,10 @@
   padding: 0 0.36rem;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-platform.platform-twitch .dj-platform-wordmark {
-  font-size: 0.58rem;
+#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-platform.platform-twitch img {
+  width: 2.35rem;
+  height: auto;
+  max-height: 0.76rem;
 }
 
 #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-platform img {
