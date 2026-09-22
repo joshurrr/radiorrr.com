@@ -676,7 +676,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       /* RADIO ROUTER LIVE DJ PLAYER */
 
-      const RADIO_ROUTER_STREAM_URL = "https://api.radiorrr.com/api/live-stream";
+      const RADIO_ROUTER_STREAM_URL = "https://stream.radiorrr.com/api/live-stream";
 
       let activeLiveUsername = "";
       let activeLiveStreamKey = "";
@@ -2485,16 +2485,24 @@ document.addEventListener("DOMContentLoaded", function () {
             // audio classification. Fetch the stored AI result for each
             // candidate so every live DJ card can show its own current
             // detected genres. This does NOT start another audio relay.
-            const secondaryLiveDJs = await Promise.all(
-              otherLiveDJs.map(async dj => {
-                const matchingFavourite = uniqueFavouriteDJs.find(
-                  favourite => getDJIdentity(favourite) === getDJIdentity(dj)
-                );
-                const merged = hydrateLiveDJProfile(dj, matchingFavourite);
-                merged.rrr_live_detected_genres = await getLiveDetectedGenres(merged);
-                return merged;
-              })
-            );
+            const secondaryLiveDJs = otherLiveDJs.map(dj => {
+              const matchingFavourite = uniqueFavouriteDJs.find(
+                favourite => getDJIdentity(favourite) === getDJIdentity(dj)
+              );
+              const merged = hydrateLiveDJProfile(dj, matchingFavourite);
+
+              // Render the LIVE row immediately from the Scout data already
+              // returned by /api/live. Do not hold the entire row waiting for
+              // extra per-DJ HTTP requests; one slow/missing AI result was able
+              // to delay every secondary LIVE card indefinitely.
+              merged.rrr_live_detected_genres = parseLiveDetectedGenres(
+                merged && merged.ai_genres
+                  ? { genres: merged.ai_genres }
+                  : null
+              );
+
+              return merged;
+            });
 
             // Queue secondary LIVE DJs by PROGRAM MATCH score.
             // Highest score renders first, ready to take over next.
