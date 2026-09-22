@@ -2277,7 +2277,10 @@ document.addEventListener("DOMContentLoaded", function () {
               }
             });
           }
-          const favourites = Array.isArray(data.favourites) ? data.favourites : [];
+          const favourites =
+            Array.isArray(allPlatformsData && allPlatformsData.favourites)
+              ? allPlatformsData.favourites
+              : (Array.isArray(data.favourites) ? data.favourites : []);
 
           // data.relay is the station-wide relay selected by the backend.
           // If TikTok briefly reports the DJ as offline, the backend may
