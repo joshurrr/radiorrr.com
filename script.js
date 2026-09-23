@@ -2026,6 +2026,21 @@ document.addEventListener("DOMContentLoaded", function () {
           score += 5;
         }
 
+        // Cross-platform fairness: Twitch favourites often do not carry the
+        // TikTok-specific followers/likes/videos metadata above. Give any
+        // supported non-TikTok catalogue entry a neutral baseline when it has
+        // no popularity metadata, so it can participate in discovery ranking
+        // instead of being forced to the bottom at score 0.
+        const platform = getDJPlatform(dj).toLowerCase();
+        const hasPopularityMetadata =
+          (Number.isFinite(followers) && followers > 0) ||
+          (Number.isFinite(likes) && likes > 0) ||
+          (Number.isFinite(videos) && videos > 0);
+
+        if (platform !== "tiktok" && !hasPopularityMetadata) {
+          score = Math.max(score, 12);
+        }
+
         // A currently live DJ gets a small discovery boost, while the
         // popularity/activity signals remain the main driver of the order.
         if (dj.live === true) score += 5;
@@ -2060,6 +2075,7 @@ document.addEventListener("DOMContentLoaded", function () {
               dj.detected_genres,
               dj.current_genres,
               dj.rrr_genres,
+              getDJPlatform(dj),
               genres.join(" ")
             ].map(value => String(value || "").toLowerCase()).join(" ");
 
@@ -2093,9 +2109,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return a.name.localeCompare(b.name);
           });
 
-        const limited = ranked.slice(0, 12);
-
-        if (!limited.length) {
+        if (!ranked.length) {
           resultsEl.innerHTML =
             '<div class="dj-discovery-empty">' +
             (djDiscoveryDJs.length
@@ -2107,7 +2121,7 @@ document.addEventListener("DOMContentLoaded", function () {
           return;
         }
 
-        resultsEl.innerHTML = limited.map(item => {
+        resultsEl.innerHTML = ranked.map(item => {
           const dj = item.dj;
           const profilePic =
             dj.profile_pic || dj.profile_picture || dj.avatar || dj.photo || "";
@@ -2172,8 +2186,8 @@ document.addEventListener("DOMContentLoaded", function () {
         liveDjRequestController = new AbortController();
 
         try {
-          // /api/live is now the single platform-neutral source for the
-          // station relay, all live DJs and the full DJ catalogue.
+          // /api/live is the single platform-neutral source for the station
+          // relay, all live DJs and the complete DJ catalogue.
           const response = await fetch(
             getFreshUrl("https://api.radiorrr.com/api/live"),
             {
