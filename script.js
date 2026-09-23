@@ -812,8 +812,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         liveGenresDetected.style.display = "block";
-        liveGenresDetectedList.innerHTML = "";
 
+        // Keep the previous genre rows visible while the fresh detector result
+        // is being fetched. Clearing them here caused the Current DJ card to
+        // collapse for the duration of the request, producing a visible page
+        // jump for listeners who were scrolled further down.
         let genreData = null;
 
         // /api/live supplies ai_genre as a display string (for example
@@ -907,6 +910,10 @@ document.addEventListener("DOMContentLoaded", function () {
           ...genres.map(item => item.confidence),
           0.01
         );
+
+        // New detector data is ready. Replace the old rows now, in the same
+        // rendering turn, instead of leaving the panel empty during the fetch.
+        liveGenresDetectedList.innerHTML = "";
 
         genres.forEach(item => {
           const row = document.createElement("div");
@@ -2412,7 +2419,6 @@ document.addEventListener("DOMContentLoaded", function () {
            * data.relay is the station-wide default. A manualFeaturedDJIdentity
            * is a browser-local override and must never alter data.relay.
            */
-          liveDjsList.innerHTML = "";
 
           const matchingLiveDj = routerIdentity
             ? uniqueLiveDJs.find(dj => getDJIdentity(dj) === routerIdentity)
@@ -2447,6 +2453,11 @@ document.addEventListener("DOMContentLoaded", function () {
             routerIdentity,
             selectedFeaturedDj && selectedFeaturedDj.platform
           );
+
+          // Do not collapse the LIVE/DISCOVER area while waiting for the
+          // detector request above. Rebuild only after the async genre refresh
+          // has completed so the browser never sees a temporarily short page.
+          liveDjsList.innerHTML = "";
 
           if (hasRelay) {
             updateLiveDjGenres(selectedFeaturedDj);
