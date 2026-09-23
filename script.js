@@ -2111,10 +2111,13 @@ document.addEventListener("DOMContentLoaded", function () {
           const dj = item.dj;
           const profilePic =
             dj.profile_pic || dj.profile_picture || dj.avatar || dj.photo || "";
+          const platform = getDJPlatform(dj).toLowerCase();
           const profileUrl =
             dj.profile_url ||
             (item.username
-              ? "https://www.tiktok.com/@" + item.username
+              ? (platform === "twitch"
+                ? "https://www.twitch.tv/" + item.username
+                : "https://www.tiktok.com/@" + item.username)
               : "#");
           const isLive = dj.live === true;
           const status = isLive ? "LIVE" : "OFFLINE";
@@ -2194,33 +2197,27 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
           }
 
-          // Fetch the complete TikTok + Twitch live pool only for the
-          // secondary LIVE DJ cards. If this request fails, retain the
-          // established TikTok list from /api/live rather than disturbing
-          // the main station player.
-          let allPlatformsData = null;
-          try {
-            const allPlatformsResponse = await fetch(
-              getFreshUrl("https://api.radiorrr.com/api/live?all_platforms=true"),
-              {
-                cache: "no-store",
-                headers: {
-                  "Cache-Control": "no-cache",
-                  "Pragma": "no-cache"
-                },
-                signal: liveDjRequestController.signal
-              }
-            );
+          // The cross-platform response is authoritative for every DJ list and
+          // catalogue surface. Do not silently fall back to TikTok-only data:
+          // if this request is unavailable, show the normal API error state
+          // rather than making Twitch (or future platforms) disappear.
+          const allPlatformsResponse = await fetch(
+            getFreshUrl("https://api.radiorrr.com/api/live?all_platforms=true"),
+            {
+              cache: "no-store",
+              headers: {
+                "Cache-Control": "no-cache",
+                "Pragma": "no-cache"
+              },
+              signal: liveDjRequestController.signal
+            }
+          );
 
-            if (allPlatformsResponse.ok) {
-              allPlatformsData = await allPlatformsResponse.json();
-            }
-          } catch (allPlatformsError) {
-            if (allPlatformsError && allPlatformsError.name === "AbortError") {
-              return;
-            }
-            console.warn("Radio RRR cross-platform live list unavailable:", allPlatformsError);
+          if (!allPlatformsResponse.ok) {
+            throw new Error("All-platforms API returned " + allPlatformsResponse.status);
           }
+
+          const allPlatformsData = await allPlatformsResponse.json();
 
           // Stage 3 exposes the same ranking used by the automatic relay
           // selector. Use it only as a display/monitoring signal here.
@@ -2250,9 +2247,9 @@ document.addEventListener("DOMContentLoaded", function () {
             console.warn("Radio RRR genre-match display unavailable:", matchError);
           }
 
-          const live = Array.isArray(allPlatformsData && allPlatformsData.live)
+          const live = Array.isArray(allPlatformsData.live)
             ? allPlatformsData.live
-            : (Array.isArray(data.live) ? data.live : []);
+            : [];
 
           currentLiveMatchScores = {};
           if (
@@ -2278,9 +2275,9 @@ document.addEventListener("DOMContentLoaded", function () {
             });
           }
           const favourites =
-            Array.isArray(allPlatformsData && allPlatformsData.favourites)
+            Array.isArray(allPlatformsData.favourites)
               ? allPlatformsData.favourites
-              : (Array.isArray(data.favourites) ? data.favourites : []);
+              : [];
 
           // data.relay is the station-wide relay selected by the backend.
           // If TikTok briefly reports the DJ as offline, the backend may
