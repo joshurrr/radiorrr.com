@@ -2454,6 +2454,11 @@ document.addEventListener("DOMContentLoaded", function () {
             selectedFeaturedDj && selectedFeaturedDj.platform
           );
 
+          // A newer 30-second refresh may have completed while this request was
+          // waiting for /api/ai-genre. Never let an older refresh clear and
+          // repaint the LIVE/DISCOVER area with stale DJ/relay data.
+          if (requestId !== liveDjRequestId) return;
+
           // Do not collapse the LIVE/DISCOVER area while waiting for the
           // detector request above. Rebuild only after the async genre refresh
           // has completed so the browser never sees a temporarily short page.
