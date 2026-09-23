@@ -2172,9 +2172,8 @@ document.addEventListener("DOMContentLoaded", function () {
         liveDjRequestController = new AbortController();
 
         try {
-          // Keep the station relay/current-DJ lookup on the established
-          // /api/live response. Fetch the cross-platform live pool separately
-          // so adding Twitch cards cannot affect main relay startup.
+          // /api/live is now the single platform-neutral source for the
+          // station relay, all live DJs and the full DJ catalogue.
           const response = await fetch(
             getFreshUrl("https://api.radiorrr.com/api/live"),
             {
@@ -2196,28 +2195,6 @@ document.addEventListener("DOMContentLoaded", function () {
           if (requestId !== liveDjRequestId || !data || typeof data !== "object") {
             return;
           }
-
-          // The cross-platform response is authoritative for every DJ list and
-          // catalogue surface. Do not silently fall back to TikTok-only data:
-          // if this request is unavailable, show the normal API error state
-          // rather than making Twitch (or future platforms) disappear.
-          const allPlatformsResponse = await fetch(
-            getFreshUrl("https://api.radiorrr.com/api/live?all_platforms=true"),
-            {
-              cache: "no-store",
-              headers: {
-                "Cache-Control": "no-cache",
-                "Pragma": "no-cache"
-              },
-              signal: liveDjRequestController.signal
-            }
-          );
-
-          if (!allPlatformsResponse.ok) {
-            throw new Error("All-platforms API returned " + allPlatformsResponse.status);
-          }
-
-          const allPlatformsData = await allPlatformsResponse.json();
 
           // Stage 3 exposes the same ranking used by the automatic relay
           // selector. Use it only as a display/monitoring signal here.
@@ -2247,8 +2224,8 @@ document.addEventListener("DOMContentLoaded", function () {
             console.warn("Radio RRR genre-match display unavailable:", matchError);
           }
 
-          const live = Array.isArray(allPlatformsData.live)
-            ? allPlatformsData.live
+          const live = Array.isArray(data.live)
+            ? data.live
             : [];
 
           currentLiveMatchScores = {};
@@ -2275,8 +2252,8 @@ document.addEventListener("DOMContentLoaded", function () {
             });
           }
           const favourites =
-            Array.isArray(allPlatformsData.favourites)
-              ? allPlatformsData.favourites
+            Array.isArray(data.favourites)
+              ? data.favourites
               : [];
 
           // data.relay is the station-wide relay selected by the backend.
