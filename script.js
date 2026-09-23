@@ -691,6 +691,17 @@ document.addEventListener("DOMContentLoaded", function () {
       let nativePlaybackRecoveryTimer = null;
       let manualDJStreamFailureHandled = false;
 
+      // Hard browser-player recovery. The normal HLS handlers below get the
+      // first chance to recover a short stall. If playback time still stops
+      // advancing for 12 seconds, rebuild the existing HLS player and rejoin
+      // the live edge without changing DJ or creating a second media element.
+      const LIVE_PLAYBACK_HARD_STALL_MS = 12 * 1000;
+      const LIVE_PLAYBACK_WATCHDOG_MS = 2 * 1000;
+      let livePlaybackLastTime = 0;
+      let livePlaybackLastProgressAt = Date.now();
+      let livePlaybackHasProgressed = false;
+      let livePlaybackHardRecoveryInProgress = false;
+
       // The backend relay has its own liveness grace period. TikTok can
       // occasionally return a false "offline" result for one or two checks
       // while the existing relay stream is still healthy. Never tear down a
@@ -1305,6 +1316,137 @@ document.addEventListener("DOMContentLoaded", function () {
         if (randomLiveDjMetaField) randomLiveDjMetaField.hidden = !metadata;
       }
 
+      function attachLiveHls(streamUrl) {
+        const hls = new Hls({
+          enableWorker: true,
+
+          // Stability-first settings for the TikTok → FFmpeg → HLS relay.
+          // Running too close to the live edge was causing bufferStalledError.
+          lowLatencyMode: false,
+          liveSyncDurationCount: 5,
+          maxLiveSyncPlaybackRate: 1.1,
+          maxBufferLength: 30,
+          maxMaxBufferLength: 60,
+          backBufferLength: 30,
+
+          manifestLoadingTimeOut: 10000,
+          manifestLoadingMaxRetry: 3,
+          manifestLoadingRetryDelay: 1000
+        });
+
+        window.radioRrrHls = hls;
+        hls.loadSource(getFreshUrl(streamUrl));
+        hls.attachMedia(liveDjVideo);
+
+        hls.on(Hls.Events.MANIFEST_PARSED, function () {
+          livePlaybackLastTime = Number(liveDjVideo.currentTime) || 0;
+          livePlaybackLastProgressAt = Date.now();
+          resumeLivePlayback();
+        });
+
+        hls.on(Hls.Events.ERROR, function (event, data) {
+          console.warn("Radio RRR HLS error:", data);
+
+          if (handleManualDJStreamFailure(data)) return;
+
+          // A temporary buffer stall is recoverable. Keep the player alive
+          // and let hls.js load more media instead of treating it as a stop.
+          if (data.details === Hls.ErrorDetails.BUFFER_STALLED_ERROR) {
+            try {
+              hls.startLoad();
+            } catch (e) {}
+            return;
+          }
+
+          if (data.fatal) {
+            if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+              hls.startLoad();
+            } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+              hls.recoverMediaError();
+            }
+          }
+        });
+
+        return hls;
+      }
+
+      function hardRecoverLivePlayback() {
+        if (
+          livePlaybackHardRecoveryInProgress ||
+          !liveDjVideo ||
+          !activeLiveStreamUrl ||
+          document.hidden
+        ) {
+          return;
+        }
+
+        livePlaybackHardRecoveryInProgress = true;
+
+        const streamUrl = activeLiveStreamUrl;
+        const streamKey = activeLiveStreamKey;
+        const preserveAudio = userRequestedAudio;
+
+        console.warn(
+          "Radio RRR: live player stopped advancing; rebuilding HLS at the live edge"
+        );
+
+        try {
+          if (window.radioRrrHls) {
+            window.radioRrrHls.destroy();
+            window.radioRrrHls = null;
+          }
+
+          // Clear the wedged MediaSource/decoder state, but keep the same video
+          // element and the same selected/default DJ.
+          liveDjVideo.pause();
+          liveDjVideo.removeAttribute("src");
+          liveDjVideo.load();
+
+          liveDjVideo.autoplay = true;
+          liveDjVideo.playsInline = true;
+          liveDjVideo.muted = !preserveAudio;
+          liveDjVideo.defaultMuted = !preserveAudio;
+          updateLiveDjMuteButton();
+
+          if (window.Hls && Hls.isSupported()) {
+            attachLiveHls(streamUrl);
+          } else if (
+            liveDjVideo.canPlayType("application/vnd.apple.mpegurl")
+          ) {
+            liveDjVideo.src = getFreshUrl(streamUrl);
+            liveDjVideo.addEventListener(
+              "loadedmetadata",
+              resumeLivePlayback,
+              { once: true }
+            );
+            liveDjVideo.addEventListener(
+              "canplay",
+              resumeLivePlayback,
+              { once: true }
+            );
+            resumeLivePlayback();
+          }
+        } catch (error) {
+          console.warn("Radio RRR hard playback recovery failed:", error);
+        }
+
+        window.setTimeout(function () {
+          // If Stage 3 changed the relay while recovery was underway, normal
+          // relay-selection code owns the newly attached stream.
+          if (activeLiveStreamKey === streamKey) {
+            userRequestedAudio = preserveAudio;
+            liveDjVideo.muted = !preserveAudio;
+            liveDjVideo.defaultMuted = !preserveAudio;
+            updateLiveDjMuteButton();
+            liveDjVideo.play().catch(() => {});
+          }
+
+          livePlaybackLastTime = Number(liveDjVideo.currentTime) || 0;
+          livePlaybackLastProgressAt = Date.now();
+          livePlaybackHardRecoveryInProgress = false;
+        }, 1500);
+      }
+
       function showLiveDjPlayer(dj) {
   // Preserve the player's current mute/unmute state when manually switching DJs.
   if (liveDjVideo) {
@@ -1337,6 +1479,9 @@ document.addEventListener("DOMContentLoaded", function () {
           randomLiveDj.dataset.platform = platform;
         }
         activeLiveStreamUrl = streamUrl;
+        livePlaybackLastTime = Number(liveDjVideo.currentTime) || 0;
+        livePlaybackLastProgressAt = Date.now();
+        livePlaybackHasProgressed = false;
         liveDjVideo.autoplay = true;
         liveDjVideo.playsInline = true;
         liveDjVideo.muted = !userRequestedAudio;
@@ -1366,53 +1511,7 @@ document.addEventListener("DOMContentLoaded", function () {
             window.radioRrrHlsBackground = null;
           }
 
-          const hls = new Hls({
-            enableWorker: true,
-
-            // Stability-first settings for the TikTok → FFmpeg → HLS relay.
-            // Running too close to the live edge was causing bufferStalledError.
-            lowLatencyMode: false,
-            liveSyncDurationCount: 5,
-            maxLiveSyncPlaybackRate: 1.1,
-            maxBufferLength: 30,
-            maxMaxBufferLength: 60,
-            backBufferLength: 30,
-
-            manifestLoadingTimeOut: 10000,
-            manifestLoadingMaxRetry: 3,
-            manifestLoadingRetryDelay: 1000
-          });
-
-          window.radioRrrHls = hls;
-          hls.loadSource(getFreshUrl(streamUrl));
-          hls.attachMedia(liveDjVideo);
-
-          hls.on(Hls.Events.MANIFEST_PARSED, function () {
-            resumeLivePlayback();
-          });
-
-          hls.on(Hls.Events.ERROR, function (event, data) {
-            console.warn("Radio RRR HLS error:", data);
-
-            if (handleManualDJStreamFailure(data)) return;
-
-            // A temporary buffer stall is recoverable. Keep the player alive
-            // and let hls.js load more media instead of treating it as a stop.
-            if (data.details === Hls.ErrorDetails.BUFFER_STALLED_ERROR) {
-              try {
-                hls.startLoad();
-              } catch (e) {}
-              return;
-            }
-
-            if (data.fatal) {
-              if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
-                hls.startLoad();
-              } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
-                hls.recoverMediaError();
-              }
-            }
-          });
+          attachLiveHls(streamUrl);
 
         } else if (liveDjVideo.canPlayType("application/vnd.apple.mpegurl")) {
           liveDjVideo.src = getFreshUrl(streamUrl);
@@ -1518,7 +1617,21 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       if (liveDjVideo) {
+        liveDjVideo.addEventListener("timeupdate", function () {
+          const currentTime = Number(liveDjVideo.currentTime) || 0;
+
+          if (Math.abs(currentTime - livePlaybackLastTime) >= 0.05) {
+            livePlaybackLastTime = currentTime;
+            livePlaybackLastProgressAt = Date.now();
+            livePlaybackHasProgressed = true;
+          }
+        });
+
         liveDjVideo.addEventListener("playing", function () {
+          livePlaybackLastTime =
+            Number(liveDjVideo.currentTime) || livePlaybackLastTime;
+          livePlaybackLastProgressAt = Date.now();
+          livePlaybackHasProgressed = true;
           // Re-assert the user's explicit mute/unmute choice whenever the
           // media element starts playing or recovers.
           liveDjVideo.muted = !userRequestedAudio;
@@ -1544,6 +1657,39 @@ document.addEventListener("DOMContentLoaded", function () {
           if (liveDjPlaceholder) {
             liveDjPlaceholder.querySelector("span").textContent =
               "Live DJ stream is not available yet.";
+          }
+        });
+
+        window.setInterval(function () {
+          if (
+            document.hidden ||
+            !activeLiveStreamUrl ||
+            livePlaybackHardRecoveryInProgress ||
+            !livePlaybackHasProgressed
+          ) {
+            return;
+          }
+
+          // Respect an intentional pause when the browser still has playable
+          // media. A wedged player commonly reports paused with low readyState,
+          // so that state remains eligible for recovery.
+          if (liveDjVideo.paused && liveDjVideo.readyState >= 3) {
+            return;
+          }
+
+          if (
+            Date.now() - livePlaybackLastProgressAt >=
+            LIVE_PLAYBACK_HARD_STALL_MS
+          ) {
+            hardRecoverLivePlayback();
+          }
+        }, LIVE_PLAYBACK_WATCHDOG_MS);
+
+        document.addEventListener("visibilitychange", function () {
+          if (!document.hidden) {
+            // Time spent in a background tab is not a playback stall.
+            livePlaybackLastTime = Number(liveDjVideo.currentTime) || 0;
+            livePlaybackLastProgressAt = Date.now();
           }
         });
       }
