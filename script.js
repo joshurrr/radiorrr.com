@@ -1448,11 +1448,10 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       function showLiveDjPlayer(dj) {
-  // Preserve the player's current mute/unmute state when manually switching DJs.
-  if (liveDjVideo) {
-    userRequestedAudio = !liveDjVideo.muted;
-  }
-
+        // Do not infer the user's audio preference from liveDjVideo.muted here.
+        // During an automatic DJ/HLS transition the media element can be
+        // temporarily muted. Only the explicit MUTE/UNMUTE button may change
+        // userRequestedAudio; DJ swaps and recoveries must preserve it.
         if (!liveDjVideo || !randomLiveDj) return;
 
         const username = getDJUsername(dj);
