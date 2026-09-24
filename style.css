@@ -5773,3 +5773,111 @@
   }
 }
 
+
+/* 2026-09-25.8 MOBILE PROGRAM CLARITY + COMPACT LAYOUT
+   Mobile only: preserve the distinction between the program target and the
+   DJ's CURRENT SOUND while getting the live player higher on the first screen. */
+@media (max-width: 720px) {
+  body {
+    padding-top: 0.3rem;
+  }
+
+  .wrapper {
+    padding-top: 0.55rem;
+  }
+
+  .hero {
+    gap: 0.5rem;
+    padding: 0.62rem 0.6rem;
+    margin-bottom: 0.55rem;
+  }
+
+  .hero-left img {
+    width: min(104px, 36vw);
+  }
+
+  .hero-program-badge {
+    margin-bottom: 0.25rem;
+    padding: 0.16rem 0.48rem;
+    font-size: 0.60rem;
+  }
+
+  .hero-program-title-row {
+    margin-bottom: 0.06rem;
+  }
+
+  .hero-program-title-row .hero-main-message {
+    font-size: clamp(1.02rem, 5.2vw, 1.28rem);
+    line-height: 1.04;
+  }
+
+  .hero-program-time {
+    margin-top: 0.12rem;
+    font-size: 0.78rem;
+  }
+
+  .hero-program-target-row {
+    gap: 0.24rem 0.28rem;
+    margin-top: 0.3rem;
+    margin-bottom: 0.26rem;
+    font-size: 0.70rem;
+    line-height: 1.2;
+  }
+
+  .hero-program-target-row > strong {
+    font-size: 0;
+  }
+
+  .hero-program-target-row > strong::after {
+    content: "TARGET SOUND";
+    font-size: 0.64rem;
+    letter-spacing: 0.08em;
+  }
+
+  .hero-program-targets {
+    gap: 0.22rem;
+  }
+
+  .hero-program-targets .random-live-program-target-pill {
+    padding: 0.15rem 0.38rem;
+    font-size: 0.62rem;
+  }
+
+  .hero-program-bpm {
+    padding-left: 0.3rem;
+    font-size: 0.68rem;
+  }
+
+  .hero-program-explainer {
+    position: relative;
+    margin-top: 0;
+    font-size: 0;
+    line-height: 1.25;
+  }
+
+  .hero-program-explainer::after {
+    content: "Automatically finding live DJs that match this program.";
+    font-size: 0.68rem;
+  }
+
+  .nav-tabs {
+    gap: 0.32rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .nav-tabs a,
+  .nav-tabs .recommend-dj-button {
+    min-height: 38px;
+    padding: 0.34rem 0.32rem;
+  }
+
+  #live-section > .channel {
+    padding: 0.52rem 0.62rem;
+    margin-bottom: 0.6rem;
+  }
+
+  #randomLiveDj {
+    gap: 0.55rem;
+  }
+}
