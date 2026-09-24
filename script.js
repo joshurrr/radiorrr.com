@@ -1722,7 +1722,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const normalized = platform.toLowerCase();
         const iconUrl = normalized === "tiktok"
           ? "https://cdn.simpleicons.org/tiktok/FFFFFF"
-          : "";
+          : normalized === "youtube"
+            ? "https://cdn.simpleicons.org/youtube/FF0000"
+            : "";
 
         if (normalized !== "twitch" && !iconUrl) return "";
 
