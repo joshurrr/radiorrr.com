@@ -5508,3 +5508,164 @@
     min-height: 430px;
   }
 }
+
+/* 2026-09-25.3 HERO PROGRAM READABILITY
+   Align the complete program text block with the logo height and render
+   current target genres as compact scan-friendly pills. */
+@media (min-width: 721px) {
+  .hero-right {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 0;
+  }
+
+  .hero-program-badge,
+  .hero-program-title-row,
+  .hero-program-target-row,
+  .hero-program-explainer {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .hero-program-badge {
+    align-self: flex-start;
+    font-size: 0.70rem;
+    padding: 0.22rem 0.60rem;
+  }
+
+  .hero-program-title-row .hero-main-message {
+    font-size: clamp(1.22rem, 2.15vw, 1.72rem);
+  }
+
+  .hero-program-time {
+    font-size: clamp(0.88rem, 1.4vw, 1.05rem);
+  }
+
+  .hero-program-target-row {
+    align-items: center;
+    gap: 0.28rem 0.38rem;
+    font-size: 0.80rem;
+    line-height: 1.2;
+  }
+
+  .hero-program-targets {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.28rem;
+  }
+
+  .hero-program-targets .random-live-program-target-pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.35rem;
+    padding: 0.18rem 0.46rem;
+    border: 1px solid rgba(103,232,249,0.62);
+    border-radius: 999px;
+    background: rgba(5,20,35,0.70);
+    color: #e7fbff;
+    font-size: 0.70rem;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+    box-shadow: 0 0 7px rgba(56,189,248,0.15);
+  }
+
+  .hero-program-targets .random-live-program-target-pill:nth-child(2n) {
+    border-color: rgba(255,77,171,0.66);
+    background: rgba(45,10,35,0.66);
+    color: #ffe6f2;
+    box-shadow: 0 0 7px rgba(255,0,102,0.14);
+  }
+
+  .hero-program-targets .random-live-program-target-pill:nth-child(3n) {
+    border-color: rgba(167,139,250,0.70);
+    background: rgba(31,20,58,0.66);
+    color: #eee9ff;
+    box-shadow: 0 0 7px rgba(139,92,246,0.14);
+  }
+
+  .hero-program-targets .random-live-program-target-pill:not(:last-child)::after {
+    content: none;
+  }
+
+  .hero-program-bpm:not(:empty)::before {
+    content: "";
+    margin: 0;
+  }
+
+  .hero-program-bpm {
+    margin-left: 0.12rem;
+    padding-left: 0.48rem;
+    border-left: 1px solid rgba(255,255,255,0.28);
+    font-size: 0.82rem;
+  }
+
+  .hero-program-explainer {
+    font-size: 0.80rem;
+    line-height: 1.25;
+  }
+}
+
+/* Keep the same pill language on phones, but let it wrap naturally beneath
+   the centred program heading rather than forcing desktop alignment. */
+@media (max-width: 720px) {
+  .hero-program-target-row {
+    justify-content: center;
+    align-items: center;
+    gap: 0.30rem;
+    font-size: 0.74rem;
+  }
+
+  .hero-program-targets {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.26rem;
+  }
+
+  .hero-program-targets .random-live-program-target-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.17rem 0.42rem;
+    border: 1px solid rgba(103,232,249,0.62);
+    border-radius: 999px;
+    background: rgba(5,20,35,0.70);
+    color: #e7fbff;
+    font-size: 0.66rem;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+    box-shadow: 0 0 6px rgba(56,189,248,0.14);
+  }
+
+  .hero-program-targets .random-live-program-target-pill:nth-child(2n) {
+    border-color: rgba(255,77,171,0.66);
+    background: rgba(45,10,35,0.66);
+    color: #ffe6f2;
+  }
+
+  .hero-program-targets .random-live-program-target-pill:nth-child(3n) {
+    border-color: rgba(167,139,250,0.70);
+    background: rgba(31,20,58,0.66);
+    color: #eee9ff;
+  }
+
+  .hero-program-targets .random-live-program-target-pill:not(:last-child)::after {
+    content: none;
+  }
+
+  .hero-program-bpm:not(:empty)::before {
+    content: "";
+    margin: 0;
+  }
+
+  .hero-program-bpm {
+    padding-left: 0.38rem;
+    border-left: 1px solid rgba(255,255,255,0.24);
+  }
+}
+
