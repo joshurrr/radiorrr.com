@@ -6,7 +6,7 @@
 <title>RadioRRR | Online Radio &amp; Live DJ Discovery</title>
 <link href="favicon.ico" rel="icon" type="image/x-icon"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<link rel="stylesheet" href="style.css?v=20260922.4">
+<link rel="stylesheet" href="style.css?v=20260925.1">
 <meta content="RadioRRR is an online radio station and live DJ discovery platform. Listen to RadioRRR and discover DJs broadcasting live across social platforms." name="description"/>
 <meta content="index, follow, max-image-preview:large" name="robots"/>
 <meta content="#070818" name="theme-color"/>
@@ -79,16 +79,17 @@
       </div>
 
       <div class="hero-right">
-        <div class="live-pill">
-          <span class="live-dot"></span>
-          LIVE DJ RADIO · STREAMING
+        <div class="hero-program-badge">NOW PROGRAMMED</div>
+        <div class="hero-program-title-row">
+          <h1 class="hero-main-message" id="heroNowPlaying">Loading current program…</h1>
+          <span class="hero-program-time" id="heroProgramTime"></span>
         </div>
-
-        <h1 class="hero-main-message">LIVE DJs. LIVE MUSIC. 24/7.</h1>
-
-        <p class="hero-description">
-          Discover DJs broadcasting live — <strong>no playlists required.</strong>
-        </p>
+        <div class="hero-program-target-row">
+          <strong>Targeting:</strong>
+          <div class="hero-program-targets" id="liveProgramTargetGenres"></div>
+          <span class="hero-program-bpm" id="heroProgramBpm"></span>
+        </div>
+        <p class="hero-program-explainer">▥&nbsp; Radio RRR finds live DJs that best match the program.</p>
       </div>
     </section>
 
@@ -168,26 +169,16 @@
 <!-- RADIO ROUTER LIVE DJ -->
 <div class="random-live-dj" id="randomLiveDj">
 <div class="live-router-side">
-<!-- CURRENT PROGRAM — program name, audio control and target genres in one panel -->
-<section class="random-live-program-target" aria-label="Current program and target genres">
-  <div class="random-live-program-top-row">
-    <div class="random-live-now-playing">
-      <strong id="heroNowPlaying">Loading current block…</strong>
-    </div>
+<!-- CURRENT DJ CARD -->
+<section aria-label="Current DJ" class="current-dj-card">
+  <div class="current-dj-card-heading">
+    <div class="current-dj-card-title">NOW PLAYING</div>
     <div class="random-live-audio-actions">
       <button class="random-live-button random-live-audio-toggle" id="liveDjUnmute" type="button">
         🔊 UNMUTE
       </button>
     </div>
   </div>
-  <div class="random-live-program-target-label">TARGET GENRES</div>
-  <div class="random-live-program-target-list" id="liveProgramTargetGenres"></div>
-</section>
-
-<!-- CURRENT DJ CARD — intentionally first -->
-<section aria-label="Current DJ" class="current-dj-card">
-<div class="current-dj-live-badge"><span class="dj-live-dot"></span>LIVE NOW</div>
-<span class="current-dj-platform" id="randomLiveDjPlatform" hidden></span>
 
 <div class="random-live-dj-row">
 <div class="random-live-dj-profile">
@@ -205,6 +196,7 @@
 </div>
 
 </div>
+<div class="current-dj-analysis">
 <canvas id="liveDjSpectrum" width="640" height="144" aria-hidden="true"></canvas>
         <section id="liveGenresDetected" class="live-genres-detected" aria-live="polite">
           <div class="live-genres-detected-title">
@@ -214,8 +206,11 @@
           <div id="liveGenresDetectedList" class="live-genres-detected-list"></div>
         </section>
 <div class="dj-match-score main-dj-match-score match-low" id="randomLiveDjMatch" title="RRR genre compatibility score out of 100"><span class="rrr-program-match-left"><span class="main-dj-match-label">🎯 PROGRAM MATCH</span> <span class="main-dj-match-value">—</span></span><span class="rrr-program-match-right" id="randomLiveDjBpm"></span></div>
+</div>
 </section>
 </div><div class="radio-router-player">
+<div class="current-dj-live-badge"><span class="dj-live-dot"></span>LIVE NOW</div>
+<span class="current-dj-platform" id="randomLiveDjPlatform" hidden></span>
 <video aria-hidden="true" autoplay="" class="live-dj-background" crossorigin="anonymous" id="liveDjBackground" muted="" playsinline="" preload="none" webkit-playsinline="">
 </video>
 <div class="live-dj-ambient" aria-hidden="true"><span></span><span></span><span></span></div>
@@ -385,7 +380,7 @@
 </div>
 
 <p class="footer-description rrr-footer-description">
-  Radio RRR is a live electronic music station that discovers DJs broadcasting across social platforms and brings them together into one continuous radio stream. We’re building toward a more personalised way to discover and listen to live music.
+  Radio RRR connects you to live DJs broadcasting around the world, 24/7 — no playlists required.
 </p>
 
 <div class="rrr-footer-genres" aria-label="Radio RRR top scheduled genres">
@@ -712,7 +707,7 @@ window.formspree =
 })();
 </script>
 
-<script src="script.js?v=20260924.3"></script>
+<script src="script.js?v=20260925.1"></script>
 
 <script>
 /*
@@ -840,6 +835,7 @@ window.formspree =
     const matchEl = document.getElementById("randomLiveDjMatch");
     const matchValueEl = matchEl && matchEl.querySelector(".main-dj-match-value");
     const bpmEl = document.getElementById("randomLiveDjBpm");
+    const heroProgramBpmEl = document.getElementById("heroProgramBpm");
     const bpmHealthEl = document.getElementById("toolBpmDetector");
     if (!matchEl || !matchValueEl || !bpmEl) return;
 
@@ -851,6 +847,13 @@ window.formspree =
 
       const data = await response.json();
       const item = findDisplayedItem(data);
+      const heroBounds = scheduleBounds(data, item);
+
+      if (heroProgramBpmEl) {
+        heroProgramBpmEl.textContent = heroBounds
+          ? "BPM " + formatBpm(heroBounds.min) + "–" + formatBpm(heroBounds.max)
+          : "";
+      }
 
       if (!item) {
         bpmEl.textContent = "";
@@ -872,9 +875,10 @@ window.formspree =
         const bpm = formatBpm(item.bpm);
         const bounds = scheduleBounds(data, item);
 
-        bpmEl.textContent = bounds
-          ? "BPM " + bpm + " {" + formatBpm(bounds.min) + "–" + formatBpm(bounds.max) + "}"
-          : "BPM " + bpm;
+        bpmEl.innerHTML = bounds
+          ? '<span class="rrr-current-bpm">BPM ' + bpm + '</span>' +
+            '<span class="rrr-target-bpm">Target ' + formatBpm(bounds.min) + '–' + formatBpm(bounds.max) + '</span>'
+          : '<span class="rrr-current-bpm">BPM ' + bpm + '</span>';
 
         if (bpmHealthEl) {
           bpmHealthEl.className = "tool-health healthy";

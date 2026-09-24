@@ -5222,3 +5222,280 @@
   line-height: 1 !important;
 }
 
+
+/* 2026-09-25 CURRENT PROGRAM HERO + NOW PLAYING LAYOUT */
+.hero-program-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  margin-bottom: 0.34rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,77,171,0.82);
+  background: rgba(122,14,73,0.62);
+  color: #fff;
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+  box-shadow: 0 0 10px rgba(255,0,102,0.32);
+}
+
+.hero-program-title-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.75rem;
+  min-width: 0;
+}
+
+.hero-program-title-row .hero-main-message {
+  margin: 0;
+  font-size: clamp(1.12rem, 2vw, 1.62rem);
+  line-height: 1.08;
+  letter-spacing: 0.035em;
+}
+
+.hero-program-time {
+  display: inline-flex;
+  align-items: center;
+  color: #c4b5fd;
+  font-size: clamp(0.82rem, 1.35vw, 1rem);
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.hero-program-time:not(:empty)::before {
+  content: "|";
+  margin-right: 0.75rem;
+  color: rgba(255,255,255,0.52);
+}
+
+.hero-program-target-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.18rem 0.38rem;
+  margin-top: 0.42rem;
+  color: #e5e7eb;
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.hero-program-target-row > strong {
+  color: #f0abfc;
+  font-weight: 900;
+}
+
+.hero-program-targets {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0;
+  min-width: 0;
+}
+
+.hero-program-targets .random-live-program-target-pill {
+  display: inline;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #f3f4f6;
+  box-shadow: none;
+  font-size: inherit;
+  font-weight: 700;
+  line-height: inherit;
+  white-space: normal;
+}
+
+.hero-program-targets .random-live-program-target-pill:not(:last-child)::after {
+  content: " · ";
+  color: #8b9dcc;
+  white-space: pre;
+}
+
+.hero-program-bpm {
+  color: #67e8f9;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.hero-program-bpm:not(:empty)::before {
+  content: "|";
+  margin: 0 0.35rem 0 0.2rem;
+  color: rgba(255,255,255,0.42);
+}
+
+.hero-program-explainer {
+  margin: 0.42rem 0 0;
+  color: #d1d5db;
+  font-size: 0.72rem;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+/* Current DJ card is now only about what is actually playing. */
+#randomLiveDj .current-dj-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background-size: cover;
+  background-position: center top;
+}
+
+#randomLiveDj .current-dj-card::before {
+  background: linear-gradient(180deg, rgba(4,7,18,0.80) 0%, rgba(4,7,18,0.60) 34%, rgba(4,7,18,0.72) 58%, rgba(4,7,18,0.96) 100%);
+}
+
+#randomLiveDj .current-dj-card-heading {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  margin: 0 0 0.7rem;
+  flex: 0 0 auto;
+}
+
+#randomLiveDj .current-dj-card-title {
+  color: #bae6fd;
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  text-shadow: 0 0 8px rgba(34,211,238,0.45);
+}
+
+#randomLiveDj .current-dj-card > .random-live-dj-row {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+#randomLiveDj .current-dj-analysis {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: auto;
+  flex: 0 0 auto;
+}
+
+#randomLiveDj .current-dj-analysis .live-genres-detected {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0.45rem 0 0;
+  padding: 0.65rem 0.72rem;
+  background: rgba(5,12,28,0.80);
+}
+
+#randomLiveDj .current-dj-analysis .main-dj-match-score {
+  margin-top: 0.5rem;
+  min-height: 58px;
+  padding: 0.65rem 0.78rem;
+  border-radius: 12px;
+  background: rgba(5,12,28,0.86);
+}
+
+#randomLiveDj .rrr-program-match-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+}
+
+#randomLiveDj .main-dj-match-value {
+  margin-left: 0;
+  color: #ff2d95;
+  font-size: 1.55rem;
+  line-height: 1;
+  font-weight: 950;
+}
+
+#randomLiveDj .rrr-program-match-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.12rem;
+  color: #ddd6fe;
+  font-weight: 900;
+}
+
+#randomLiveDj .rrr-program-match-right .rrr-current-bpm {
+  font-size: 0.9rem;
+  color: #ddd6fe;
+}
+
+#randomLiveDj .rrr-program-match-right .rrr-target-bpm {
+  font-size: 0.67rem;
+  color: #a5b4fc;
+  font-weight: 700;
+}
+
+/* LIVE/platform badges belong to the player, not the DJ information card. */
+#randomLiveDj .radio-router-player > .current-dj-live-badge {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 5;
+  margin: 0;
+}
+
+#randomLiveDj .radio-router-player > .current-dj-platform {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 5;
+}
+
+@media (min-width: 1200px) {
+  #randomLiveDj .live-router-side {
+    gap: 0;
+  }
+
+  #randomLiveDj .live-router-side .current-dj-card {
+    flex: 1 1 auto;
+    height: 100%;
+    min-height: 0;
+    margin: 0;
+    padding: 0.78rem 0.85rem;
+  }
+
+  #randomLiveDj .current-dj-analysis #liveDjSpectrum {
+    flex: 0 0 72px;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero {
+    align-items: flex-start;
+  }
+
+  .hero-program-title-row {
+    display: block;
+  }
+
+  .hero-program-time {
+    margin-top: 0.2rem;
+  }
+
+  .hero-program-time:not(:empty)::before {
+    content: "";
+    margin: 0;
+  }
+
+  .hero-program-target-row {
+    font-size: 0.68rem;
+  }
+
+  .hero-program-explainer {
+    font-size: 0.66rem;
+  }
+
+  #randomLiveDj .current-dj-card {
+    min-height: 430px;
+  }
+}

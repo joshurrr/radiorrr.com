@@ -438,6 +438,9 @@ document.addEventListener("DOMContentLoaded", function () {
       const heroNowEl =
         document.getElementById("heroNowPlaying");
 
+      const heroProgramTime =
+        document.getElementById("heroProgramTime");
+
       const liveProgramTargetGenres =
         document.getElementById("liveProgramTargetGenres");
 
@@ -3184,6 +3187,8 @@ document.addEventListener("DOMContentLoaded", function () {
         return {
           start: Number(current.start.split(":")[0]) + Number(current.start.split(":")[1]) / 60,
           end: current.end === "00:00" ? 24 : Number(current.end.split(":")[0]) + Number(current.end.split(":")[1]) / 60,
+          startText: current.start,
+          endText: current.end,
           name: current.name,
           genres: current.genres.join(" · ")
         };
@@ -3275,17 +3280,35 @@ document.addEventListener("DOMContentLoaded", function () {
             liveProgramTargetGenres.innerHTML = "";
           }
 
+          if (heroProgramTime) {
+            heroProgramTime.textContent = "";
+          }
+
           return;
         }
 
         const blockLabel =
-          dayName +
+          dayName.toUpperCase() +
           " – " +
-          block.name;
+          String(block.name || "").toUpperCase();
+
+        function formatHeroTime(value) {
+          const parts = String(value || "").split(":");
+          const hour24 = Number(parts[0]);
+          const minute = Number(parts[1] || 0);
+          if (!Number.isFinite(hour24)) return String(value || "");
+          const suffix = hour24 >= 12 ? "PM" : "AM";
+          const hour12 = (hour24 % 12) || 12;
+          return hour12 + (minute ? ":" + String(minute).padStart(2, "0") : "") + suffix;
+        }
 
         if (heroNowEl) {
-          heroNowEl.textContent =
-            blockLabel;
+          heroNowEl.textContent = blockLabel;
+        }
+
+        if (heroProgramTime) {
+          heroProgramTime.textContent =
+            formatHeroTime(block.startText) + " – " + formatHeroTime(block.endText);
         }
 
         if (liveProgramTargetGenres) {
