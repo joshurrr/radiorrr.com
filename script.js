@@ -4184,15 +4184,33 @@ document.addEventListener("DOMContentLoaded", function () {
       if (context.state !== "running") await context.resume();
       if (context.state !== "running") return;
       if (!attempted) {
+        const capture = video.captureStream || video.mozCaptureStream;
+        if (!capture) {
+          failed = true;
+          stop();
+          return;
+        }
+
         analyser = context.createAnalyser();
         analyser.fftSize = 256;
         analyser.smoothingTimeConstant = 0.8;
         bins = new Uint8Array(analyser.frequencyBinCount);
-        attempted = true;
-        source = context.createMediaElementSource(video);
-        // One unchanged-gain audible path; the analyser is a separate leaf.
-        source.connect(context.destination);
+
+        // Analyse a passive capture of the video instead of routing the
+        // video's audible output through Web Audio. Browsers may suspend an
+        // AudioContext in a background tab; native video audio must continue
+        // independently when that happens.
+        const capturedStream = capture.call(video);
+        source = context.createMediaStreamSource(capturedStream);
         source.connect(analyser);
+
+        // Keep the analysis graph active without creating an audible path.
+        const silentSink = context.createGain();
+        silentSink.gain.value = 0;
+        analyser.connect(silentSink);
+        silentSink.connect(context.destination);
+
+        attempted = true;
       }
       draw();
     } catch (_) {
