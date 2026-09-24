@@ -1487,6 +1487,8 @@ document.addEventListener("DOMContentLoaded", function () {
         liveDjVideo.autoplay = true;
         liveDjVideo.playsInline = true;
         liveDjVideo.muted = !userRequestedAudio;
+        liveDjVideo.defaultMuted = !userRequestedAudio;
+        liveDjVideo.dataset.rrrUserAudio = userRequestedAudio ? "1" : "0";
         updateLiveDjMuteButton();
         if (liveDjBackground) {
           liveDjBackground.autoplay = true;
@@ -2946,6 +2948,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const targetUsername = getDJUsername(dj);
             if (!targetUsername) return;
+
+            // A manual DJ change is a user gesture, so this is the safe point
+            // to snapshot the listener's current audio choice before HLS is
+            // torn down and attached to the newly selected DJ.
+            if (liveDjVideo) {
+              userRequestedAudio = !liveDjVideo.muted;
+              liveDjVideo.dataset.rrrUserAudio = userRequestedAudio ? "1" : "0";
+              liveDjVideo.defaultMuted = !userRequestedAudio;
+            }
 
             card.dataset.switching = "1";
             const originalOpacity = card.style.opacity;
