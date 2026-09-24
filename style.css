@@ -5707,3 +5707,13 @@
   }
 }
 
+/* 2026-09-25.6 HERO VERTICAL ALIGNMENT
+   Keep the program title + targets tightly grouped, but center the complete
+   text block vertically against the logo. */
+@media (min-width: 721px) {
+  .hero-right {
+    align-self: center;
+    justify-content: flex-start;
+  }
+}
+
