@@ -5276,9 +5276,10 @@
   flex-wrap: wrap;
   gap: 0.18rem 0.38rem;
   margin-top: 0.42rem;
-  color: #e5e7eb;
-  font-size: 0.75rem;
-  line-height: 1.35;
+  color: #f3f4f6;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  font-weight: 650;
 }
 
 .hero-program-target-row > strong {
@@ -5328,10 +5329,11 @@
 
 .hero-program-explainer {
   margin: 0.42rem 0 0;
-  color: #d1d5db;
-  font-size: 0.72rem;
-  line-height: 1.3;
-  font-weight: 600;
+  color: #e5e7eb;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  font-weight: 700;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.72);
 }
 
 /* Current DJ card is now only about what is actually playing. */
@@ -5405,6 +5407,13 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 0.1rem;
+}
+
+#randomLiveDj .main-dj-match-label {
+  max-width: 150px;
+  font-size: 0.68rem;
+  line-height: 1.12;
+  white-space: normal;
 }
 
 #randomLiveDj .main-dj-match-value {
@@ -5488,11 +5497,11 @@
   }
 
   .hero-program-target-row {
-    font-size: 0.68rem;
+    font-size: 0.74rem;
   }
 
   .hero-program-explainer {
-    font-size: 0.66rem;
+    font-size: 0.70rem;
   }
 
   #randomLiveDj .current-dj-card {

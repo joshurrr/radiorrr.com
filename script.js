@@ -1783,7 +1783,7 @@ document.addEventListener("DOMContentLoaded", function () {
           const left = document.createElement("span");
           left.className = "rrr-program-match-left";
           left.innerHTML =
-            '<span class="main-dj-match-label">🎯 PROGRAM MATCH</span> ' +
+            '<span class="main-dj-match-label">🎯 MATCH TO CURRENT PROGRAM</span> ' +
             '<span class="main-dj-match-value">—</span>';
           randomLiveDjMatch.prepend(left);
           valueEl = left.querySelector(".main-dj-match-value");
