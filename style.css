@@ -5669,3 +5669,41 @@
   }
 }
 
+/* 2026-09-25.4 HERO PROGRAM GROUPING
+   Keep the program title/time and its target genres visually grouped as one unit. */
+@media (min-width: 721px) {
+  .hero-right {
+    justify-content: flex-start;
+  }
+
+  .hero-program-badge {
+    margin-bottom: 0.48rem;
+  }
+
+  .hero-program-title-row {
+    margin-bottom: 0.12rem;
+  }
+
+  .hero-program-target-row {
+    margin-bottom: 0.46rem;
+  }
+
+  .hero-program-explainer {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .hero-program-badge {
+    margin-bottom: 0.38rem;
+  }
+
+  .hero-program-title-row {
+    margin-bottom: 0.10rem;
+  }
+
+  .hero-program-target-row {
+    margin-bottom: 0.36rem;
+  }
+}
+
