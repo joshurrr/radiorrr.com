@@ -5717,3 +5717,59 @@
   }
 }
 
+/* 2026-09-25.7 LISTENER-FACING LEGIBILITY POLISH
+   Slightly improve desktop readability without changing the live-player,
+   genre-detection or card layout behavior. */
+@media (min-width: 721px) {
+  .hero-program-explainer {
+    color: #f3f4f6;
+    font-size: 0.84rem;
+    font-weight: 750;
+    line-height: 1.3;
+  }
+
+  #randomLiveDj .random-live-dj-profile-label {
+    font-size: 0.71rem;
+  }
+
+  #randomLiveDj .random-live-dj-bio {
+    font-size: 0.82rem;
+    line-height: 1.42;
+  }
+
+  #randomLiveDj .random-live-dj-meta {
+    font-size: 0.76rem;
+    line-height: 1.35;
+  }
+
+  #randomLiveDj .live-genres-detected-title strong {
+    font-size: 0.96rem;
+  }
+
+  #randomLiveDj .live-genres-detected-status {
+    font-size: 0.74rem;
+  }
+
+  #randomLiveDj .live-genre-detected-name {
+    font-size: 0.76rem;
+  }
+
+  #randomLiveDj .live-genre-detected-confidence {
+    font-size: 0.74rem;
+  }
+
+  #randomLiveDj .main-dj-match-label {
+    max-width: 170px;
+    font-size: 0.72rem;
+    line-height: 1.08;
+  }
+
+  #randomLiveDj .rrr-program-match-right .rrr-current-bpm {
+    font-size: 0.94rem;
+  }
+
+  #randomLiveDj .rrr-program-match-right .rrr-target-bpm {
+    font-size: 0.71rem;
+  }
+}
+
