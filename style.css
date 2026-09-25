@@ -5966,3 +5966,27 @@
     width: 100%;
   }
 }
+
+/* 2026-09-26 hero clarity */
+.hero {
+  background:
+    linear-gradient(90deg, rgba(5,7,22,0.92) 0%, rgba(5,7,22,0.78) 54%, rgba(5,7,22,0.20) 100%),
+    url('radiorrr_background.png') center / cover no-repeat;
+}
+.hero-left img { width: 122px; }
+.hero-program-title-row { display: block; }
+.hero-program-title-row .hero-main-message { font-size: clamp(1.36rem, 2.45vw, 2rem); line-height: 1.12; }
+.hero-program-time { display: block; margin-top: 0.22rem; }
+.hero-program-time:not(:empty)::before { content: none; }
+.hero-program-more { color: #ddd6fe; font-size: 0.75rem; font-weight: 750; white-space: nowrap; }
+@media (min-width: 721px) {
+  .hero-program-title-row { margin-bottom: 0.3rem; }
+  .hero-program-target-row { margin-bottom: 0.36rem; }
+}
+@media (max-width: 720px) {
+  .hero-left img { width: min(88px, 30vw); }
+  .hero-program-title-row .hero-main-message { font-size: clamp(1.06rem, 5.4vw, 1.4rem); }
+  .hero-program-explainer { font-size: 0.68rem; }
+  .hero-program-explainer::after { content: none; }
+  .hero-program-more { font-size: 0.64rem; }
+}

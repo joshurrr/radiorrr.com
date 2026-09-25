@@ -443,6 +443,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const liveProgramTargetGenres =
         document.getElementById("liveProgramTargetGenres");
+      const heroProgramExplainer = document.getElementById("heroProgramExplainer");
 
       const liveDjsList =
         document.getElementById("liveDjsList");
@@ -3294,6 +3295,7 @@ document.addEventListener("DOMContentLoaded", function () {
           if (heroProgramTime) {
             heroProgramTime.textContent = "";
           }
+          if (heroProgramExplainer) heroProgramExplainer.textContent = "Finding live DJs that fit this program.";
 
           return;
         }
@@ -3322,21 +3324,27 @@ document.addEventListener("DOMContentLoaded", function () {
             formatHeroTime(block.startText) + " – " + formatHeroTime(block.endText);
         }
 
+        const heroGenres = block.genres.split("·").map(function (genre) { return genre.trim(); }).filter(Boolean);
         if (liveProgramTargetGenres) {
-          liveProgramTargetGenres.innerHTML =
-            block.genres
-              .split("·")
-              .map(function (genre) {
-                const safeGenre = genre
-                  .trim()
-                  .replace(/&/g, "&amp;")
-                  .replace(/</g, "&lt;")
-                  .replace(/>/g, "&gt;");
-                return '<span class="random-live-program-target-pill">' +
-                  safeGenre +
-                  '</span>';
-              })
-              .join("");
+          liveProgramTargetGenres.replaceChildren();
+          heroGenres.slice(0, 3).forEach(function (genre) {
+            const pill = document.createElement("span");
+            pill.className = "random-live-program-target-pill";
+            pill.textContent = genre;
+            liveProgramTargetGenres.appendChild(pill);
+          });
+          if (heroGenres.length > 3) {
+            const more = document.createElement("span");
+            more.className = "hero-program-more";
+            more.textContent = "+" + (heroGenres.length - 3) + " more";
+            more.title = heroGenres.slice(3).join(" · ");
+            liveProgramTargetGenres.appendChild(more);
+          }
+        }
+        if (heroProgramExplainer) {
+          heroProgramExplainer.textContent = heroGenres.length
+            ? "Finding live DJs that fit " + heroGenres.slice(0, 3).join(", ") + "."
+            : "Finding live DJs that fit this program.";
         }
 
       }
