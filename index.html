@@ -461,13 +461,17 @@ window.formspree =
 </style>
 
 <style id="rrr-program-match-bpm-layout">
-/* Keep script.js-owned Program Match markup intact; BPM is a separate right-aligned field. */
+/* Current Program Match: one clear heading with score and BPM grouped beneath it. */
 #randomLiveDjMatch.main-dj-match-score {
-  display: flex !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 1px auto !important;
+  grid-template-rows: auto auto !important;
   align-items: center !important;
-  justify-content: space-between !important;
-  gap: 0.75rem !important;
+  column-gap: 0.8rem !important;
+  row-gap: 0.16rem !important;
   width: 100% !important;
+  min-height: 66px !important;
+  padding: 0.58rem 0.78rem !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   font-size: 0.76rem !important;
@@ -476,20 +480,53 @@ window.formspree =
 }
 
 #randomLiveDjMatch .rrr-program-match-left {
-  min-width: 0 !important;
+  display: contents !important;
+}
+
+#randomLiveDjMatch .main-dj-match-label {
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+  max-width: none !important;
   text-align: left !important;
+  white-space: nowrap !important;
+}
+
+#randomLiveDjMatch .main-dj-match-value {
+  grid-column: 1 !important;
+  grid-row: 2 !important;
+  margin: 0 !important;
+  text-align: left !important;
+  font-size: 1.85rem !important;
+  line-height: 1 !important;
+}
+
+#randomLiveDjMatch::before {
+  content: "";
+  grid-column: 2 !important;
+  grid-row: 2 !important;
+  width: 1px !important;
+  height: 2rem !important;
+  background: rgba(103, 232, 249, 0.62) !important;
+  box-shadow: 0 0 6px rgba(103, 232, 249, 0.2);
 }
 
 #randomLiveDjMatch .rrr-program-match-right {
-  flex: 0 0 auto !important;
-  margin-left: auto !important;
+  grid-column: 3 !important;
+  grid-row: 2 !important;
+  margin: 0 !important;
   text-align: right !important;
 }
 
 @media (max-width: 640px) {
   #randomLiveDjMatch.main-dj-match-score {
-    gap: 0.45rem !important;
+    column-gap: 0.55rem !important;
+    min-height: 62px !important;
+    padding: 0.5rem 0.68rem !important;
     font-size: 0.66rem !important;
+  }
+
+  #randomLiveDjMatch .main-dj-match-value {
+    font-size: 1.65rem !important;
   }
 }
 </style>
