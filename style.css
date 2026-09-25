@@ -5881,3 +5881,88 @@
     gap: 0.55rem;
   }
 }
+
+/* PUBLIC BPM DETECTOR TOOL */
+.bpm-detector-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.6rem;
+  margin-top: 0.65rem;
+  align-items: center;
+}
+
+.bpm-detector-form input {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid rgba(129,140,248,0.58);
+  border-radius: 10px;
+  background: rgba(4,8,20,0.92);
+  color: #ffffff;
+  font: inherit;
+  outline: none;
+}
+
+.bpm-detector-form input:focus {
+  border-color: #22d3ee;
+  box-shadow: 0 0 0 2px rgba(34,211,238,0.12);
+}
+
+.bpm-detector-result {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  margin-top: 0.7rem;
+}
+
+.bpm-detector-result[hidden] {
+  display: none;
+}
+
+.bpm-detector-result strong {
+  color: #ffffff;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.bpm-detector-result span,
+.bpm-detector-status {
+  color: #a5b4fc;
+  font-size: 0.78rem;
+}
+
+.bpm-detector-status {
+  margin-top: 0.45rem;
+  min-height: 1.05rem;
+}
+
+.bpm-detector-status.error {
+  color: #fca5a5;
+}
+
+.bpm-detector-status.success {
+  color: #86efac;
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+@media (max-width: 640px) {
+  .bpm-detector-form {
+    grid-template-columns: 1fr;
+  }
+
+  .bpm-detector-form .tool-button {
+    width: 100%;
+  }
+}

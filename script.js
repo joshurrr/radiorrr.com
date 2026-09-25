@@ -3353,6 +3353,91 @@ document.addEventListener("DOMContentLoaded", function () {
         60 * 1000
       );
 
+      /* RRR TOOLS — PUBLIC BPM DETECTOR */
+      const bpmDetectorUrl = document.getElementById("bpmDetectorUrl");
+      const bpmDetectorStart = document.getElementById("bpmDetectorStart");
+      const bpmDetectorResult = document.getElementById("bpmDetectorResult");
+      const bpmDetectorValue = document.getElementById("bpmDetectorValue");
+      const bpmDetectorConfidence = document.getElementById("bpmDetectorConfidence");
+      const bpmDetectorStatus = document.getElementById("bpmDetectorStatus");
+
+      function setBpmDetectorStatus(message, state) {
+        if (!bpmDetectorStatus) return;
+        bpmDetectorStatus.textContent = message;
+        bpmDetectorStatus.classList.remove("error", "success");
+        if (state) bpmDetectorStatus.classList.add(state);
+      }
+
+      async function detectStreamBpm() {
+        if (!bpmDetectorUrl || !bpmDetectorStart) return;
+
+        const url = String(bpmDetectorUrl.value || "").trim();
+        if (!/^https?:\/\//i.test(url)) {
+          setBpmDetectorStatus("Enter a direct http:// or https:// stream URL first.", "error");
+          bpmDetectorUrl.focus();
+          return;
+        }
+
+        bpmDetectorStart.disabled = true;
+        bpmDetectorStart.textContent = "Analysing…";
+        if (bpmDetectorResult) bpmDetectorResult.hidden = true;
+        setBpmDetectorStatus("Sampling the stream for about 24 seconds…");
+
+        try {
+          const response = await fetch("https://api.radiorrr.com/api/tools/bpm", {
+            method: "POST",
+            cache: "no-store",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url: url })
+          });
+
+          let data = null;
+          try {
+            data = await response.json();
+          } catch (e) {}
+
+          if (!response.ok) {
+            const detail = data && data.detail ? String(data.detail) : "Could not analyse this stream.";
+            throw new Error(detail);
+          }
+
+          const bpm = Number(data && data.bpm);
+          if (!Number.isFinite(bpm)) {
+            throw new Error("The detector did not return a BPM reading.");
+          }
+
+          if (bpmDetectorValue) bpmDetectorValue.textContent = Math.round(bpm) + " BPM";
+
+          const confidence = Number(data && data.confidence);
+          if (bpmDetectorConfidence) {
+            bpmDetectorConfidence.textContent = Number.isFinite(confidence)
+              ? Math.round(Math.max(0, Math.min(1, confidence)) * 100) + "% confidence"
+              : "";
+          }
+
+          if (bpmDetectorResult) bpmDetectorResult.hidden = false;
+          setBpmDetectorStatus("Analysis complete.", "success");
+        } catch (error) {
+          setBpmDetectorStatus(error && error.message ? error.message : "Could not analyse this stream.", "error");
+        } finally {
+          bpmDetectorStart.disabled = false;
+          bpmDetectorStart.textContent = "Detect BPM";
+        }
+      }
+
+      if (bpmDetectorStart) {
+        bpmDetectorStart.addEventListener("click", detectStreamBpm);
+      }
+
+      if (bpmDetectorUrl) {
+        bpmDetectorUrl.addEventListener("keydown", function (event) {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            detectStreamBpm();
+          }
+        });
+      }
+
       /* RRR TOOLS — LIVE STATUS AND DIAGNOSTICS */
       const refreshTools = document.getElementById("refreshTools");
       const openScheduleTab = document.getElementById("openScheduleTab");
