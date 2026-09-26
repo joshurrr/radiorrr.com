@@ -3455,6 +3455,164 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       }
 
+
+      /* RRR TOOLS — DJ TALK DETECTOR */
+      const talkDetectorStart = document.getElementById("talkDetectorStart");
+      const talkDetectorStatus = document.getElementById("talkDetectorStatus");
+      const talkDetectorResults = document.getElementById("talkDetectorResults");
+
+      function setTalkDetectorStatus(message, state) {
+        if (!talkDetectorStatus) return;
+        talkDetectorStatus.textContent = message;
+        talkDetectorStatus.classList.remove("error", "success");
+        if (state) talkDetectorStatus.classList.add(state);
+      }
+
+      function getTalkActivityLevel(ratio) {
+        if (ratio >= 0.55) {
+          return { label: "Heavy talking", level: "heavy" };
+        }
+        if (ratio >= 0.20) {
+          return { label: "Frequent talking", level: "frequent" };
+        }
+        if (ratio >= 0.08) {
+          return { label: "Occasional talking", level: "occasional" };
+        }
+        return { label: "Music dominant", level: "music" };
+      }
+
+      function renderTalkDetectorResults(entries) {
+        if (!talkDetectorResults) return;
+
+        talkDetectorResults.innerHTML = "";
+
+        if (!entries.length) {
+          talkDetectorResults.hidden = false;
+          const empty = document.createElement("div");
+          empty.className = "talk-detector-empty";
+          empty.textContent = "No recent talk-analysis samples are available yet.";
+          talkDetectorResults.appendChild(empty);
+          return;
+        }
+
+        entries.forEach(function (entry) {
+          const ratio = Math.max(0, Math.min(1, Number(entry.speech_ratio) || 0));
+          const confidenceValue = Number(entry.speech_confidence);
+          const activity = getTalkActivityLevel(ratio);
+
+          const row = document.createElement("div");
+          row.className = "talk-detector-result " + activity.level;
+
+          const identity = document.createElement("div");
+          identity.className = "talk-detector-identity";
+
+          const name = document.createElement("strong");
+          name.textContent = String(entry.name || entry.username || "Live DJ");
+          identity.appendChild(name);
+
+          const meta = document.createElement("span");
+          const platform = String(entry.platform || "TikTok");
+          const username = String(entry.username || "").replace(/^@/, "");
+          meta.textContent = platform + (username ? " · @" + username : "");
+          identity.appendChild(meta);
+
+          const meter = document.createElement("div");
+          meter.className = "talk-detector-meter";
+          meter.setAttribute("aria-hidden", "true");
+
+          const fill = document.createElement("span");
+          fill.style.width = Math.round(ratio * 100) + "%";
+          meter.appendChild(fill);
+
+          const reading = document.createElement("div");
+          reading.className = "talk-detector-reading";
+
+          const value = document.createElement("strong");
+          value.textContent = Math.round(ratio * 100) + "%";
+          value.title = "Conservative talk activity score from repeated voice-related music ducking";
+          reading.appendChild(value);
+
+          const label = document.createElement("span");
+          label.className = "talk-detector-label";
+          label.textContent = activity.label;
+          reading.appendChild(label);
+
+          if (Number.isFinite(confidenceValue) && confidenceValue > 0) {
+            const confidence = document.createElement("small");
+            confidence.textContent =
+              Math.round(Math.max(0, Math.min(1, confidenceValue)) * 100) +
+              "% confidence";
+            reading.appendChild(confidence);
+          }
+
+          row.appendChild(identity);
+          row.appendChild(meter);
+          row.appendChild(reading);
+          talkDetectorResults.appendChild(row);
+        });
+
+        talkDetectorResults.hidden = false;
+      }
+
+      async function scanLiveDjTalkActivity() {
+        if (!talkDetectorStart) return;
+
+        talkDetectorStart.disabled = true;
+        talkDetectorStart.textContent = "Scanning…";
+        if (talkDetectorResults) talkDetectorResults.hidden = true;
+        setTalkDetectorStatus("Loading the latest live DJ talk-analysis samples…");
+
+        try {
+          const response = await fetch(
+            "https://stream.radiorrr.com/api/genre-match",
+            { cache: "no-store" }
+          );
+
+          if (!response.ok) {
+            throw new Error("Talk detector API returned " + response.status + ".");
+          }
+
+          const data = await response.json();
+          const ranked = Array.isArray(data && data.ranked) ? data.ranked : [];
+
+          const entries = ranked
+            .filter(function (entry) {
+              return entry && Number.isFinite(Number(entry.speech_ratio));
+            })
+            .slice()
+            .sort(function (a, b) {
+              return Number(b.speech_ratio || 0) - Number(a.speech_ratio || 0);
+            });
+
+          renderTalkDetectorResults(entries);
+
+          if (entries.length) {
+            setTalkDetectorStatus(
+              "Latest live samples loaded. Talk activity is a conservative voice-vs-music score, not a transcript.",
+              "success"
+            );
+          } else {
+            setTalkDetectorStatus(
+              "No recent talk-analysis samples are available yet."
+            );
+          }
+        } catch (error) {
+          setTalkDetectorStatus(
+            error && error.message
+              ? error.message
+              : "Could not load live talk-analysis results.",
+            "error"
+          );
+        } finally {
+          talkDetectorStart.disabled = false;
+          talkDetectorStart.textContent = "🗣️ Scan Live DJs";
+        }
+      }
+
+      if (talkDetectorStart) {
+        talkDetectorStart.addEventListener("click", scanLiveDjTalkActivity);
+      }
+
       /* RRR TOOLS — LIVE STATUS AND DIAGNOSTICS */
       const refreshTools = document.getElementById("refreshTools");
       const openScheduleTab = document.getElementById("openScheduleTab");
