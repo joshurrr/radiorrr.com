@@ -1452,11 +1452,16 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       function showLiveDjPlayer(dj) {
-        // Do not infer the user's audio preference from liveDjVideo.muted here.
-        // During an automatic DJ/HLS transition the media element can be
-        // temporarily muted. Only the explicit MUTE/UNMUTE button may change
-        // userRequestedAudio; DJ swaps and recoveries must preserve it.
         if (!liveDjVideo || !randomLiveDj) return;
+
+        // Preserve the current listener audio state before an automatic DJ
+        // handoff tears down the existing HLS attachment. Manual DJ selection
+        // already snapshots this state in its click handler.
+        if (activeLiveStreamKey && !livePlaybackHardRecoveryInProgress) {
+          userRequestedAudio = !liveDjVideo.muted;
+          liveDjVideo.dataset.rrrUserAudio = userRequestedAudio ? "1" : "0";
+          liveDjVideo.defaultMuted = !userRequestedAudio;
+        }
 
         const username = getDJUsername(dj);
         const name = dj.name || dj.username || dj.display_name || "LIVE DJ";
