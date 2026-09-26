@@ -6098,3 +6098,88 @@
   .hero .hero-program-targets { justify-content: center; }
   .hero .hero-program-targets .dj-genre-pill { font-size: 0.64rem; }
 }
+
+
+/* 2026-09-26.4 HERO HIERARCHY + COLOUR BALANCE
+   Keep the existing three-line copy, but restore the stronger visual rhythm
+   and varied neon genre accents without affecting genre pills elsewhere. */
+@media (min-width: 721px) {
+  .hero .hero-right {
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 122px;
+    row-gap: 0;
+  }
+
+  .hero .hero-program-title-row {
+    margin-bottom: 0.52rem;
+  }
+
+  .hero .hero-program-target-row {
+    margin-bottom: 0.26rem;
+  }
+}
+
+.hero .hero-program-title-row .hero-main-message {
+  letter-spacing: 0.045em;
+}
+
+.hero .hero-program-time {
+  color: #c4b5fd;
+  font-size: clamp(0.82rem, 1.25vw, 1rem);
+  font-weight: 800;
+  opacity: 0.92;
+}
+
+.hero .hero-program-target-row > strong {
+  color: #e9b7f4;
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.hero .hero-program-explainer {
+  color: #e5e7eb;
+}
+
+/* Deliberately cycle the hero target colours so adjacent genres remain
+   visually distinct even when several belong to the same genre family. */
+.hero .hero-program-targets .dj-genre-pill:nth-child(7n + 1) {
+  --genre-neon-rgb: 255,45,149;
+  --genre-text: #ffd6ec;
+}
+.hero .hero-program-targets .dj-genre-pill:nth-child(7n + 2) {
+  --genre-neon-rgb: 34,255,255;
+  --genre-text: #d7ffff;
+}
+.hero .hero-program-targets .dj-genre-pill:nth-child(7n + 3) {
+  --genre-neon-rgb: 183,95,255;
+  --genre-text: #f2d9ff;
+}
+.hero .hero-program-targets .dj-genre-pill:nth-child(7n + 4) {
+  --genre-neon-rgb: 0,132,255;
+  --genre-text: #d7ecff;
+}
+.hero .hero-program-targets .dj-genre-pill:nth-child(7n + 5) {
+  --genre-neon-rgb: 178,255,0;
+  --genre-text: #efffbd;
+}
+.hero .hero-program-targets .dj-genre-pill:nth-child(7n + 6) {
+  --genre-neon-rgb: 255,125,24;
+  --genre-text: #ffe2c7;
+}
+.hero .hero-program-targets .dj-genre-pill:nth-child(7n) {
+  --genre-neon-rgb: 106,90,255;
+  --genre-text: #e5e0ff;
+}
+
+@media (max-width: 720px) {
+  .hero .hero-program-target-row > strong {
+    font-size: 0.62rem;
+    letter-spacing: 0.065em;
+  }
+}
