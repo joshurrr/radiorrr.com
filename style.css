@@ -2147,7 +2147,7 @@
 
     .schedule-row {
       display: grid;
-      grid-template-columns: 1.05fr 1.05fr 1.25fr 2.65fr;
+      grid-template-columns: 1.05fr 1.05fr 1.25fr 0.85fr 2.35fr;
       gap: 0;
       align-items: stretch;
       padding: 0;
@@ -2210,6 +2210,12 @@
     }
 
     .schedule-row > div:nth-child(4) {
+      color: #a5f3fc;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .schedule-row > div:nth-child(5) {
       color: #e0e0ff;
     }
 
@@ -2242,8 +2248,8 @@
       }
 
       .schedule-row {
-        min-width: 720px;
-        grid-template-columns: 1fr 0.95fr 1.15fr 2fr;
+        min-width: 820px;
+        grid-template-columns: 1fr 0.95fr 1.15fr 0.8fr 2fr;
         font-size: 0.72rem;
       }
     }
@@ -3219,8 +3225,8 @@
 
     @media (max-width: 720px) {
       .schedule-row {
-        grid-template-columns: 0.9fr 1.1fr 1.7fr;
-        gap: 0.55rem;
+        grid-template-columns: 0.9fr 1.1fr 1.5fr 0.9fr 2fr;
+        gap: 0;
         font-size: 0.72rem;
         line-height: 1.35;
       }

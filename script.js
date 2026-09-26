@@ -3108,6 +3108,8 @@ document.addEventListener("DOMContentLoaded", function () {
             start: row.start,
             end: row.end,
             name: row.name,
+            bpm_min: row.bpm_min,
+            bpm_max: row.bpm_max,
             genres: Array.isArray(row.genres) ? row.genres : []
           };
         });
@@ -3115,7 +3117,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       function publicScheduleSignature(rows) {
         return JSON.stringify((rows || []).map(function (r) {
-          return [r.start, r.end, r.name, r.genres];
+          return [r.start, r.end, r.name, r.bpm_min, r.bpm_max, r.genres];
         }));
       }
 
@@ -3150,7 +3152,7 @@ document.addEventListener("DOMContentLoaded", function () {
         byDay.Sunday.forEach(function (r) { displayRows.push({ row: r, label: "SUNDAY" }); });
 
         if (!displayRows.length) {
-          container.innerHTML = '<div class="schedule-row" role="row"><div role="cell">—</div><div role="cell">—</div><div role="cell"><strong>Schedule unavailable</strong></div><div role="cell"></div></div>';
+          container.innerHTML = '<div class="schedule-row" role="row"><div role="cell">—</div><div role="cell">—</div><div role="cell"><strong>Schedule unavailable</strong></div><div role="cell">—</div><div role="cell"></div></div>';
           return;
         }
 
@@ -3161,7 +3163,12 @@ document.addEventListener("DOMContentLoaded", function () {
             return '<span class="dj-genre-pill ' + publicGenreClass(genre) + '">' + safe + '</span>';
           }).join("");
           const safeName = String(r.name || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;");
-          return '<div class="schedule-row" role="row"><div role="cell">' + item.label + '</div><div role="cell">' + r.start + ' – ' + r.end + '</div><div role="cell"><strong>' + publicProgramIcon(r.name, r.start) + ' ' + safeName + '</strong></div><div role="cell"><div class="schedule-genres">' + genres + '</div></div></div>';
+          const bpmMin = Number(r.bpm_min);
+          const bpmMax = Number(r.bpm_max);
+          const bpmRange = Number.isFinite(bpmMin) && Number.isFinite(bpmMax)
+            ? Math.round(bpmMin) + "–" + Math.round(bpmMax) + " BPM"
+            : "—";
+          return '<div class="schedule-row" role="row"><div role="cell">' + item.label + '</div><div role="cell">' + r.start + ' – ' + r.end + '</div><div role="cell"><strong>' + publicProgramIcon(r.name, r.start) + ' ' + safeName + '</strong></div><div class="schedule-bpm" role="cell">' + bpmRange + '</div><div role="cell"><div class="schedule-genres">' + genres + '</div></div></div>';
         }).join("");
       }
 
