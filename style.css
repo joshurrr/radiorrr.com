@@ -6558,3 +6558,114 @@
     padding: 0.16rem 0.42rem;
   }
 }
+
+/* TOOLS — read-only TikTok LIVE scanner health monitor */
+#tools-section .scanner-health-title {
+  margin-top: .72rem;
+}
+
+.scanner-health-card {
+  padding: .68rem;
+  border: 1px solid rgba(129,140,248,.24);
+  border-radius: 9px;
+  background: rgba(7,12,29,.5);
+}
+
+.scanner-health-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .8rem;
+  margin-bottom: .58rem;
+}
+
+.scanner-health-head > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .14rem;
+}
+
+.scanner-health-head strong {
+  color: #fff;
+  font-size: .78rem;
+}
+
+.scanner-health-head #toolScannerHealthDetail {
+  color: #8f9bd0;
+  font-size: .62rem;
+  line-height: 1.25;
+}
+
+.scanner-health-metrics {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid rgba(129,140,248,.18);
+  border-radius: 8px;
+}
+
+.scanner-health-metrics > div {
+  min-width: 0;
+  padding: .5rem .55rem;
+  text-align: center;
+}
+
+.scanner-health-metrics > div + div {
+  border-left: 1px solid rgba(129,140,248,.14);
+}
+
+.scanner-health-metrics span {
+  display: block;
+  margin-bottom: .15rem;
+  color: #8f9bd0;
+  font-size: .55rem !important;
+  font-weight: 800 !important;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.scanner-health-metrics strong {
+  color: #fff;
+  font-size: .86rem;
+}
+
+.scanner-health-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: .75rem;
+  margin-top: .45rem;
+  color: #8792c3;
+  font-size: .59rem;
+  line-height: 1.25;
+}
+
+@media (max-width: 640px) {
+  .scanner-health-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .scanner-health-metrics > div + div {
+    border-left: 0;
+  }
+
+  .scanner-health-metrics > div:nth-child(even) {
+    border-left: 1px solid rgba(129,140,248,.14);
+  }
+
+  .scanner-health-metrics > div:nth-child(n + 3) {
+    border-top: 1px solid rgba(129,140,248,.14);
+  }
+
+  .scanner-health-metrics > div:last-child {
+    grid-column: 1 / -1;
+    border-left: 0;
+  }
+
+  .scanner-health-foot {
+    flex-direction: column;
+    gap: .18rem;
+  }
+}
+

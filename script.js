@@ -3730,6 +3730,107 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
 
+      function formatScannerAge(seconds) {
+        const value = Number(seconds);
+        if (!Number.isFinite(value) || value < 0) return "—";
+        if (value < 60) return Math.round(value) + "s";
+        if (value < 3600) return Math.round(value / 60) + "m";
+        if (value < 86400) {
+          const hours = Math.floor(value / 3600);
+          const minutes = Math.round((value % 3600) / 60);
+          return hours + "h" + (minutes ? " " + minutes + "m" : "");
+        }
+        const days = Math.floor(value / 86400);
+        const hours = Math.round((value % 86400) / 3600);
+        return days + "d" + (hours ? " " + hours + "h" : "");
+      }
+
+      async function refreshScannerHealth() {
+        const statusEl = document.getElementById("toolScannerHealth");
+        const detailEl = document.getElementById("toolScannerHealthDetail");
+
+        try {
+          const controller = new AbortController();
+          const timeout = setTimeout(function () { controller.abort(); }, 8000);
+
+          let response;
+          try {
+            response = await fetch(
+              getFreshUrl("https://api.radiorrr.com/api/tiktok-scanner-health"),
+              { cache: "no-store", signal: controller.signal }
+            );
+          } finally {
+            clearTimeout(timeout);
+          }
+
+          if (!response.ok) throw new Error("Scanner health unavailable");
+          const data = await response.json();
+
+          if (statusEl) {
+            statusEl.className = "tool-health " +
+              (data.status === "healthy"
+                ? "healthy"
+                : data.status === "critical"
+                  ? "unhealthy"
+                  : "pending");
+            statusEl.textContent = data.status_text || "Unknown";
+          }
+
+          const values = {
+            toolScannerEnabled: data.enabled_tiktok_djs,
+            toolScannerDue: data.due_now,
+            toolScanner30m: data.overdue_30m,
+            toolScanner6h: data.overdue_6h,
+            toolScanner24h: data.overdue_24h
+          };
+
+          Object.keys(values).forEach(function (id) {
+            const el = document.getElementById(id);
+            const value = values[id];
+            if (el) el.textContent = Number.isFinite(Number(value)) ? String(Number(value)) : "—";
+          });
+
+          const oldestEl = document.getElementById("toolScannerOldest");
+          if (oldestEl) {
+            oldestEl.textContent = data.oldest_overdue_username
+              ? "Oldest overdue: @" + String(data.oldest_overdue_username).replace(/^@/, "") +
+                " · " + formatScannerAge(data.oldest_overdue_seconds)
+              : "Oldest overdue: none";
+          }
+
+          const lastCheckEl = document.getElementById("toolScannerLastCheck");
+          if (lastCheckEl) {
+            lastCheckEl.textContent = data.last_check_age_seconds == null
+              ? "Last check: —"
+              : "Last check: " + formatScannerAge(data.last_check_age_seconds) + " ago";
+          }
+
+          if (detailEl) {
+            detailEl.textContent = data.status === "healthy"
+              ? "Adaptive scan queue is keeping up."
+              : data.status === "backlog"
+                ? "Scanner is running, but some enabled DJs are significantly overdue."
+                : data.status_text === "Scanner stalled"
+                  ? "No recent TikTok LIVE check has completed."
+                  : "One or more enabled DJs are more than 24 hours overdue.";
+          }
+        } catch (error) {
+          if (statusEl) {
+            statusEl.className = "tool-health unhealthy";
+            statusEl.textContent = "Unavailable";
+          }
+          if (detailEl) detailEl.textContent = "Could not read TikTok scanner queue health.";
+          ["toolScannerEnabled", "toolScannerDue", "toolScanner30m", "toolScanner6h", "toolScanner24h"].forEach(function (id) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = "—";
+          });
+          const oldestEl = document.getElementById("toolScannerOldest");
+          const lastCheckEl = document.getElementById("toolScannerLastCheck");
+          if (oldestEl) oldestEl.textContent = "Oldest overdue: —";
+          if (lastCheckEl) lastCheckEl.textContent = "Last check: —";
+        }
+      }
+
       async function refreshToolsData() {
         const controller = new AbortController();
         const timeout = setTimeout(function () { controller.abort(); }, 8000);
@@ -3820,12 +3921,17 @@ document.addEventListener("DOMContentLoaded", function () {
           const el = document.getElementById(id);
           if (el) { el.className = "tool-health pending"; el.textContent = "Checking…"; }
         });
-        ["toolLiveDjCount", "toolFavouriteDjCount", "toolListenerCount", "toolVideoViewerCount", "toolAudioDetails", "toolVideoDetails", "toolRelayDj"].forEach(function (id) {
+        const scannerHealthEl = document.getElementById("toolScannerHealth");
+        if (scannerHealthEl) {
+          scannerHealthEl.className = "tool-health pending";
+          scannerHealthEl.textContent = "Checking…";
+        }
+        ["toolLiveDjCount", "toolFavouriteDjCount", "toolListenerCount", "toolVideoViewerCount", "toolAudioDetails", "toolVideoDetails", "toolRelayDj", "toolScannerEnabled", "toolScannerDue", "toolScanner30m", "toolScanner6h", "toolScanner24h"].forEach(function (id) {
           const el = document.getElementById(id);
           if (el) el.textContent = "—";
         });
         try {
-          await Promise.allSettled([refreshEngineStatus(), refreshToolsData()]);
+          await Promise.allSettled([refreshEngineStatus(), refreshToolsData(), refreshScannerHealth()]);
           updateOverallHealth();
           const updated = document.getElementById("toolLastRefresh");
           if (updated) updated.textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
