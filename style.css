@@ -6309,3 +6309,93 @@
     text-align: left;
   }
 }
+
+
+/* SCHEDULE TYPOGRAPHY + MOBILE CARD LAYOUT — 2026-09-27
+   Desktop table text matches the existing genre-pill text size.
+   Mobile keeps the same schedule data but rearranges each row into a compact card. */
+@media (min-width: 721px) {
+  .schedule-row,
+  .schedule-header {
+    font-size: 0.68rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .schedule-table {
+    overflow-x: visible;
+    overflow-y: visible;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    padding-top: 0.35rem;
+  }
+
+  .schedule-header {
+    display: none;
+  }
+
+  .schedule-row:not(.schedule-header) {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "day time bpm"
+      "program program program"
+      "genres genres genres";
+    margin-bottom: 0.6rem;
+    border: 1px solid rgba(129, 140, 248, 0.42);
+    border-radius: 9px;
+    overflow: hidden;
+    background: rgba(5, 7, 16, 0.72);
+    font-size: 0.72rem;
+    line-height: 1.3;
+  }
+
+  .schedule-row:not(.schedule-header) > div {
+    min-width: 0;
+    padding: 0.5rem 0.58rem;
+    border-right: 0;
+    overflow-wrap: normal;
+  }
+
+  .schedule-row:not(.schedule-header) > div:nth-child(1) {
+    grid-area: day;
+    white-space: nowrap;
+  }
+
+  .schedule-row:not(.schedule-header) > div:nth-child(2) {
+    grid-area: time;
+    white-space: nowrap;
+  }
+
+  .schedule-row:not(.schedule-header) > div:nth-child(3) {
+    grid-area: program;
+    border-top: 1px solid rgba(129, 140, 248, 0.22);
+    padding-top: 0.48rem;
+    padding-bottom: 0.35rem;
+  }
+
+  .schedule-row:not(.schedule-header) > div:nth-child(4) {
+    grid-area: genres;
+    padding-top: 0.2rem;
+    padding-bottom: 0.58rem;
+  }
+
+  .schedule-row:not(.schedule-header) > div:nth-child(5) {
+    grid-area: bpm;
+    justify-self: end;
+    white-space: nowrap;
+    text-align: right;
+  }
+
+  .schedule-genres {
+    margin-top: 0;
+    gap: 0.28rem;
+  }
+
+  .schedule-genres .dj-genre-pill {
+    font-size: 0.62rem;
+    padding: 0.16rem 0.42rem;
+  }
+}
