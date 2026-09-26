@@ -6078,3 +6078,23 @@
   .hero .hero-program-target-row { font-size: 0.75rem; }
   .hero .hero-program-explainer { font-size: 0.72rem; }
 }
+
+/* 2026-09-26.3 Restore coloured bubbles for every hero target genre. */
+.hero .hero-program-targets {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.28rem;
+  vertical-align: middle;
+}
+.hero .hero-program-targets .dj-genre-pill {
+  font-size: 0.70rem;
+  line-height: 1.2;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+}
+@media (max-width: 720px) {
+  .hero .hero-program-targets { justify-content: center; }
+  .hero .hero-program-targets .dj-genre-pill { font-size: 0.64rem; }
+}

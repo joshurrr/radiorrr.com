@@ -3326,7 +3326,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const heroGenres = block.genres.split("·").map(function (genre) { return genre.trim(); }).filter(Boolean);
         if (liveProgramTargetGenres) {
-          liveProgramTargetGenres.textContent = heroGenres.join(" · ");
+          liveProgramTargetGenres.innerHTML = heroGenres.map(getGenrePillHtml).join("");
         }
         if (heroProgramExplainer) {
           heroProgramExplainer.textContent = "We find live DJs and automatically tune into the best match for this program.";
