@@ -2147,7 +2147,7 @@
 
     .schedule-row {
       display: grid;
-      grid-template-columns: 1.05fr 1.05fr 1.25fr 0.85fr 2.35fr;
+      grid-template-columns: 0.68fr 0.95fr 1.15fr 3.05fr 0.78fr;
       gap: 0;
       align-items: stretch;
       padding: 0;
@@ -2210,13 +2210,13 @@
     }
 
     .schedule-row > div:nth-child(4) {
-      color: #a5f3fc;
-      font-weight: 800;
-      white-space: nowrap;
+      color: #e0e0ff;
     }
 
     .schedule-row > div:nth-child(5) {
-      color: #e0e0ff;
+      color: #a5f3fc;
+      font-weight: 800;
+      white-space: nowrap;
     }
 
     .schedule-header {
@@ -2249,7 +2249,7 @@
 
       .schedule-row {
         min-width: 820px;
-        grid-template-columns: 1fr 0.95fr 1.15fr 0.8fr 2fr;
+        grid-template-columns: 0.72fr 0.9fr 1.1fr 2.45fr 0.78fr;
         font-size: 0.72rem;
       }
     }
