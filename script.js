@@ -3125,31 +3125,43 @@ document.addEventListener("DOMContentLoaded", function () {
         const container = document.getElementById("publicScheduleRows");
         if (!container) return;
 
+        const calendarDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const normalisedRows = normalisePublicScheduleRows(rows);
         const byDay = {};
-        ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].forEach(function (day) {
-          byDay[day] = normalisePublicScheduleRows(rows).filter(function (r) { return r.day === day; });
+        calendarDays.forEach(function (day) {
+          byDay[day] = normalisedRows
+            .filter(function (r) { return r.day === day; })
+            .sort(function (a, b) { return String(a.start).localeCompare(String(b.start)); });
         });
+
+        // Start the public schedule with the listener's current local day, then
+        // continue through the rest of the week in calendar order.
+        const todayIndex = new Date().getDay();
+        const displayDayOrder = calendarDays.slice(todayIndex).concat(calendarDays.slice(0, todayIndex));
 
         const displayRows = [];
         const weekdaySame = ["Monday", "Tuesday", "Wednesday", "Thursday"].every(function (day) {
           return publicScheduleSignature(byDay[day]) === publicScheduleSignature(byDay.Monday);
         });
+        let weekdayGroupAdded = false;
 
-        if (weekdaySame && byDay.Monday.length) {
-          byDay.Monday.forEach(function (r) {
-            displayRows.push({ row: r, label: "WEEKDAYS · MON–THU" });
-          });
-        } else {
-          ["Monday", "Tuesday", "Wednesday", "Thursday"].forEach(function (day) {
-            byDay[day].forEach(function (r) {
-              displayRows.push({ row: r, label: day.toUpperCase() });
-            });
-          });
-        }
+        displayDayOrder.forEach(function (day) {
+          const isGroupedWeekday = ["Monday", "Tuesday", "Wednesday", "Thursday"].includes(day);
 
-        byDay.Friday.forEach(function (r) { displayRows.push({ row: r, label: "FRIDAY" }); });
-        byDay.Saturday.forEach(function (r) { displayRows.push({ row: r, label: "SATURDAY" }); });
-        byDay.Sunday.forEach(function (r) { displayRows.push({ row: r, label: "SUNDAY" }); });
+          if (weekdaySame && byDay.Monday.length && isGroupedWeekday) {
+            if (!weekdayGroupAdded) {
+              byDay.Monday.forEach(function (r) {
+                displayRows.push({ row: r, label: "WEEKDAYS · MON–THU" });
+              });
+              weekdayGroupAdded = true;
+            }
+            return;
+          }
+
+          byDay[day].forEach(function (r) {
+            displayRows.push({ row: r, label: day.toUpperCase() });
+          });
+        });
 
         if (!displayRows.length) {
           container.innerHTML = '<div class="schedule-row" role="row"><div role="cell">—</div><div role="cell">—</div><div role="cell"><strong>Schedule unavailable</strong></div><div role="cell">—</div><div role="cell"></div></div>';
