@@ -6183,3 +6183,22 @@
     letter-spacing: 0.065em;
   }
 }
+
+/* 2026-09-26.5 Desktop hero: restore left alignment for all three program lines. */
+@media (min-width: 721px) {
+  .hero .hero-right,
+  .hero .hero-program-title-row,
+  .hero .hero-program-target-row,
+  .hero .hero-program-explainer {
+    text-align: left;
+  }
+
+  .hero .hero-program-title-row,
+  .hero .hero-program-target-row {
+    justify-content: flex-start;
+  }
+
+  .hero .hero-program-targets {
+    justify-content: flex-start;
+  }
+}
