@@ -3295,7 +3295,7 @@ document.addEventListener("DOMContentLoaded", function () {
           if (heroProgramTime) {
             heroProgramTime.textContent = "";
           }
-          if (heroProgramExplainer) heroProgramExplainer.textContent = "Finding live DJs that fit this program.";
+          if (heroProgramExplainer) heroProgramExplainer.textContent = "We find live DJs and automatically tune into the best match for this program.";
 
           return;
         }
@@ -3321,30 +3321,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (heroProgramTime) {
           heroProgramTime.textContent =
-            formatHeroTime(block.startText) + " – " + formatHeroTime(block.endText);
+            formatHeroTime(block.startText) + "–" + formatHeroTime(block.endText);
         }
 
         const heroGenres = block.genres.split("·").map(function (genre) { return genre.trim(); }).filter(Boolean);
         if (liveProgramTargetGenres) {
-          liveProgramTargetGenres.replaceChildren();
-          heroGenres.slice(0, 3).forEach(function (genre) {
-            const pill = document.createElement("span");
-            pill.className = "random-live-program-target-pill";
-            pill.textContent = genre;
-            liveProgramTargetGenres.appendChild(pill);
-          });
-          if (heroGenres.length > 3) {
-            const more = document.createElement("span");
-            more.className = "hero-program-more";
-            more.textContent = "+" + (heroGenres.length - 3) + " more";
-            more.title = heroGenres.slice(3).join(" · ");
-            liveProgramTargetGenres.appendChild(more);
-          }
+          liveProgramTargetGenres.textContent = heroGenres.join(" · ");
         }
         if (heroProgramExplainer) {
-          heroProgramExplainer.textContent = heroGenres.length
-            ? "Finding live DJs that fit " + heroGenres.slice(0, 3).join(", ") + "."
-            : "Finding live DJs that fit this program.";
+          heroProgramExplainer.textContent = "We find live DJs and automatically tune into the best match for this program.";
         }
 
       }

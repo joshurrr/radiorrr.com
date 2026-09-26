@@ -5990,3 +5990,91 @@
   .hero-program-explainer::after { content: none; }
   .hero-program-more { font-size: 0.64rem; }
 }
+
+/* 2026-09-26.2 Three-row hero aligned with the logo. */
+.hero .hero-program-title-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.55rem;
+  margin: 0;
+}
+.hero .hero-program-title-row .hero-main-message {
+  font-size: clamp(1.2rem, 2.1vw, 1.75rem);
+  font-weight: 900;
+  line-height: 1.15;
+}
+.hero .hero-program-time {
+  display: inline-flex;
+  margin: 0;
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
+  font-weight: 900;
+  line-height: 1.15;
+}
+.hero .hero-program-time:not(:empty)::before {
+  content: "·";
+  margin-right: 0.55rem;
+}
+.hero .hero-program-target-row {
+  display: block;
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.hero .hero-program-target-row > strong {
+  font-size: inherit;
+  font-weight: 700;
+}
+.hero .hero-program-target-row > strong::after {
+  content: none;
+}
+.hero .hero-program-targets {
+  display: inline;
+}
+.hero .hero-program-bpm {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: inherit;
+  font-weight: 700;
+}
+.hero .hero-program-bpm:not(:empty)::before {
+  content: "·";
+  margin: 0 0.3rem;
+}
+.hero .hero-program-explainer {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.hero .hero-program-explainer::after {
+  content: none;
+}
+@media (min-width: 721px) {
+  .hero .hero-left { flex: 0 0 122px; }
+  .hero .hero-right {
+    align-self: stretch;
+    display: grid;
+    grid-template-rows: repeat(3, minmax(min-content, 1fr));
+    align-items: center;
+    min-height: 122px;
+    row-gap: 0.25rem;
+  }
+}
+@media (max-width: 720px) {
+  .hero .hero-right {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+  .hero .hero-program-title-row { justify-content: center; }
+  .hero .hero-program-title-row .hero-main-message {
+    font-size: clamp(1.06rem, 5.4vw, 1.4rem);
+  }
+  .hero .hero-program-time { font-size: 0.95rem; }
+  .hero .hero-program-target-row { font-size: 0.75rem; }
+  .hero .hero-program-explainer { font-size: 0.72rem; }
+}
