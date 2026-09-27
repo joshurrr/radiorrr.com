@@ -2339,7 +2339,20 @@ document.addEventListener("DOMContentLoaded", function () {
         const resultsEl = document.getElementById("djDiscoveryResults");
         if (!section || !chipsEl || !statusEl || !resultsEl) return;
 
-        if (selectedGenre) {
+        const customSoundActive = Boolean(selectedGenre);
+
+        // Once the visitor starts designing a sound, hide the generic
+        // "switch to another live DJ" row so the filtered live results become
+        // the focus. Deselecting the genre restores the normal live-DJ row.
+        if (liveDjsList) {
+          liveDjsList.querySelectorAll(
+            ".rrr-other-live-djs-header, .dj-live-switch-card"
+          ).forEach(function (element) {
+            element.style.display = customSoundActive ? "none" : "";
+          });
+        }
+
+        if (customSoundActive) {
           // Once a genre is selected, surface the live scan/result immediately
           // below the instructions, with the genre cloud kept underneath.
           section.insertBefore(statusEl, chipsEl);
@@ -2790,6 +2803,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           if (otherLiveDJs.length) {
             const otherLiveHeader = document.createElement("div");
+            otherLiveHeader.className = "rrr-other-live-djs-header";
             otherLiveHeader.style.gridColumn = "1 / -1";
             otherLiveHeader.style.marginTop = hasRelay ? "0.8rem" : "0";
             otherLiveHeader.innerHTML =
