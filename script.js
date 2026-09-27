@@ -2856,9 +2856,8 @@ document.addEventListener("DOMContentLoaded", function () {
           resultsEl.appendChild(card);
         });
 
-        // Keep every ranked live alternative in one horizontal row. The results
-        // container provides the horizontal scrollbar/swipe area, so cards are
-        // no longer hidden behind a SHOW ALL control.
+        // Keep every ranked live alternative in one horizontal row.
+        // CSS owns the sideways scrolling; do not hide cards or render SHOW ALL.
         const resultCards = Array.from(
           resultsEl.querySelectorAll(".dj-discovery-card")
         );

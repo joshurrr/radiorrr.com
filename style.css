@@ -7257,27 +7257,26 @@
 
 
 
-/* RRR ranked live matches: single horizontal scrolling row.
-   Layout only; card rendering, ranking and DJ switching are unchanged. */
-#rrrDjDiscovery .dj-discovery-results {
+/* RRR Best Live Matches: force exactly one horizontal scrolling row.
+   Scope is deliberately limited to the current/custom sound live-match results. */
+#djDiscoveryResults.dj-discovery-results {
   display: flex !important;
-  flex-wrap: nowrap !important;
+  flex-flow: row nowrap !important;
   align-items: stretch !important;
   justify-content: flex-start !important;
-  gap: 14px !important;
+  gap: 12px !important;
   width: 100% !important;
   max-width: 100% !important;
-  overflow-x: auto !important;
+  overflow-x: scroll !important;
   overflow-y: hidden !important;
-  padding: 0 0 0.55rem !important;
+  padding: 0 0 10px !important;
+  scrollbar-gutter: stable;
   scroll-snap-type: x proximity;
-  scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(103,232,249,0.72) rgba(15,23,42,0.72);
 }
 
-#rrrDjDiscovery .dj-discovery-results .dj-discovery-card {
+#djDiscoveryResults.dj-discovery-results > .dj-discovery-card {
+  display: block !important;
   flex: 0 0 176px !important;
   width: 176px !important;
   min-width: 176px !important;
@@ -7285,23 +7284,25 @@
   scroll-snap-align: start;
 }
 
-#rrrDjDiscovery .dj-discovery-results::-webkit-scrollbar {
-  height: 9px;
+#djDiscoveryResults::-webkit-scrollbar {
+  height: 10px;
 }
 
-#rrrDjDiscovery .dj-discovery-results::-webkit-scrollbar-track {
+#djDiscoveryResults::-webkit-scrollbar-track {
   background: rgba(15,23,42,0.72);
   border-radius: 999px;
 }
 
-#rrrDjDiscovery .dj-discovery-results::-webkit-scrollbar-thumb {
-  background: linear-gradient(90deg, rgba(34,211,238,0.82), rgba(168,85,247,0.82));
+#djDiscoveryResults::-webkit-scrollbar-thumb {
+  background: rgba(103,232,249,0.72);
   border-radius: 999px;
 }
 
-@media (max-width: 640px) {
-  #rrrDjDiscovery .dj-discovery-results {
-    gap: 12px !important;
-    padding-bottom: 0.45rem !important;
+@media (max-width: 767px) {
+  #djDiscoveryResults.dj-discovery-results > .dj-discovery-card {
+    flex-basis: 160px !important;
+    width: 160px !important;
+    min-width: 160px !important;
+    max-width: 160px !important;
   }
 }
