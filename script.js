@@ -2112,8 +2112,18 @@ document.addEventListener("DOMContentLoaded", function () {
           });
         });
 
+        // Keep Discovery filters focused on established music genres.
+        const excludedDiscoveryGenre = /\b(?:gospel|religious|religion|christian|prayer|sermon|spoken[\s-]*(?:word|voice)|speech|talk|talking|dialogue|comedy|audiobook|audio[\s-]+book|radio[\s-]*play|education|educational|poetry|field[\s-]*recording|parody|non[\s-]*music)\b/i;
         const genres = Array.from(counts.values())
+          .filter(item => item.count > 3 && !excludedDiscoveryGenre.test(item.label))
           .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
+
+        // A catalogue refresh can remove the currently selected filter.
+        if (djDiscoveryGenre && !genres.some(item =>
+          item.label.toLowerCase() === djDiscoveryGenre.toLowerCase()
+        )) {
+          djDiscoveryGenre = "";
+        }
 
         chips.innerHTML =
           genres.map(item =>
