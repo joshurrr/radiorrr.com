@@ -568,6 +568,23 @@ window.formspree =
   letter-spacing: 0;
 }
 
+#randomLiveDjMatch .rrr-current-bpm.bpm-in-range {
+  color: #a7f3d0;
+}
+
+#randomLiveDjMatch .rrr-current-bpm.bpm-near-range {
+  color: #fde68a;
+}
+
+#randomLiveDjMatch .rrr-current-bpm.bpm-off-range {
+  color: #fdba74;
+}
+
+#randomLiveDjMatch .rrr-current-bpm.bpm-far-range {
+  color: #fca5a5;
+  text-shadow: 0 0 6px rgba(248,113,113,0.35);
+}
+
 #randomLiveDjTalk {
   grid-column: 2 !important;
   grid-row: 1 / span 2 !important;
@@ -1045,12 +1062,27 @@ window.formspree =
       }
 
       if (Number.isFinite(Number(item.bpm))) {
-        const bpm = formatBpm(item.bpm);
+        const bpmValue = Number(item.bpm);
+        const bpm = formatBpm(bpmValue);
         const bounds = scheduleBounds(data, item);
+        let bpmClass = "";
+
+        if (bounds) {
+          const distance = bpmValue < bounds.min
+            ? bounds.min - bpmValue
+            : bpmValue > bounds.max
+              ? bpmValue - bounds.max
+              : 0;
+
+          if (distance === 0) bpmClass = " bpm-in-range";
+          else if (distance <= 3) bpmClass = " bpm-near-range";
+          else if (distance <= 7) bpmClass = " bpm-off-range";
+          else bpmClass = " bpm-far-range";
+        }
 
         bpmEl.innerHTML =
           '<span class="rrr-bpm-label">BPM</span>' +
-          '<span class="rrr-current-bpm">' + bpm + '</span>';
+          '<span class="rrr-current-bpm' + bpmClass + '">' + bpm + '</span>';
 
         if (bpmHealthEl) {
           bpmHealthEl.className = "tool-health healthy";
