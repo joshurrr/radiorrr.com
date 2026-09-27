@@ -541,6 +541,7 @@ window.formspree =
   align-self: center !important;
   margin: 0 !important;
   text-align: right !important;
+  line-height: 1.05 !important;
 }
 
 #randomLiveDjTalk {
@@ -549,26 +550,27 @@ window.formspree =
   align-self: center !important;
   display: inline-flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
-  min-width: 3.25rem;
-  min-height: 2rem;
-  font-size: 0.64rem;
-  font-weight: 800;
-  line-height: 1.05;
-  letter-spacing: 0.035em;
+  min-width: 3.6rem;
+  min-height: 2.25rem;
+  font-size: 1.05rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0;
   white-space: nowrap;
-  text-align: right;
+  text-align: center;
 }
 
 #randomLiveDjTalk::before {
-  content: "🎙 TALK";
+  content: "TALK";
   display: block;
-  margin-bottom: 0.16rem;
-  font-size: 0.52rem;
+  margin-bottom: 0.18rem;
+  font-size: 0.62rem;
   font-weight: 800;
-  letter-spacing: 0.04em;
-  opacity: 0.82;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  opacity: 0.86;
 }
 
 #randomLiveDjTalk.talk-low {
@@ -601,12 +603,12 @@ window.formspree =
   }
 
   #randomLiveDjTalk {
-    min-width: 2.8rem;
-    font-size: 0.6rem;
+    min-width: 3.1rem;
+    font-size: 0.95rem;
   }
 
   #randomLiveDjTalk::before {
-    font-size: 0.48rem;
+    font-size: 0.56rem;
   }
 }
 </style>
