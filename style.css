@@ -7721,3 +7721,10 @@
   margin-top: 0 !important;
 }
 
+/* 2026-09-28 — desktop hero program title slightly larger */
+@media (min-width: 721px) {
+  .hero .hero-program-title-row .hero-main-message {
+    font-size: clamp(1.56rem, 2.73vw, 2.28rem);
+  }
+}
+
