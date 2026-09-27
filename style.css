@@ -6519,8 +6519,9 @@
 
 .hero .hero-program-time {
   color: #c4b5fd;
-  font-size: clamp(0.82rem, 1.25vw, 1rem);
-  font-weight: 800;
+  font-size: clamp(1.2rem, 2.1vw, 1.75rem);
+  font-weight: 900;
+  line-height: 1.15;
   opacity: 0.92;
 }
 
@@ -6666,7 +6667,8 @@
   .hero .hero-program-time {
     flex: 0 0 auto;
     margin: 0;
-    font-size: clamp(0.64rem, 2.75vw, 0.82rem);
+    font-size: clamp(0.76rem, 3.25vw, 1rem);
+    font-weight: 900;
     line-height: 1.08;
     white-space: nowrap;
   }
