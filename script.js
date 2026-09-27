@@ -1972,6 +1972,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!Number.isFinite(score)) {
           valueEl.textContent = "—";
+          valueEl.className = "main-dj-match-value";
           randomLiveDjMatch.className =
             "dj-match-score main-dj-match-score match-low";
           return;
@@ -1989,7 +1990,18 @@ document.addEventListener("DOMContentLoaded", function () {
               ? "match-mid"
               : "match-low";
 
+        const programMatchValueClass =
+          rounded >= 50
+            ? "program-match-green"
+            : rounded >= 30
+              ? "program-match-yellow"
+              : rounded >= 11
+                ? "program-match-orange"
+                : "program-match-red";
+
         valueEl.textContent = rounded + "%";
+        valueEl.className =
+          "main-dj-match-value " + programMatchValueClass;
         randomLiveDjMatch.className =
           "dj-match-score main-dj-match-score " + matchClass;
       }

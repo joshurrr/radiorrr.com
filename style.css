@@ -1657,6 +1657,24 @@
       font-weight: 900;
     }
 
+    /* Current Program Match: same four status colours used by BPM/TALK. */
+    #randomLiveDjMatch .main-dj-match-value.program-match-green {
+      color: #a7f3d0;
+    }
+
+    #randomLiveDjMatch .main-dj-match-value.program-match-yellow {
+      color: #fde68a;
+    }
+
+    #randomLiveDjMatch .main-dj-match-value.program-match-orange {
+      color: #fdba74;
+    }
+
+    #randomLiveDjMatch .main-dj-match-value.program-match-red {
+      color: #fca5a5;
+      text-shadow: 0 0 6px rgba(248,113,113,0.35);
+    }
+
     .dj-status-row .dj-live {
       min-width: 0;
       margin-bottom: 0;
