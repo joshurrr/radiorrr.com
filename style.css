@@ -7306,3 +7306,13 @@
     max-width: 160px !important;
   }
 }
+
+/* RRR Best Live Matches: keep Program Match footers aligned across cards.
+   Presentation only; ranking, playback and matching logic are unchanged. */
+#djDiscoveryResults.dj-discovery-results > .dj-discovery-card .dj-discovery-genres {
+  min-height: calc(2.66rem + 6px) !important;
+}
+
+#djDiscoveryResults.dj-discovery-results > .dj-discovery-card .dj-discovery-match-row {
+  margin-top: auto !important;
+}
