@@ -612,6 +612,40 @@ document.addEventListener("DOMContentLoaded", function () {
 
       }
 
+      const TAB_VIEW_BY_TARGET = {
+        "live-section": "live",
+        "stream-section": "audio",
+        "events-section": "schedule",
+        "tools-section": "tools"
+      };
+
+      const TAB_TARGET_BY_VIEW = {
+        live: "live-section",
+        audio: "stream-section",
+        schedule: "events-section",
+        tools: "tools-section"
+      };
+
+      function getTabTargetFromLocation() {
+        const params = new URLSearchParams(window.location.search);
+        const view = String(params.get("view") || "live").trim().toLowerCase();
+        return TAB_TARGET_BY_VIEW[view] || "live-section";
+      }
+
+      function updateTabUrl(targetId) {
+        const view = TAB_VIEW_BY_TARGET[targetId] || "live";
+        const url = new URL(window.location.href);
+
+        // Keep unrelated query parameters such as a manually selected ?dj=.
+        if (view === "live") {
+          url.searchParams.delete("view");
+        } else {
+          url.searchParams.set("view", view);
+        }
+
+        window.history.pushState({ rrrView: view }, "", url);
+      }
+
       function switchTab(targetId) {
 
         contentPanes.forEach(
@@ -657,7 +691,8 @@ document.addEventListener("DOMContentLoaded", function () {
           "click",
           function (e) {
 
-            // These are JavaScript tabs, not real navigation links.
+            // Keep the media elements mounted while exposing a real,
+            // bookmarkable URL for each existing Radio RRR view.
             e.preventDefault();
 
             const targetId =
@@ -668,6 +703,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (targetId) {
 
               switchTab(targetId);
+              updateTabUrl(targetId);
 
             }
 
@@ -676,7 +712,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
       });
 
-      switchTab("live-section");
+      window.addEventListener("popstate", function () {
+        switchTab(getTabTargetFromLocation());
+      });
+
+      // Direct visits and browser refreshes open the requested view without
+      // reconstructing the page or touching either media element.
+      switchTab(getTabTargetFromLocation());
 
       /* RADIO ROUTER LIVE DJ PLAYER */
 
