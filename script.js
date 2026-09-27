@@ -2332,12 +2332,31 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       }
 
+      function updateDjDiscoveryLayout(selectedGenre) {
+        const section = document.getElementById("rrrDjDiscovery");
+        const chipsEl = document.getElementById("djDiscoveryChips");
+        const statusEl = document.getElementById("djDiscoveryScanStatus");
+        const resultsEl = document.getElementById("djDiscoveryResults");
+        if (!section || !chipsEl || !statusEl || !resultsEl) return;
+
+        if (selectedGenre) {
+          // Once a genre is selected, surface the live scan/result immediately
+          // below the instructions, with the genre cloud kept underneath.
+          section.insertBefore(statusEl, chipsEl);
+          section.insertBefore(resultsEl, chipsEl);
+        } else {
+          // With no selection, keep the genre cloud directly below the instructions.
+          section.insertBefore(chipsEl, statusEl);
+        }
+      }
+
       function renderDjDiscoveryResults() {
         const resultsEl = document.getElementById("djDiscoveryResults");
         const statusEl = document.getElementById("djDiscoveryScanStatus");
         if (!resultsEl || !statusEl) return;
 
         const selectedGenre = djDiscoveryGenre.trim();
+        updateDjDiscoveryLayout(selectedGenre);
         if (!selectedGenre) {
           statusEl.className = "dj-discovery-scan-status idle";
           statusEl.textContent = "Choose a genre above to scan the DJs who are live now.";
