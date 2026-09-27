@@ -7489,3 +7489,203 @@
   }
 }
 
+
+
+/* LIVE DJs TOOL — isolated from the main Live page cards. */
+.live-djs-tool-panel {
+  margin-top: 1rem;
+}
+
+.live-djs-tool-heading,
+.live-djs-tool-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.live-djs-tool-controls {
+  margin-top: 0.85rem;
+}
+
+.live-djs-tool-controls input[type="search"] {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0.62rem 0.72rem;
+  border: 1px solid rgba(129,140,248,0.55);
+  border-radius: 9px;
+  background: rgba(4,8,20,0.92);
+  color: #ffffff;
+  font: inherit;
+  font-size: 0.82rem;
+  outline: none;
+}
+
+.live-djs-tool-controls input[type="search"]:focus {
+  border-color: #22d3ee;
+  box-shadow: 0 0 0 2px rgba(34,211,238,0.12);
+}
+
+.live-djs-tool-status {
+  margin: 0.7rem 0;
+  color: #a5b4fc;
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.live-djs-tool-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.live-djs-tool-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgba(34,211,238,0.36);
+  border-radius: 12px;
+  background: rgba(7,10,25,0.96);
+  box-shadow: 0 0 12px rgba(34,211,238,0.10);
+}
+
+.live-djs-tool-media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: radial-gradient(circle at top, rgba(34,211,238,0.18), rgba(7,10,25,0.98) 70%);
+}
+
+.live-djs-tool-photo {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.live-djs-tool-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+}
+
+.live-djs-tool-live {
+  position: absolute;
+  left: 0.5rem;
+  top: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  padding: 0.2rem 0.38rem;
+  border-radius: 5px;
+  background: #ff176f;
+  color: #ffffff;
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  box-shadow: 0 0 8px rgba(255,23,111,0.45);
+}
+
+.live-djs-tool-live span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 5px rgba(255,255,255,0.9);
+}
+
+.live-djs-tool-platform {
+  position: absolute !important;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 2;
+}
+
+.live-djs-tool-body {
+  padding: 0.65rem;
+}
+
+.live-djs-tool-name {
+  color: #ffffff;
+  font-size: 0.88rem;
+  line-height: 1.15;
+  font-weight: 900;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.live-djs-tool-handle {
+  margin-top: 0.16rem;
+  color: #a5b4fc;
+  font-size: 0.66rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.live-djs-tool-genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+  min-height: 1.4rem;
+  margin-top: 0.5rem;
+}
+
+.live-djs-tool-genres .dj-genre-pill {
+  max-width: 100%;
+  padding: 0.14rem 0.32rem;
+  font-size: 0.5rem;
+  line-height: 1;
+}
+
+.live-djs-tool-muted,
+.live-djs-tool-metrics {
+  color: #94a3b8;
+  font-size: 0.62rem;
+}
+
+.live-djs-tool-metrics {
+  min-height: 1.2rem;
+  margin: 0.45rem 0 0.55rem;
+  line-height: 1.35;
+}
+
+.live-djs-tool-listen {
+  width: 100%;
+  justify-content: center;
+}
+
+.live-djs-tool-empty {
+  grid-column: 1 / -1;
+  padding: 1rem;
+  border: 1px dashed rgba(129,140,248,0.35);
+  border-radius: 10px;
+  color: #a5b4fc;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .live-djs-tool-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .live-djs-tool-heading {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .live-djs-tool-grid {
+    grid-template-columns: 1fr;
+  }
+  .live-djs-tool-controls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .live-djs-tool-controls .tool-button {
+    width: 100%;
+  }
+}

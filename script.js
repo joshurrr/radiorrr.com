@@ -4439,6 +4439,224 @@ document.addEventListener("DOMContentLoaded", function () {
       refreshToolsPanel();
       setInterval(refreshToolsPanel, 30 * 1000);
 
+      /* RRR TOOLS — LIVE DJs */
+      const openLiveDjsTool = document.getElementById("openLiveDjsTool");
+      const liveDjsToolPanel = document.getElementById("liveDjsToolPanel");
+      const liveDjsToolClose = document.getElementById("liveDjsToolClose");
+      const liveDjsToolRefresh = document.getElementById("liveDjsToolRefresh");
+      const liveDjsToolSearch = document.getElementById("liveDjsToolSearch");
+      const liveDjsToolStatus = document.getElementById("liveDjsToolStatus");
+      const liveDjsToolResults = document.getElementById("liveDjsToolResults");
+      let liveDjsToolItems = [];
+      let liveDjsToolLoading = false;
+
+      function setLiveDjsToolOpen(open) {
+        if (!liveDjsToolPanel) return;
+        liveDjsToolPanel.hidden = !open;
+        if (openLiveDjsTool) {
+          openLiveDjsTool.setAttribute("aria-expanded", String(open));
+        }
+        if (open) {
+          loadLiveDjsTool();
+          window.setTimeout(function () {
+            liveDjsToolPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 0);
+        }
+      }
+
+      function getLiveDjsToolSearchText(dj) {
+        return [
+          dj && dj.name,
+          dj && dj.display_name,
+          getDJUsername(dj),
+          getDJPlatform(dj)
+        ].filter(Boolean).join(" ").toLowerCase();
+      }
+
+      function renderLiveDjsTool() {
+        if (!liveDjsToolResults) return;
+
+        const query = String(liveDjsToolSearch && liveDjsToolSearch.value || "")
+          .trim().toLowerCase().replace(/^@/, "");
+        const visible = liveDjsToolItems.filter(function (item) {
+          return !query || getLiveDjsToolSearchText(item.dj).includes(query);
+        });
+
+        liveDjsToolResults.innerHTML = "";
+
+        if (!visible.length) {
+          const empty = document.createElement("div");
+          empty.className = "live-djs-tool-empty";
+          empty.textContent = liveDjsToolItems.length
+            ? "No live DJs match that search."
+            : "No DJs are currently detected live.";
+          liveDjsToolResults.appendChild(empty);
+          return;
+        }
+
+        visible.forEach(function (item) {
+          const dj = item.dj;
+          const username = getDJUsername(dj);
+          const platform = getDJPlatform(dj);
+          const name = String(dj.name || dj.display_name || username || "Live DJ");
+          const profilePic = String(
+            dj.profile_pic || dj.profile_picture || dj.avatar || dj.photo || ""
+          );
+          const genres = getLiveAIGenres(dj).slice(0, 4);
+          const metrics = item.metrics || {};
+          const bpm = Number(metrics.bpm);
+          const talkRatio = Number(metrics.speech_ratio);
+          const matchScore = Number(metrics.raw_score ?? metrics.score);
+
+          const card = document.createElement("article");
+          card.className = "live-djs-tool-card";
+          card.dataset.identity = getDJIdentity(dj);
+
+          const imageHtml = profilePic
+            ? '<img class="live-djs-tool-photo" src="' + escapeAttr(profilePic) + '" alt="" loading="lazy">'
+            : '<div class="live-djs-tool-photo-placeholder" aria-hidden="true">🎧</div>';
+          const genreHtml = genres.length
+            ? genres.map(function (genre) {
+                return '<span class="dj-genre-pill ' + getGenreNeonClass(genre) + '">' +
+                  escapeHtml(genre) + '</span>';
+              }).join("")
+            : '<span class="live-djs-tool-muted">Scanning genres…</span>';
+
+          const metricParts = [];
+          if (Number.isFinite(bpm)) metricParts.push("BPM " + Math.round(bpm));
+          if (Number.isFinite(talkRatio)) {
+            metricParts.push("TALK " + Math.max(0, Math.min(100, Math.round(talkRatio * 100))) + "%");
+          }
+          if (Number.isFinite(matchScore)) {
+            metricParts.push("PROGRAM MATCH " + Math.max(0, Math.min(100, Math.round(matchScore))) + "%");
+          }
+
+          card.innerHTML =
+            '<div class="live-djs-tool-media">' + imageHtml +
+              '<div class="live-djs-tool-live"><span></span>LIVE</div>' +
+              getDJPlatformBadgeHtml(dj, "live-djs-tool-platform") +
+            '</div>' +
+            '<div class="live-djs-tool-body">' +
+              '<div class="live-djs-tool-name">' + escapeHtml(name) + '</div>' +
+              '<div class="live-djs-tool-handle">' +
+                (username ? '@' + escapeHtml(username) + ' · ' : '') + escapeHtml(platform) +
+              '</div>' +
+              '<div class="live-djs-tool-genres">' + genreHtml + '</div>' +
+              '<div class="live-djs-tool-metrics">' +
+                (metricParts.length ? escapeHtml(metricParts.join(" · ")) : "Live detection available") +
+              '</div>' +
+              '<button class="tool-button live-djs-tool-listen" type="button">▶ Listen to this DJ</button>' +
+            '</div>';
+
+          const listenButton = card.querySelector(".live-djs-tool-listen");
+          if (listenButton) {
+            listenButton.addEventListener("click", async function () {
+              if (!username || listenButton.disabled) return;
+              listenButton.disabled = true;
+              listenButton.textContent = "Switching…";
+              try {
+                manualFeaturedDJIdentity = getDJIdentity(dj);
+                manualFeaturedDJMissingCount = 0;
+                manualDJStreamFailureHandled = false;
+                currentFeaturedDJ = dj;
+                showLiveDjPlayer(dj);
+                await updateLiveGenresDetected(
+                  null,
+                  manualFeaturedDJIdentity,
+                  "",
+                  platform
+                );
+                updateTabUrl("live-section");
+                applyLocationState();
+                await loadLiveDJs();
+              } catch (error) {
+                console.error("Radio RRR Live DJs tool selection failed:", error);
+                manualFeaturedDJIdentity = "";
+                manualFeaturedDJMissingCount = 0;
+                manualDJStreamFailureHandled = false;
+                if (liveDjsToolStatus) {
+                  liveDjsToolStatus.textContent = "Could not switch to that DJ. Refresh and try again.";
+                }
+              } finally {
+                listenButton.disabled = false;
+                listenButton.textContent = "▶ Listen to this DJ";
+              }
+            });
+          }
+
+          liveDjsToolResults.appendChild(card);
+        });
+      }
+
+      async function loadLiveDjsTool() {
+        if (!liveDjsToolResults || liveDjsToolLoading) return;
+        liveDjsToolLoading = true;
+        if (liveDjsToolRefresh) liveDjsToolRefresh.disabled = true;
+        if (liveDjsToolStatus) liveDjsToolStatus.textContent = "Checking DJs currently detected live…";
+
+        try {
+          const responses = await Promise.all([
+            fetch(getFreshUrl("https://api.radiorrr.com/api/live"), { cache: "no-store" }),
+            fetch(getFreshUrl("https://api.radiorrr.com/api/genre-match"), { cache: "no-store" })
+          ]);
+          if (!responses[0].ok) throw new Error("Live API returned " + responses[0].status);
+
+          const liveData = await responses[0].json();
+          const matchData = responses[1].ok ? await responses[1].json() : null;
+          const live = mergeUniqueDJs(Array.isArray(liveData && liveData.live) ? liveData.live : []);
+          const metricMap = new Map();
+
+          if (matchData && Array.isArray(matchData.ranked)) {
+            matchData.ranked.forEach(function (entry) {
+              const username = String(entry && entry.username || "").replace(/^@/, "").trim().toLowerCase();
+              const platform = String(entry && entry.platform || "TikTok").trim().toLowerCase() || "tiktok";
+              if (username) metricMap.set(platform + ":" + username, entry);
+            });
+          }
+
+          liveDjsToolItems = live.map(function (dj) {
+            const key = getDJPlatform(dj).toLowerCase() + ":" + getDJUsername(dj).toLowerCase();
+            return { dj: dj, metrics: metricMap.get(key) || null };
+          }).sort(function (a, b) {
+            const aScore = Number(a.metrics && (a.metrics.raw_score ?? a.metrics.score));
+            const bScore = Number(b.metrics && (b.metrics.raw_score ?? b.metrics.score));
+            if (Number.isFinite(aScore) && Number.isFinite(bScore) && bScore !== aScore) return bScore - aScore;
+            if (Number.isFinite(bScore) && !Number.isFinite(aScore)) return 1;
+            if (Number.isFinite(aScore) && !Number.isFinite(bScore)) return -1;
+            return String(a.dj.name || getDJUsername(a.dj)).localeCompare(String(b.dj.name || getDJUsername(b.dj)));
+          });
+
+          if (liveDjsToolStatus) {
+            liveDjsToolStatus.textContent = liveDjsToolItems.length
+              ? liveDjsToolItems.length + " DJ" + (liveDjsToolItems.length === 1 ? "" : "s") + " currently detected live."
+              : "No DJs are currently detected live.";
+          }
+          renderLiveDjsTool();
+        } catch (error) {
+          console.error("Radio RRR Live DJs tool error:", error);
+          liveDjsToolItems = [];
+          if (liveDjsToolStatus) liveDjsToolStatus.textContent = "Could not load the current live DJ list.";
+          renderLiveDjsTool();
+        } finally {
+          liveDjsToolLoading = false;
+          if (liveDjsToolRefresh) liveDjsToolRefresh.disabled = false;
+        }
+      }
+
+      if (openLiveDjsTool) {
+        openLiveDjsTool.addEventListener("click", function () {
+          setLiveDjsToolOpen(liveDjsToolPanel ? liveDjsToolPanel.hidden : true);
+        });
+      }
+      if (liveDjsToolClose) {
+        liveDjsToolClose.addEventListener("click", function () {
+          setLiveDjsToolOpen(false);
+          if (openLiveDjsTool) openLiveDjsTool.focus();
+        });
+      }
+      if (liveDjsToolRefresh) liveDjsToolRefresh.addEventListener("click", loadLiveDjsTool);
+      if (liveDjsToolSearch) liveDjsToolSearch.addEventListener("input", renderLiveDjsTool);
+
       /* RRR TOOLS — PASSIVE STREAM HEALTH TEST
          This observes the existing liveDjVideo/HLS instance only while the
          user starts a test. It never creates another stream, media element,
