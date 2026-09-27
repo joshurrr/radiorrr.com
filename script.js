@@ -2167,6 +2167,7 @@ document.addEventListener("DOMContentLoaded", function () {
       let djDiscoveryEditorOpen = false;
       let djDiscoveryShowAll = false;
       let djDiscoveryRenderId = 0;
+      let djDiscoveryResizeTimer = null;
 
       function getDiscoveryGenres(dj) {
         // Detector history supplies the stable list of genre choices shown in
@@ -2690,12 +2691,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         resultsEl.innerHTML = "";
 
-        const initialVisibleCount = 8;
-        const visibleRanked = djDiscoveryShowAll
-          ? ranked
-          : ranked.slice(0, initialVisibleCount);
-
-        visibleRanked.forEach((item, index) => {
+        // Render the full ranked list first so the browser's actual grid layout
+        // can tell us exactly how many cards fit on one row at this width.
+        ranked.forEach((item, index) => {
           const dj = item.dj;
           const name = String(dj.name || dj.display_name || dj.username || "DJ").trim();
           const username = getDJUsername(dj);
@@ -2774,14 +2772,36 @@ document.addEventListener("DOMContentLoaded", function () {
           resultsEl.appendChild(card);
         });
 
+        // Default to exactly one complete row, whatever the current viewport
+        // and grid sizing allow. This avoids a single card wrapping onto a new
+        // line on one screen size while keeping the behaviour responsive.
+        const resultCards = Array.from(
+          resultsEl.querySelectorAll(".dj-discovery-card")
+        );
+        resultCards.forEach(card => { card.style.display = ""; });
+
+        let initialVisibleCount = resultCards.length;
+        if (resultCards.length) {
+          const firstRowTop = resultCards[0].offsetTop;
+          const firstWrappedIndex = resultCards.findIndex((card, index) =>
+            index > 0 && card.offsetTop > firstRowTop + 1
+          );
+          if (firstWrappedIndex > 0) initialVisibleCount = firstWrappedIndex;
+        }
+
+        if (!djDiscoveryShowAll) {
+          resultCards.forEach((card, index) => {
+            if (index >= initialVisibleCount) card.style.display = "none";
+          });
+        }
+
         const moreWrap = document.getElementById("djDiscoveryMoreWrap");
         if (moreWrap) {
           if (ranked.length > initialVisibleCount) {
-            const remaining = ranked.length - initialVisibleCount;
             moreWrap.innerHTML =
               '<button type="button" class="dj-discovery-more" id="djDiscoveryMore">' +
               (djDiscoveryShowAll
-                ? 'SHOW TOP 8'
+                ? 'SHOW TOP ' + initialVisibleCount
                 : 'SHOW ALL ' + ranked.length + ' LIVE DJS') +
               '</button>';
 
@@ -2797,6 +2817,15 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         }
       }
+
+      window.addEventListener("resize", function () {
+        window.clearTimeout(djDiscoveryResizeTimer);
+        djDiscoveryResizeTimer = window.setTimeout(function () {
+          if (document.getElementById("djDiscoveryResults")) {
+            renderDjDiscoveryResults();
+          }
+        }, 150);
+      });
 
       /* LIVE DJs API */
 
