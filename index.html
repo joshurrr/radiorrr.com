@@ -539,9 +539,33 @@ window.formspree =
   grid-column: 4 !important;
   grid-row: 1 / span 2 !important;
   align-self: center !important;
+  display: inline-flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+  min-width: 3.6rem;
+  min-height: 2.25rem;
   margin: 0 !important;
   text-align: right !important;
-  line-height: 1.05 !important;
+  line-height: 1 !important;
+}
+
+#randomLiveDjMatch .rrr-bpm-label {
+  display: block;
+  margin-bottom: 0.18rem;
+  font-size: 0.62rem !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  letter-spacing: 0.05em;
+  opacity: 0.86;
+}
+
+#randomLiveDjMatch .rrr-current-bpm {
+  display: block;
+  font-size: 1.05rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  letter-spacing: 0;
 }
 
 #randomLiveDjTalk {
@@ -609,6 +633,14 @@ window.formspree =
 
   #randomLiveDjTalk::before {
     font-size: 0.56rem;
+  }
+
+  #randomLiveDjMatch .rrr-bpm-label {
+    font-size: 0.56rem !important;
+  }
+
+  #randomLiveDjMatch .rrr-current-bpm {
+    font-size: 0.95rem !important;
   }
 }
 </style>
@@ -1016,10 +1048,9 @@ window.formspree =
         const bpm = formatBpm(item.bpm);
         const bounds = scheduleBounds(data, item);
 
-        bpmEl.innerHTML = bounds
-          ? '<span class="rrr-current-bpm">BPM ' + bpm + '</span>' +
-            '<span class="rrr-target-bpm">Target ' + formatBpm(bounds.min) + '–' + formatBpm(bounds.max) + '</span>'
-          : '<span class="rrr-current-bpm">BPM ' + bpm + '</span>';
+        bpmEl.innerHTML =
+          '<span class="rrr-bpm-label">BPM</span>' +
+          '<span class="rrr-current-bpm">' + bpm + '</span>';
 
         if (bpmHealthEl) {
           bpmHealthEl.className = "tool-health healthy";
