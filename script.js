@@ -2783,9 +2783,16 @@ document.addEventListener("DOMContentLoaded", function () {
             : '<div class="dj-discovery-placeholder">🎧</div>';
 
           const rankNumber = index + 2;
-          const matchText = matchPercent === null
-            ? '— ' + (usingRadioRrrPreset ? 'PROGRAM MATCH' : 'YOUR SOUND MATCH')
-            : matchPercent + '% ' + (usingRadioRrrPreset ? 'PROGRAM MATCH' : 'YOUR SOUND MATCH');
+          const matchLabel = usingRadioRrrPreset ? 'PROGRAM MATCH' : 'YOUR SOUND MATCH';
+          const matchValueText = matchPercent === null ? '—' : matchPercent + '%';
+          const matchClass = matchPercent === null
+            ? 'match-low'
+            : matchPercent >= 50
+              ? 'match-high'
+              : matchPercent >= 20
+                ? 'match-mid'
+                : 'match-low';
+          const matchFillWidth = matchPercent === null ? 0 : matchPercent;
 
           card.innerHTML =
             '<div class="dj-discovery-rank">#' + rankNumber + '</div>' +
@@ -2795,10 +2802,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 '<div class="dj-discovery-handle">@' + escapeHtml(username) + '</div>' +
               '</div>' +
             '</div>' +
+            '<div class="dj-discovery-overlay"></div>' +
+            getDJPlatformBadgeHtml(dj, "dj-discovery-platform") +
             '<div class="dj-discovery-status live"><span class="dj-discovery-status-dot"></span>LIVE NOW</div>' +
-            '<div class="dj-discovery-match">' + matchText + '</div>' +
             '<div class="dj-discovery-genres" aria-label="Current live detected genres">' +
               liveGenres.map(getGenrePillHtml).join("") +
+            '</div>' +
+            '<div class="dj-discovery-match-row">' +
+              '<span>' + matchLabel + '</span>' +
+              '<span class="dj-discovery-match-value">' + matchValueText + '</span>' +
+            '</div>' +
+            '<div class="dj-discovery-match-bar" aria-label="' + matchLabel + ' ' + matchValueText + '">' +
+              '<div class="dj-discovery-match-fill ' + matchClass + '" style="width:' + matchFillWidth + '%"></div>' +
             '</div>' +
             '<div class="dj-discovery-play-hint">▶ PLAY THIS DJ</div>';
 
