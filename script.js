@@ -2113,13 +2113,13 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         const genres = Array.from(counts.values())
-          .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label))
-          .slice(0, 14);
+          .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
 
         chips.innerHTML =
           genres.map(item =>
-            '<button type="button" class="dj-discovery-chip ' +
+            '<button type="button" class="dj-discovery-chip ' + getGenreNeonClass(item.label) + ' ' +
             (djDiscoveryGenre.toLowerCase() === item.label.toLowerCase() ? "active" : "") +
+            '" aria-pressed="' + (djDiscoveryGenre.toLowerCase() === item.label.toLowerCase()) +
             '" data-genre="' + escapeAttr(item.label) + '">' +
             escapeHtml(item.label) + ' · ' + item.count +
             '</button>'
