@@ -2164,6 +2164,8 @@ document.addEventListener("DOMContentLoaded", function () {
       let djDiscoverySelectedGenres = [];
       let djDiscoveryPresetGenres = [];
       let djDiscoveryCustomised = false;
+      let djDiscoveryEditorOpen = false;
+      let djDiscoveryShowAll = false;
       let djDiscoveryRenderId = 0;
 
       function getDiscoveryGenres(dj) {
@@ -2296,6 +2298,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (presetChanged || document.getElementById("rrrDjDiscovery")) {
+          renderDjDiscoveryProgramContext();
           renderDjDiscoverySelectedGenres();
           renderDjDiscoveryChips();
           renderDjDiscoveryResults();
@@ -2336,50 +2339,124 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         section.innerHTML =
-          '<div class="dj-discovery-header">' +
-            '<div class="dj-discovery-title">🎚️ YOUR LIVE SOUND</div>' +
-            '<div class="dj-discovery-subtitle">You’re listening to Radio RRR — a live station built from DJs broadcasting right now. This mix is tuned for the current program; remove or add genres to make it yours.</div>' +
+          '<div class="dj-discovery-program">' +
+            '<div class="dj-discovery-program-copy">' +
+              '<div class="dj-discovery-program-kicker">CURRENT PROGRAM</div>' +
+              '<div class="dj-discovery-program-title-row">' +
+                '<div class="dj-discovery-program-name" id="djDiscoveryProgramName">Radio RRR</div>' +
+                '<div class="dj-discovery-program-time" id="djDiscoveryProgramTime"></div>' +
+              '</div>' +
+              '<div class="dj-discovery-program-note">Scheduled genres for this program</div>' +
+              '<div class="dj-discovery-program-genres" id="djDiscoveryProgramGenres"></div>' +
+              '<div class="dj-discovery-program-state" id="djDiscoveryProgramState" hidden></div>' +
+            '</div>' +
+            '<button type="button" class="dj-discovery-edit-button" id="djDiscoveryEditSound">✎ EDIT THIS SOUND</button>' +
           '</div>' +
-          '<div class="dj-discovery-recipe">' +
-            '<div class="dj-discovery-recipe-head">' +
-              '<span class="dj-discovery-recipe-label" id="djDiscoveryRecipeLabel">RADIO RRR PRESET</span>' +
-              '<button type="button" class="dj-discovery-reset" id="djDiscoveryReset">Reset to Radio RRR</button>' +
+          '<div class="dj-discovery-editor" id="djDiscoveryEditor" hidden>' +
+            '<div class="dj-discovery-editor-head">' +
+              '<div>' +
+                '<div class="dj-discovery-title">🎚️ YOUR CUSTOM SOUND</div>' +
+                '<div class="dj-discovery-subtitle">Remove genres or add new ones. Your live DJ ranking changes only after you edit the recipe.</div>' +
+              '</div>' +
+              '<div class="dj-discovery-editor-actions">' +
+                '<button type="button" class="dj-discovery-reset" id="djDiscoveryReset">Reset to Radio RRR</button>' +
+                '<button type="button" class="dj-discovery-done" id="djDiscoveryDone">✓ DONE EDITING</button>' +
+              '</div>' +
             '</div>' +
             '<div class="dj-discovery-selected" id="djDiscoverySelected"></div>' +
+            '<div class="dj-discovery-section-title dj-discovery-add-title">ADD TO YOUR SOUND</div>' +
+            '<div class="dj-discovery-chips" id="djDiscoveryChips"></div>' +
           '</div>' +
-          '<div class="dj-discovery-section-title" id="djDiscoveryMatchesTitle">BEST LIVE MATCHES FOR RADIO RRR</div>' +
+          '<div class="dj-discovery-section-title" id="djDiscoveryMatchesTitle">BEST LIVE MATCHES FOR THIS PROGRAM</div>' +
           '<div class="dj-discovery-scan-status" id="djDiscoveryScanStatus" role="status" aria-live="polite"></div>' +
           '<div class="dj-discovery-results" id="djDiscoveryResults"></div>' +
-          '<div class="dj-discovery-section-title dj-discovery-add-title">ADD TO YOUR SOUND</div>' +
-          '<div class="dj-discovery-chips" id="djDiscoveryChips"></div>';
+          '<div class="dj-discovery-more-wrap" id="djDiscoveryMoreWrap"></div>';
+
+        const editSound = document.getElementById("djDiscoveryEditSound");
+        if (editSound) {
+          editSound.addEventListener("click", function () {
+            djDiscoveryEditorOpen = true;
+            renderDjDiscoveryProgramContext();
+            renderDjDiscoverySelectedGenres();
+            renderDjDiscoveryChips();
+          });
+        }
+
+        const done = document.getElementById("djDiscoveryDone");
+        if (done) {
+          done.addEventListener("click", function () {
+            djDiscoveryEditorOpen = false;
+            renderDjDiscoveryProgramContext();
+          });
+        }
 
         const reset = document.getElementById("djDiscoveryReset");
         if (reset) {
           reset.addEventListener("click", function () {
             djDiscoverySelectedGenres = djDiscoveryPresetGenres.slice();
             djDiscoveryCustomised = false;
+            djDiscoveryEditorOpen = false;
+            djDiscoveryShowAll = false;
+            renderDjDiscoveryProgramContext();
             renderDjDiscoverySelectedGenres();
             renderDjDiscoveryChips();
             renderDjDiscoveryResults();
           });
         }
 
+        renderDjDiscoveryProgramContext();
         renderDjDiscoverySelectedGenres();
         renderDjDiscoveryChips();
         renderDjDiscoveryResults();
       }
 
+      function renderDjDiscoveryProgramContext() {
+        const nameEl = document.getElementById("djDiscoveryProgramName");
+        const timeEl = document.getElementById("djDiscoveryProgramTime");
+        const genresEl = document.getElementById("djDiscoveryProgramGenres");
+        const stateEl = document.getElementById("djDiscoveryProgramState");
+        const editEl = document.getElementById("djDiscoveryEditSound");
+        const editorEl = document.getElementById("djDiscoveryEditor");
+
+        if (nameEl) {
+          nameEl.textContent = String(heroNowEl && heroNowEl.textContent || "CURRENT RADIO RRR PROGRAM").trim();
+        }
+
+        if (timeEl) {
+          timeEl.textContent = String(heroProgramTime && heroProgramTime.textContent || "").trim();
+        }
+
+        if (genresEl) {
+          genresEl.innerHTML = djDiscoveryPresetGenres.length
+            ? djDiscoveryPresetGenres.map(genre =>
+                '<span class="dj-discovery-program-chip ' + getGenreNeonClass(genre) + '">' +
+                escapeHtml(genre) + '</span>'
+              ).join("")
+            : '<span class="dj-discovery-selected-empty">Loading scheduled genres…</span>';
+        }
+
+        if (stateEl) {
+          stateEl.hidden = !djDiscoveryCustomised;
+          stateEl.textContent = djDiscoveryCustomised
+            ? "YOUR CUSTOM SOUND IS ACTIVE · " + djDiscoverySelectedGenres.length +
+              (djDiscoverySelectedGenres.length === 1 ? " GENRE" : " GENRES")
+            : "";
+        }
+
+        if (editEl) {
+          editEl.textContent = djDiscoveryCustomised ? "✎ EDIT YOUR SOUND" : "✎ EDIT THIS SOUND";
+          editEl.hidden = djDiscoveryEditorOpen;
+        }
+
+        if (editorEl) {
+          editorEl.hidden = !djDiscoveryEditorOpen;
+        }
+      }
+
       function renderDjDiscoverySelectedGenres() {
         const selectedEl = document.getElementById("djDiscoverySelected");
-        const labelEl = document.getElementById("djDiscoveryRecipeLabel");
         const resetEl = document.getElementById("djDiscoveryReset");
         if (!selectedEl) return;
-
-        if (labelEl) {
-          labelEl.textContent = djDiscoveryCustomised
-            ? "YOUR CUSTOM SOUND"
-            : "RADIO RRR PRESET";
-        }
 
         if (resetEl) {
           resetEl.hidden = !djDiscoveryCustomised;
@@ -2411,6 +2488,8 @@ document.addEventListener("DOMContentLoaded", function () {
               djDiscoveryPresetGenres
             );
 
+            djDiscoveryShowAll = false;
+            renderDjDiscoveryProgramContext();
             renderDjDiscoverySelectedGenres();
             renderDjDiscoveryChips();
             renderDjDiscoveryResults();
@@ -2474,6 +2553,8 @@ document.addEventListener("DOMContentLoaded", function () {
               djDiscoveryPresetGenres
             );
 
+            djDiscoveryShowAll = false;
+            renderDjDiscoveryProgramContext();
             renderDjDiscoverySelectedGenres();
             renderDjDiscoveryChips();
             renderDjDiscoveryResults();
@@ -2494,7 +2575,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (matchesTitleEl) {
           matchesTitleEl.textContent = usingRadioRrrPreset
-            ? "BEST LIVE MATCHES FOR RADIO RRR"
+            ? "BEST LIVE MATCHES FOR THIS PROGRAM"
             : "BEST LIVE MATCHES FOR YOUR SOUND";
         }
 
@@ -2609,7 +2690,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         resultsEl.innerHTML = "";
 
-        ranked.forEach((item, index) => {
+        const initialVisibleCount = 8;
+        const visibleRanked = djDiscoveryShowAll
+          ? ranked
+          : ranked.slice(0, initialVisibleCount);
+
+        visibleRanked.forEach((item, index) => {
           const dj = item.dj;
           const name = String(dj.name || dj.display_name || dj.username || "DJ").trim();
           const username = getDJUsername(dj);
@@ -2687,6 +2773,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
           resultsEl.appendChild(card);
         });
+
+        const moreWrap = document.getElementById("djDiscoveryMoreWrap");
+        if (moreWrap) {
+          if (ranked.length > initialVisibleCount) {
+            const remaining = ranked.length - initialVisibleCount;
+            moreWrap.innerHTML =
+              '<button type="button" class="dj-discovery-more" id="djDiscoveryMore">' +
+              (djDiscoveryShowAll
+                ? 'SHOW TOP 8'
+                : 'SHOW ALL ' + ranked.length + ' LIVE DJS') +
+              '</button>';
+
+            const moreButton = document.getElementById("djDiscoveryMore");
+            if (moreButton) {
+              moreButton.addEventListener("click", function () {
+                djDiscoveryShowAll = !djDiscoveryShowAll;
+                renderDjDiscoveryResults();
+              });
+            }
+          } else {
+            moreWrap.innerHTML = "";
+          }
+        }
       }
 
       /* LIVE DJs API */

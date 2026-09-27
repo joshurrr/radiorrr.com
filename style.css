@@ -6950,3 +6950,188 @@
   }
 }
 
+
+
+/* CURRENT PROGRAM → EDIT SOUND UX */
+.dj-discovery-program {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 0.95rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(34,211,238,0.42);
+  border-radius: 13px;
+  background: linear-gradient(135deg, rgba(8,18,40,0.90), rgba(5,10,28,0.88));
+  box-shadow: inset 0 0 18px rgba(34,211,238,0.05);
+}
+
+.dj-discovery-program-copy {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.dj-discovery-program-kicker {
+  margin-bottom: 0.24rem;
+  color: #a5b4fc;
+  font-size: 0.64rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.dj-discovery-program-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.dj-discovery-program-name {
+  color: #ffffff;
+  font-size: 1.08rem;
+  font-weight: 950;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+  text-shadow: 0 0 8px rgba(103,232,249,0.20);
+}
+
+.dj-discovery-program-time {
+  color: #a5b4fc;
+  font-size: 0.72rem;
+  font-weight: 850;
+}
+
+.dj-discovery-program-note {
+  margin: 0.45rem 0 0.42rem;
+  color: #94a3b8;
+  font-size: 0.68rem;
+}
+
+.dj-discovery-program-genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.34rem;
+}
+
+.dj-discovery-program-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.27rem 0.54rem;
+  border: 1px solid rgba(var(--genre-neon-rgb,34,211,238),0.82);
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(var(--genre-neon-rgb,34,211,238),0.22), rgba(7,10,25,0.88));
+  color: var(--genre-text,#e0f2fe);
+  font-size: 0.67rem;
+  font-weight: 850;
+  box-shadow: 0 0 8px rgba(var(--genre-neon-rgb,34,211,238),0.25);
+}
+
+.dj-discovery-program-state {
+  margin-top: 0.58rem;
+  color: #67e8f9;
+  font-size: 0.65rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+
+.dj-discovery-edit-button,
+.dj-discovery-done,
+.dj-discovery-more {
+  border: 1px solid rgba(34,211,238,0.72);
+  border-radius: 9px;
+  background: linear-gradient(135deg, rgba(8,145,178,0.38), rgba(67,56,202,0.42));
+  color: #ffffff;
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.045em;
+  cursor: pointer;
+  box-shadow: 0 0 11px rgba(34,211,238,0.18);
+}
+
+.dj-discovery-edit-button {
+  flex: 0 0 auto;
+  min-height: 42px;
+  padding: 0.62rem 0.85rem;
+}
+
+.dj-discovery-edit-button:hover,
+.dj-discovery-edit-button:focus-visible,
+.dj-discovery-done:hover,
+.dj-discovery-done:focus-visible,
+.dj-discovery-more:hover,
+.dj-discovery-more:focus-visible {
+  border-color: #67e8f9;
+  box-shadow: 0 0 14px rgba(34,211,238,0.38);
+  outline: none;
+}
+
+.dj-discovery-editor {
+  margin: 0 0 1rem;
+  padding: 0.85rem 0.9rem;
+  border: 1px solid rgba(168,85,247,0.46);
+  border-radius: 13px;
+  background: rgba(8,8,28,0.82);
+}
+
+.dj-discovery-editor[hidden] {
+  display: none !important;
+}
+
+.dj-discovery-editor-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-bottom: 0.72rem;
+}
+
+.dj-discovery-editor .dj-discovery-title {
+  margin-bottom: 0.2rem;
+}
+
+.dj-discovery-editor-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.dj-discovery-done {
+  padding: 0.46rem 0.68rem;
+}
+
+.dj-discovery-more-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 0.75rem 0 0.2rem;
+}
+
+.dj-discovery-more {
+  min-width: 150px;
+  padding: 0.48rem 0.72rem;
+  background: rgba(9,14,34,0.88);
+}
+
+@media (max-width: 640px) {
+  .dj-discovery-program {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 0.78rem;
+  }
+
+  .dj-discovery-edit-button {
+    width: 100%;
+  }
+
+  .dj-discovery-editor-head {
+    flex-direction: column;
+  }
+
+  .dj-discovery-editor-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
