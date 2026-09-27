@@ -7316,3 +7316,47 @@
 #djDiscoveryResults.dj-discovery-results > .dj-discovery-card .dj-discovery-match-row {
   margin-top: auto !important;
 }
+
+/* RRR Best Live Matches: pin the match footer to the same bottom position.
+   The cards contain variable-height genre bubbles, so keeping the footer in
+   normal flex flow lets it move vertically from card to card. These rules
+   anchor the genre area, identity and Program Match footer independently. */
+#djDiscoveryResults.dj-discovery-results > .dj-discovery-card {
+  position: relative !important;
+}
+
+#djDiscoveryResults.dj-discovery-results > .dj-discovery-card .dj-discovery-genres {
+  position: absolute !important;
+  left: 0.65rem !important;
+  right: 0.65rem !important;
+  bottom: 6.15rem !important;
+  width: auto !important;
+  min-height: calc(2.66rem + 6px) !important;
+  max-height: calc(2.66rem + 6px) !important;
+  margin: 0 !important;
+  align-content: flex-start !important;
+}
+
+#djDiscoveryResults.dj-discovery-results > .dj-discovery-card .dj-discovery-name-wrap {
+  left: 0.65rem !important;
+  right: 0.65rem !important;
+  bottom: 3.15rem !important;
+}
+
+#djDiscoveryResults.dj-discovery-results > .dj-discovery-card .dj-discovery-match-row {
+  position: absolute !important;
+  left: 0.65rem !important;
+  right: 0.65rem !important;
+  bottom: 1.25rem !important;
+  width: auto !important;
+  margin: 0 !important;
+}
+
+#djDiscoveryResults.dj-discovery-results > .dj-discovery-card .dj-discovery-match-bar {
+  position: absolute !important;
+  left: 0.65rem !important;
+  right: 0.65rem !important;
+  bottom: 0.72rem !important;
+  width: auto !important;
+  margin: 0 !important;
+}
