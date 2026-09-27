@@ -7255,3 +7255,53 @@
   box-shadow: none !important;
 }
 
+
+
+/* RRR ranked live matches: single horizontal scrolling row.
+   Layout only; card rendering, ranking and DJ switching are unchanged. */
+#rrrDjDiscovery .dj-discovery-results {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 14px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  padding: 0 0 0.55rem !important;
+  scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(103,232,249,0.72) rgba(15,23,42,0.72);
+}
+
+#rrrDjDiscovery .dj-discovery-results .dj-discovery-card {
+  flex: 0 0 176px !important;
+  width: 176px !important;
+  min-width: 176px !important;
+  max-width: 176px !important;
+  scroll-snap-align: start;
+}
+
+#rrrDjDiscovery .dj-discovery-results::-webkit-scrollbar {
+  height: 9px;
+}
+
+#rrrDjDiscovery .dj-discovery-results::-webkit-scrollbar-track {
+  background: rgba(15,23,42,0.72);
+  border-radius: 999px;
+}
+
+#rrrDjDiscovery .dj-discovery-results::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, rgba(34,211,238,0.82), rgba(168,85,247,0.82));
+  border-radius: 999px;
+}
+
+@media (max-width: 640px) {
+  #rrrDjDiscovery .dj-discovery-results {
+    gap: 12px !important;
+    padding-bottom: 0.45rem !important;
+  }
+}

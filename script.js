@@ -2856,50 +2856,16 @@ document.addEventListener("DOMContentLoaded", function () {
           resultsEl.appendChild(card);
         });
 
-        // Default to exactly one complete row, whatever the current viewport
-        // and grid sizing allow. This avoids a single card wrapping onto a new
-        // line on one screen size while keeping the behaviour responsive.
+        // Keep every ranked live alternative in one horizontal row. The results
+        // container provides the horizontal scrollbar/swipe area, so cards are
+        // no longer hidden behind a SHOW ALL control.
         const resultCards = Array.from(
           resultsEl.querySelectorAll(".dj-discovery-card")
         );
         resultCards.forEach(card => { card.style.display = ""; });
 
-        let initialVisibleCount = resultCards.length;
-        if (resultCards.length) {
-          const firstRowTop = resultCards[0].offsetTop;
-          const firstWrappedIndex = resultCards.findIndex((card, index) =>
-            index > 0 && card.offsetTop > firstRowTop + 1
-          );
-          if (firstWrappedIndex > 0) initialVisibleCount = firstWrappedIndex;
-        }
-
-        if (!djDiscoveryShowAll) {
-          resultCards.forEach((card, index) => {
-            if (index >= initialVisibleCount) card.style.display = "none";
-          });
-        }
-
         const moreWrap = document.getElementById("djDiscoveryMoreWrap");
-        if (moreWrap) {
-          if (ranked.length > initialVisibleCount) {
-            moreWrap.innerHTML =
-              '<button type="button" class="dj-discovery-more" id="djDiscoveryMore">' +
-              (djDiscoveryShowAll
-                ? 'SHOW TOP ' + initialVisibleCount
-                : 'SHOW ALL ' + ranked.length + ' LIVE DJS') +
-              '</button>';
-
-            const moreButton = document.getElementById("djDiscoveryMore");
-            if (moreButton) {
-              moreButton.addEventListener("click", function () {
-                djDiscoveryShowAll = !djDiscoveryShowAll;
-                renderDjDiscoveryResults();
-              });
-            }
-          } else {
-            moreWrap.innerHTML = "";
-          }
-        }
+        if (moreWrap) moreWrap.innerHTML = "";
       }
 
       window.addEventListener("resize", function () {
