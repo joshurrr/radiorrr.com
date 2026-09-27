@@ -729,21 +729,22 @@ document.addEventListener("DOMContentLoaded", function () {
         const detailMode = Boolean(toolRoute && TOOL_ROUTE_CONFIG[toolRoute]);
         const healthDashboard = toolsSection.querySelector(".system-health-dashboard");
         const toolsHeading = toolsSection.querySelector(".tools-section-heading");
+        const toolsHubGrid = toolsSection.querySelector("#toolsHubGrid");
+        const detailList = toolsSection.querySelector(".tool-detail-list");
+        const streamHealthPanel = toolsSection.querySelector("#toolStreamHealthPanel");
 
         if (healthDashboard) healthDashboard.hidden = detailMode;
         if (toolsHeading) toolsHeading.hidden = detailMode;
+        if (toolsHubGrid) toolsHubGrid.hidden = detailMode;
+        if (detailList) detailList.hidden = !detailMode;
+        if (streamHealthPanel && detailMode) streamHealthPanel.hidden = true;
 
         toolsSection.querySelectorAll("[data-tool-intro]").forEach(function (intro) {
           intro.hidden = !detailMode || intro.getAttribute("data-tool-intro") !== toolRoute;
         });
 
         toolsSection.querySelectorAll(".tools-action-list > .tool-row").forEach(function (row) {
-          if (!detailMode) {
-            row.hidden = false;
-            return;
-          }
-
-          row.hidden = row.getAttribute("data-tool-route") !== toolRoute;
+          row.hidden = !detailMode || row.getAttribute("data-tool-route") !== toolRoute;
         });
       }
 
@@ -4022,6 +4023,35 @@ document.addEventListener("DOMContentLoaded", function () {
       const streamHealthStop = document.getElementById("streamHealthStop");
       const streamHealthReset = document.getElementById("streamHealthReset");
       const streamHealthLog = document.getElementById("streamHealthLog");
+      const openStreamHealthTile = document.getElementById("openStreamHealthTile");
+      const streamHealthPanel = document.getElementById("toolStreamHealthPanel");
+      const streamHealthClose = document.getElementById("streamHealthClose");
+
+      function setStreamHealthPanelOpen(open) {
+        if (!streamHealthPanel) return;
+        streamHealthPanel.hidden = !open;
+        if (openStreamHealthTile) {
+          openStreamHealthTile.setAttribute("aria-expanded", String(open));
+        }
+        if (open) {
+          window.setTimeout(function () {
+            streamHealthPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 0);
+        }
+      }
+
+      if (openStreamHealthTile) {
+        openStreamHealthTile.addEventListener("click", function () {
+          setStreamHealthPanelOpen(streamHealthPanel ? streamHealthPanel.hidden : true);
+        });
+      }
+
+      if (streamHealthClose) {
+        streamHealthClose.addEventListener("click", function () {
+          setStreamHealthPanelOpen(false);
+          if (openStreamHealthTile) openStreamHealthTile.focus();
+        });
+      }
 
       const STREAM_HEALTH_TEST_MS = 60 * 1000;
       let streamHealthRunning = false;
