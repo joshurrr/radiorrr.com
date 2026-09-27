@@ -1,0 +1,7 @@
+main.py
+**/main.py
+*.env
+.env
+*.db
+*.sqlite
+tiktok_session.json
