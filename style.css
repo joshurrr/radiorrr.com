@@ -4176,6 +4176,9 @@
     }
 
     #rrrDjDiscovery .dj-discovery-genres {
+      /* Three rows: 3 x (0.54rem text + 0.24rem padding + 2px border), plus two gaps. */
+      max-height: calc(2.66rem + 6px) !important;
+      align-content: flex-start !important;
       min-height: 1.05rem !important;
       display: flex !important;
       align-items: center !important;
@@ -4192,8 +4195,10 @@
       padding: 0.12rem 0.42rem !important;
       font-size: 0.54rem !important;
       line-height: 1 !important;
-      white-space: normal !important;
-      overflow-wrap: anywhere !important;
+      height: calc(0.78rem + 2px) !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
     }
 
     @media (min-width: 1400px) {

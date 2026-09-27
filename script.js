@@ -2315,13 +2315,7 @@ document.addEventListener("DOMContentLoaded", function () {
               : "#");
           const isLive = dj.live === true;
           const status = isLive ? "LIVE" : "OFFLINE";
-          const genresHtml = item.genres.length
-            ? item.genres.slice(0, 3).map(getGenrePillHtml).join("") +
-              (item.genres.length > 3
-                ? '<span class="dj-genre-pill" title="' + escapeAttr(item.genres.slice(3).join(", ")) +
-                  '" aria-label="' + (item.genres.length - 3) + ' more genres">+' + (item.genres.length - 3) + '</span>'
-                : "")
-            : '';
+          const genresHtml = item.genres.map(getGenrePillHtml).join("");
 
           const photo = profilePic
             ? '<img class="dj-discovery-thumb" src="' + escapeAttr(String(profilePic)) +
