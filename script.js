@@ -2165,6 +2165,7 @@ document.addEventListener("DOMContentLoaded", function () {
       let djDiscoveryPresetGenres = [];
       let djDiscoveryCustomised = false;
       let djDiscoveryEditorOpen = false;
+      let djDiscoveryAddGenresOpen = false;
       let djDiscoveryShowAll = false;
       let djDiscoveryRenderId = 0;
       let djDiscoveryResizeTimer = null;
@@ -2357,7 +2358,7 @@ document.addEventListener("DOMContentLoaded", function () {
             '<div class="dj-discovery-editor-head">' +
               '<div>' +
                 '<div class="dj-discovery-title">🎚️ YOUR CUSTOM SOUND</div>' +
-                '<div class="dj-discovery-subtitle">Remove genres or add new ones. Your live DJ ranking changes only after you edit the recipe.</div>' +
+                '<div class="dj-discovery-subtitle">Your selected genres control the live DJ ranking below.</div>' +
               '</div>' +
               '<div class="dj-discovery-editor-actions">' +
                 '<button type="button" class="dj-discovery-reset" id="djDiscoveryReset">Reset to Radio RRR</button>' +
@@ -2365,18 +2366,24 @@ document.addEventListener("DOMContentLoaded", function () {
               '</div>' +
             '</div>' +
             '<div class="dj-discovery-selected" id="djDiscoverySelected"></div>' +
-            '<div class="dj-discovery-section-title dj-discovery-add-title">ADD TO YOUR SOUND</div>' +
-            '<div class="dj-discovery-chips" id="djDiscoveryChips"></div>' +
           '</div>' +
           '<div class="dj-discovery-section-title" id="djDiscoveryMatchesTitle">BEST LIVE MATCHES FOR THIS PROGRAM</div>' +
           '<div class="dj-discovery-scan-status" id="djDiscoveryScanStatus" role="status" aria-live="polite"></div>' +
           '<div class="dj-discovery-results" id="djDiscoveryResults"></div>' +
-          '<div class="dj-discovery-more-wrap" id="djDiscoveryMoreWrap"></div>';
+          '<div class="dj-discovery-more-wrap" id="djDiscoveryMoreWrap"></div>' +
+          '<div class="dj-discovery-add-panel" id="djDiscoveryAddPanel" hidden>' +
+            '<button type="button" class="dj-discovery-add-toggle" id="djDiscoveryAddToggle" aria-expanded="false">＋ ADD ANOTHER GENRE</button>' +
+            '<div class="dj-discovery-add-content" id="djDiscoveryAddContent" hidden>' +
+              '<div class="dj-discovery-section-title dj-discovery-add-title">ADD TO YOUR SOUND</div>' +
+              '<div class="dj-discovery-chips" id="djDiscoveryChips"></div>' +
+            '</div>' +
+          '</div>';
 
         const editSound = document.getElementById("djDiscoveryEditSound");
         if (editSound) {
           editSound.addEventListener("click", function () {
             djDiscoveryEditorOpen = true;
+            djDiscoveryAddGenresOpen = !djDiscoveryCustomised;
             renderDjDiscoveryProgramContext();
             renderDjDiscoverySelectedGenres();
             renderDjDiscoveryChips();
@@ -2387,7 +2394,18 @@ document.addEventListener("DOMContentLoaded", function () {
         if (done) {
           done.addEventListener("click", function () {
             djDiscoveryEditorOpen = false;
+            djDiscoveryAddGenresOpen = false;
             renderDjDiscoveryProgramContext();
+          });
+        }
+
+
+        const addToggle = document.getElementById("djDiscoveryAddToggle");
+        if (addToggle) {
+          addToggle.addEventListener("click", function () {
+            djDiscoveryAddGenresOpen = !djDiscoveryAddGenresOpen;
+            renderDjDiscoveryProgramContext();
+            if (djDiscoveryAddGenresOpen) renderDjDiscoveryChips();
           });
         }
 
@@ -2397,7 +2415,11 @@ document.addEventListener("DOMContentLoaded", function () {
             djDiscoverySelectedGenres = djDiscoveryPresetGenres.slice();
             djDiscoveryCustomised = false;
             djDiscoveryEditorOpen = false;
+            djDiscoveryAddGenresOpen = false;
             djDiscoveryShowAll = false;
+            if (djDiscoveryCustomised && djDiscoverySelectedGenres.length) {
+              djDiscoveryAddGenresOpen = false;
+            }
             renderDjDiscoveryProgramContext();
             renderDjDiscoverySelectedGenres();
             renderDjDiscoveryChips();
@@ -2418,6 +2440,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const stateEl = document.getElementById("djDiscoveryProgramState");
         const editEl = document.getElementById("djDiscoveryEditSound");
         const editorEl = document.getElementById("djDiscoveryEditor");
+        const programEl = document.querySelector("#rrrDjDiscovery .dj-discovery-program");
+        const kickerEl = document.querySelector("#rrrDjDiscovery .dj-discovery-program-kicker");
+        const doneEl = document.getElementById("djDiscoveryDone");
+        const addPanelEl = document.getElementById("djDiscoveryAddPanel");
+        const addToggleEl = document.getElementById("djDiscoveryAddToggle");
+        const addContentEl = document.getElementById("djDiscoveryAddContent");
 
         if (nameEl) {
           nameEl.textContent = String(heroNowEl && heroNowEl.textContent || "CURRENT RADIO RRR PROGRAM").trim();
@@ -2439,9 +2467,18 @@ document.addEventListener("DOMContentLoaded", function () {
         if (stateEl) {
           stateEl.hidden = !djDiscoveryCustomised;
           stateEl.textContent = djDiscoveryCustomised
-            ? "YOUR CUSTOM SOUND IS ACTIVE · " + djDiscoverySelectedGenres.length +
-              (djDiscoverySelectedGenres.length === 1 ? " GENRE" : " GENRES")
+            ? "ORIGINAL RADIO RRR PROGRAM · REFERENCE ONLY"
             : "";
+        }
+
+        if (programEl) {
+          programEl.classList.toggle("is-reference", djDiscoveryCustomised);
+        }
+
+        if (kickerEl) {
+          kickerEl.textContent = djDiscoveryCustomised
+            ? "ORIGINAL RADIO RRR PROGRAM"
+            : "CURRENT PROGRAM";
         }
 
         if (editEl) {
@@ -2450,7 +2487,27 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (editorEl) {
-          editorEl.hidden = !djDiscoveryEditorOpen;
+          editorEl.hidden = !(djDiscoveryEditorOpen || djDiscoveryCustomised);
+          editorEl.classList.toggle("is-summary", djDiscoveryCustomised && !djDiscoveryEditorOpen);
+        }
+
+        if (doneEl) {
+          doneEl.hidden = !djDiscoveryEditorOpen;
+        }
+
+        if (addPanelEl) {
+          addPanelEl.hidden = !djDiscoveryEditorOpen;
+        }
+
+        if (addToggleEl) {
+          addToggleEl.setAttribute("aria-expanded", String(djDiscoveryAddGenresOpen));
+          addToggleEl.textContent = djDiscoveryAddGenresOpen
+            ? "− HIDE GENRES"
+            : "＋ ADD ANOTHER GENRE";
+        }
+
+        if (addContentEl) {
+          addContentEl.hidden = !djDiscoveryAddGenresOpen;
         }
       }
 
@@ -2490,6 +2547,9 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
             djDiscoveryShowAll = false;
+            if (djDiscoveryCustomised && djDiscoverySelectedGenres.length) {
+              djDiscoveryAddGenresOpen = false;
+            }
             renderDjDiscoveryProgramContext();
             renderDjDiscoverySelectedGenres();
             renderDjDiscoveryChips();
@@ -2672,13 +2732,14 @@ document.addEventListener("DOMContentLoaded", function () {
           statusEl.className = "dj-discovery-scan-status scanning";
           statusEl.innerHTML =
             '<span class="dj-discovery-scan-dot" aria-hidden="true"></span>' +
-            'Re-ranking <strong>' + ranked.length + ' of ' + alternativeCount +
-            '</strong> live alternatives against your custom sound · ' + waitingCount +
-            (waitingCount === 1 ? ' awaiting genre data' : ' awaiting genre data');
+            '<strong>Scanning live DJs to update genres — this may take a few minutes.</strong> ' +
+            'Currently ranked ' + ranked.length + ' of ' + alternativeCount +
+            ' live alternatives · ' + waitingCount +
+            (waitingCount === 1 ? ' awaiting fresh genre data' : ' awaiting fresh genre data');
         } else {
           statusEl.className = "dj-discovery-scan-status complete";
           statusEl.innerHTML =
-            'Re-ranked <strong>' + ranked.length + '</strong> live ' +
+            '<strong>Live genre scan complete.</strong> Re-ranked ' + ranked.length + ' live ' +
             (ranked.length === 1 ? 'alternative' : 'alternatives') +
             ' against your custom sound';
         }

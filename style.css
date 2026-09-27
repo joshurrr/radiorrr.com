@@ -7135,3 +7135,68 @@
     justify-content: flex-start;
   }
 }
+
+
+/* CUSTOM SOUND RESULT-FIRST UX */
+.dj-discovery-program.is-reference {
+  opacity: 0.72;
+  background: rgba(8, 12, 28, 0.62);
+  border-color: rgba(129, 140, 248, 0.34);
+  box-shadow: none;
+}
+
+.dj-discovery-program.is-reference .dj-discovery-program-chip {
+  opacity: 0.72;
+}
+
+.dj-discovery-editor.is-summary {
+  border-color: rgba(34,211,238,0.42);
+  background: rgba(7, 13, 30, 0.86);
+}
+
+.dj-discovery-add-panel {
+  margin-top: 0.9rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(129,140,248,0.24);
+}
+
+.dj-discovery-add-panel[hidden],
+.dj-discovery-add-content[hidden],
+.dj-discovery-done[hidden] {
+  display: none !important;
+}
+
+.dj-discovery-add-toggle {
+  min-height: 38px;
+  padding: 0.48rem 0.72rem;
+  border: 1px solid rgba(34,211,238,0.62);
+  border-radius: 9px;
+  background: rgba(7, 18, 36, 0.88);
+  color: #dffaff;
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.dj-discovery-add-toggle:hover,
+.dj-discovery-add-toggle:focus-visible {
+  border-color: #67e8f9;
+  box-shadow: 0 0 12px rgba(34,211,238,0.28);
+  outline: none;
+}
+
+.dj-discovery-add-content {
+  margin-top: 0.7rem;
+}
+
+.dj-discovery-scan-status.scanning strong {
+  color: #fde68a;
+}
+
+@media (max-width: 640px) {
+  .dj-discovery-add-toggle {
+    width: 100%;
+  }
+}
