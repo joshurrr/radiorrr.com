@@ -626,24 +626,125 @@ document.addEventListener("DOMContentLoaded", function () {
         tools: "tools-section"
       };
 
+      const TOOL_ROUTE_CONFIG = {
+        "bpm-detector": {
+          path: "/tools/bpm-detector/",
+          title: "Live Stream BPM Detector – Detect BPM from Online Audio | Radio RRR",
+          description: "Detect the BPM of a live online audio or HLS stream. Paste a direct stream URL and analyse a short sample to estimate its tempo."
+        },
+        "dj-speech-detector": {
+          path: "/tools/dj-speech-detector/",
+          title: "DJ Speech Detector – Detect Talking in Live DJ Streams | Radio RRR",
+          description: "Detect talking in live DJ streams with voice-versus-music analysis that measures repeated microphone speech and music ducking."
+        }
+      };
+
+      const DEFAULT_PAGE_METADATA = {
+        title: "RadioRRR | Online Radio & Live DJ Discovery",
+        description: "RadioRRR is an online radio station and live DJ discovery platform. Listen to RadioRRR and discover DJs broadcasting live across social platforms.",
+        canonical: "https://radiorrr.com/"
+      };
+
+      function normalisePathname(pathname) {
+        const value = String(pathname || "/").replace(/\/{2,}/g, "/");
+        if (value === "/") return "/";
+        return value.endsWith("/") ? value : value + "/";
+      }
+
+      function getToolRouteFromLocation() {
+        const pathname = normalisePathname(window.location.pathname);
+        return Object.keys(TOOL_ROUTE_CONFIG).find(function (route) {
+          return TOOL_ROUTE_CONFIG[route].path === pathname;
+        }) || "";
+      }
+
       function getTabTargetFromLocation() {
+        if (getToolRouteFromLocation()) return "tools-section";
+
         const params = new URLSearchParams(window.location.search);
         const view = String(params.get("view") || "live").trim().toLowerCase();
         return TAB_TARGET_BY_VIEW[view] || "live-section";
       }
 
+      function copyUnrelatedQueryParams(fromUrl, toUrl) {
+        fromUrl.searchParams.forEach(function (value, key) {
+          if (key !== "view") toUrl.searchParams.append(key, value);
+        });
+      }
+
       function updateTabUrl(targetId) {
         const view = TAB_VIEW_BY_TARGET[targetId] || "live";
-        const url = new URL(window.location.href);
+        const currentUrl = new URL(window.location.href);
+        const url = new URL("/", window.location.origin);
 
         // Keep unrelated query parameters such as a manually selected ?dj=.
-        if (view === "live") {
-          url.searchParams.delete("view");
-        } else {
+        copyUnrelatedQueryParams(currentUrl, url);
+
+        if (view !== "live") {
           url.searchParams.set("view", view);
         }
 
         window.history.pushState({ rrrView: view }, "", url);
+      }
+
+      function updateToolUrl(route) {
+        const config = TOOL_ROUTE_CONFIG[route];
+        if (!config) return;
+
+        const currentUrl = new URL(window.location.href);
+        const url = new URL(config.path, window.location.origin);
+        copyUnrelatedQueryParams(currentUrl, url);
+        window.history.pushState({ rrrTool: route }, "", url);
+      }
+
+      function updateMetaContent(selector, value) {
+        const el = document.querySelector(selector);
+        if (el) el.setAttribute("content", value);
+      }
+
+      function applyRouteMetadata(toolRoute) {
+        const config = TOOL_ROUTE_CONFIG[toolRoute];
+        const title = config ? config.title : DEFAULT_PAGE_METADATA.title;
+        const description = config ? config.description : DEFAULT_PAGE_METADATA.description;
+        const canonical = config
+          ? new URL(config.path, window.location.origin).href
+          : DEFAULT_PAGE_METADATA.canonical;
+
+        document.title = title;
+        updateMetaContent('meta[name="description"]', description);
+        updateMetaContent('meta[property="og:title"]', title);
+        updateMetaContent('meta[property="og:description"]', description);
+        updateMetaContent('meta[property="og:url"]', canonical);
+        updateMetaContent('meta[name="twitter:title"]', title);
+        updateMetaContent('meta[name="twitter:description"]', description);
+
+        const canonicalEl = document.querySelector('link[rel="canonical"]');
+        if (canonicalEl) canonicalEl.setAttribute("href", canonical);
+      }
+
+      function applyToolRoute(toolRoute) {
+        const toolsSection = document.getElementById("tools-section");
+        if (!toolsSection) return;
+
+        const detailMode = Boolean(toolRoute && TOOL_ROUTE_CONFIG[toolRoute]);
+        const healthDashboard = toolsSection.querySelector(".system-health-dashboard");
+        const toolsHeading = toolsSection.querySelector(".tools-section-heading");
+
+        if (healthDashboard) healthDashboard.hidden = detailMode;
+        if (toolsHeading) toolsHeading.hidden = detailMode;
+
+        toolsSection.querySelectorAll("[data-tool-intro]").forEach(function (intro) {
+          intro.hidden = !detailMode || intro.getAttribute("data-tool-intro") !== toolRoute;
+        });
+
+        toolsSection.querySelectorAll(".tools-action-list > .tool-row").forEach(function (row) {
+          if (!detailMode) {
+            row.hidden = false;
+            return;
+          }
+
+          row.hidden = row.getAttribute("data-tool-route") !== toolRoute;
+        });
       }
 
       function switchTab(targetId) {
@@ -685,6 +786,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
       }
 
+      function applyLocationState() {
+        const toolRoute = getToolRouteFromLocation();
+        switchTab(getTabTargetFromLocation());
+        applyToolRoute(toolRoute);
+        applyRouteMetadata(toolRoute);
+      }
+
       navLinks.forEach(link => {
 
         link.addEventListener(
@@ -701,10 +809,8 @@ document.addEventListener("DOMContentLoaded", function () {
               );
 
             if (targetId) {
-
-              switchTab(targetId);
               updateTabUrl(targetId);
-
+              applyLocationState();
             }
 
           }
@@ -712,13 +818,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
       });
 
-      window.addEventListener("popstate", function () {
-        switchTab(getTabTargetFromLocation());
+      document.querySelectorAll("[data-tool-route-link]").forEach(function (link) {
+        link.addEventListener("click", function (e) {
+          const route = e.currentTarget.getAttribute("data-tool-route-link");
+          if (!TOOL_ROUTE_CONFIG[route]) return;
+
+          e.preventDefault();
+          updateToolUrl(route);
+          applyLocationState();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
       });
+
+      document.querySelectorAll("[data-tool-back]").forEach(function (link) {
+        link.addEventListener("click", function (e) {
+          e.preventDefault();
+          updateTabUrl("tools-section");
+          applyLocationState();
+        });
+      });
+
+      window.addEventListener("popstate", applyLocationState);
 
       // Direct visits and browser refreshes open the requested view without
       // reconstructing the page or touching either media element.
-      switchTab(getTabTargetFromLocation());
+      applyLocationState();
 
       /* RADIO ROUTER LIVE DJ PLAYER */
 

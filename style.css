@@ -6564,3 +6564,59 @@
     padding: 0.16rem 0.42rem;
   }
 }
+
+/* SEO tool detail routes */
+.tool-row-title-link {
+  display: inline-block;
+  width: fit-content;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.tool-row-title-link:hover,
+.tool-row-title-link:focus-visible {
+  color: #67e8f9;
+  text-decoration: none;
+}
+
+.tool-detail-intro {
+  margin: 1.35rem 0 1rem;
+  padding: 1rem 1.05rem;
+  border: 1px solid rgba(103, 232, 249, 0.34);
+  border-radius: 12px;
+  background: rgba(5, 12, 28, 0.7);
+}
+
+.tool-detail-intro h1 {
+  margin: 0 0 0.45rem;
+  color: #ffffff;
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+.tool-detail-intro p {
+  margin: 0.35rem 0;
+  color: #c7d2fe;
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.tool-detail-back {
+  display: inline-block;
+  margin-top: 0.55rem;
+  color: #67e8f9;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.tool-detail-back:hover,
+.tool-detail-back:focus-visible {
+  color: #ffffff;
+}
+
+
+/* Route visibility safety for elements toggled with the HTML hidden attribute. */
+#tools-section [hidden] {
+  display: none !important;
+}
