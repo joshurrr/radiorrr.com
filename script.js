@@ -2140,18 +2140,19 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       }
 
-      /* DISCOVER DJs
-         Offline favourite DJs are searchable instead of being rendered as a
-         long page. Genres come from learned AI genre profiles only. */
+      /* BUILD YOUR LIVE SOUND
+         One genre at a time for the first version. Discovery now shows only
+         DJs who are LIVE right now, using current-session AI genre detections
+         when available. DJs still waiting for a current scan are counted in
+         the visible scan status instead of being shown as offline cards. */
       let djDiscoveryDJs = [];
-      let djDiscoveryQuery = "";
+      let djDiscoveryGenreCatalogue = [];
       let djDiscoveryGenre = "";
       let djDiscoveryRenderId = 0;
 
       function getDiscoveryGenres(dj) {
-        // Once detector history exists it becomes the DJ's Radio RRR profile.
-        // TikTok/profile-text genres are only bootstrap data for DJs that have
-        // not yet accumulated any learned detector observations.
+        // Detector history supplies the stable list of genre choices shown in
+        // the selector. Current live matching below uses current-session scans.
         const learnedGenres = Array.isArray(dj && dj.rrr_learned_genres)
           ? dj.rrr_learned_genres
           : [];
@@ -2198,40 +2199,58 @@ document.addEventListener("DOMContentLoaded", function () {
         return filterMusicGenres(out);
       }
 
+      function normaliseDiscoveryGenre(value) {
+        const normalized = normalizeGenreForMatch(value);
+        if (/^(?:dnb|d and b|drum and bass)$/.test(normalized)) return "drum and bass";
+        return normalized;
+      }
+
+      function liveGenreMatchesSelection(detectedGenre, selectedGenre) {
+        const detected = normaliseDiscoveryGenre(detectedGenre);
+        const selected = normaliseDiscoveryGenre(selectedGenre);
+        if (!detected || !selected) return false;
+        return detected === selected || detected.includes(selected) || selected.includes(detected);
+      }
+
+      function getLiveGenreSelectionScore(dj, selectedGenre) {
+        const raw = Array.isArray(dj && dj.ai_genres) ? dj.ai_genres : [];
+        let best = 0;
+
+        raw.forEach(item => {
+          const genre = item && typeof item === "object" ? item.genre : item;
+          if (!liveGenreMatchesSelection(genre, selectedGenre)) return;
+
+          let confidence = Number(item && typeof item === "object" ? item.confidence : 0);
+          if (confidence > 1 && confidence <= 100) confidence /= 100;
+          if (Number.isFinite(confidence)) best = Math.max(best, confidence);
+        });
+
+        return best;
+      }
+
       async function renderDjDiscovery(favourites, liveDJs) {
         if (!liveDjsList) return;
 
         const renderId = ++djDiscoveryRenderId;
         const favouriteList = Array.isArray(favourites) ? favourites.slice() : [];
-        const liveList = Array.isArray(liveDJs) ? liveDJs : [];
+        const liveList = Array.isArray(liveDJs) ? liveDJs.slice() : [];
+        const favouriteByIdentity = new Map();
 
-        // Discover is based on the RRR catalogue, but a DJ who is live can
-        // have fresher genre/profile data in /api/live than the catalogue
-        // record. Merge the live record over the favourite record so the
-        // search/filter view sees the same DJ data as the LIVE cards.
-        const liveByIdentity = new Map();
-        liveList.forEach(live => {
-          const identity = getDJIdentity(live);
-          if (identity) liveByIdentity.set(identity, live);
+        favouriteList.forEach(favourite => {
+          const identity = getDJIdentity(favourite);
+          if (identity) favouriteByIdentity.set(identity, favourite);
         });
 
-        djDiscoveryDJs = favouriteList.map(favourite => {
-          const live = liveByIdentity.get(getDJIdentity(favourite));
-          if (!live) return favourite;
-
-          const merged = mergeDJRecords(live, favourite);
-          // The live record is authoritative for live status.
+        // Only LIVE DJs participate in results. Favourite/catalogue data is
+        // merged in solely for names/photos/profile metadata and selector genres.
+        djDiscoveryDJs = liveList.map(live => {
+          const favourite = favouriteByIdentity.get(getDJIdentity(live));
+          const merged = favourite ? mergeDJRecords(live, favourite) : { ...live };
           merged.live = true;
           return merged;
         });
+        djDiscoveryGenreCatalogue = favouriteList;
 
-        // /api/live now supplies the persistent learned genre profile on
-        // every favourite record, including OFFLINE DJs. No per-DJ profile
-        // requests are needed here.
-
-        // A newer 30-second /api/live refresh may have started while the
-        // profile requests above were in flight. Never let an older render
-        // overwrite the latest catalogue state.
         if (renderId !== djDiscoveryRenderId) return;
 
         let section = document.getElementById("rrrDjDiscovery");
@@ -2242,24 +2261,14 @@ document.addEventListener("DOMContentLoaded", function () {
           liveDjsList.appendChild(section);
         }
 
-        section.innerHTML = "";
         section.innerHTML =
           '<div class="dj-discovery-header">' +
-            '<div class="dj-discovery-title">🎧 DISCOVER DJs</div>' +
-            '<div class="dj-discovery-subtitle">Search or choose a genre to discover DJs, live or offline.</div>' +
+            '<div class="dj-discovery-title">🎚️ BUILD YOUR LIVE SOUND</div>' +
+            '<div class="dj-discovery-subtitle">Choose one genre to find DJs playing that sound live right now.</div>' +
           '</div>' +
-          '<input class="dj-discovery-search" id="djDiscoverySearch" type="search" ' +
-            'autocomplete="off" placeholder="Search DJ name, @username or genre…" aria-label="Search RRR DJs">' +
           '<div class="dj-discovery-chips" id="djDiscoveryChips"></div>' +
+          '<div class="dj-discovery-scan-status" id="djDiscoveryScanStatus" role="status" aria-live="polite"></div>' +
           '<div class="dj-discovery-results" id="djDiscoveryResults"></div>';
-
-        const search = section.querySelector("#djDiscoverySearch");
-        search.value = djDiscoveryQuery;
-
-        search.addEventListener("input", function () {
-          djDiscoveryQuery = this.value;
-          renderDjDiscoveryResults();
-        });
 
         renderDjDiscoveryChips();
         renderDjDiscoveryResults();
@@ -2271,7 +2280,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const counts = new Map();
 
-        djDiscoveryDJs.forEach(dj => {
+        djDiscoveryGenreCatalogue.forEach(dj => {
           getDiscoveryGenres(dj).forEach(genre => {
             const key = genre.toLowerCase();
             if (!counts.has(key)) counts.set(key, { label: genre, count: 0 });
@@ -2279,28 +2288,25 @@ document.addEventListener("DOMContentLoaded", function () {
           });
         });
 
-        // Keep Discovery filters focused on established music genres.
         const excludedDiscoveryGenre = /\b(?:gospel|religious|religion|christian|prayer|sermon|spoken[\s-]*(?:word|voice)|speech|talk|talking|dialogue|comedy|audiobook|audio[\s-]+book|radio[\s-]*play|education|educational|poetry|field[\s-]*recording|parody|non[\s-]*music)\b/i;
         const genres = Array.from(counts.values())
           .filter(item => item.count > 3 && !excludedDiscoveryGenre.test(item.label))
           .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
 
-        // A catalogue refresh can remove the currently selected filter.
         if (djDiscoveryGenre && !genres.some(item =>
           item.label.toLowerCase() === djDiscoveryGenre.toLowerCase()
         )) {
           djDiscoveryGenre = "";
         }
 
-        chips.innerHTML =
-          genres.map(item =>
-            '<button type="button" class="dj-discovery-chip ' + getGenreNeonClass(item.label) + ' ' +
-            (djDiscoveryGenre.toLowerCase() === item.label.toLowerCase() ? "active" : "") +
-            '" aria-pressed="' + (djDiscoveryGenre.toLowerCase() === item.label.toLowerCase()) +
-            '" data-genre="' + escapeAttr(item.label) + '">' +
-            escapeHtml(item.label) + ' · ' + item.count +
-            '</button>'
-          ).join("");
+        chips.innerHTML = genres.map(item =>
+          '<button type="button" class="dj-discovery-chip ' + getGenreNeonClass(item.label) + ' ' +
+          (djDiscoveryGenre.toLowerCase() === item.label.toLowerCase() ? "active" : "") +
+          '" aria-pressed="' + (djDiscoveryGenre.toLowerCase() === item.label.toLowerCase()) +
+          '" data-genre="' + escapeAttr(item.label) + '">' +
+          escapeHtml(item.label) +
+          '</button>'
+        ).join("");
 
         chips.querySelectorAll(".dj-discovery-chip").forEach(button => {
           button.addEventListener("click", function () {
@@ -2314,203 +2320,141 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       }
 
-      function getDiscoveryScore(dj, genres) {
-        if (!dj) return 0;
-
-        // Prefer an explicit RRR discovery/popularity score when the API
-        // supplies one. Never use the bot-risk scanner score for ordering.
-        const explicitScore = [
-          dj.discovery_score,
-          dj.discoveryScore,
-          dj.popularity_score,
-          dj.popularityScore,
-          dj.dj_score,
-          dj.djScore
-        ]
-          .map(value => Number(value))
-          .find(value => Number.isFinite(value));
-
-        if (Number.isFinite(explicitScore)) {
-          return Math.max(0, Math.min(100, explicitScore));
-        }
-
-        const followers = Number(
-          dj.followers ?? dj.follower_count ?? dj.followerCount
-        );
-        const likes = Number(
-          dj.likes ?? dj.like_count ?? dj.likeCount
-        );
-        const videos = Number(
-          dj.videos ?? dj.video_count ?? dj.videoCount
-        );
-
-        let score = 0;
-
-        // Popularity/activity are deliberately logarithmic so a huge account
-        // does not completely swamp smaller DJs.
-        if (Number.isFinite(followers) && followers > 0) {
-          score += Math.min(42, Math.log10(followers + 1) * 7);
-        }
-
-        if (Number.isFinite(likes) && likes > 0) {
-          score += Math.min(28, Math.log10(likes + 1) * 4.7);
-        }
-
-        if (Number.isFinite(videos) && videos > 0) {
-          score += Math.min(12, videos * 0.35);
-        }
-
-        if (Array.isArray(genres)) {
-          score += Math.min(8, genres.length * 1.6);
-        }
-
-        if (dj.verified === true || dj.is_verified === true) {
-          score += 5;
-        }
-
-        // Cross-platform fairness: Twitch favourites often do not carry the
-        // TikTok-specific followers/likes/videos metadata above. Give any
-        // supported non-TikTok catalogue entry a neutral baseline when it has
-        // no popularity metadata, so it can participate in discovery ranking
-        // instead of being forced to the bottom at score 0.
-        const platform = getDJPlatform(dj).toLowerCase();
-        const hasPopularityMetadata =
-          (Number.isFinite(followers) && followers > 0) ||
-          (Number.isFinite(likes) && likes > 0) ||
-          (Number.isFinite(videos) && videos > 0);
-
-        if (platform !== "tiktok" && !hasPopularityMetadata) {
-          score = Math.max(score, 12);
-        }
-
-        // A currently live DJ gets a small discovery boost, while the
-        // popularity/activity signals remain the main driver of the order.
-        if (dj.live === true) score += 5;
-
-        return Math.max(0, Math.min(100, score));
-      }
-
       function renderDjDiscoveryResults() {
         const resultsEl = document.getElementById("djDiscoveryResults");
-        if (!resultsEl) return;
+        const statusEl = document.getElementById("djDiscoveryScanStatus");
+        if (!resultsEl || !statusEl) return;
 
-        const query = djDiscoveryQuery.trim().toLowerCase();
-        const genreFilter = djDiscoveryGenre.trim().toLowerCase();
-
-        // Wait for a search or genre selection before ranking or creating cards.
-        if (!query && !genreFilter) {
+        const selectedGenre = djDiscoveryGenre.trim();
+        if (!selectedGenre) {
+          statusEl.className = "dj-discovery-scan-status idle";
+          statusEl.textContent = "Choose a genre above to scan the DJs who are live now.";
           resultsEl.innerHTML = "";
           return;
         }
 
-        // Include both live and offline DJs in search/filter results.
-        const ranked = djDiscoveryDJs
-          .map(dj => {
-            const name = String(dj.name || dj.display_name || dj.username || "").trim();
-            const username = getDJUsername(dj);
-            const genres = getDiscoveryGenres(dj);
-            const haystack = [
-              name,
-              username,
-              dj.unique_id,
-              dj.handle,
-              dj.bio,
-              dj.biography,
-              dj.genre,
-              dj.genres,
-              dj.ai_genres,
-              dj.detected_genres,
-              dj.current_genres,
-              dj.rrr_genres,
-              getDJPlatform(dj),
-              genres.join(" ")
-            ].map(value => String(value || "").toLowerCase()).join(" ");
+        const scanned = [];
+        const waiting = [];
 
-            if (genreFilter && !genres.some(g => g.toLowerCase() === genreFilter)) {
-              return null;
-            }
+        djDiscoveryDJs.forEach(dj => {
+          const currentGenres = getLiveAIGenres(dj);
+          if (currentGenres.length) scanned.push(dj);
+          else waiting.push(dj);
+        });
 
-            if (query && !haystack.includes(query)) return null;
+        const matches = scanned
+          .map(dj => ({
+            dj,
+            score: getLiveGenreSelectionScore(dj, selectedGenre)
+          }))
+          .filter(item => item.score > 0)
+          .sort((a, b) => b.score - a.score ||
+            String(a.dj.name || a.dj.username || "").localeCompare(
+              String(b.dj.name || b.dj.username || "")
+            ));
 
-            let searchScore = 0;
-            if (query) {
-              if (name.toLowerCase().startsWith(query)) searchScore += 30;
-              if (username.toLowerCase() === query.replace(/^@/, "")) searchScore += 50;
-              if (genres.some(g => g.toLowerCase().startsWith(query))) searchScore += 20;
-            }
+        const totalLive = djDiscoveryDJs.length;
+        const scannedCount = scanned.length;
+        const waitingCount = waiting.length;
 
-            const discoveryScore = getDiscoveryScore(dj, genres);
+        if (!totalLive) {
+          statusEl.className = "dj-discovery-scan-status complete";
+          statusEl.textContent = "No Radio RRR DJs are live right now.";
+          resultsEl.innerHTML = "";
+          return;
+        }
 
-            return { dj, name, username, genres, searchScore, discoveryScore };
-          })
-          .filter(Boolean)
-          .sort((a, b) => {
-            // With a search term, relevance remains the first priority.
-            // Otherwise the catalogue is ordered by the RRR discovery score.
-            if (query && b.searchScore !== a.searchScore) {
-              return b.searchScore - a.searchScore;
-            }
-            if (b.discoveryScore !== a.discoveryScore) {
-              return b.discoveryScore - a.discoveryScore;
-            }
-            return a.name.localeCompare(b.name);
-          });
+        if (waitingCount > 0) {
+          statusEl.className = "dj-discovery-scan-status scanning";
+          statusEl.innerHTML =
+            '<span class="dj-discovery-scan-dot" aria-hidden="true"></span>' +
+            'Scanning live DJs for <strong>' + escapeHtml(selectedGenre) + '</strong>… ' +
+            scannedCount + ' of ' + totalLive + ' checked · ' + matches.length +
+            (matches.length === 1 ? ' match found' : ' matches found');
+        } else {
+          statusEl.className = "dj-discovery-scan-status complete";
+          statusEl.innerHTML =
+            'Scan complete · <strong>' + matches.length + '</strong> live ' +
+            (matches.length === 1 ? 'DJ matches ' : 'DJs match ') +
+            '<strong>' + escapeHtml(selectedGenre) + '</strong>';
+        }
 
-        if (!ranked.length) {
+        if (!matches.length) {
           resultsEl.innerHTML =
             '<div class="dj-discovery-empty">' +
-            (djDiscoveryDJs.length
-              ? (query || genreFilter
-                ? "No DJs match that search. Try another name or genre."
-                : "All DJs in the catalogue are live now. Search or choose a genre to find them.")
-              : "No DJs are currently available in the RRR catalogue.") +
+            (waitingCount > 0
+              ? 'No confirmed ' + escapeHtml(selectedGenre) + ' DJs yet. Results will update as live scans arrive.'
+              : 'No live DJs are currently matching ' + escapeHtml(selectedGenre) + '.') +
             '</div>';
           return;
         }
 
-        resultsEl.innerHTML = ranked.map(item => {
+        resultsEl.innerHTML = "";
+
+        matches.forEach(item => {
           const dj = item.dj;
-          const profilePic =
-            dj.profile_pic || dj.profile_picture || dj.avatar || dj.photo || "";
-          const platform = getDJPlatform(dj).toLowerCase();
-          const profileUrl =
-            dj.profile_url ||
-            (item.username
-              ? (platform === "twitch"
-                ? "https://www.twitch.tv/" + item.username
-                : "https://www.tiktok.com/@" + item.username)
-              : "#");
-          const isLive = dj.live === true;
-          const status = isLive ? "LIVE" : "OFFLINE";
-          const genresHtml = item.genres.map(getGenrePillHtml).join("");
+          const name = String(dj.name || dj.display_name || dj.username || "DJ").trim();
+          const username = getDJUsername(dj);
+          const profilePic = dj.profile_pic || dj.profile_picture || dj.avatar || dj.photo || "";
+          const liveGenres = getLiveAIGenres(dj).slice(0, 6);
+          const matchPercent = Math.max(1, Math.min(100, Math.round(item.score * 100)));
+
+          const card = document.createElement("button");
+          card.type = "button";
+          card.className = "dj-discovery-card is-live dj-discovery-live-select";
+          card.setAttribute("aria-label", "Play " + name + " in this browser");
 
           const photo = profilePic
-            ? '<img class="dj-discovery-thumb" src="' + escapeAttr(String(profilePic)) +
-              '" alt="" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\';">' +
-              '<div class="dj-discovery-placeholder" style="display:none;">🎧</div>'
+            ? '<img class="dj-discovery-thumb" src="' + escapeAttr(String(profilePic)) + '" alt="" loading="lazy">'
             : '<div class="dj-discovery-placeholder">🎧</div>';
 
-          const platformBadgeHtml = getDJPlatformBadgeHtml(dj, "dj-discovery-platform");
+          card.innerHTML =
+            '<div class="dj-discovery-card-top">' + photo +
+              '<div class="dj-discovery-name-wrap">' +
+                '<div class="dj-discovery-name" title="' + escapeAttr(name) + '">' + escapeHtml(name) + '</div>' +
+                '<div class="dj-discovery-handle">@' + escapeHtml(username) + '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="dj-discovery-status live"><span class="dj-discovery-status-dot"></span>LIVE NOW</div>' +
+            '<div class="dj-discovery-match">' + matchPercent + '% ' + escapeHtml(selectedGenre) + ' detection</div>' +
+            '<div class="dj-discovery-genres" aria-label="Current live detected genres">' +
+              liveGenres.map(getGenrePillHtml).join("") +
+            '</div>' +
+            '<div class="dj-discovery-play-hint">▶ PLAY THIS DJ</div>';
 
-          return '<a class="dj-discovery-card' + (isLive ? ' is-live' : '') + '" href="' + escapeAttr(String(profileUrl)) +
-            '" target="_blank" rel="noopener">' +
-              '<div class="dj-discovery-card-top">' +
-                photo +
-              '</div>' +
-              '<div class="dj-discovery-overlay"></div>' +
-              '<div class="dj-discovery-status ' + (isLive ? "live" : "offline") + '">' +
-                  '<span class="dj-discovery-status-dot"></span>' + status +
-                '</div>' +
-              platformBadgeHtml +
-              '<div class="dj-discovery-content">' +
-                '<div class="dj-discovery-name" title="' + escapeAttr(String(item.name || "DJ")) + '">' +
-                  escapeHtml(item.name || "DJ") +
-                '</div>' +
-                '<div class="dj-discovery-handle">@' + escapeHtml(item.username) + '</div>' +
-                '<div class="dj-discovery-genres" aria-label="DJ genres">' + genresHtml + '</div>' +
-              '</div>' +
-            '</a>';
-        }).join("");
+          card.addEventListener("click", async function () {
+            if (card.dataset.switching === "1") return;
+            const targetUsername = getDJUsername(dj);
+            if (!targetUsername) return;
+
+            if (liveDjVideo) {
+              userRequestedAudio = !liveDjVideo.muted;
+              liveDjVideo.dataset.rrrUserAudio = userRequestedAudio ? "1" : "0";
+              liveDjVideo.defaultMuted = !userRequestedAudio;
+            }
+
+            card.dataset.switching = "1";
+            try {
+              manualFeaturedDJIdentity = getDJIdentity(dj);
+              manualFeaturedDJMissingCount = 0;
+              manualDJStreamFailureHandled = false;
+              currentFeaturedDJ = dj;
+              showLiveDjPlayer(dj);
+              await updateLiveGenresDetected(null, manualFeaturedDJIdentity, "", dj && dj.platform);
+              await loadLiveDJs();
+            } catch (error) {
+              console.error("Radio RRR custom live sound selection failed:", error);
+              manualFeaturedDJIdentity = "";
+              manualFeaturedDJMissingCount = 0;
+              manualDJStreamFailureHandled = false;
+              await loadLiveDJs();
+            } finally {
+              card.dataset.switching = "0";
+            }
+          });
+
+          resultsEl.appendChild(card);
+        });
       }
 
       /* LIVE DJs API */
