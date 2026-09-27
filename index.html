@@ -216,7 +216,7 @@
           </div>
           <div id="liveGenresDetectedList" class="live-genres-detected-list"></div>
         </section>
-<div class="dj-match-score main-dj-match-score match-low" id="randomLiveDjMatch" title="RRR genre compatibility score out of 100"><span class="rrr-program-match-left"><span class="main-dj-match-label">🎯 CURRENT PROGRAM MATCH</span> <span class="main-dj-match-value">—</span></span><span class="rrr-program-match-right"><span id="randomLiveDjBpm"></span><span class="rrr-current-talk talk-low" id="randomLiveDjTalk"></span></span></div>
+<div class="dj-match-score main-dj-match-score match-low" id="randomLiveDjMatch" title="RRR genre compatibility score out of 100"><span class="rrr-program-match-left"><span class="main-dj-match-label">🎯 CURRENT PROGRAM MATCH</span> <span class="main-dj-match-value">—</span></span><span class="rrr-current-talk talk-low" id="randomLiveDjTalk"></span><span class="rrr-program-match-right" id="randomLiveDjBpm"></span></div>
 </div>
 </section>
 </div><div class="radio-router-player">
@@ -484,7 +484,7 @@ window.formspree =
 /* Current Program Match: one clear heading with score and BPM grouped beneath it. */
 #randomLiveDjMatch.main-dj-match-score {
   display: grid !important;
-  grid-template-columns: minmax(0, 1fr) 1px auto !important;
+  grid-template-columns: minmax(0, 1fr) auto 1px auto !important;
   grid-template-rows: auto auto !important;
   align-items: center !important;
   column-gap: 0.8rem !important;
@@ -504,7 +504,7 @@ window.formspree =
 }
 
 #randomLiveDjMatch .main-dj-match-label {
-  grid-column: 1 / -1 !important;
+  grid-column: 1 !important;
   grid-row: 1 !important;
   max-width: none !important;
   text-align: left !important;
@@ -522,39 +522,53 @@ window.formspree =
 
 #randomLiveDjMatch::before {
   content: "";
-  grid-column: 2 !important;
-  grid-row: 2 !important;
+  grid-column: 3 !important;
+  grid-row: 1 / span 2 !important;
+  align-self: center !important;
   width: 1px !important;
-  height: 2rem !important;
+  height: 2.15rem !important;
   background: rgba(103, 232, 249, 0.62) !important;
   box-shadow: 0 0 6px rgba(103, 232, 249, 0.2);
 }
 
+#randomLiveDjMatch::after {
+  content: none !important;
+}
+
 #randomLiveDjMatch .rrr-program-match-right {
-  grid-column: 3 !important;
-  grid-row: 2 !important;
+  grid-column: 4 !important;
+  grid-row: 1 / span 2 !important;
+  align-self: center !important;
   margin: 0 !important;
   text-align: right !important;
 }
 
-#randomLiveDjMatch .rrr-program-match-right {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: flex-end !important;
-  justify-content: center !important;
-  gap: 0.2rem !important;
-}
-
 #randomLiveDjTalk {
+  grid-column: 2 !important;
+  grid-row: 1 / span 2 !important;
+  align-self: center !important;
   display: inline-flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-height: 1rem;
-  font-size: 0.62rem;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  min-width: 3.25rem;
+  min-height: 2rem;
+  font-size: 0.64rem;
   font-weight: 800;
-  line-height: 1;
+  line-height: 1.05;
   letter-spacing: 0.035em;
   white-space: nowrap;
+  text-align: right;
+}
+
+#randomLiveDjTalk::before {
+  content: "🎙 TALK";
+  display: block;
+  margin-bottom: 0.16rem;
+  font-size: 0.52rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  opacity: 0.82;
 }
 
 #randomLiveDjTalk.talk-low {
@@ -584,6 +598,15 @@ window.formspree =
 
   #randomLiveDjMatch .main-dj-match-value {
     font-size: 1.65rem !important;
+  }
+
+  #randomLiveDjTalk {
+    min-width: 2.8rem;
+    font-size: 0.6rem;
+  }
+
+  #randomLiveDjTalk::before {
+    font-size: 0.48rem;
   }
 }
 </style>
@@ -1012,7 +1035,7 @@ window.formspree =
         const talkRatio = Number(item.speech_ratio);
         if (Number.isFinite(talkRatio)) {
           const talkPercent = Math.max(0, Math.min(100, Math.round(talkRatio * 100)));
-          talkEl.textContent = "🎙 TALK " + talkPercent + "%";
+          talkEl.textContent = talkPercent + "%";
           talkEl.className = "rrr-current-talk";
 
           if (item.speech_excluded || talkPercent >= 55) {
