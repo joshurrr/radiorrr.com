@@ -499,7 +499,7 @@
 </div>
 
 <div class="rrr-footer-meta">
-  <span>Powered by RadioRouter · Build 20260928.5</span>
+  <span>Powered by RadioRouter · Build 20260928.7</span>
 </div>
 </footer>
 </main>
@@ -698,6 +698,24 @@ window.formspree =
 #randomLiveDjTalk.talk-excluded {
   color: #fca5a5;
   text-shadow: 0 0 6px rgba(248,113,113,0.35);
+}
+
+/* Featured DJs override the schedule by operator priority. The programme
+   score is intentionally hidden because it does not control this selection. */
+#randomLiveDjMatch.featured-override-active .main-dj-match-label {
+  grid-column: 4 !important;
+  grid-row: 1 / span 2 !important;
+  align-self: center !important;
+  color: #fde68a !important;
+  font-size: 0.78rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.06em !important;
+  text-align: right !important;
+  text-shadow: 0 0 8px rgba(250, 204, 21, 0.32);
+}
+
+#randomLiveDjMatch.featured-override-active .main-dj-match-value {
+  display: none !important;
 }
 
 @media (max-width: 640px) {
@@ -970,10 +988,16 @@ window.formspree =
 (function () {
   "use strict";
 
-  const GENRE_MATCH_URL = "https://stream.radiorrr.com/api/genre-match";
+  const GENRE_MATCH_URL = "https://api.radiorrr.com/api/genre-match";
+  const FEATURED_DJS_URLS = [
+    "https://api.radiorrr.com/api/admin/featured-djs",
+    "https://stream.radiorrr.com/api/admin/featured-djs"
+  ];
   const REFRESH_MS = 30000;
+  const FEATURED_CACHE_MS = 15000;
   let refreshTimer = null;
   let refreshInFlight = false;
+  let featuredCache = { fetchedAt: 0, djs: [] };
 
   function normaliseUsername(value) {
     return String(value || "")
@@ -1073,6 +1097,78 @@ window.formspree =
     return null;
   }
 
+  async function loadFeaturedDjs() {
+    const now = Date.now();
+    if (featuredCache.fetchedAt && (now - featuredCache.fetchedAt) < FEATURED_CACHE_MS) {
+      return featuredCache.djs;
+    }
+
+    let lastError = null;
+    for (const url of FEATURED_DJS_URLS) {
+      try {
+        const response = await fetch(url, { cache: "no-store" });
+        if (!response.ok) throw new Error("Featured DJ API returned " + response.status);
+        const data = await response.json();
+        const djs = Array.isArray(data && data.featured_djs) ? data.featured_djs : [];
+        featuredCache = { fetchedAt: now, djs: djs };
+        return djs;
+      } catch (error) {
+        lastError = error;
+      }
+    }
+
+    console.warn("Radio RRR Featured DJ display warning:", lastError);
+    return featuredCache.djs;
+  }
+
+  function featuredRankForDisplayedDj(featuredDjs, data, item) {
+    if (!item) return null;
+
+    const params = new URLSearchParams(window.location.search);
+    if (normaliseUsername(params.get("dj"))) return null;
+
+    const itemUsername = normaliseUsername(item.username);
+    const itemPlatform = String(item.platform || "TikTok").trim().toLowerCase();
+    const relayUsername = normaliseUsername(data && data.current_relay);
+    const relayPlatform = String(data && data.current_relay_platform || "TikTok").trim().toLowerCase();
+
+    if (!itemUsername || itemUsername !== relayUsername || itemPlatform !== relayPlatform) {
+      return null;
+    }
+
+    const featured = (Array.isArray(featuredDjs) ? featuredDjs : []).find(function (entry) {
+      return normaliseUsername(entry && entry.username) === itemUsername &&
+        String(entry && entry.platform || "TikTok").trim().toLowerCase() === itemPlatform;
+    });
+
+    const rank = Number(featured && featured.rank);
+    return Number.isFinite(rank) && rank > 0 ? Math.round(rank) : null;
+  }
+
+  function renderProgramMatchState(matchEl, matchValueEl, percent, featuredRank) {
+    const labelEl = matchEl.querySelector(".main-dj-match-label");
+
+    if (featuredRank) {
+      matchEl.classList.add("featured-override-active");
+      if (labelEl) labelEl.textContent = "★ FEATURED DJ";
+      matchValueEl.textContent = "";
+      matchValueEl.classList.remove(
+        "program-match-green",
+        "program-match-yellow",
+        "program-match-orange",
+        "program-match-red"
+      );
+      matchEl.title = "Featured DJ priority is active";
+      return;
+    }
+
+    matchEl.classList.remove("featured-override-active");
+    if (labelEl) labelEl.textContent = "🎯 CURRENT PROGRAM MATCH";
+    matchValueEl.textContent = percent + "%";
+    matchEl.title = "RRR genre compatibility score out of 100";
+    updateMatchClass(matchEl, percent);
+  }
+
   function updateMatchClass(matchEl, percent) {
     if (!matchEl || !Number.isFinite(percent)) return;
 
@@ -1116,6 +1212,7 @@ window.formspree =
 
       const data = await response.json();
       const item = findDisplayedItem(data);
+      const featuredDjs = await loadFeaturedDjs();
       const heroBounds = scheduleBounds(data, item);
 
       if (heroProgramBpmEl) {
@@ -1125,6 +1222,9 @@ window.formspree =
       }
 
       if (!item) {
+        matchEl.classList.remove("featured-override-active");
+        const labelEl = matchEl.querySelector(".main-dj-match-label");
+        if (labelEl) labelEl.textContent = "🎯 CURRENT PROGRAM MATCH";
         bpmEl.textContent = "";
         if (talkEl) {
           talkEl.textContent = "";
@@ -1140,8 +1240,8 @@ window.formspree =
       const matchScore = Number(item.raw_score);
       if (Number.isFinite(matchScore)) {
         const percent = Math.max(0, Math.min(100, Math.round(matchScore)));
-        matchValueEl.textContent = percent + "%";
-        updateMatchClass(matchEl, percent);
+        const featuredRank = featuredRankForDisplayedDj(featuredDjs, data, item);
+        renderProgramMatchState(matchEl, matchValueEl, percent, featuredRank);
       }
 
       if (Number.isFinite(Number(item.bpm))) {
