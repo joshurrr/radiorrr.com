@@ -2212,7 +2212,7 @@
 
 
     /* YOUR LIVE SOUND — editable Radio RRR preset + ranked live DJs */
-    .rrr-live-djs-data-grid {
+    #liveDjsList.rrr-live-djs-data-grid {
       display: none !important;
     }
 
