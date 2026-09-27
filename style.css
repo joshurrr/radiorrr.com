@@ -7360,3 +7360,132 @@
   width: auto !important;
   margin: 0 !important;
 }
+
+/* 2026-09-28 — Tune Sound interaction polish */
+#rrrDjDiscovery .dj-discovery-program[hidden] {
+  display: none !important;
+}
+
+#rrrDjDiscovery .dj-discovery-program {
+  padding: 1rem 1.05rem;
+}
+
+#rrrDjDiscovery .dj-discovery-program-note {
+  margin-top: 0.52rem;
+}
+
+#rrrDjDiscovery .dj-discovery-edit-button {
+  min-height: 38px;
+  padding: 0.54rem 0.72rem;
+  border-color: rgba(34,211,238,0.48);
+  background: rgba(8,18,40,0.84);
+  color: #dffaff;
+  box-shadow: 0 0 8px rgba(34,211,238,0.10);
+}
+
+#rrrDjDiscovery .dj-discovery-edit-button:hover,
+#rrrDjDiscovery .dj-discovery-edit-button:focus-visible {
+  background: linear-gradient(135deg, rgba(8,145,178,0.25), rgba(67,56,202,0.30));
+}
+
+#rrrDjDiscovery .dj-discovery-editor {
+  margin: 0 0 0.95rem;
+  padding: 0.95rem 1rem;
+  border-color: rgba(34,211,238,0.44);
+  background: linear-gradient(135deg, rgba(8,18,40,0.90), rgba(8,8,28,0.88));
+  box-shadow: inset 0 0 18px rgba(34,211,238,0.045);
+}
+
+#rrrDjDiscovery .dj-discovery-editor.is-editing {
+  border-color: rgba(168,85,247,0.52);
+}
+
+#rrrDjDiscovery .dj-discovery-editor.is-summary {
+  border-color: rgba(34,211,238,0.42);
+  background: linear-gradient(135deg, rgba(8,18,40,0.86), rgba(5,10,28,0.84));
+}
+
+#rrrDjDiscovery .dj-discovery-editor-actions {
+  align-self: center;
+}
+
+#rrrDjDiscovery .dj-discovery-retune {
+  min-height: 38px;
+  padding: 0.5rem 0.72rem;
+  border: 1px solid rgba(34,211,238,0.52);
+  border-radius: 9px;
+  background: rgba(8,18,40,0.84);
+  color: #dffaff;
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.045em;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(34,211,238,0.10);
+}
+
+#rrrDjDiscovery .dj-discovery-retune:hover,
+#rrrDjDiscovery .dj-discovery-retune:focus-visible {
+  border-color: #67e8f9;
+  box-shadow: 0 0 13px rgba(34,211,238,0.30);
+  outline: none;
+}
+
+#rrrDjDiscovery .dj-discovery-retune[hidden] {
+  display: none !important;
+}
+
+#rrrDjDiscovery .dj-discovery-selected-chip.is-summary-chip {
+  cursor: default;
+  padding-right: 0.65rem;
+}
+
+#rrrDjDiscovery .dj-discovery-selected-chip.is-summary-chip:hover {
+  box-shadow: 0 0 10px rgba(var(--genre-neon-rgb,34,211,238),0.38);
+}
+
+/* Status is supporting information, not a full-width alert banner. */
+#rrrDjDiscovery .dj-discovery-scan-status {
+  min-height: 1.15rem;
+  margin: 0.08rem 0 0.58rem;
+  padding: 0.08rem 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #aab7d6;
+  font-size: 0.69rem;
+}
+
+#rrrDjDiscovery .dj-discovery-scan-status.scanning,
+#rrrDjDiscovery .dj-discovery-scan-status.complete {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+#rrrDjDiscovery .dj-discovery-scan-status.complete {
+  color: #a7f3d0;
+}
+
+/* Keep the compact card footer readable on a single line. */
+#rrrDjDiscovery .dj-discovery-match-row {
+  flex-wrap: nowrap !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 640px) {
+  #rrrDjDiscovery .dj-discovery-editor {
+    padding: 0.82rem;
+  }
+
+  #rrrDjDiscovery .dj-discovery-editor-actions {
+    align-self: stretch;
+  }
+
+  #rrrDjDiscovery .dj-discovery-retune,
+  #rrrDjDiscovery .dj-discovery-done {
+    width: 100%;
+  }
+}
+

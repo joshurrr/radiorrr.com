@@ -2356,21 +2356,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 '<div class="dj-discovery-program-name" id="djDiscoveryProgramName">Radio RRR</div>' +
                 '<div class="dj-discovery-program-time" id="djDiscoveryProgramTime"></div>' +
               '</div>' +
-              '<div class="dj-discovery-program-note">Scheduled genres for this program</div>' +
+              '<div class="dj-discovery-program-note">Scheduled sound for this program</div>' +
               '<div class="dj-discovery-program-genres" id="djDiscoveryProgramGenres"></div>' +
               '<div class="dj-discovery-program-state" id="djDiscoveryProgramState" hidden></div>' +
             '</div>' +
-            '<button type="button" class="dj-discovery-edit-button" id="djDiscoveryEditSound">✎ EDIT THIS SOUND</button>' +
+            '<button type="button" class="dj-discovery-edit-button" id="djDiscoveryEditSound">☷ TUNE SOUND</button>' +
           '</div>' +
           '<div class="dj-discovery-editor" id="djDiscoveryEditor" hidden>' +
             '<div class="dj-discovery-editor-head">' +
               '<div>' +
-                '<div class="dj-discovery-title">🎚️ YOUR CUSTOM SOUND</div>' +
-                '<div class="dj-discovery-subtitle">Your selected genres control the live DJ ranking below.</div>' +
+                '<div class="dj-discovery-title" id="djDiscoveryEditorTitle">🎚️ TUNE YOUR SOUND</div>' +
+                '<div class="dj-discovery-subtitle" id="djDiscoveryEditorSubtitle">Started from the current program. Add or remove genres to change the live DJ ranking below.</div>' +
               '</div>' +
               '<div class="dj-discovery-editor-actions">' +
-                '<button type="button" class="dj-discovery-reset" id="djDiscoveryReset">Reset to Radio RRR</button>' +
-                '<button type="button" class="dj-discovery-done" id="djDiscoveryDone">✓ DONE EDITING</button>' +
+                '<button type="button" class="dj-discovery-reset" id="djDiscoveryReset">↺ RESET TO PROGRAM</button>' +
+                '<button type="button" class="dj-discovery-retune" id="djDiscoveryRetune" hidden>☷ TUNE SOUND</button>' +
+                '<button type="button" class="dj-discovery-done" id="djDiscoveryDone">✓ DONE</button>' +
               '</div>' +
             '</div>' +
             '<div class="dj-discovery-selected" id="djDiscoverySelected"></div>' +
@@ -2390,8 +2391,24 @@ document.addEventListener("DOMContentLoaded", function () {
         const editSound = document.getElementById("djDiscoveryEditSound");
         if (editSound) {
           editSound.addEventListener("click", function () {
+            // A fresh edit always starts from the sound currently shown by
+            // the Radio RRR program rather than from an empty recipe.
+            if (!djDiscoveryCustomised) {
+              djDiscoverySelectedGenres = djDiscoveryPresetGenres.slice();
+            }
             djDiscoveryEditorOpen = true;
-            djDiscoveryAddGenresOpen = !djDiscoveryCustomised;
+            djDiscoveryAddGenresOpen = false;
+            renderDjDiscoveryProgramContext();
+            renderDjDiscoverySelectedGenres();
+            renderDjDiscoveryChips();
+          });
+        }
+
+        const retune = document.getElementById("djDiscoveryRetune");
+        if (retune) {
+          retune.addEventListener("click", function () {
+            djDiscoveryEditorOpen = true;
+            djDiscoveryAddGenresOpen = false;
             renderDjDiscoveryProgramContext();
             renderDjDiscoverySelectedGenres();
             renderDjDiscoveryChips();
@@ -2422,11 +2439,12 @@ document.addEventListener("DOMContentLoaded", function () {
           reset.addEventListener("click", function () {
             djDiscoverySelectedGenres = djDiscoveryPresetGenres.slice();
             djDiscoveryCustomised = false;
-            djDiscoveryEditorOpen = false;
             djDiscoveryAddGenresOpen = false;
             djDiscoveryShowAll = false;
-            if (djDiscoveryCustomised && djDiscoverySelectedGenres.length) {
-              djDiscoveryAddGenresOpen = false;
+            // While actively tuning, keep the editor in place so the listener
+            // can immediately see the restored current-program recipe.
+            if (!djDiscoveryEditorOpen) {
+              djDiscoveryEditorOpen = false;
             }
             renderDjDiscoveryProgramContext();
             renderDjDiscoverySelectedGenres();
@@ -2450,7 +2468,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const editorEl = document.getElementById("djDiscoveryEditor");
         const programEl = document.querySelector("#rrrDjDiscovery .dj-discovery-program");
         const kickerEl = document.querySelector("#rrrDjDiscovery .dj-discovery-program-kicker");
+        const editorTitleEl = document.getElementById("djDiscoveryEditorTitle");
+        const editorSubtitleEl = document.getElementById("djDiscoveryEditorSubtitle");
+        const retuneEl = document.getElementById("djDiscoveryRetune");
         const doneEl = document.getElementById("djDiscoveryDone");
+        const resetEl = document.getElementById("djDiscoveryReset");
         const addPanelEl = document.getElementById("djDiscoveryAddPanel");
         const addToggleEl = document.getElementById("djDiscoveryAddToggle");
         const addContentEl = document.getElementById("djDiscoveryAddContent");
@@ -2473,34 +2495,55 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (stateEl) {
-          stateEl.hidden = !djDiscoveryCustomised;
-          stateEl.textContent = djDiscoveryCustomised
-            ? "ORIGINAL RADIO RRR PROGRAM · REFERENCE ONLY"
-            : "";
+          stateEl.hidden = true;
+          stateEl.textContent = "";
         }
 
+        // The program card and sound editor intentionally occupy the same UI
+        // role: once tuning begins, the program card disappears rather than
+        // leaving two competing sound summaries on screen.
         if (programEl) {
-          programEl.classList.toggle("is-reference", djDiscoveryCustomised);
+          programEl.hidden = djDiscoveryEditorOpen || djDiscoveryCustomised;
+          programEl.classList.remove("is-reference");
         }
 
         if (kickerEl) {
-          kickerEl.textContent = djDiscoveryCustomised
-            ? "ORIGINAL RADIO RRR PROGRAM"
-            : "CURRENT PROGRAM";
+          kickerEl.textContent = "CURRENT PROGRAM";
         }
 
         if (editEl) {
-          editEl.textContent = djDiscoveryCustomised ? "✎ EDIT YOUR SOUND" : "✎ EDIT THIS SOUND";
-          editEl.hidden = djDiscoveryEditorOpen;
+          editEl.textContent = "☷ TUNE SOUND";
+          editEl.hidden = false;
         }
 
         if (editorEl) {
           editorEl.hidden = !(djDiscoveryEditorOpen || djDiscoveryCustomised);
           editorEl.classList.toggle("is-summary", djDiscoveryCustomised && !djDiscoveryEditorOpen);
+          editorEl.classList.toggle("is-editing", djDiscoveryEditorOpen);
+        }
+
+        if (editorTitleEl) {
+          editorTitleEl.textContent = djDiscoveryEditorOpen
+            ? "🎚️ TUNE YOUR SOUND"
+            : "🎚️ YOUR SOUND";
+        }
+
+        if (editorSubtitleEl) {
+          editorSubtitleEl.textContent = djDiscoveryEditorOpen
+            ? "Started from the current program. Add or remove genres to change the live DJ ranking below."
+            : "Live DJs are ranked against these selected genres.";
+        }
+
+        if (retuneEl) {
+          retuneEl.hidden = djDiscoveryEditorOpen || !djDiscoveryCustomised;
         }
 
         if (doneEl) {
           doneEl.hidden = !djDiscoveryEditorOpen;
+        }
+
+        if (resetEl) {
+          resetEl.hidden = !djDiscoveryEditorOpen;
         }
 
         if (addPanelEl) {
@@ -2525,12 +2568,20 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!selectedEl) return;
 
         if (resetEl) {
-          resetEl.hidden = !djDiscoveryCustomised;
+          resetEl.hidden = !djDiscoveryEditorOpen;
         }
 
         if (!djDiscoverySelectedGenres.length) {
           selectedEl.innerHTML =
             '<span class="dj-discovery-selected-empty">Add at least one genre below to rank the live DJs.</span>';
+          return;
+        }
+
+        if (!djDiscoveryEditorOpen) {
+          selectedEl.innerHTML = djDiscoverySelectedGenres.map(genre =>
+            '<span class="dj-discovery-selected-chip is-summary-chip ' +
+            getGenreNeonClass(genre) + '">' + escapeHtml(genre) + '</span>'
+          ).join("");
           return;
         }
 
