@@ -4085,7 +4085,11 @@
   justify-items: start !important;
 }
 
-#liveDjsList > .dj-discovery {
+#djDiscoveryHost {
+  width: 100%;
+}
+
+#djDiscoveryHost > .dj-discovery {
   grid-column: 1 / -1 !important;
   width: 100% !important;
   max-width: none !important;
@@ -4093,7 +4097,7 @@
   justify-self: stretch !important;
 }
 
-#liveDjsList > .dj-discovery .dj-discovery-results {
+#djDiscoveryHost > .dj-discovery .dj-discovery-results {
   width: 100%;
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
 }

@@ -448,6 +448,9 @@ document.addEventListener("DOMContentLoaded", function () {
       const liveDjsList =
         document.getElementById("liveDjsList");
 
+      const djDiscoveryHost =
+        document.getElementById("djDiscoveryHost");
+
       const liveRefresh =
         document.getElementById("liveRefresh");
 
@@ -730,12 +733,14 @@ document.addEventListener("DOMContentLoaded", function () {
         const healthDashboard = toolsSection.querySelector(".system-health-dashboard");
         const toolsHeading = toolsSection.querySelector(".tools-section-heading");
         const toolsHubGrid = toolsSection.querySelector("#toolsHubGrid");
+        const liveDjMonitor = toolsSection.querySelector("#toolsLiveDjMonitor");
         const detailList = toolsSection.querySelector(".tool-detail-list");
         const streamHealthPanel = toolsSection.querySelector("#toolStreamHealthPanel");
 
         if (healthDashboard) healthDashboard.hidden = detailMode;
         if (toolsHeading) toolsHeading.hidden = detailMode;
         if (toolsHubGrid) toolsHubGrid.hidden = detailMode;
+        if (liveDjMonitor) liveDjMonitor.hidden = detailMode;
         if (detailList) detailList.hidden = !detailMode;
         if (streamHealthPanel && detailMode) streamHealthPanel.hidden = true;
 
@@ -2241,7 +2246,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       async function renderDjDiscovery(favourites, liveDJs) {
-        if (!liveDjsList) return;
+        if (!djDiscoveryHost) return;
 
         const renderId = ++djDiscoveryRenderId;
         const favouriteList = Array.isArray(favourites) ? favourites.slice() : [];
@@ -2270,7 +2275,7 @@ document.addEventListener("DOMContentLoaded", function () {
           section = document.createElement("section");
           section.id = "rrrDjDiscovery";
           section.className = "dj-discovery";
-          liveDjsList.appendChild(section);
+          djDiscoveryHost.appendChild(section);
         }
 
         section.innerHTML =
@@ -2340,17 +2345,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!section || !chipsEl || !statusEl || !resultsEl) return;
 
         const customSoundActive = Boolean(selectedGenre);
-
-        // Once the visitor starts designing a sound, hide the generic
-        // "switch to another live DJ" row so the filtered live results become
-        // the focus. Deselecting the genre restores the normal live-DJ row.
-        if (liveDjsList) {
-          liveDjsList.querySelectorAll(
-            ".rrr-other-live-djs-header, .dj-live-switch-card"
-          ).forEach(function (element) {
-            element.style.display = customSoundActive ? "none" : "";
-          });
-        }
 
         if (customSoundActive) {
           // Once a genre is selected, surface the live scan/result immediately
