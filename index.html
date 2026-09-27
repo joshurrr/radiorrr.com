@@ -216,7 +216,7 @@
           </div>
           <div id="liveGenresDetectedList" class="live-genres-detected-list"></div>
         </section>
-<div class="dj-match-score main-dj-match-score match-low" id="randomLiveDjMatch" title="RRR genre compatibility score out of 100"><span class="rrr-program-match-left"><span class="main-dj-match-label">🎯 CURRENT PROGRAM MATCH</span> <span class="main-dj-match-value">—</span></span><span class="rrr-program-match-right" id="randomLiveDjBpm"></span></div>
+<div class="dj-match-score main-dj-match-score match-low" id="randomLiveDjMatch" title="RRR genre compatibility score out of 100"><span class="rrr-program-match-left"><span class="main-dj-match-label">🎯 CURRENT PROGRAM MATCH</span> <span class="main-dj-match-value">—</span></span><span class="rrr-program-match-right"><span id="randomLiveDjBpm"></span><span class="rrr-current-talk talk-low" id="randomLiveDjTalk"></span></span></div>
 </div>
 </section>
 </div><div class="radio-router-player">
@@ -535,6 +535,43 @@ window.formspree =
   grid-row: 2 !important;
   margin: 0 !important;
   text-align: right !important;
+}
+
+#randomLiveDjMatch .rrr-program-match-right {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+  gap: 0.2rem !important;
+}
+
+#randomLiveDjTalk {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 1rem;
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.035em;
+  white-space: nowrap;
+}
+
+#randomLiveDjTalk.talk-low {
+  color: #a7f3d0;
+}
+
+#randomLiveDjTalk.talk-medium {
+  color: #fde68a;
+}
+
+#randomLiveDjTalk.talk-high {
+  color: #fdba74;
+}
+
+#randomLiveDjTalk.talk-excluded {
+  color: #fca5a5;
+  text-shadow: 0 0 6px rgba(248,113,113,0.35);
 }
 
 @media (max-width: 640px) {
@@ -909,6 +946,7 @@ window.formspree =
     const matchEl = document.getElementById("randomLiveDjMatch");
     const matchValueEl = matchEl && matchEl.querySelector(".main-dj-match-value");
     const bpmEl = document.getElementById("randomLiveDjBpm");
+    const talkEl = document.getElementById("randomLiveDjTalk");
     const heroProgramBpmEl = document.getElementById("heroProgramBpm");
     const bpmHealthEl = document.getElementById("toolBpmDetector");
     if (!matchEl || !matchValueEl || !bpmEl) return;
@@ -931,6 +969,10 @@ window.formspree =
 
       if (!item) {
         bpmEl.textContent = "";
+        if (talkEl) {
+          talkEl.textContent = "";
+          talkEl.className = "rrr-current-talk talk-low";
+        }
         if (bpmHealthEl) {
           bpmHealthEl.className = "tool-health pending";
           bpmHealthEl.textContent = "No reading";
@@ -963,6 +1005,28 @@ window.formspree =
         if (bpmHealthEl) {
           bpmHealthEl.className = "tool-health pending";
           bpmHealthEl.textContent = "No reading";
+        }
+      }
+
+      if (talkEl) {
+        const talkRatio = Number(item.speech_ratio);
+        if (Number.isFinite(talkRatio)) {
+          const talkPercent = Math.max(0, Math.min(100, Math.round(talkRatio * 100)));
+          talkEl.textContent = "🎙 TALK " + talkPercent + "%";
+          talkEl.className = "rrr-current-talk";
+
+          if (item.speech_excluded || talkPercent >= 55) {
+            talkEl.classList.add("talk-excluded");
+          } else if (talkPercent > 20) {
+            talkEl.classList.add("talk-high");
+          } else if (talkPercent > 8) {
+            talkEl.classList.add("talk-medium");
+          } else {
+            talkEl.classList.add("talk-low");
+          }
+        } else {
+          talkEl.textContent = "";
+          talkEl.className = "rrr-current-talk talk-low";
         }
       }
     } catch (error) {
