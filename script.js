@@ -3799,8 +3799,12 @@ document.addEventListener("DOMContentLoaded", function () {
           const dayText = cells[0].textContent.trim().toUpperCase();
           const timeText = cells[1].textContent.trim();
 
+          const currentDayName = publicDayName(dayIndex).toUpperCase();
           const matchesDay =
-            (dayType === 'weekday' && dayText.indexOf('WEEKDAYS') === 0) ||
+            (dayType === 'weekday' && (
+              dayText.indexOf('WEEKDAYS') === 0 ||
+              dayText.indexOf(currentDayName) === 0
+            )) ||
             (dayType === 'friday' && dayText.indexOf('FRIDAY') === 0) ||
             (dayType === 'saturday' && dayText.indexOf('SATURDAY') === 0) ||
             (dayType === 'sunday' && dayText.indexOf('SUNDAY') === 0);
