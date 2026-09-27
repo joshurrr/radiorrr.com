@@ -895,6 +895,115 @@ document.addEventListener("DOMContentLoaded", function () {
         return url + separator + "_rrr=" + Date.now();
       }
 
+      // Paint the existing live video into the blurred background canvas.
+      // This restores the portrait-video side fill without opening a second
+      // HLS connection or creating a second browser video decoder.
+      let liveDjBackgroundFrame = 0;
+      let liveDjBackgroundLastPaint = 0;
+      const LIVE_DJ_BACKGROUND_FPS = 12;
+
+      function stopLiveDjBackgroundFill() {
+        if (liveDjBackgroundFrame) {
+          window.cancelAnimationFrame(liveDjBackgroundFrame);
+          liveDjBackgroundFrame = 0;
+        }
+
+        liveDjBackgroundLastPaint = 0;
+
+        if (liveDjBackground && liveDjBackground.getContext) {
+          const ctx = liveDjBackground.getContext("2d");
+          if (ctx) {
+            ctx.clearRect(
+              0,
+              0,
+              liveDjBackground.width || 1,
+              liveDjBackground.height || 1
+            );
+          }
+        }
+      }
+
+      function paintLiveDjBackground(now) {
+        if (!liveDjBackground || !liveDjVideo || document.hidden) {
+          liveDjBackgroundFrame = window.requestAnimationFrame(paintLiveDjBackground);
+          return;
+        }
+
+        const frameInterval = 1000 / LIVE_DJ_BACKGROUND_FPS;
+        if (now - liveDjBackgroundLastPaint < frameInterval) {
+          liveDjBackgroundFrame = window.requestAnimationFrame(paintLiveDjBackground);
+          return;
+        }
+
+        liveDjBackgroundLastPaint = now;
+
+        if (
+          liveDjVideo.readyState >= 2 &&
+          liveDjVideo.videoWidth > 0 &&
+          liveDjVideo.videoHeight > 0
+        ) {
+          const rect = liveDjBackground.getBoundingClientRect();
+
+          // The background is deliberately low resolution. CSS supplies the
+          // blur, so full player resolution would only waste CPU/GPU time.
+          const targetWidth = Math.max(240, Math.round(rect.width * 0.55));
+          const targetHeight = Math.max(180, Math.round(rect.height * 0.55));
+
+          if (
+            liveDjBackground.width !== targetWidth ||
+            liveDjBackground.height !== targetHeight
+          ) {
+            liveDjBackground.width = targetWidth;
+            liveDjBackground.height = targetHeight;
+          }
+
+          const sourceWidth = liveDjVideo.videoWidth;
+          const sourceHeight = liveDjVideo.videoHeight;
+          const sourceRatio = sourceWidth / sourceHeight;
+          const targetRatio = targetWidth / targetHeight;
+
+          let sx = 0;
+          let sy = 0;
+          let sw = sourceWidth;
+          let sh = sourceHeight;
+
+          // Crop like object-fit: cover so the blurred layer fills the frame.
+          if (sourceRatio > targetRatio) {
+            sw = sourceHeight * targetRatio;
+            sx = (sourceWidth - sw) / 2;
+          } else {
+            sh = sourceWidth / targetRatio;
+            sy = (sourceHeight - sh) / 2;
+          }
+
+          const ctx = liveDjBackground.getContext("2d", { alpha: false });
+          if (ctx) {
+            ctx.drawImage(
+              liveDjVideo,
+              sx, sy, sw, sh,
+              0, 0, targetWidth, targetHeight
+            );
+          }
+        }
+
+        liveDjBackgroundFrame = window.requestAnimationFrame(paintLiveDjBackground);
+      }
+
+      function startLiveDjBackgroundFill() {
+        if (!liveDjBackground || !liveDjVideo) return;
+
+        // Preserve the mobile stability rule: mobile keeps exactly one live
+        // video presentation path and uses the existing ambient CSS fallback.
+        if (isMobileLivePlayer) {
+          stopLiveDjBackgroundFill();
+          return;
+        }
+
+        if (!liveDjBackgroundFrame) {
+          liveDjBackgroundFrame = window.requestAnimationFrame(paintLiveDjBackground);
+        }
+      }
+
       function updateLiveGenreRefreshCountdown() {
         if (!liveGenresDetectedStatus) return;
 
@@ -1674,11 +1783,7 @@ document.addEventListener("DOMContentLoaded", function () {
         liveDjVideo.defaultMuted = !userRequestedAudio;
         liveDjVideo.dataset.rrrUserAudio = userRequestedAudio ? "1" : "0";
         updateLiveDjMuteButton();
-        if (liveDjBackground) {
-          liveDjBackground.autoplay = true;
-          liveDjBackground.playsInline = true;
-          liveDjBackground.muted = true;
-        }
+        startLiveDjBackgroundFill();
         randomLiveDjName.textContent = "🎧 " + String(name);
         updateCurrentDJPlatform(dj);
         updateMainDJMatchScore(dj);
@@ -1751,11 +1856,7 @@ document.addEventListener("DOMContentLoaded", function () {
           liveDjVideo.load();
         }
 
-        if (liveDjBackground) {
-          liveDjBackground.pause();
-          liveDjBackground.removeAttribute("src");
-          liveDjBackground.load();
-        }
+        stopLiveDjBackgroundFill();
 
         const liveCandidatesAvailable = currentLiveDJs.length > 0;
 
