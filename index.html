@@ -487,7 +487,7 @@ window.formspree =
   grid-template-columns: auto auto 1px minmax(0, 1fr) !important;
   grid-template-rows: auto auto !important;
   align-items: center !important;
-  column-gap: 0.8rem !important;
+  column-gap: 0.48rem !important;
   row-gap: 0.16rem !important;
   width: 100% !important;
   min-height: 66px !important;
@@ -507,6 +507,12 @@ window.formspree =
   grid-column: 4 !important;
   grid-row: 1 !important;
   max-width: none !important;
+  margin: 0 !important;
+  color: #cbd5e1 !important;
+  font-size: 0.62rem !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  letter-spacing: 0.05em !important;
   text-align: right !important;
   white-space: nowrap !important;
 }
@@ -552,12 +558,13 @@ window.formspree =
 
 #randomLiveDjMatch .rrr-bpm-label {
   display: block;
-  margin-bottom: 0.18rem;
+  margin: 0 0 0.16rem !important;
+  color: #cbd5e1 !important;
   font-size: 0.62rem !important;
   font-weight: 800 !important;
   line-height: 1 !important;
-  letter-spacing: 0.05em;
-  opacity: 0.86;
+  letter-spacing: 0.05em !important;
+  opacity: 1 !important;
 }
 
 #randomLiveDjMatch .rrr-current-bpm {
@@ -606,12 +613,13 @@ window.formspree =
 #randomLiveDjTalk::before {
   content: "TALK";
   display: block;
-  margin-bottom: 0.18rem;
-  font-size: 0.62rem;
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: 0.05em;
-  opacity: 0.86;
+  margin: 0 0 0.16rem !important;
+  color: #cbd5e1 !important;
+  font-size: 0.62rem !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  letter-spacing: 0.05em !important;
+  opacity: 1 !important;
 }
 
 #randomLiveDjTalk.talk-low {
@@ -633,7 +641,7 @@ window.formspree =
 
 @media (max-width: 640px) {
   #randomLiveDjMatch.main-dj-match-score {
-    column-gap: 0.55rem !important;
+    column-gap: 0.42rem !important;
     min-height: 62px !important;
     padding: 0.5rem 0.68rem !important;
     font-size: 0.66rem !important;
@@ -648,11 +656,9 @@ window.formspree =
     font-size: 0.95rem;
   }
 
-  #randomLiveDjTalk::before {
-    font-size: 0.56rem;
-  }
-
-  #randomLiveDjMatch .rrr-bpm-label {
+  #randomLiveDjTalk::before,
+  #randomLiveDjMatch .rrr-bpm-label,
+  #randomLiveDjMatch .main-dj-match-label {
     font-size: 0.56rem !important;
   }
 
