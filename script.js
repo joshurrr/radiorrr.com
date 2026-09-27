@@ -1624,11 +1624,19 @@ document.addEventListener("DOMContentLoaded", function () {
       function showLiveDjPlayer(dj) {
         if (!liveDjVideo || !randomLiveDj) return;
 
-        // Preserve the current listener audio state before an automatic DJ
-        // handoff tears down the existing HLS attachment. Manual DJ selection
-        // already snapshots this state in its click handler.
+        // Preserve the listener's explicit audio choice across automatic DJ
+        // handoffs. HLS/browser recovery can temporarily flip video.muted, so
+        // prefer the persisted user choice instead of treating that transient
+        // muted state as a new request from the listener.
         if (activeLiveStreamKey && !livePlaybackHardRecoveryInProgress) {
-          userRequestedAudio = !liveDjVideo.muted;
+          const savedAudioChoice = liveDjVideo.dataset.rrrUserAudio;
+          if (savedAudioChoice === "1") {
+            userRequestedAudio = true;
+          } else if (savedAudioChoice === "0") {
+            userRequestedAudio = false;
+          } else {
+            userRequestedAudio = !liveDjVideo.muted;
+          }
           liveDjVideo.dataset.rrrUserAudio = userRequestedAudio ? "1" : "0";
           liveDjVideo.defaultMuted = !userRequestedAudio;
         }
