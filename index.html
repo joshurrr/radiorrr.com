@@ -978,7 +978,7 @@ window.formspree =
 })();
 </script>
 
-<script src="script.js?v=20260928.19"></script>
+<script src="script.js?v=20260928.20"></script>
 
 <script>
 /*
@@ -1146,11 +1146,14 @@ window.formspree =
     return Number.isFinite(rank) && rank > 0 ? Math.round(rank) : null;
   }
 
-  function renderProgramMatchState(matchEl, matchValueEl, percent, featuredRank) {
+  function renderProgramMatchState(matchEl, matchValueEl, percent, featuredRank, currentBpm) {
     const labelEl = matchEl.querySelector(".main-dj-match-label");
 
     if (featuredRank) {
       matchEl.classList.add("featured-override-active");
+      if (window.RadioRRRSetFeaturedHeroMode) {
+        window.RadioRRRSetFeaturedHeroMode(true, currentBpm);
+      }
       if (labelEl) labelEl.textContent = "FEATURED DJ 💪💪";
       matchValueEl.textContent = "";
       matchValueEl.classList.remove(
@@ -1164,6 +1167,9 @@ window.formspree =
     }
 
     matchEl.classList.remove("featured-override-active");
+    if (window.RadioRRRSetFeaturedHeroMode) {
+      window.RadioRRRSetFeaturedHeroMode(false);
+    }
     if (labelEl) labelEl.textContent = "🎯 CURRENT PROGRAM MATCH";
     matchValueEl.textContent = percent + "%";
     matchEl.title = "RRR genre compatibility score out of 100";
@@ -1224,6 +1230,9 @@ window.formspree =
 
       if (!item) {
         matchEl.classList.remove("featured-override-active");
+        if (window.RadioRRRSetFeaturedHeroMode) {
+          window.RadioRRRSetFeaturedHeroMode(false);
+        }
         const labelEl = matchEl.querySelector(".main-dj-match-label");
         if (labelEl) labelEl.textContent = "🎯 CURRENT PROGRAM MATCH";
         bpmEl.textContent = "";
@@ -1242,7 +1251,7 @@ window.formspree =
       if (Number.isFinite(matchScore)) {
         const percent = Math.max(0, Math.min(100, Math.round(matchScore)));
         const featuredRank = featuredRankForDisplayedDj(featuredDjs, data, item);
-        renderProgramMatchState(matchEl, matchValueEl, percent, featuredRank);
+        renderProgramMatchState(matchEl, matchValueEl, percent, featuredRank, item.bpm);
       }
 
       if (Number.isFinite(Number(item.bpm))) {

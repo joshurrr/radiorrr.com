@@ -443,7 +443,58 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const liveProgramTargetGenres =
         document.getElementById("liveProgramTargetGenres");
+      const heroProgramTargetLabel =
+        document.querySelector(".hero-program-target-row > strong");
+      const heroProgramBpm =
+        document.getElementById("heroProgramBpm");
       const heroProgramExplainer = document.getElementById("heroProgramExplainer");
+
+      let featuredHeroOverrideActive = false;
+      let featuredHeroGenres = [];
+      let featuredHeroBpm = "";
+
+      function applyFeaturedHeroOverride() {
+        if (!featuredHeroOverrideActive) return false;
+
+        if (heroProgramTargetLabel) {
+          heroProgramTargetLabel.textContent = "LIVE SOUND:";
+        }
+
+        if (liveProgramTargetGenres) {
+          liveProgramTargetGenres.innerHTML = featuredHeroGenres.length
+            ? featuredHeroGenres.map(getGenrePillHtml).join("")
+            : "";
+        }
+
+        if (heroProgramBpm) {
+          heroProgramBpm.textContent = featuredHeroBpm
+            ? "BPM " + featuredHeroBpm
+            : "";
+        }
+
+        if (heroProgramExplainer) {
+          heroProgramExplainer.textContent =
+            "Featured DJ is live — showing the sound currently being detected.";
+        }
+
+        return true;
+      }
+
+      window.RadioRRRSetFeaturedHeroMode = function (active, bpm) {
+        const nextActive = Boolean(active);
+        featuredHeroOverrideActive = nextActive;
+
+        if (nextActive) {
+          const bpmNumber = Number(bpm);
+          featuredHeroBpm = Number.isFinite(bpmNumber)
+            ? String(Math.round(bpmNumber))
+            : "";
+          applyFeaturedHeroOverride();
+        } else {
+          featuredHeroBpm = "";
+          updateTitles();
+        }
+      };
 
       const liveDjsList =
         document.getElementById("liveDjsList");
@@ -1204,6 +1255,11 @@ document.addEventListener("DOMContentLoaded", function () {
           ...genres.map(item => item.confidence),
           0.01
         );
+
+        featuredHeroGenres = genres.map(item =>
+          item.genre.replace(/^.*---/, "")
+        );
+        applyFeaturedHeroOverride();
 
         // New detector data is ready. Replace the old rows now, in the same
         // rendering turn, instead of leaving the panel empty during the fetch.
@@ -4046,8 +4102,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const heroGenres = block.genres.split("·").map(function (genre) { return genre.trim(); }).filter(Boolean);
-        if (liveProgramTargetGenres) {
-          liveProgramTargetGenres.innerHTML = heroGenres.map(getGenrePillHtml).join("");
+
+        if (featuredHeroOverrideActive) {
+          applyFeaturedHeroOverride();
+        } else {
+          if (heroProgramTargetLabel) {
+            heroProgramTargetLabel.textContent = "TARGET SOUND:";
+          }
+          if (liveProgramTargetGenres) {
+            liveProgramTargetGenres.innerHTML = heroGenres.map(getGenrePillHtml).join("");
+          }
         }
 
         // The listener starts with Radio RRR's tuned current-program sound.
