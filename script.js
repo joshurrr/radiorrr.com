@@ -493,6 +493,9 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
           featuredHeroBpm = "";
           updateTitles();
+          if (document.getElementById("rrrDjDiscovery")) {
+            renderDjDiscoveryProgramContext();
+          }
         }
       };
 
@@ -1260,6 +1263,13 @@ document.addEventListener("DOMContentLoaded", function () {
           item.genre.replace(/^.*---/, "")
         );
         applyFeaturedHeroOverride();
+
+        // Keep the CURRENT PROGRAM card in sync with a live Featured DJ.
+        // This only changes what the card displays; the listener's tuning
+        // preset and the scheduled program data remain untouched.
+        if (featuredHeroOverrideActive && document.getElementById("rrrDjDiscovery")) {
+          renderDjDiscoveryProgramContext();
+        }
 
         // New detector data is ready. Replace the old rows now, in the same
         // rendering turn, instead of leaving the panel empty during the fetch.
@@ -2633,6 +2643,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const addPanelEl = document.getElementById("djDiscoveryAddPanel");
         const addToggleEl = document.getElementById("djDiscoveryAddToggle");
         const addContentEl = document.getElementById("djDiscoveryAddContent");
+        const programNoteEl = document.querySelector("#rrrDjDiscovery .dj-discovery-program-note");
 
         if (nameEl) {
           nameEl.textContent = String(heroNowEl && heroNowEl.textContent || "CURRENT RADIO RRR PROGRAM").trim();
@@ -2643,12 +2654,24 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (genresEl) {
-          genresEl.innerHTML = djDiscoveryPresetGenres.length
-            ? djDiscoveryPresetGenres.map(genre =>
+          const displayedProgramGenres =
+            featuredHeroOverrideActive && featuredHeroGenres.length
+              ? featuredHeroGenres
+              : djDiscoveryPresetGenres;
+
+          genresEl.innerHTML = displayedProgramGenres.length
+            ? displayedProgramGenres.map(genre =>
                 '<span class="dj-discovery-program-chip ' + getGenreNeonClass(genre) + '">' +
                 escapeHtml(genre) + '</span>'
               ).join("")
             : '<span class="dj-discovery-selected-empty">Loading scheduled genres…</span>';
+        }
+
+        if (programNoteEl) {
+          programNoteEl.textContent =
+            featuredHeroOverrideActive && featuredHeroGenres.length
+              ? "Live sound detected from the Featured DJ"
+              : "Scheduled sound for this program";
         }
 
         if (stateEl) {
