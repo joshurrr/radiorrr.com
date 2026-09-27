@@ -2375,17 +2375,17 @@ document.addEventListener("DOMContentLoaded", function () {
             '</div>' +
             '<div class="dj-discovery-selected" id="djDiscoverySelected"></div>' +
           '</div>' +
-          '<div class="dj-discovery-section-title" id="djDiscoveryMatchesTitle">BEST LIVE MATCHES FOR THIS PROGRAM</div>' +
-          '<div class="dj-discovery-scan-status" id="djDiscoveryScanStatus" role="status" aria-live="polite"></div>' +
-          '<div class="dj-discovery-results" id="djDiscoveryResults"></div>' +
-          '<div class="dj-discovery-more-wrap" id="djDiscoveryMoreWrap"></div>' +
           '<div class="dj-discovery-add-panel" id="djDiscoveryAddPanel" hidden>' +
             '<button type="button" class="dj-discovery-add-toggle" id="djDiscoveryAddToggle" aria-expanded="false">＋ ADD ANOTHER GENRE</button>' +
             '<div class="dj-discovery-add-content" id="djDiscoveryAddContent" hidden>' +
               '<div class="dj-discovery-section-title dj-discovery-add-title">ADD TO YOUR SOUND</div>' +
               '<div class="dj-discovery-chips" id="djDiscoveryChips"></div>' +
             '</div>' +
-          '</div>';
+          '</div>' +
+          '<div class="dj-discovery-section-title" id="djDiscoveryMatchesTitle">BEST LIVE MATCHES FOR THIS PROGRAM</div>' +
+          '<div class="dj-discovery-scan-status" id="djDiscoveryScanStatus" role="status" aria-live="polite"></div>' +
+          '<div class="dj-discovery-results" id="djDiscoveryResults"></div>' +
+          '<div class="dj-discovery-more-wrap" id="djDiscoveryMoreWrap"></div>';
 
         const editSound = document.getElementById("djDiscoveryEditSound");
         if (editSound) {
