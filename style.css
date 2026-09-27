@@ -2210,6 +2210,147 @@
       }
     }
 
+
+    /* YOUR LIVE SOUND — editable Radio RRR preset + ranked live DJs */
+    .rrr-live-djs-data-grid {
+      display: none !important;
+    }
+
+    .dj-discovery-header {
+      margin-bottom: 0.9rem;
+    }
+
+    .dj-discovery-subtitle {
+      max-width: 760px;
+      line-height: 1.45;
+    }
+
+    .dj-discovery-recipe {
+      margin: 0 0 1rem;
+      padding: 0.75rem;
+      border: 1px solid rgba(34,211,238,0.28);
+      border-radius: 12px;
+      background: rgba(4,10,25,0.68);
+    }
+
+    .dj-discovery-recipe-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.65rem;
+      margin-bottom: 0.55rem;
+      flex-wrap: wrap;
+    }
+
+    .dj-discovery-recipe-label,
+    .dj-discovery-section-title {
+      color: #c7d2fe;
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .dj-discovery-reset {
+      border: 0;
+      padding: 0;
+      background: transparent;
+      color: #67e8f9;
+      font: inherit;
+      font-size: 0.68rem;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .dj-discovery-reset:hover,
+    .dj-discovery-reset:focus-visible {
+      color: #ffffff;
+      outline: none;
+    }
+
+    .dj-discovery-selected {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.38rem;
+      min-height: 1.8rem;
+    }
+
+    .dj-discovery-selected-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.34rem;
+      border: 1px solid rgba(var(--genre-neon-rgb, 34,211,238),0.9);
+      border-radius: 999px;
+      padding: 0.34rem 0.55rem 0.34rem 0.65rem;
+      background: linear-gradient(135deg, rgba(var(--genre-neon-rgb, 34,211,238),0.30), rgba(7,10,25,0.88));
+      color: var(--genre-text, #e0f2fe);
+      box-shadow: 0 0 10px rgba(var(--genre-neon-rgb, 34,211,238),0.38);
+      font-size: 0.7rem;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .dj-discovery-selected-chip span {
+      color: #ffffff;
+      font-size: 0.9rem;
+      line-height: 0.8;
+      opacity: 0.88;
+    }
+
+    .dj-discovery-selected-chip:hover,
+    .dj-discovery-selected-chip:focus-visible {
+      color: #ffffff;
+      box-shadow: 0 0 0 1px rgb(var(--genre-neon-rgb, 34,211,238)), 0 0 14px rgba(var(--genre-neon-rgb, 34,211,238),0.58);
+      outline: none;
+    }
+
+    .dj-discovery-selected-empty {
+      color: #94a3b8;
+      font-size: 0.74rem;
+      line-height: 1.4;
+    }
+
+    .dj-discovery-section-title {
+      margin: 0.85rem 0 0.45rem;
+    }
+
+    .dj-discovery-add-title {
+      margin-top: 1.15rem;
+    }
+
+    .dj-discovery-chips {
+      margin: 0.5rem 0 0;
+    }
+
+    .dj-discovery-rank {
+      float: right;
+      margin-left: 0.45rem;
+      color: #67e8f9;
+      font-size: 0.7rem;
+      font-weight: 900;
+    }
+
+    .dj-discovery-results {
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+
+    .dj-discovery-card {
+      position: relative;
+    }
+
+    @media (max-width: 560px) {
+      .dj-discovery-recipe {
+        padding: 0.65rem;
+      }
+
+      .dj-discovery-selected-chip,
+      .dj-discovery-chip {
+        min-height: 36px;
+      }
+    }
+
     /* SCHEDULE — spreadsheet / Excel-style grid */
     .schedule-table {
       overflow-x: auto;
