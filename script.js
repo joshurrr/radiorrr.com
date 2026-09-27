@@ -2347,7 +2347,7 @@ document.addEventListener("DOMContentLoaded", function () {
             '</div>' +
             '<div class="dj-discovery-selected" id="djDiscoverySelected"></div>' +
           '</div>' +
-          '<div class="dj-discovery-section-title">BEST LIVE MATCHES NOW</div>' +
+          '<div class="dj-discovery-section-title" id="djDiscoveryMatchesTitle">BEST LIVE MATCHES FOR RADIO RRR</div>' +
           '<div class="dj-discovery-scan-status" id="djDiscoveryScanStatus" role="status" aria-live="polite"></div>' +
           '<div class="dj-discovery-results" id="djDiscoveryResults"></div>' +
           '<div class="dj-discovery-section-title dj-discovery-add-title">ADD TO YOUR SOUND</div>' +
@@ -2484,9 +2484,19 @@ document.addEventListener("DOMContentLoaded", function () {
       function renderDjDiscoveryResults() {
         const resultsEl = document.getElementById("djDiscoveryResults");
         const statusEl = document.getElementById("djDiscoveryScanStatus");
+        const matchesTitleEl = document.getElementById("djDiscoveryMatchesTitle");
         if (!resultsEl || !statusEl) return;
 
         const selectedGenres = djDiscoverySelectedGenres.slice();
+        const usingRadioRrrPreset =
+          !djDiscoveryCustomised &&
+          sameDiscoveryGenreSet(selectedGenres, djDiscoveryPresetGenres);
+
+        if (matchesTitleEl) {
+          matchesTitleEl.textContent = usingRadioRrrPreset
+            ? "BEST LIVE MATCHES FOR RADIO RRR"
+            : "BEST LIVE MATCHES FOR YOUR SOUND";
+        }
 
         if (!selectedGenres.length) {
           statusEl.className = "dj-discovery-scan-status idle";
@@ -2497,47 +2507,67 @@ document.addEventListener("DOMContentLoaded", function () {
           return;
         }
 
-        const scanned = [];
-        const waiting = [];
+        const featuredIdentity = currentFeaturedDJ
+          ? getDJIdentity(currentFeaturedDJ)
+          : "";
+        const alternatives = djDiscoveryDJs.filter(
+          dj => !featuredIdentity || getDJIdentity(dj) !== featuredIdentity
+        );
 
-        djDiscoveryDJs.forEach(dj => {
-          const currentGenres = getLiveAIGenres(dj);
-          if (currentGenres.length) scanned.push(dj);
-          else waiting.push(dj);
-        });
+        let ranked = [];
+        let waitingCount = 0;
 
-        const usingRadioRrrPreset =
-          !djDiscoveryCustomised &&
-          sameDiscoveryGenreSet(selectedGenres, djDiscoveryPresetGenres);
+        if (usingRadioRrrPreset) {
+          // The untouched preset must mirror Radio RRR's real backend ordering.
+          // #1 is already the main live DJ above, so this grid begins at #2.
+          ranked = alternatives.map(dj => {
+            const programScore = Number(
+              currentLiveMatchScores[getDJMatchKey(dj)]
+            );
 
-        const ranked = scanned
-          .map(dj => {
-            let score = getLiveSoundMatchScore(dj, selectedGenres);
-
-            // While the listener is using the untouched Radio RRR preset,
-            // preserve the station's full tuned ranking from Stage 3. That
-            // score includes the backend's schedule weights and other live
-            // matching signals. Once the listener edits the recipe, ranking
-            // becomes browser-local and genre-only.
-            if (usingRadioRrrPreset) {
-              const programScore = Number(
-                currentLiveMatchScores[getDJMatchKey(dj)]
-              );
-              if (Number.isFinite(programScore)) {
-                score = Math.max(0, Math.min(100, programScore)) / 100;
-              }
+            return {
+              dj,
+              score: Number.isFinite(programScore)
+                ? Math.max(0, Math.min(100, programScore)) / 100
+                : null,
+              programScore: Number.isFinite(programScore) ? programScore : -1
+            };
+          }).sort((a, b) => {
+            if (b.programScore !== a.programScore) {
+              return b.programScore - a.programScore;
             }
 
-            return { dj, score };
-          })
-          .sort((a, b) => b.score - a.score ||
+            return String(a.dj.name || a.dj.username || "").localeCompare(
+              String(b.dj.name || b.dj.username || "")
+            );
+          });
+
+          waitingCount = ranked.filter(item => item.score === null).length;
+        } else {
+          // Once the listener edits the recipe, rank the same live alternatives
+          // against the selected genres using their current live AI detections.
+          const scanned = [];
+          const waiting = [];
+
+          alternatives.forEach(dj => {
+            const currentGenres = getLiveAIGenres(dj);
+            if (currentGenres.length) scanned.push(dj);
+            else waiting.push(dj);
+          });
+
+          ranked = scanned.map(dj => ({
+            dj,
+            score: getLiveSoundMatchScore(dj, selectedGenres)
+          })).sort((a, b) => b.score - a.score ||
             String(a.dj.name || a.dj.username || "").localeCompare(
               String(b.dj.name || b.dj.username || "")
             ));
 
+          waitingCount = waiting.length;
+        }
+
         const totalLive = djDiscoveryDJs.length;
-        const scannedCount = scanned.length;
-        const waitingCount = waiting.length;
+        const alternativeCount = alternatives.length;
 
         if (!totalLive) {
           statusEl.className = "dj-discovery-scan-status complete";
@@ -2546,28 +2576,34 @@ document.addEventListener("DOMContentLoaded", function () {
           return;
         }
 
-        if (waitingCount > 0) {
+        if (usingRadioRrrPreset) {
+          statusEl.className = waitingCount > 0
+            ? "dj-discovery-scan-status scanning"
+            : "dj-discovery-scan-status complete";
+          statusEl.innerHTML =
+            '<strong>#1 is playing now</strong> · showing ' + alternativeCount +
+            (alternativeCount === 1 ? ' ranked live alternative' : ' ranked live alternatives') +
+            (waitingCount > 0
+              ? ' · ' + waitingCount + (waitingCount === 1 ? ' awaiting a Program Match score' : ' awaiting Program Match scores')
+              : '');
+        } else if (waitingCount > 0) {
           statusEl.className = "dj-discovery-scan-status scanning";
           statusEl.innerHTML =
             '<span class="dj-discovery-scan-dot" aria-hidden="true"></span>' +
-            'Ranking <strong>' + scannedCount + ' of ' + totalLive +
-            '</strong> live DJs ' +
-            (usingRadioRrrPreset ? 'for the current Radio RRR program' : 'against your custom sound') +
-            ' · ' + waitingCount +
+            'Re-ranking <strong>' + ranked.length + ' of ' + alternativeCount +
+            '</strong> live alternatives against your custom sound · ' + waitingCount +
             (waitingCount === 1 ? ' awaiting genre data' : ' awaiting genre data');
         } else {
           statusEl.className = "dj-discovery-scan-status complete";
           statusEl.innerHTML =
-            'Ranked <strong>' + ranked.length + '</strong> live ' +
-            (ranked.length === 1 ? 'DJ' : 'DJs') +
-            (usingRadioRrrPreset
-              ? ' against the current Radio RRR program'
-              : ' against your custom sound');
+            'Re-ranked <strong>' + ranked.length + '</strong> live ' +
+            (ranked.length === 1 ? 'alternative' : 'alternatives') +
+            ' against your custom sound';
         }
 
         if (!ranked.length) {
           resultsEl.innerHTML =
-            '<div class="dj-discovery-empty">Live DJs are still waiting for current genre detections.</div>';
+            '<div class="dj-discovery-empty">Live alternatives are still waiting for current genre detections.</div>';
           return;
         }
 
@@ -2579,7 +2615,10 @@ document.addEventListener("DOMContentLoaded", function () {
           const username = getDJUsername(dj);
           const profilePic = dj.profile_pic || dj.profile_picture || dj.avatar || dj.photo || "";
           const liveGenres = getLiveAIGenres(dj).slice(0, 6);
-          const matchPercent = Math.max(0, Math.min(100, Math.round(item.score * 100)));
+          const hasScore = Number.isFinite(Number(item.score));
+          const matchPercent = hasScore
+            ? Math.max(0, Math.min(100, Math.round(Number(item.score) * 100)))
+            : null;
 
           const card = document.createElement("button");
           card.type = "button";
@@ -2590,8 +2629,13 @@ document.addEventListener("DOMContentLoaded", function () {
             ? '<img class="dj-discovery-thumb" src="' + escapeAttr(String(profilePic)) + '" alt="" loading="lazy">'
             : '<div class="dj-discovery-placeholder">🎧</div>';
 
+          const rankNumber = index + 2;
+          const matchText = matchPercent === null
+            ? '— ' + (usingRadioRrrPreset ? 'PROGRAM MATCH' : 'YOUR SOUND MATCH')
+            : matchPercent + '% ' + (usingRadioRrrPreset ? 'PROGRAM MATCH' : 'YOUR SOUND MATCH');
+
           card.innerHTML =
-            '<div class="dj-discovery-rank">#' + (index + 1) + '</div>' +
+            '<div class="dj-discovery-rank">#' + rankNumber + '</div>' +
             '<div class="dj-discovery-card-top">' + photo +
               '<div class="dj-discovery-name-wrap">' +
                 '<div class="dj-discovery-name" title="' + escapeAttr(name) + '">' + escapeHtml(name) + '</div>' +
@@ -2599,9 +2643,7 @@ document.addEventListener("DOMContentLoaded", function () {
               '</div>' +
             '</div>' +
             '<div class="dj-discovery-status live"><span class="dj-discovery-status-dot"></span>LIVE NOW</div>' +
-            '<div class="dj-discovery-match">' + matchPercent + '% ' +
-              (usingRadioRrrPreset ? 'PROGRAM MATCH' : 'YOUR SOUND MATCH') +
-            '</div>' +
+            '<div class="dj-discovery-match">' + matchText + '</div>' +
             '<div class="dj-discovery-genres" aria-label="Current live detected genres">' +
               liveGenres.map(getGenrePillHtml).join("") +
             '</div>' +
