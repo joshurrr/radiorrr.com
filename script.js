@@ -2602,10 +2602,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const done = document.getElementById("djDiscoveryDone");
         if (done) {
-          done.addEventListener("click", function () {
+          done.addEventListener("click", async function () {
             djDiscoveryEditorOpen = false;
             djDiscoveryAddGenresOpen = false;
             renderDjDiscoveryProgramContext();
+
+            // A custom recipe should immediately affect this listener's live
+            // playback, not just re-order the cards below. Pick the strongest
+            // currently detected custom-sound match and use the existing
+            // browser-local per-DJ relay. This must never change the shared
+            // Radio RRR station relay or MP3 stream.
+            if (djDiscoveryCustomised && djDiscoverySelectedGenres.length) {
+              await applyBestCustomSoundDj();
+            }
           });
         }
 
@@ -2902,6 +2911,63 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       }
 
+      async function applyBestCustomSoundDj() {
+        const selectedGenres = djDiscoverySelectedGenres.slice();
+        if (!selectedGenres.length || !djDiscoveryDJs.length) return false;
+
+        const ranked = djDiscoveryDJs.map(dj => ({
+          dj,
+          score: getLiveSoundMatchScore(dj, selectedGenres)
+        })).sort((a, b) => b.score - a.score ||
+          String(a.dj.name || a.dj.username || "").localeCompare(
+            String(b.dj.name || b.dj.username || "")
+          )
+        );
+
+        const best = ranked[0];
+        if (!best || !(best.score > 0)) {
+          renderDjDiscoveryResults();
+          return false;
+        }
+
+        const bestIdentity = getDJIdentity(best.dj);
+        if (!bestIdentity) return false;
+
+        if (currentFeaturedDJ && getDJIdentity(currentFeaturedDJ) === bestIdentity) {
+          renderDjDiscoveryResults();
+          return true;
+        }
+
+        if (liveDjVideo) {
+          userRequestedAudio = !liveDjVideo.muted;
+          liveDjVideo.dataset.rrrUserAudio = userRequestedAudio ? "1" : "0";
+          liveDjVideo.defaultMuted = !userRequestedAudio;
+        }
+
+        try {
+          manualFeaturedDJIdentity = bestIdentity;
+          manualFeaturedDJMissingCount = 0;
+          manualDJStreamFailureHandled = false;
+          currentFeaturedDJ = best.dj;
+          showLiveDjPlayer(best.dj);
+          await updateLiveGenresDetected(
+            null,
+            manualFeaturedDJIdentity,
+            "",
+            best.dj && best.dj.platform
+          );
+          await loadLiveDJs();
+          return true;
+        } catch (error) {
+          console.error("Radio RRR custom program auto-selection failed:", error);
+          manualFeaturedDJIdentity = "";
+          manualFeaturedDJMissingCount = 0;
+          manualDJStreamFailureHandled = false;
+          await loadLiveDJs();
+          return false;
+        }
+      }
+
       function renderDjDiscoveryResults() {
         const resultsEl = document.getElementById("djDiscoveryResults");
         const statusEl = document.getElementById("djDiscoveryScanStatus");
@@ -3016,11 +3082,13 @@ document.addEventListener("DOMContentLoaded", function () {
             ' live alternatives · ' + waitingCount +
             (waitingCount === 1 ? ' awaiting fresh genre data' : ' awaiting fresh genre data');
         } else {
+          const hasCustomMatch = ranked.some(item => Number(item.score) > 0);
           statusEl.className = "dj-discovery-scan-status complete";
-          statusEl.innerHTML =
-            '<strong>Live genre scan complete.</strong> Re-ranked ' + ranked.length + ' live ' +
-            (ranked.length === 1 ? 'alternative' : 'alternatives') +
-            ' against your custom sound';
+          statusEl.innerHTML = hasCustomMatch
+            ? '<strong>Live genre scan complete.</strong> Re-ranked ' + ranked.length + ' live ' +
+              (ranked.length === 1 ? 'alternative' : 'alternatives') +
+              ' against your custom sound'
+            : '<strong>No detected live match yet.</strong> Keeping the current DJ while live genre scans update.';
         }
 
         if (!ranked.length) {
