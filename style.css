@@ -8845,7 +8845,7 @@
 
 /* Mobile footer cleanup: hide scheduled genre bubbles only on phones. */
 @media (max-width: 767px) {
-  .rrr-footer-genres {
-    display: none;
+  body .rrr-footer .rrr-footer-genres {
+    display: none !important;
   }
 }
