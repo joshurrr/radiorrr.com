@@ -3395,30 +3395,57 @@ document.addEventListener("DOMContentLoaded", function () {
               ? ' · ' + waitingCount + (waitingCount === 1 ? ' awaiting a Program Match score' : ' awaiting Program Match scores')
               : '');
         } else if (waitingCount > 0) {
+          const customSoundLabel = selectedGenres.length === 1
+            ? selectedGenres[0]
+            : selectedGenres.slice(0, 2).join(" + ") + (selectedGenres.length > 2 ? " + more" : "");
+          const analysedCount = ranked.length;
+          const bestScore = ranked.length
+            ? Math.max(0, Math.round(Number(ranked[0].score || 0) * 100))
+            : 0;
           statusEl.className = "dj-discovery-scan-status scanning custom-retuning";
           statusEl.innerHTML =
             '<span class="dj-discovery-scan-dot" aria-hidden="true"></span>' +
             '<span class="dj-discovery-retune-copy">' +
-              '<strong>RETUNING YOUR SOUND</strong>' +
-              '<span>Radio RRR is rescanning live DJs for your new genre mix. ' +
-              'This can take a few minutes while fresh genre data comes in. ' +
+              '<strong>FINDING LIVE ' + escapeHtml(customSoundLabel.toUpperCase()) + ' DJs</strong>' +
+              '<span>Radio RRR is checking live DJs, analysing their current audio and ranking the best matches for your custom sound. ' +
               'The main DJ will change automatically when a better match is found.</span>' +
-              '<small>Currently ranked ' + ranked.length + ' of ' + alternativeCount +
-              ' live alternatives · ' + waitingCount +
-              (waitingCount === 1 ? ' awaiting fresh genre data' : ' awaiting fresh genre data') +
+              '<span class="dj-discovery-search-steps" aria-label="Live DJ search progress">' +
+                '<span class="done">✓ Live DJs found</span>' +
+                '<span class="active">● Analysing audio</span>' +
+                '<span>Comparing genres</span>' +
+                '<span>Ranking matches</span>' +
+              '</span>' +
+              '<small>' + analysedCount + ' of ' + alternativeCount + ' live alternatives analysed · ' + waitingCount +
+              (waitingCount === 1 ? ' waiting for fresh genre data' : ' waiting for fresh genre data') +
+              (bestScore > 0 ? ' · best detected match ' + bestScore + '%' : '') +
               '</small>' +
             '</span>';
         } else {
           const hasCustomMatch = ranked.some(item => Number(item.score) > 0);
+          const customSoundLabel = selectedGenres.length === 1
+            ? selectedGenres[0]
+            : selectedGenres.slice(0, 2).join(" + ") + (selectedGenres.length > 2 ? " + more" : "");
+          const bestScore = ranked.length
+            ? Math.max(0, Math.round(Number(ranked[0].score || 0) * 100))
+            : 0;
           statusEl.className = hasCustomMatch
             ? "dj-discovery-scan-status complete custom-active"
             : "dj-discovery-scan-status scanning custom-retuning";
           statusEl.innerHTML = hasCustomMatch
-            ? '<strong>✓ CUSTOM SOUND ACTIVE</strong> · Live DJs are ranked against your selected genres.'
+            ? '<strong>✓ CUSTOM SOUND ACTIVE</strong> · ' + ranked.length + ' live DJs analysed · best ' + bestScore + '% match for ' + escapeHtml(customSoundLabel) + '.'
             : '<span class="dj-discovery-scan-dot" aria-hidden="true"></span>' +
-              '<span class="dj-discovery-retune-copy"><strong>RETUNING YOUR SOUND</strong>' +
-              '<span>No detected live match yet. Radio RRR will keep rescanning live DJs; ' +
-              'this can take a few minutes after changing genres.</span></span>';
+              '<span class="dj-discovery-retune-copy">' +
+                '<strong>STILL SEARCHING FOR LIVE ' + escapeHtml(customSoundLabel.toUpperCase()) + '</strong>' +
+                '<span>No strong match has been detected yet. Radio RRR has analysed the currently available live DJs and will keep rescanning as fresh audio and genre data arrives. ' +
+                'The cards below are the best currently available candidates while the search continues.</span>' +
+                '<span class="dj-discovery-search-steps" aria-label="Live DJ search progress">' +
+                  '<span class="done">✓ Live DJs found</span>' +
+                  '<span class="done">✓ Audio analysed</span>' +
+                  '<span class="done">✓ Genres compared</span>' +
+                  '<span class="active">● Rescanning</span>' +
+                '</span>' +
+                '<small>' + ranked.length + ' live alternatives analysed · no positive genre match yet</small>' +
+              '</span>';
         }
 
         if (!ranked.length) {
