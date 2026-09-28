@@ -8713,3 +8713,40 @@
   }
 }
 
+
+/* 2026-09-28 — MOBILE ONLY: larger program name/time beside logo, with wrapping.
+   Desktop remains unchanged. */
+@media (max-width: 720px) {
+  .hero .hero-program-title-row {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.18rem;
+    min-width: 0;
+  }
+
+  .hero .hero-program-title-row .hero-main-message {
+    width: 100%;
+    min-width: 0;
+    font-size: clamp(1.02rem, 4.6vw, 1.28rem);
+    line-height: 1.08;
+    white-space: normal;
+    overflow-wrap: normal;
+    text-align: left;
+  }
+
+  .hero .hero-program-time {
+    margin: 0;
+    font-size: clamp(0.82rem, 3.7vw, 1rem);
+    line-height: 1.08;
+    white-space: nowrap;
+    text-align: left;
+  }
+
+  .hero .hero-program-time:not(:empty)::before {
+    content: none;
+    margin: 0;
+  }
+}
