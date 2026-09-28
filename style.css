@@ -8215,3 +8215,25 @@
   width: auto !important;
   margin: 0 !important;
 }
+
+/* 2026-09-28 — Best Live Matches: simplify the card footer.
+   The percentage already communicates the score, so remove the redundant bar
+   and make the Program Match label/value larger and equally sized. */
+#djDiscoveryResults.dj-discovery-results > .dj-discovery-card .dj-discovery-match-bar {
+  display: none !important;
+}
+
+#djDiscoveryResults.dj-discovery-results > .dj-discovery-card .dj-discovery-match-row {
+  bottom: 0.72rem !important;
+  gap: 0.22rem !important;
+  font-size: 0.56rem !important;
+  line-height: 1 !important;
+  letter-spacing: 0.01em !important;
+}
+
+#djDiscoveryResults.dj-discovery-results > .dj-discovery-card .dj-discovery-match-row > span,
+#djDiscoveryResults.dj-discovery-results > .dj-discovery-card .dj-discovery-match-value {
+  font-size: 0.56rem !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+}
