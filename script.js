@@ -2371,6 +2371,165 @@ document.addEventListener("DOMContentLoaded", function () {
       let customSoundAutoRetuneTimer = null;
       let customSoundAutoRetuneInFlight = false;
 
+      const DJ_DISCOVERY_SAVED_STATIONS_KEY = "radiorrr.savedStations.v1";
+      let djDiscoverySavedStations = loadDjDiscoverySavedStations();
+
+      function loadDjDiscoverySavedStations() {
+        try {
+          const parsed = JSON.parse(localStorage.getItem(DJ_DISCOVERY_SAVED_STATIONS_KEY) || "[]");
+          if (!Array.isArray(parsed)) return [];
+
+          return parsed.map(station => ({
+            id: String(station && station.id || ""),
+            name: String(station && station.name || "").trim(),
+            genres: uniqueDiscoveryGenres(station && station.genres),
+            bpmMin: station && station.bpmMin != null ? station.bpmMin : null,
+            bpmMax: station && station.bpmMax != null ? station.bpmMax : null,
+            avoidGenres: Array.isArray(station && station.avoidGenres) ? station.avoidGenres.slice() : [],
+            allowAiDjs: station && station.allowAiDjs !== false,
+            createdAt: String(station && station.createdAt || ""),
+            updatedAt: String(station && station.updatedAt || "")
+          })).filter(station => station.id && station.name && station.genres.length);
+        } catch (error) {
+          console.warn("Could not load saved Radio RRR stations:", error);
+          return [];
+        }
+      }
+
+      function persistDjDiscoverySavedStations() {
+        try {
+          localStorage.setItem(
+            DJ_DISCOVERY_SAVED_STATIONS_KEY,
+            JSON.stringify(djDiscoverySavedStations)
+          );
+          return true;
+        } catch (error) {
+          console.warn("Could not save Radio RRR stations:", error);
+          return false;
+        }
+      }
+
+      function makeSavedStationId() {
+        return "station_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
+      }
+
+      function defaultSavedStationName() {
+        const labels = uniqueDiscoveryGenres(djDiscoverySelectedGenres);
+        if (!labels.length) return "My Station";
+        if (labels.length === 1) return labels[0];
+        return labels.slice(0, 2).join(" + ");
+      }
+
+      function openDjDiscoveryStationModal() {
+        const modal = document.getElementById("djDiscoveryStationModal");
+        const input = document.getElementById("djDiscoveryStationName");
+        if (!modal || !input || !djDiscoverySelectedGenres.length) return;
+
+        input.value = defaultSavedStationName();
+        modal.hidden = false;
+        document.body.classList.add("rrr-station-modal-open");
+        window.setTimeout(function () {
+          input.focus();
+          input.select();
+        }, 0);
+      }
+
+      function closeDjDiscoveryStationModal() {
+        const modal = document.getElementById("djDiscoveryStationModal");
+        if (modal) modal.hidden = true;
+        document.body.classList.remove("rrr-station-modal-open");
+      }
+
+      function saveCurrentSoundAsStation(name) {
+        const stationName = String(name || "").trim().slice(0, 48);
+        const genres = uniqueDiscoveryGenres(djDiscoverySelectedGenres);
+        if (!stationName || !genres.length) return false;
+
+        const now = new Date().toISOString();
+        const existing = djDiscoverySavedStations.find(station =>
+          station.name.toLowerCase() === stationName.toLowerCase()
+        );
+
+        if (existing) {
+          existing.genres = genres.slice();
+          existing.updatedAt = now;
+        } else {
+          djDiscoverySavedStations.push({
+            id: makeSavedStationId(),
+            name: stationName,
+            genres: genres.slice(),
+            bpmMin: null,
+            bpmMax: null,
+            avoidGenres: [],
+            allowAiDjs: true,
+            createdAt: now,
+            updatedAt: now
+          });
+        }
+
+        if (!persistDjDiscoverySavedStations()) return false;
+        renderDjDiscoverySavedStations();
+        return true;
+      }
+
+      function renderDjDiscoverySavedStations() {
+        const wrap = document.getElementById("djDiscoverySavedStations");
+        const list = document.getElementById("djDiscoverySavedStationsList");
+        if (!wrap || !list) return;
+
+        if (!djDiscoverySavedStations.length) {
+          wrap.hidden = true;
+          list.innerHTML = "";
+          return;
+        }
+
+        wrap.hidden = false;
+        list.innerHTML = djDiscoverySavedStations.map(station =>
+          '<div class="dj-discovery-station-item">' +
+            '<button type="button" class="dj-discovery-station-load" data-load-station="' +
+              escapeAttr(station.id) + '" title="Load ' + escapeAttr(station.name) + '">' +
+              '<strong>' + escapeHtml(station.name) + '</strong>' +
+              '<span>' + escapeHtml(station.genres.join(" · ")) + '</span>' +
+            '</button>' +
+            '<button type="button" class="dj-discovery-station-delete" data-delete-station="' +
+              escapeAttr(station.id) + '" aria-label="Delete ' + escapeAttr(station.name) + '">×</button>' +
+          '</div>'
+        ).join("");
+
+        list.querySelectorAll("[data-load-station]").forEach(button => {
+          button.addEventListener("click", async function () {
+            const id = this.getAttribute("data-load-station") || "";
+            const station = djDiscoverySavedStations.find(item => item.id === id);
+            if (!station || !station.genres.length) return;
+
+            djDiscoverySelectedGenres = uniqueDiscoveryGenres(station.genres);
+            djDiscoveryCustomised = true;
+            djDiscoveryEditorOpen = false;
+            djDiscoveryAddGenresOpen = false;
+            djDiscoveryShowAll = false;
+
+            renderDjDiscoveryProgramContext();
+            renderDjDiscoverySelectedGenres();
+            renderDjDiscoveryChips();
+            renderDjDiscoveryResults();
+            await applyBestCustomSoundDj();
+          });
+        });
+
+        list.querySelectorAll("[data-delete-station]").forEach(button => {
+          button.addEventListener("click", function () {
+            const id = this.getAttribute("data-delete-station") || "";
+            const station = djDiscoverySavedStations.find(item => item.id === id);
+            if (!station) return;
+            if (!window.confirm('Delete saved station "' + station.name + '"?')) return;
+
+            djDiscoverySavedStations = djDiscoverySavedStations.filter(item => item.id !== id);
+            persistDjDiscoverySavedStations();
+            renderDjDiscoverySavedStations();
+          });
+        });
+      }
+
       function getDiscoveryGenres(dj) {
         // Detector history supplies the stable list of genre choices shown in
         // the selector. Current live matching below uses current-session scans.
@@ -2622,11 +2781,16 @@ document.addEventListener("DOMContentLoaded", function () {
               '</div>' +
               '<div class="dj-discovery-editor-actions">' +
                 '<button type="button" class="dj-discovery-reset" id="djDiscoveryReset">↺ RESET TO PROGRAM</button>' +
+                '<button type="button" class="dj-discovery-save-station" id="djDiscoverySaveStation" hidden>★ SAVE AS STATION</button>' +
                 '<button type="button" class="dj-discovery-retune" id="djDiscoveryRetune" hidden>☷ TUNE SOUND</button>' +
                 '<button type="button" class="dj-discovery-done" id="djDiscoveryDone">✓ DONE</button>' +
               '</div>' +
             '</div>' +
             '<div class="dj-discovery-selected" id="djDiscoverySelected"></div>' +
+          '</div>' +
+          '<div class="dj-discovery-saved-stations" id="djDiscoverySavedStations" hidden>' +
+            '<div class="dj-discovery-saved-title">MY STATIONS</div>' +
+            '<div class="dj-discovery-saved-list" id="djDiscoverySavedStationsList"></div>' +
           '</div>' +
           '<div class="dj-discovery-add-panel" id="djDiscoveryAddPanel" hidden>' +
             '<button type="button" class="dj-discovery-add-toggle" id="djDiscoveryAddToggle" aria-expanded="false">＋ ADD ANOTHER GENRE</button>' +
@@ -2642,7 +2806,21 @@ document.addEventListener("DOMContentLoaded", function () {
           '<div class="dj-discovery-section-title" id="djDiscoveryMatchesTitle">BEST LIVE MATCHES FOR THIS PROGRAM</div>' +
           '<div class="dj-discovery-scan-status" id="djDiscoveryScanStatus" role="status" aria-live="polite"></div>' +
           '<div class="dj-discovery-results" id="djDiscoveryResults"></div>' +
-          '<div class="dj-discovery-more-wrap" id="djDiscoveryMoreWrap"></div>';
+          '<div class="dj-discovery-more-wrap" id="djDiscoveryMoreWrap"></div>' +
+          '<div class="dj-discovery-station-modal" id="djDiscoveryStationModal" hidden>' +
+            '<div class="dj-discovery-station-modal-card" role="dialog" aria-modal="true" aria-labelledby="djDiscoveryStationModalTitle">' +
+              '<div class="dj-discovery-station-modal-title" id="djDiscoveryStationModalTitle">SAVE AS STATION</div>' +
+              '<div class="dj-discovery-station-modal-copy">Save this sound in this browser so you can retune to it later.</div>' +
+              '<form id="djDiscoveryStationForm">' +
+                '<label for="djDiscoveryStationName">Station name</label>' +
+                '<input type="text" id="djDiscoveryStationName" maxlength="48" autocomplete="off" required>' +
+                '<div class="dj-discovery-station-modal-actions">' +
+                  '<button type="button" class="dj-discovery-station-cancel" id="djDiscoveryStationCancel">CANCEL</button>' +
+                  '<button type="submit" class="dj-discovery-station-confirm">★ SAVE STATION</button>' +
+                '</div>' +
+              '</form>' +
+            '</div>' +
+          '</div>';
 
         const editSound = document.getElementById("djDiscoveryEditSound");
         if (editSound) {
@@ -2671,6 +2849,37 @@ document.addEventListener("DOMContentLoaded", function () {
             renderDjDiscoveryProgramContext();
             renderDjDiscoverySelectedGenres();
             renderDjDiscoveryChips();
+          });
+        }
+
+        const saveStation = document.getElementById("djDiscoverySaveStation");
+        if (saveStation) {
+          saveStation.addEventListener("click", openDjDiscoveryStationModal);
+        }
+
+        const stationModal = document.getElementById("djDiscoveryStationModal");
+        const stationCancel = document.getElementById("djDiscoveryStationCancel");
+        const stationForm = document.getElementById("djDiscoveryStationForm");
+        if (stationCancel) {
+          stationCancel.addEventListener("click", closeDjDiscoveryStationModal);
+        }
+        if (stationModal) {
+          stationModal.addEventListener("click", function (event) {
+            if (event.target === stationModal) closeDjDiscoveryStationModal();
+          });
+        }
+        if (stationForm) {
+          stationForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const input = document.getElementById("djDiscoveryStationName");
+            const name = input ? input.value : "";
+            if (!String(name || "").trim()) {
+              if (input) input.focus();
+              return;
+            }
+            if (saveCurrentSoundAsStation(name)) {
+              closeDjDiscoveryStationModal();
+            }
           });
         }
 
@@ -2734,6 +2943,7 @@ document.addEventListener("DOMContentLoaded", function () {
         renderDjDiscoverySelectedGenres();
         renderDjDiscoveryChips();
         renderDjDiscoveryResults();
+        renderDjDiscoverySavedStations();
       }
 
       function renderDjDiscoveryProgramContext() {
@@ -2748,6 +2958,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const editorTitleEl = document.getElementById("djDiscoveryEditorTitle");
         const editorSubtitleEl = document.getElementById("djDiscoveryEditorSubtitle");
         const retuneEl = document.getElementById("djDiscoveryRetune");
+        const saveStationEl = document.getElementById("djDiscoverySaveStation");
         const doneEl = document.getElementById("djDiscoveryDone");
         const resetEl = document.getElementById("djDiscoveryReset");
         const addPanelEl = document.getElementById("djDiscoveryAddPanel");
@@ -2834,6 +3045,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (retuneEl) {
           retuneEl.hidden = djDiscoveryEditorOpen || !djDiscoveryCustomised;
+        }
+
+        if (saveStationEl) {
+          saveStationEl.hidden = djDiscoveryEditorOpen || !djDiscoveryCustomised || !djDiscoverySelectedGenres.length;
         }
 
         if (doneEl) {

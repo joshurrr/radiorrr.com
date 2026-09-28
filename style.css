@@ -8237,3 +8237,243 @@
   line-height: 1 !important;
   font-weight: 900 !important;
 }
+
+/* 2026-09-28 — Browser-local saved stations for Custom Program. */
+#rrrDjDiscovery .dj-discovery-save-station {
+  min-height: 38px;
+  padding: 0.5rem 0.72rem;
+  border: 1px solid rgba(250,204,21,0.68);
+  border-radius: 9px;
+  background: linear-gradient(135deg, rgba(120,82,8,0.34), rgba(67,56,202,0.34));
+  color: #fff7bf;
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.045em;
+  cursor: pointer;
+  box-shadow: 0 0 9px rgba(250,204,21,0.14);
+}
+
+#rrrDjDiscovery .dj-discovery-save-station:hover,
+#rrrDjDiscovery .dj-discovery-save-station:focus-visible {
+  border-color: #fde68a;
+  box-shadow: 0 0 14px rgba(250,204,21,0.30);
+  outline: none;
+}
+
+#rrrDjDiscovery .dj-discovery-save-station[hidden] {
+  display: none !important;
+}
+
+#rrrDjDiscovery .dj-discovery-saved-stations {
+  margin: 0 0 0.9rem;
+  padding: 0.75rem 0.82rem;
+  border: 1px solid rgba(129,140,248,0.28);
+  border-radius: 11px;
+  background: rgba(7,12,30,0.66);
+}
+
+#rrrDjDiscovery .dj-discovery-saved-stations[hidden] {
+  display: none !important;
+}
+
+#rrrDjDiscovery .dj-discovery-saved-title {
+  margin-bottom: 0.5rem;
+  color: #a5b4fc;
+  font-size: 0.63rem;
+  font-weight: 950;
+  letter-spacing: 0.085em;
+}
+
+#rrrDjDiscovery .dj-discovery-saved-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.48rem;
+}
+
+#rrrDjDiscovery .dj-discovery-station-item {
+  display: inline-flex;
+  min-width: 0;
+  border: 1px solid rgba(34,211,238,0.42);
+  border-radius: 10px;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(8,28,44,0.88), rgba(22,12,44,0.88));
+  box-shadow: 0 0 9px rgba(34,211,238,0.08);
+}
+
+#rrrDjDiscovery .dj-discovery-station-load,
+#rrrDjDiscovery .dj-discovery-station-delete {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+#rrrDjDiscovery .dj-discovery-station-load {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  max-width: 240px;
+  padding: 0.48rem 0.62rem;
+  text-align: left;
+}
+
+#rrrDjDiscovery .dj-discovery-station-load strong {
+  max-width: 100%;
+  overflow: hidden;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#rrrDjDiscovery .dj-discovery-station-load span {
+  max-width: 100%;
+  overflow: hidden;
+  color: #9dd9e8;
+  font-size: 0.61rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#rrrDjDiscovery .dj-discovery-station-load:hover,
+#rrrDjDiscovery .dj-discovery-station-load:focus-visible {
+  background: rgba(34,211,238,0.09);
+  outline: none;
+}
+
+#rrrDjDiscovery .dj-discovery-station-delete {
+  width: 30px;
+  border-left: 1px solid rgba(129,140,248,0.22);
+  color: #94a3b8;
+  font-size: 1rem;
+}
+
+#rrrDjDiscovery .dj-discovery-station-delete:hover,
+#rrrDjDiscovery .dj-discovery-station-delete:focus-visible {
+  background: rgba(239,68,68,0.12);
+  color: #fecaca;
+  outline: none;
+}
+
+.rrr-station-modal-open {
+  overflow: hidden;
+}
+
+#rrrDjDiscovery .dj-discovery-station-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(2,4,12,0.82);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+#rrrDjDiscovery .dj-discovery-station-modal[hidden] {
+  display: none !important;
+}
+
+#rrrDjDiscovery .dj-discovery-station-modal-card {
+  width: min(100%, 420px);
+  padding: 1rem;
+  border: 1px solid rgba(34,211,238,0.68);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(7,18,38,0.98), rgba(14,7,32,0.98));
+  box-shadow: 0 0 28px rgba(34,211,238,0.20), 0 0 32px rgba(168,85,247,0.16);
+  text-align: left;
+}
+
+#rrrDjDiscovery .dj-discovery-station-modal-title {
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 950;
+  letter-spacing: 0.06em;
+}
+
+#rrrDjDiscovery .dj-discovery-station-modal-copy {
+  margin: 0.3rem 0 0.8rem;
+  color: #aab7d6;
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
+#rrrDjDiscovery .dj-discovery-station-modal label {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: #dbeafe;
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+#rrrDjDiscovery .dj-discovery-station-modal input {
+  width: 100%;
+  padding: 0.65rem 0.72rem;
+  border: 1px solid rgba(129,140,248,0.56);
+  border-radius: 9px;
+  background: rgba(3,7,18,0.94);
+  color: #ffffff;
+  font: inherit;
+  outline: none;
+}
+
+#rrrDjDiscovery .dj-discovery-station-modal input:focus {
+  border-color: #67e8f9;
+  box-shadow: 0 0 0 2px rgba(34,211,238,0.10), 0 0 10px rgba(34,211,238,0.18);
+}
+
+#rrrDjDiscovery .dj-discovery-station-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.55rem;
+  margin-top: 0.85rem;
+}
+
+#rrrDjDiscovery .dj-discovery-station-cancel,
+#rrrDjDiscovery .dj-discovery-station-confirm {
+  min-height: 36px;
+  padding: 0.46rem 0.66rem;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+#rrrDjDiscovery .dj-discovery-station-cancel {
+  border: 1px solid rgba(148,163,184,0.38);
+  background: rgba(15,23,42,0.86);
+  color: #cbd5e1;
+}
+
+#rrrDjDiscovery .dj-discovery-station-confirm {
+  border: 1px solid rgba(250,204,21,0.68);
+  background: linear-gradient(135deg, rgba(120,82,8,0.42), rgba(67,56,202,0.42));
+  color: #fff7bf;
+}
+
+@media (max-width: 640px) {
+  #rrrDjDiscovery .dj-discovery-save-station,
+  #rrrDjDiscovery .dj-discovery-retune,
+  #rrrDjDiscovery .dj-discovery-done {
+    width: 100%;
+  }
+
+  #rrrDjDiscovery .dj-discovery-saved-list {
+    flex-direction: column;
+  }
+
+  #rrrDjDiscovery .dj-discovery-station-item,
+  #rrrDjDiscovery .dj-discovery-station-load {
+    width: 100%;
+    max-width: none;
+  }
+}
+
