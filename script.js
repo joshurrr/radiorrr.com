@@ -698,6 +698,11 @@ document.addEventListener("DOMContentLoaded", function () {
           path: "/tools/dj-speech-detector/",
           title: "DJ Speech Detector – Detect Talking in Live DJ Streams | Radio RRR",
           description: "Detect talking in live DJ streams with voice-versus-music analysis that measures repeated microphone speech and music ducking."
+        },
+        "stuck-frame-effect": {
+          path: "/tools/stuck-frame-effect/",
+          title: "Stuck Frame Effect – Beat-Synced Video Freeze Tool | Radio RRR",
+          description: "Upload a video and automatically create short stuck-frame freezes synchronised to the detected beat."
         }
       };
 
@@ -4713,6 +4718,143 @@ document.addEventListener("DOMContentLoaded", function () {
             detectStreamBpm();
           }
         });
+      }
+
+
+
+      /* RRR TOOLS — STUCK FRAME EFFECT */
+      const stuckFrameVideo = document.getElementById("stuckFrameVideo");
+      const stuckFrameStart = document.getElementById("stuckFrameStart");
+      const stuckFrameFileName = document.getElementById("stuckFrameFileName");
+      const stuckFrameStatus = document.getElementById("stuckFrameStatus");
+      const stuckFrameProgress = document.getElementById("stuckFrameProgress");
+      const stuckFrameDownload = document.getElementById("stuckFrameDownload");
+      let stuckFrameDownloadUrl = "";
+
+      function setStuckFrameStatus(message, state) {
+        if (!stuckFrameStatus) return;
+        stuckFrameStatus.textContent = message;
+        stuckFrameStatus.classList.remove("error", "success");
+        if (state) stuckFrameStatus.classList.add(state);
+      }
+
+      function clearStuckFrameDownload() {
+        if (stuckFrameDownloadUrl) {
+          URL.revokeObjectURL(stuckFrameDownloadUrl);
+          stuckFrameDownloadUrl = "";
+        }
+        if (stuckFrameDownload) {
+          stuckFrameDownload.hidden = true;
+          stuckFrameDownload.removeAttribute("href");
+          stuckFrameDownload.removeAttribute("download");
+        }
+      }
+
+      function selectedStuckFrameFile() {
+        return stuckFrameVideo && stuckFrameVideo.files && stuckFrameVideo.files[0]
+          ? stuckFrameVideo.files[0]
+          : null;
+      }
+
+      if (stuckFrameVideo) {
+        stuckFrameVideo.addEventListener("change", function () {
+          clearStuckFrameDownload();
+          const file = selectedStuckFrameFile();
+
+          if (!file) {
+            if (stuckFrameFileName) stuckFrameFileName.textContent = "No video selected.";
+            if (stuckFrameStart) stuckFrameStart.disabled = true;
+            setStuckFrameStatus("MP4, MOV, M4V, WebM and MKV videos are supported. Maximum upload size: 100 MB.");
+            return;
+          }
+
+          if (stuckFrameFileName) {
+            const sizeMb = file.size / (1024 * 1024);
+            stuckFrameFileName.textContent = file.name + " · " + sizeMb.toFixed(1) + " MB";
+          }
+
+          if (file.size > 100 * 1024 * 1024) {
+            if (stuckFrameStart) stuckFrameStart.disabled = true;
+            setStuckFrameStatus("This video is larger than the 100 MB upload limit.", "error");
+            return;
+          }
+
+          if (stuckFrameStart) stuckFrameStart.disabled = false;
+          setStuckFrameStatus("Ready to analyse the beat and render the stuck-frame effect.");
+        });
+      }
+
+      async function createStuckFrameEffect() {
+        const file = selectedStuckFrameFile();
+        if (!file || !stuckFrameStart) return;
+
+        if (file.size > 100 * 1024 * 1024) {
+          setStuckFrameStatus("This video is larger than the 100 MB upload limit.", "error");
+          return;
+        }
+
+        clearStuckFrameDownload();
+        stuckFrameStart.disabled = true;
+        stuckFrameStart.textContent = "Processing…";
+        if (stuckFrameProgress) stuckFrameProgress.hidden = false;
+        setStuckFrameStatus("Uploading the video, detecting the beat and rendering the effect. This can take a minute or two.");
+
+        try {
+          const response = await fetch(
+            "https://api.radiorrr.com/api/tools/stuck-frame-effect",
+            {
+              method: "POST",
+              cache: "no-store",
+              headers: {
+                "Content-Type": file.type || "application/octet-stream",
+                "X-RRR-Filename": encodeURIComponent(file.name)
+              },
+              body: file
+            }
+          );
+
+          if (!response.ok) {
+            let detail = "";
+            try {
+              const data = await response.json();
+              detail = data && data.detail ? String(data.detail) : "";
+            } catch (e) {
+              try { detail = await response.text(); } catch (ignore) {}
+            }
+            throw new Error(detail || "Could not process this video.");
+          }
+
+          const blob = await response.blob();
+          if (!blob.size) {
+            throw new Error("The processed video was empty.");
+          }
+
+          stuckFrameDownloadUrl = URL.createObjectURL(blob);
+          const originalBase = file.name.replace(/\.[^.]+$/, "") || "video";
+          if (stuckFrameDownload) {
+            stuckFrameDownload.href = stuckFrameDownloadUrl;
+            stuckFrameDownload.download = originalBase + "-stuck-frame.mp4";
+            stuckFrameDownload.hidden = false;
+          }
+
+          setStuckFrameStatus(
+            "Effect complete. The stuck frames are synchronised to the detected beat.",
+            "success"
+          );
+        } catch (error) {
+          setStuckFrameStatus(
+            error && error.message ? error.message : "Could not process this video.",
+            "error"
+          );
+        } finally {
+          stuckFrameStart.disabled = !selectedStuckFrameFile();
+          stuckFrameStart.textContent = "Create Effect";
+          if (stuckFrameProgress) stuckFrameProgress.hidden = true;
+        }
+      }
+
+      if (stuckFrameStart) {
+        stuckFrameStart.addEventListener("click", createStuckFrameEffect);
       }
 
 
