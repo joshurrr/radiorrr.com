@@ -2904,9 +2904,9 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
             djDiscoveryShowAll = false;
-            if (djDiscoveryCustomised && djDiscoverySelectedGenres.length) {
-              djDiscoveryAddGenresOpen = false;
-            }
+            // Removing a selected genre must not collapse the available-genre
+            // picker. Keep the tuning palette open so the listener can remove
+            // several genres or immediately choose replacements.
             renderDjDiscoveryProgramContext();
             renderDjDiscoverySelectedGenres();
             renderDjDiscoveryChips();
