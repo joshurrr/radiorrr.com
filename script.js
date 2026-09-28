@@ -4560,7 +4560,7 @@ document.addEventListener("DOMContentLoaded", function () {
           if (cells.length < 4) return;
 
           const dayText = cells[0].textContent.trim().toUpperCase();
-          const timeText = cells[1].textContent.trim();
+          const timeText = cells[2].textContent.trim();
 
           const currentDayName = publicDayName(dayIndex).toUpperCase();
           const matchesDay =
