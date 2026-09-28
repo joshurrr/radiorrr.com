@@ -2464,6 +2464,40 @@ document.addEventListener("DOMContentLoaded", function () {
         return total / selected.length;
       }
 
+      function getLiveSoundMatchEvidence(dj, selectedGenres) {
+        const selected = Array.isArray(selectedGenres) ? selectedGenres : [];
+        const raw = Array.isArray(dj && dj.ai_genres) ? dj.ai_genres : [];
+
+        return selected.map(selectedGenre => {
+          let bestConfidence = 0;
+          let bestDetectedGenre = "";
+
+          raw.forEach(item => {
+            const rawGenre = item && typeof item === "object" ? item.genre : item;
+            if (!liveGenreMatchesSelection(rawGenre, selectedGenre)) return;
+
+            let confidence = Number(
+              item && typeof item === "object" ? item.confidence : 0
+            );
+            if (confidence > 1 && confidence <= 100) confidence /= 100;
+            if (!Number.isFinite(confidence)) confidence = 0;
+            confidence = Math.max(0, Math.min(1, confidence));
+
+            if (confidence >= bestConfidence) {
+              bestConfidence = confidence;
+              bestDetectedGenre = String(rawGenre || "").split("---").pop().trim();
+            }
+          });
+
+          return {
+            selectedGenre: String(selectedGenre || "").trim(),
+            detectedGenre: bestDetectedGenre,
+            confidence: bestConfidence,
+            matched: Boolean(bestDetectedGenre)
+          };
+        });
+      }
+
       window.RadioRRRGetCustomSoundMatchState = function (username, platform) {
         if (!djDiscoveryCustomised || !djDiscoverySelectedGenres.length) {
           return { active: false, score: null };
@@ -3182,7 +3216,19 @@ document.addEventListener("DOMContentLoaded", function () {
           const name = String(dj.name || dj.display_name || dj.username || "DJ").trim();
           const username = getDJUsername(dj);
           const profilePic = dj.profile_pic || dj.profile_picture || dj.avatar || dj.photo || "";
-          const liveGenres = getLiveAIGenres(dj).slice(0, 6);
+          const allLiveGenres = getLiveAIGenres(dj);
+          const customEvidence = usingRadioRrrPreset
+            ? []
+            : getLiveSoundMatchEvidence(dj, selectedGenres);
+          const customHits = customEvidence.filter(entry => entry.matched);
+          const matchedDetectedKeys = new Set(
+            customHits.map(entry => normaliseDiscoveryGenre(entry.detectedGenre))
+          );
+          const liveGenres = usingRadioRrrPreset
+            ? allLiveGenres.slice(0, 6)
+            : allLiveGenres.filter(genre =>
+                !matchedDetectedKeys.has(normaliseDiscoveryGenre(genre))
+              ).slice(0, Math.max(0, 6 - customHits.length));
           const hasScore = Number.isFinite(Number(item.score));
           const matchPercent = hasScore
             ? Math.max(0, Math.min(100, Math.round(Number(item.score) * 100)))
@@ -3191,6 +3237,9 @@ document.addEventListener("DOMContentLoaded", function () {
           const card = document.createElement("button");
           card.type = "button";
           card.className = "dj-discovery-card is-live dj-discovery-live-select";
+          if (!usingRadioRrrPreset) {
+            card.classList.add(customHits.length ? "has-custom-hit" : "no-custom-hit");
+          }
           card.setAttribute("aria-label", "Play " + name + " in this browser");
 
           const photo = profilePic
@@ -3209,6 +3258,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 : 'match-low';
           const matchFillWidth = matchPercent === null ? 0 : matchPercent;
 
+          const customGenreEvidenceHtml = usingRadioRrrPreset
+            ? ""
+            : (customHits.length
+                ? customHits.map(entry => {
+                    const percent = Math.round(entry.confidence * 100);
+                    const title = entry.detectedGenre &&
+                      normaliseDiscoveryGenre(entry.detectedGenre) !== normaliseDiscoveryGenre(entry.selectedGenre)
+                        ? entry.selectedGenre + " matched " + entry.detectedGenre + " at " + percent + "%"
+                        : entry.selectedGenre + " detected at " + percent + "%";
+                    return '<span class="dj-discovery-custom-hit ' + getGenreNeonClass(entry.selectedGenre) +
+                      '" title="' + escapeAttr(title) + '">✓ ' +
+                      escapeHtml(entry.selectedGenre) + ' ' + percent + '%</span>';
+                  }).join("")
+                : '<span class="dj-discovery-custom-miss">NO SELECTED GENRE DETECTED YET</span>');
+
           card.innerHTML =
             '<div class="dj-discovery-rank">#' + rankNumber + '</div>' +
             '<div class="dj-discovery-card-top">' + photo +
@@ -3221,6 +3285,7 @@ document.addEventListener("DOMContentLoaded", function () {
             getDJPlatformBadgeHtml(dj, "dj-discovery-platform") +
             '<div class="dj-discovery-status live"><span class="dj-discovery-status-dot"></span>LIVE NOW</div>' +
             '<div class="dj-discovery-genres" aria-label="Current live detected genres">' +
+              customGenreEvidenceHtml +
               liveGenres.map(getGenrePillHtml).join("") +
             '</div>' +
             '<div class="dj-discovery-match-row">' +

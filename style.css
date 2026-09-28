@@ -8122,3 +8122,44 @@
     font-size: 0.82rem;
   }
 }
+
+/* 2026-09-28 — Custom Program cards: show the selected-genre evidence first.
+   This is presentation only; the existing live AI data and custom score still
+   own ranking. A selected-genre hit is pulled into view even when it would
+   otherwise fall outside the card's first few detected-genre pills. */
+#djDiscoveryResults .dj-discovery-card.has-custom-hit {
+  border-color: rgba(52,211,153,0.72) !important;
+  box-shadow: 0 0 14px rgba(52,211,153,0.16) !important;
+}
+
+#djDiscoveryResults .dj-discovery-custom-hit,
+#djDiscoveryResults .dj-discovery-custom-miss {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  max-width: 100%;
+  min-height: 1.02rem;
+  padding: 0.16rem 0.34rem;
+  border-radius: 999px;
+  font-size: 0.48rem;
+  font-weight: 950;
+  line-height: 1;
+  letter-spacing: 0.025em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#djDiscoveryResults .dj-discovery-custom-hit {
+  border: 1px solid rgba(var(--genre-neon-rgb,34,211,238),0.95);
+  background: rgba(var(--genre-neon-rgb,34,211,238),0.24);
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(var(--genre-neon-rgb,34,211,238),0.45);
+}
+
+#djDiscoveryResults .dj-discovery-custom-miss {
+  border: 1px solid rgba(148,163,184,0.48);
+  background: rgba(15,23,42,0.78);
+  color: #cbd5e1;
+  box-shadow: none;
+}
