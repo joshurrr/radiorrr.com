@@ -8901,3 +8901,10 @@
     display: inline;
   }
 }
+
+/* 2026-09-28 desktop hero program time matches program name size. */
+@media (min-width: 721px) {
+  .hero .hero-program-time {
+    font-size: clamp(1.2rem, 2.1vw, 1.75rem);
+  }
+}
