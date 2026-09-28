@@ -1177,6 +1177,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (manualDJStreamFailureHandled) return true;
 
         manualDJStreamFailureHandled = true;
+        clearManualDJHold();
         manualFeaturedDJIdentity = "";
         manualFeaturedDJMissingCount = 0;
 
@@ -2139,6 +2140,52 @@ document.addEventListener("DOMContentLoaded", function () {
       let currentFeaturedDJ = null;
       let manualFeaturedDJIdentity = "";
       let manualFeaturedDJMissingCount = 0;
+
+      // A listener can temporarily override the automatic/custom-program DJ
+      // choice by clicking any live DJ card. Keep that browser-local choice
+      // for 15 minutes, then release it so normal Radio RRR programming and
+      // custom-sound auto-selection can take over again.
+      const MANUAL_DJ_HOLD_MS = 15 * 60 * 1000;
+      let manualDJHoldUntil = 0;
+      let manualDJHoldTimer = null;
+
+      function clearManualDJHold() {
+        manualDJHoldUntil = 0;
+        if (manualDJHoldTimer) {
+          window.clearTimeout(manualDJHoldTimer);
+          manualDJHoldTimer = null;
+        }
+      }
+
+      function isManualDJHoldActive() {
+        return Boolean(
+          manualFeaturedDJIdentity &&
+          manualDJHoldUntil &&
+          Date.now() < manualDJHoldUntil
+        );
+      }
+
+      function releaseManualDJHold() {
+        clearManualDJHold();
+        if (!manualFeaturedDJIdentity) return;
+
+        manualFeaturedDJIdentity = "";
+        manualFeaturedDJMissingCount = 0;
+        manualDJStreamFailureHandled = false;
+
+        // First return this browser to the station/default relay. loadLiveDJs()
+        // will then schedule the normal custom-sound retune again when relevant.
+        loadLiveDJs();
+      }
+
+      function startManualDJHold() {
+        clearManualDJHold();
+        manualDJHoldUntil = Date.now() + MANUAL_DJ_HOLD_MS;
+        manualDJHoldTimer = window.setTimeout(
+          releaseManualDJHold,
+          MANUAL_DJ_HOLD_MS
+        );
+      }
 
       function getDJUsername(dj) {
         return String(
@@ -3306,6 +3353,8 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       async function applyBestCustomSoundDj() {
+        if (isManualDJHoldActive()) return false;
+
         const selectedGenres = djDiscoverySelectedGenres.slice();
         if (!selectedGenres.length || !djDiscoveryDJs.length) return false;
 
@@ -3369,6 +3418,11 @@ document.addEventListener("DOMContentLoaded", function () {
           customSoundAutoRetuneTimer = null;
         }
 
+        // Do not let the recurring custom-program ranking immediately replace
+        // a DJ that the listener explicitly selected. When the 15-minute hold
+        // expires, releaseManualDJHold() returns control to automatic tuning.
+        if (isManualDJHoldActive()) return;
+
         if (
           !djDiscoveryCustomised ||
           djDiscoveryEditorOpen ||
@@ -3380,7 +3434,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         customSoundAutoRetuneTimer = window.setTimeout(async function () {
           customSoundAutoRetuneTimer = null;
-          if (customSoundAutoRetuneInFlight) return;
+          if (customSoundAutoRetuneInFlight || isManualDJHoldActive()) return;
           customSoundAutoRetuneInFlight = true;
           try {
             await applyBestCustomSoundDj();
@@ -3662,6 +3716,7 @@ document.addEventListener("DOMContentLoaded", function () {
               manualFeaturedDJIdentity = getDJIdentity(dj);
               manualFeaturedDJMissingCount = 0;
               manualDJStreamFailureHandled = false;
+              startManualDJHold();
               currentFeaturedDJ = dj;
               showLiveDjPlayer(dj);
               await updateLiveGenresDetected(
@@ -3673,6 +3728,7 @@ document.addEventListener("DOMContentLoaded", function () {
               await loadLiveDJs();
             } catch (error) {
               console.error("Radio RRR custom live sound selection failed:", error);
+              clearManualDJHold();
               manualFeaturedDJIdentity = "";
               manualFeaturedDJMissingCount = 0;
               manualDJStreamFailureHandled = false;
@@ -3887,6 +3943,7 @@ document.addEventListener("DOMContentLoaded", function () {
              } else {
                manualFeaturedDJMissingCount += 1;
                if (manualFeaturedDJMissingCount >= 2) {
+                 clearManualDJHold();
                  manualFeaturedDJIdentity = "";
                  manualFeaturedDJMissingCount = 0;
                }
@@ -4350,6 +4407,7 @@ document.addEventListener("DOMContentLoaded", function () {
               manualFeaturedDJIdentity = getDJIdentity(dj);
               manualFeaturedDJMissingCount = 0;
               manualDJStreamFailureHandled = false;
+              startManualDJHold();
               currentFeaturedDJ = dj;
 
               showLiveDjPlayer(dj);
@@ -4362,6 +4420,7 @@ document.addEventListener("DOMContentLoaded", function () {
               await loadLiveDJs();
             } catch (error) {
               console.error("Radio RRR DJ selection failed:", error);
+              clearManualDJHold();
               manualFeaturedDJIdentity = "";
               manualFeaturedDJMissingCount = 0;
               manualDJStreamFailureHandled = false;
@@ -5505,6 +5564,7 @@ document.addEventListener("DOMContentLoaded", function () {
               manualFeaturedDJIdentity = getDJIdentity(dj);
               manualFeaturedDJMissingCount = 0;
               manualDJStreamFailureHandled = false;
+              startManualDJHold();
               currentFeaturedDJ = dj;
               showLiveDjPlayer(dj);
               await updateLiveGenresDetected(
@@ -5518,6 +5578,7 @@ document.addEventListener("DOMContentLoaded", function () {
               await loadLiveDJs();
             } catch (error) {
               console.error("Radio RRR Live DJs tool selection failed:", error);
+              clearManualDJHold();
               manualFeaturedDJIdentity = "";
               manualFeaturedDJMissingCount = 0;
               manualDJStreamFailureHandled = false;
