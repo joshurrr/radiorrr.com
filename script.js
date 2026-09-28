@@ -684,6 +684,11 @@ document.addEventListener("DOMContentLoaded", function () {
       };
 
       const TOOL_ROUTE_CONFIG = {
+        "live-djs": {
+          path: "/tools/live-djs/",
+          title: "Live DJs Streaming Now – Find Live DJ Sets | Radio RRR",
+          description: "Discover DJs streaming live now across supported platforms. Browse live genres, BPM and audio analysis, then listen directly through Radio RRR."
+        },
         "bpm-detector": {
           path: "/tools/bpm-detector/",
           title: "Live Stream BPM Detector – Detect BPM from Online Audio | Radio RRR",
@@ -789,12 +794,16 @@ document.addEventListener("DOMContentLoaded", function () {
         const toolsHubGrid = toolsSection.querySelector("#toolsHubGrid");
         const detailList = toolsSection.querySelector(".tool-detail-list");
         const streamHealthPanel = toolsSection.querySelector("#toolStreamHealthPanel");
+        const liveDjsPanel = toolsSection.querySelector("#liveDjsToolPanel");
+        const isLiveDjsRoute = toolRoute === "live-djs";
 
         if (healthDashboard) healthDashboard.hidden = detailMode;
         if (toolsHeading) toolsHeading.hidden = detailMode;
         if (toolsHubGrid) toolsHubGrid.hidden = detailMode;
-        if (detailList) detailList.hidden = !detailMode;
+        if (detailList) detailList.hidden = !detailMode || isLiveDjsRoute;
         if (streamHealthPanel && detailMode) streamHealthPanel.hidden = true;
+        if (liveDjsPanel) liveDjsPanel.hidden = !isLiveDjsRoute;
+        if (isLiveDjsRoute) window.setTimeout(loadLiveDjsTool, 0);
 
         toolsSection.querySelectorAll("[data-tool-intro]").forEach(function (intro) {
           intro.hidden = !detailMode || intro.getAttribute("data-tool-intro") !== toolRoute;
@@ -4831,15 +4840,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
 
-      if (openLiveDjsTool) {
-        openLiveDjsTool.addEventListener("click", function () {
-          setLiveDjsToolOpen(liveDjsToolPanel ? liveDjsToolPanel.hidden : true);
-        });
-      }
       if (liveDjsToolClose) {
         liveDjsToolClose.addEventListener("click", function () {
-          setLiveDjsToolOpen(false);
-          if (openLiveDjsTool) openLiveDjsTool.focus();
+          updateTabUrl("tools-section");
+          applyLocationState();
         });
       }
       if (liveDjsToolRefresh) liveDjsToolRefresh.addEventListener("click", loadLiveDjsTool);
