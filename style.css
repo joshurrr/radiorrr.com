@@ -6965,11 +6965,11 @@
   display: none !important;
 }
 
-/* TOOLS HUB — compact square launcher tiles. */
+/* TOOLS HUB — six wide launchers with Radio RRR image treatment. */
 .tools-hub-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 0.8rem;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.65rem;
   justify-content: start;
   margin: 0.75rem 0 0.25rem;
 }
@@ -6977,14 +6977,15 @@
 .tool-hub-tile {
   appearance: none;
   -webkit-appearance: none;
-  aspect-ratio: 1 / 1;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   min-width: 0;
-  padding: 0.95rem 0.8rem;
-  border: 1px solid rgba(129,140,248,0.46);
+  min-height: 148px;
+  padding: 0.82rem 0.52rem;
+  border: 1px solid rgba(129,140,248,0.54);
   border-radius: 14px;
-  background:
-    radial-gradient(circle at 78% 16%, rgba(255,0,102,0.10), transparent 32%),
-    linear-gradient(145deg, rgba(18,22,44,0.96), rgba(6,9,24,0.98));
+  background: #070918;
   color: #ffffff;
   text-decoration: none;
   text-align: center;
@@ -6993,48 +6994,104 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.48rem;
-  box-shadow: 0 0 10px rgba(67,56,202,0.10);
-  transition: transform 0.16s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  gap: 0.42rem;
+  box-shadow: 0 0 12px rgba(67,56,202,0.12);
+  transition: transform 0.16s ease, border-color 0.18s ease, box-shadow 0.18s ease;
   font: inherit;
 }
 
+.tool-hub-tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image: url('radiorrr_background.png');
+  background-repeat: no-repeat;
+  background-size: 430%;
+  background-position: center;
+  opacity: 0.52;
+  filter: saturate(1.18) contrast(1.06);
+  transform: scale(1.03);
+  transition: opacity 0.18s ease, transform 0.24s ease, filter 0.18s ease;
+}
+
+.tool-hub-tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(3,7,20,0.22) 0%, rgba(5,8,24,0.68) 54%, rgba(5,7,20,0.94) 100%),
+    radial-gradient(circle at 72% 18%, rgba(255,0,102,0.22), transparent 42%),
+    radial-gradient(circle at 22% 74%, rgba(34,211,238,0.18), transparent 46%);
+  transition: background 0.18s ease;
+}
+
+.tool-hub-tile:nth-child(1)::before { background-position: 8% 46%; filter: saturate(1.22) hue-rotate(-8deg) contrast(1.05); }
+.tool-hub-tile:nth-child(2)::before { background-position: 28% 42%; filter: saturate(1.28) hue-rotate(18deg) contrast(1.08); }
+.tool-hub-tile:nth-child(3)::before { background-position: 47% 52%; filter: saturate(1.34) hue-rotate(52deg) contrast(1.08); }
+.tool-hub-tile:nth-child(4)::before { background-position: 65% 44%; filter: saturate(1.30) hue-rotate(286deg) contrast(1.08); }
+.tool-hub-tile:nth-child(5)::before { background-position: 82% 48%; filter: saturate(1.30) hue-rotate(128deg) contrast(1.08); }
+.tool-hub-tile:nth-child(6)::before { background-position: 96% 43%; filter: saturate(1.32) hue-rotate(228deg) contrast(1.08); }
+
 .tool-hub-tile:hover,
 .tool-hub-tile:focus-visible {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   border-color: #22d3ee;
-  background:
-    radial-gradient(circle at 78% 16%, rgba(255,0,102,0.16), transparent 34%),
-    linear-gradient(145deg, rgba(20,27,55,0.98), rgba(8,13,31,0.99));
-  box-shadow: 0 0 14px rgba(34,211,238,0.22), 0 0 18px rgba(255,0,102,0.12);
+  box-shadow: 0 0 16px rgba(34,211,238,0.30), 0 0 22px rgba(255,0,102,0.16);
   outline: none;
+}
+
+.tool-hub-tile:hover::before,
+.tool-hub-tile:focus-visible::before {
+  opacity: 0.68;
+  transform: scale(1.08);
+}
+
+.tool-hub-tile:hover::after,
+.tool-hub-tile:focus-visible::after {
+  background:
+    linear-gradient(180deg, rgba(3,7,20,0.12) 0%, rgba(5,8,24,0.58) 54%, rgba(5,7,20,0.92) 100%),
+    radial-gradient(circle at 72% 18%, rgba(255,0,102,0.30), transparent 44%),
+    radial-gradient(circle at 22% 74%, rgba(34,211,238,0.25), transparent 48%);
+}
+
+.tool-hub-icon,
+.tool-hub-name,
+.tool-hub-note {
+  position: relative;
+  z-index: 1;
 }
 
 .tool-hub-icon {
   display: grid;
   place-items: center;
-  width: 3.45rem;
-  height: 3.45rem;
-  border-radius: 13px;
-  border: 1px solid rgba(34,211,238,0.28);
-  background: rgba(8,32,45,0.58);
-  font-size: 1.8rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 12px;
+  border: 1px solid rgba(103,232,249,0.48);
+  background: rgba(3,13,28,0.72);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  font-size: 1.55rem;
   line-height: 1;
-  box-shadow: inset 0 0 12px rgba(34,211,238,0.06);
+  box-shadow: 0 0 12px rgba(34,211,238,0.16), inset 0 0 12px rgba(34,211,238,0.08);
 }
 
 .tool-hub-name {
   color: #ffffff;
-  font-size: 0.9rem;
-  line-height: 1.15;
+  font-size: 0.78rem;
+  line-height: 1.12;
   font-weight: 850;
+  text-shadow: 0 1px 5px rgba(0,0,0,0.9), 0 0 7px rgba(34,211,238,0.18);
 }
 
 .tool-hub-note {
-  color: #a5b4fc;
-  font-size: 0.7rem;
-  line-height: 1.25;
-  font-weight: 650;
+  color: #d7dcff;
+  font-size: 0.61rem;
+  line-height: 1.22;
+  font-weight: 700;
+  text-shadow: 0 1px 5px rgba(0,0,0,0.95);
 }
 
 .tool-stream-health-panel {
@@ -7053,13 +7110,24 @@
   margin: 0;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 920px) {
+  .tools-hub-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .tool-hub-tile {
+    min-height: 138px;
+  }
+}
+
+@media (max-width: 600px) {
   .tools-hub-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .tool-hub-tile {
     width: 100%;
+    min-height: 132px;
   }
 }
 
@@ -7069,7 +7137,6 @@
   }
 
   .tool-hub-tile {
-    aspect-ratio: auto;
     min-height: 118px;
   }
 }
