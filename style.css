@@ -6115,6 +6115,12 @@
 }
 
 /* PUBLIC BPM DETECTOR TOOL */
+/* The routed BPM page uses the full tool-row width so the URL field stays wide and left-aligned. */
+.tool-bpm-detector .tool-row-main {
+  display: block;
+  width: 100%;
+}
+
 .bpm-detector-form {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -6828,6 +6834,11 @@
   font-size: 0.78rem;
   font-weight: 800;
   text-decoration: none;
+}
+
+
+.tool-detail-intro[data-tool-intro="bpm-detector"] .tool-detail-back {
+  margin: 0 0 0.75rem;
 }
 
 .tool-detail-back:hover,
