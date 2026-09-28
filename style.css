@@ -2364,7 +2364,7 @@
 
     .schedule-row {
       display: grid;
-      grid-template-columns: 0.68fr 0.95fr 1.15fr 3.05fr 0.78fr;
+      grid-template-columns: 0.68fr 1.15fr 0.95fr 3.05fr 0.78fr;
       gap: 0;
       align-items: stretch;
       padding: 0;
@@ -6869,15 +6869,15 @@
   }
 
   .schedule-row:not(.schedule-header) > div:nth-child(2) {
-    grid-area: time;
-    white-space: nowrap;
-  }
-
-  .schedule-row:not(.schedule-header) > div:nth-child(3) {
     grid-area: program;
     border-top: 1px solid rgba(129, 140, 248, 0.22);
     padding-top: 0.48rem;
     padding-bottom: 0.35rem;
+  }
+
+  .schedule-row:not(.schedule-header) > div:nth-child(3) {
+    grid-area: time;
+    white-space: nowrap;
   }
 
   .schedule-row:not(.schedule-header) > div:nth-child(4) {
