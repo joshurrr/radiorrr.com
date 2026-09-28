@@ -3410,7 +3410,7 @@ document.addEventListener("DOMContentLoaded", function () {
               '<span>Radio RRR is checking live DJs, analysing their current audio and ranking the best matches for your custom sound. ' +
               'The main DJ will change automatically when a better match is found.</span>' +
               '<span class="dj-discovery-search-steps" aria-label="Live DJ search progress">' +
-                '<span class="done">✓ Live DJs found</span>' +
+                '<span class="done">✓ Live DJs detected</span>' +
                 '<span class="active">● Analysing audio</span>' +
                 '<span>Comparing genres</span>' +
                 '<span>Ranking matches</span>' +
@@ -3439,12 +3439,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 '<span>No strong match has been detected yet. Radio RRR has analysed the currently available live DJs and will keep rescanning as fresh audio and genre data arrives. ' +
                 'The cards below are the best currently available candidates while the search continues.</span>' +
                 '<span class="dj-discovery-search-steps" aria-label="Live DJ search progress">' +
-                  '<span class="done">✓ Live DJs found</span>' +
+                  '<span class="done">✓ Live DJs detected</span>' +
                   '<span class="done">✓ Audio analysed</span>' +
                   '<span class="done">✓ Genres compared</span>' +
                   '<span class="active">● Rescanning</span>' +
                 '</span>' +
-                '<small>' + ranked.length + ' live alternatives analysed · no positive genre match yet</small>' +
+                '<small>' + ranked.length + ' of ' + alternativeCount + ' live DJs analysed · no strong match yet · rescanning automatically</small>' +
               '</span>';
         }
 
