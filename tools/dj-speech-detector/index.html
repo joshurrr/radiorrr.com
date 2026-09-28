@@ -4,10 +4,9 @@
 <head>
 <meta charset="utf-8"/>
 <title>DJ Speech Detector – Detect Talking in Live DJ Streams | Radio RRR</title>
-<link href="favicon.ico" rel="icon" type="image/x-icon"/>
+<link href="/favicon.ico" rel="icon" type="image/x-icon"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<base href="/">
-<link rel="stylesheet" href="style.css?v=20260927.9">
+<link rel="stylesheet" href="/style.css?v=20260928.35">
 <meta content="Detect talking in live DJ streams with voice-versus-music analysis that measures repeated microphone speech and music ducking." name="description"/>
 <meta content="index, follow, max-image-preview:large" name="robots"/>
 <meta content="#070818" name="theme-color"/>
@@ -70,41 +69,82 @@
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "name": "Radio RRR DJ Talk Detector",
-  "url": "https://radiorrr.com/tools/dj-speech-detector/",
+  "name": "Radio RRR Live DJs",
+  "url": "https://radiorrr.com/tools/live-djs/",
   "applicationCategory": "MultimediaApplication",
   "operatingSystem": "Web",
-  "description": "Free live DJ voice vs music detector that measures repeated microphone talking and music ducking in current live DJ streams."
+  "description": "Discover DJs currently detected live by Radio RRR across supported streaming platforms, see live genre and audio analysis, and listen to a selected DJ."
 }
 </script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "name": "Radio RRR Live Stream BPM Detector",
-  "url": "https://radiorrr.com/tools/bpm-detector/",
+  "name": "Radio RRR Stuck Frame Effect",
+  "url": "https://radiorrr.com/tools/stuck-frame-effect/",
   "applicationCategory": "MultimediaApplication",
   "operatingSystem": "Web",
-  "description": "Free live stream BPM detector for estimating the tempo of direct online audio and HLS streams."
+  "description": "Upload a video and create a beat-synchronised stuck-frame effect automatically."
 }
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Radio RRR DJ Speech Detector",
+  "url": "https://radiorrr.com/tools/dj-speech-detector/",
+  "description": "Detect talking in live DJ streams with voice-versus-music analysis that measures repeated microphone speech and music ducking.",
+  "applicationCategory": "MultimediaApplication",
+  "operatingSystem": "Web",
+  "isAccessibleForFree": true
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Radio RRR",
+      "item": "https://radiorrr.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Tools",
+      "item": "https://radiorrr.com/tools/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "DJ Speech Detector",
+      "item": "https://radiorrr.com/tools/dj-speech-detector/"
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <main class="wrapper">
 <!-- HERO BANNER -->
-    <section class="hero">
+    <section class="hero" data-nosnippet>
       <div class="hero-left">
-        <img
-          src="radiorrr-logo-20260926.png"
-          alt="Radio RRR online radio logo"
-        >
+        <a href="/" aria-label="Reset Radio RRR and return to the live radio home page" title="Reset Radio RRR">
+          <img
+            src="/radiorrr-logo-20260926.png"
+            alt="Radio RRR online radio logo"
+          >
+        </a>
       </div>
 
       <div class="hero-right">
         <div class="hero-program-title-row">
-          <h1 class="hero-main-message" id="heroNowPlaying">Loading current program…</h1>
+          <div class="hero-main-message" id="heroNowPlaying" role="heading" aria-level="2">Loading current program…</div>
           <span class="hero-program-time" id="heroProgramTime"></span>
         </div>
         <div class="hero-program-target-row">
@@ -133,7 +173,7 @@
 <span class="nav-label">Schedule</span>
 </a>
 <!-- TOOLS -->
-<a data-target="tools-section" href="/?view=tools">
+<a data-target="tools-section" href="/tools/">
 <span class="nav-icon">🛠️</span>
 <span class="nav-label">Tools</span>
 </a>
@@ -160,7 +200,7 @@
 </div>
 </div>
 <!-- LIVE AUDIO TAB -->
-<div class="content-pane hidden-pane" id="stream-section">
+<div class="content-pane hidden-pane" id="stream-section" data-nosnippet>
 <div class="channel live-audio-channel">
 <div class="live-audio-header">
 <div class="live-audio-title">🔊 LIVE AUDIO</div>
@@ -187,7 +227,7 @@
 </div>
 </div>
 <!-- LIVE DJs TAB -->
-<div class="content-pane hidden-pane" id="live-section">
+<div class="content-pane hidden-pane" id="live-section" data-nosnippet>
 <div class="channel">
 <!-- RADIO ROUTER LIVE DJ -->
 <div class="random-live-dj" id="randomLiveDj">
@@ -195,7 +235,7 @@
 <!-- CURRENT DJ CARD -->
 <section aria-label="Current DJ" class="current-dj-card">
   <div class="current-dj-card-heading">
-    <div class="current-dj-card-title">NOW PLAYING</div>
+    <div class="current-dj-card-title">#1 NOW PLAYING</div>
     <div class="random-live-audio-actions">
       <button class="random-live-button random-live-audio-toggle" id="liveDjUnmute" type="button">
         🔊 UNMUTE
@@ -234,8 +274,7 @@
 </div><div class="radio-router-player">
 <div class="current-dj-live-badge"><span class="dj-live-dot"></span>LIVE NOW</div>
 <span class="current-dj-platform" id="randomLiveDjPlatform" hidden></span>
-<video aria-hidden="true" autoplay="" class="live-dj-background" crossorigin="anonymous" id="liveDjBackground" muted="" playsinline="" preload="none" webkit-playsinline="">
-</video>
+<canvas aria-hidden="true" class="live-dj-background" id="liveDjBackground"></canvas>
 <div class="live-dj-ambient" aria-hidden="true"><span></span><span></span><span></span></div>
 <video autoplay="" controls="" crossorigin="anonymous" id="liveDjVideo" muted="" playsinline="" preload="none" webkit-playsinline="">
               Your browser does not support HTML5 video.
@@ -246,25 +285,24 @@
 </div>
 </div>
 </div>
-<div class="live-djs-grid" id="liveDjsList">
-<div class="live-empty">Checking who's live…</div>
-</div>
+<div class="live-djs-grid rrr-live-djs-data-grid" id="liveDjsList" aria-hidden="true" hidden></div>
+<div id="djDiscoveryHost"></div>
 </div>
 </div>
 <!-- SCHEDULE TAB -->
-<div class="content-pane hidden-pane" id="events-section">
+<div class="content-pane hidden-pane" id="events-section" data-nosnippet>
 <div class="channel">
 <span>Radio RRR Schedule</span>
 <div class="schedule-table" role="table" aria-label="Radio RRR weekly schedule">
-<div class="schedule-row schedule-header" role="row"><div role="columnheader">DAY</div><div role="columnheader">TIME</div><div role="columnheader">PROGRAM</div><div role="columnheader">GENRES</div><div role="columnheader">TARGET BPM</div></div>
+<div class="schedule-row schedule-header" role="row"><div role="columnheader">DAY</div><div role="columnheader">PROGRAM</div><div role="columnheader">TIME</div><div role="columnheader">GENRES</div><div role="columnheader">TARGET BPM</div></div>
 <div id="publicScheduleRows">
-<div class="schedule-row" role="row"><div role="cell">LOADING</div><div role="cell">--:-- – --:--</div><div role="cell"><strong>Loading Radio RRR schedule…</strong></div><div role="cell"><div class="schedule-genres"></div></div><div class="schedule-bpm" role="cell">—</div></div>
+<div class="schedule-row" role="row"><div role="cell">LOADING</div><div role="cell"><strong>Loading Radio RRR schedule…</strong></div><div role="cell">--:-- – --:--</div><div role="cell"><div class="schedule-genres"></div></div><div class="schedule-bpm" role="cell">—</div></div>
 </div>
 </div></div>
 </div>
 </div>
 <!-- SOCIALS TAB -->
-<div class="content-pane hidden-pane" id="video-section">
+<div class="content-pane hidden-pane" id="video-section" data-nosnippet>
 <div class="channel">
 <span>TikTok Clips</span><br/>
 <small>
@@ -337,35 +375,119 @@
   <div class="health-count-compact"><span class="health-station-label">FAVOURITE DJs</span><strong id="toolFavouriteDjCount">—</strong></div>
 </div>
 </section>
-<h2 class="tools-section-heading">TOOLS</h2>
-<section class="tool-detail-intro" data-tool-intro="bpm-detector" hidden>
-<h1>Live Stream BPM Detector</h1>
+<h2 class="tools-section-heading">Free DJ &amp; Live Music Tools</h2>
+<div class="tools-hub-grid" id="toolsHubGrid" aria-label="Radio RRR tools">
+<button class="tool-hub-tile" id="recommendDjOpen" type="button" aria-label="Submit a DJ">
+<span class="tool-hub-icon" aria-hidden="true">🎧</span>
+<span class="tool-hub-name">Add DJ</span>
+<span class="tool-hub-note">Submit a live DJ</span>
+</button>
+<a class="tool-hub-tile" id="openLiveDjsTool" data-tool-route-link="live-djs" href="/tools/live-djs/">
+<span class="tool-hub-icon" aria-hidden="true">📡</span>
+<span class="tool-hub-name">Live DJs</span>
+<span class="tool-hub-note">See who’s live now</span>
+</a>
+<a class="tool-hub-tile" data-tool-route-link="bpm-detector" href="/tools/bpm-detector/">
+<span class="tool-hub-icon" aria-hidden="true">🥁</span>
+<span class="tool-hub-name">BPM Detector</span>
+<span class="tool-hub-note">Analyse live tempo</span>
+</a>
+<a class="tool-hub-tile" data-tool-route-link="dj-speech-detector" href="/tools/dj-speech-detector/">
+<span class="tool-hub-icon" aria-hidden="true">🗣️</span>
+<span class="tool-hub-name">DJ Speech Detector</span>
+<span class="tool-hub-note">Detect talking</span>
+</a>
+<a class="tool-hub-tile" id="openStreamHealthTile" data-tool-route-link="stream-health" href="/tools/stream-health/">
+<span class="tool-hub-icon" aria-hidden="true">📈</span>
+<span class="tool-hub-name">Stream Health</span>
+<span class="tool-hub-note">Test HLS playback stability</span>
+</a>
+<a class="tool-hub-tile" data-tool-route-link="stuck-frame-effect" href="/tools/stuck-frame-effect/">
+<span class="tool-hub-icon" aria-hidden="true">🎞️</span>
+<span class="tool-hub-name">Stuck Frame Effect</span>
+<span class="tool-hub-note">Beat-sync a video freeze effect</span>
+</a>
+</div>
+<section class="tool-detail-intro live-djs-seo-intro" data-tool-intro="live-djs" hidden data-nosnippet>
+<h2>Live DJs Streaming Now</h2>
+<p>Discover DJs currently broadcasting live and detected by Radio RRR. The live DJ finder brings together active streams from supported social and streaming platforms so you can see who is on air now without hunting through separate apps.</p>
+<p>Radio RRR continuously analyses available live audio to identify the current sound. Where detection data is available, the cards below can show live genres, BPM, talking activity and how closely each DJ matches the current Radio RRR program.</p>
+<div class="live-djs-seo-features" aria-label="Live DJ finder features">
+<div><strong>📡 Live now</strong><span>See DJs Radio RRR currently detects as broadcasting live.</span></div>
+<div><strong>🎵 Music detection</strong><span>Browse live genre and audio-analysis data when a fresh scan is available.</span></div>
+<div><strong>▶ Listen instantly</strong><span>Choose a DJ and switch your browser directly to that live stream.</span></div>
+</div>
+<p class="live-djs-seo-platforms"><strong>Live DJ discovery:</strong> electronic music, house, techno, trance, drum &amp; bass and other styles across supported platforms including TikTok, Twitch and YouTube.</p>
+<h2>How Radio RRR finds live DJs</h2>
+<p>Radio RRR monitors supported live-streaming sources, checks which DJs are currently broadcasting, then analyses recent audio when detector data is available. The live list can combine current genre detection, BPM estimates and talking activity to help describe what each stream sounds like right now.</p>
+<h2>Live electronic music genres</h2>
+<p>Depending on who is broadcasting, the live finder can surface house, deep house, techno, minimal techno, trance, tech trance, progressive trance, drum &amp; bass, electro, synthwave and other electronic styles.</p>
+<h2>Platforms monitored</h2>
+<p>Radio RRR currently supports live DJ discovery from selected TikTok, Twitch and YouTube sources. Availability changes continuously as DJs start and end their broadcasts.</p>
+<a class="tool-detail-back" data-tool-back href="/tools/">← All Radio RRR tools</a>
+</section>
+<section class="tool-row tool-wide live-djs-tool-panel" id="liveDjsToolPanel" aria-labelledby="liveDjsToolTitle" hidden>
+<div class="tool-row-icon">📡</div>
+<div class="tool-row-main">
+<div class="live-djs-tool-heading">
+<div>
+<h2 class="tool-row-title" id="liveDjsToolTitle">DJs Live Right Now</h2>
+<div class="tool-row-description">Search DJs currently detected live by Radio RRR, filter by name or username, and switch your browser directly to a live stream.</div>
+</div>
+<button class="tool-button secondary" id="liveDjsToolClose" type="button">All tools</button>
+</div>
+<div class="live-djs-tool-controls">
+<label class="sr-only" for="liveDjsToolSearch">Search live DJs</label>
+<input id="liveDjsToolSearch" type="search" autocomplete="off" placeholder="Search @username or DJ name">
+<button class="tool-button secondary" id="liveDjsToolRefresh" type="button">↻ Refresh</button>
+</div>
+<div class="live-djs-tool-status" id="liveDjsToolStatus" role="status" aria-live="polite">Loading DJs currently detected live…</div>
+<div class="live-djs-tool-grid" id="liveDjsToolResults"></div>
+</div>
+</section>
+<section class="tool-detail-intro" data-tool-intro="bpm-detector" hidden data-nosnippet>
+<a class="tool-detail-back" data-tool-back href="/tools/">← Back to Tools Page</a>
+<h2>Live Stream BPM Detector</h2>
 <p>Detect the BPM of a live online audio or HLS stream. Paste a direct HTTP or HTTPS stream URL and Radio RRR will analyse a short audio sample to estimate its tempo.</p>
 <p>This tool is designed for DJs, online radio stations and live music streams where you want a quick BPM estimate without downloading the audio first.</p>
-<a class="tool-detail-back" data-tool-back href="/?view=tools">← All Radio RRR tools</a>
 </section>
-<section class="tool-detail-intro" data-tool-intro="dj-speech-detector">
+<section class="tool-detail-intro" data-tool-intro="dj-speech-detector" hidden>
 <h1>DJ Speech Detector</h1>
 <p>Detect talking in live DJ streams using voice-versus-music analysis. Radio RRR measures repeated microphone speech and music ducking so brief announcements are treated differently from persistent talking.</p>
 <p>The detector scans Radio RRR's latest live DJ audio samples and reports talk activity for the DJs currently being monitored.</p>
-<h2>How the DJ speech detector works</h2>
-<p>Choose <strong>Scan Live DJs</strong> to analyse the latest monitored audio samples. The detector estimates how much of each sample contains speech rather than music and reports a talk-activity percentage.</p>
-<h2>What the talk percentage means</h2>
-<p>A low reading usually indicates predominantly music. Higher readings suggest more sustained microphone use or spoken content. Radio RRR deliberately treats short DJ announcements differently from repeated or persistent talking.</p>
-<h2>Why detect speech in a DJ stream?</h2>
-<p>Speech detection can help listeners, DJs and online radio operators distinguish music-focused streams from sets with frequent microphone breaks, interviews, announcements or other spoken content.</p>
-<p>The result is an estimate rather than a transcript or voice-identification system. Vocals, crowd noise, effects and unusual mixes can sometimes be interpreted as speech.</p>
-<a class="tool-detail-back" data-tool-back href="/?view=tools">← All Radio RRR tools</a>
+<a class="tool-detail-back" data-tool-back href="/tools/">← All Radio RRR tools</a>
 </section>
-<div class="tools-list tools-action-list">
-<section class="tool-row" aria-labelledby="toolAddDjTitle">
-<div class="tool-row-icon">🎧</div>
+<section class="tool-detail-intro" data-tool-intro="stream-health" hidden data-nosnippet>
+<a class="tool-detail-back" data-tool-back href="/tools/">← Back to Tools Page</a>
+<h2>HLS Stream Health Test</h2>
+<p>Test the stability of Radio RRR's current live HLS playback for 60 seconds. The browser monitor records buffering events, total buffering time, dropped frames, HLS errors and recovery after a DJ switch.</p>
+<p>The test is passive: it observes the existing Radio RRR live player instead of opening a second stream, so the measurements reflect the playback session you are actually using.</p>
+<h2>What the stream test measures</h2>
+<p>Use the results to spot repeated buffering, long stalls, excessive dropped frames or slow recovery when the live relay changes from one DJ to another.</p>
+</section>
+<section class="tool-detail-intro" data-tool-intro="stuck-frame-effect" hidden data-nosnippet>
+<a class="tool-detail-back" data-tool-back href="/tools/">← Back to Tools Page</a>
+<h2>Stuck Frame Effect</h2>
+<p>Upload a video and Radio RRR will analyse its soundtrack, detect the beat and add short stuck-frame freezes in time with the music.</p>
+<p>The video is processed on the Radio RRR server and returned as a new MP4. Audio timing is preserved while the visual freeze effect is applied to beat positions.</p>
+</section>
+<div class="tools-list tools-action-list tool-detail-list" hidden>
+<section class="tool-row tool-wide tool-stuck-frame-effect" data-tool-route="stuck-frame-effect" aria-labelledby="stuckFrameEffectTitle">
+<div class="tool-row-icon">🎞️</div>
 <div class="tool-row-main">
-<div class="tool-row-title" id="toolAddDjTitle">Add DJ</div>
-<div class="tool-row-description">Add a TikTok DJ</div>
-<div class="tools-actions compact">
-<button class="tool-button" id="recommendDjOpen" type="button">🎧 Submit a DJ</button>
+<div class="tool-row-title" id="stuckFrameEffectTitle">Stuck Frame Effect</div>
+<div class="tool-row-description">Upload a video to create short beat-synchronised frame freezes automatically.</div>
+<div class="stuck-frame-form">
+<label class="stuck-frame-file-label" for="stuckFrameVideo">
+<span>Choose video</span>
+<input id="stuckFrameVideo" type="file" accept="video/*">
+</label>
+<button class="tool-button" id="stuckFrameStart" type="button" disabled>Create Effect</button>
 </div>
+<div class="stuck-frame-file-name" id="stuckFrameFileName">No video selected.</div>
+<div class="stuck-frame-progress" id="stuckFrameProgress" hidden aria-hidden="true"><span></span></div>
+<div class="stuck-frame-status" id="stuckFrameStatus" role="status" aria-live="polite">MP4, MOV, M4V, WebM and MKV videos are supported. Maximum upload size: 100 MB.</div>
+<a class="tool-button stuck-frame-download" id="stuckFrameDownload" hidden>Download processed video</a>
 </div>
 </section>
 <section class="tool-row tool-wide tool-bpm-detector" data-tool-route="bpm-detector" aria-labelledby="toolBpmDetectorTitle">
@@ -397,11 +519,17 @@
 <div class="talk-detector-results" id="talkDetectorResults" hidden></div>
 </div>
 </section>
-<section class="tool-row tool-wide tool-stream-health" aria-labelledby="toolStreamHealthTitle">
+</div>
+<section class="tool-row tool-wide tool-stream-health tool-stream-health-panel" id="toolStreamHealthPanel" aria-labelledby="toolStreamHealthTitle" hidden>
 <div class="tool-row-icon">📈</div>
 <div class="tool-row-main">
+<div class="tool-stream-health-heading">
+<div>
 <div class="tool-row-title" id="toolStreamHealthTitle">Stream Health Test</div>
 <div class="tool-row-description">Passive 60-second browser test. Measures playback stalls, buffering, frame drops and DJ-switch recovery without opening another stream or analyser.</div>
+</div>
+<button class="tool-button secondary tool-stream-health-close" id="streamHealthClose" type="button">Close</button>
+</div>
 <div class="tools-actions compact">
 <button class="tool-button" id="streamHealthStart" type="button">▶ Start 60s Test</button>
 <button class="tool-button secondary" id="streamHealthStop" type="button" disabled>■ Stop</button>
@@ -426,7 +554,6 @@
 </section>
 </div>
 </div>
-</div>
 
 
 <!-- FOOTER LINKS -->
@@ -440,11 +567,9 @@
 <span>·</span>
 <a href="https://www.twitch.tv/radiorrr" rel="noopener" target="_blank">Twitch</a>
 <span>·</span>
-<a href="https://soundcloud.com/radiorrr" rel="noopener" target="_blank">SoundCloud</a>
-<span>·</span>
 <a href="https://github.com/joshurrr" rel="noopener" target="_blank">GitHub</a>
 <span>·</span>
-<a href="https://www.reddit.com/user/radio_rrr/" rel="noopener" target="_blank">Reddit</a>
+<a href="mailto:admin@radiorr.com">EMAIL</a>
 </div>
 
 <p class="footer-description rrr-footer-description">
@@ -465,15 +590,11 @@
 </div>
 
 <div class="rrr-footer-meta">
-  <strong>STREAMING 24/7</strong>
-  <span>·</span>
-  <a href="mailto:admin@radiorrr.com">admin@radiorrr.com</a>
-  <span>·</span>
-  <span>Powered by RadioRouter</span>
+  <span>Powered by RadioRouter · Build 20260928.18</span>
 </div>
 </footer>
 </main>
-<script src="genre-detection.js"></script>
+<script src="/genre-detection.js"></script>
 <script>
 window.formspree =
       window.formspree ||
@@ -670,6 +791,25 @@ window.formspree =
   text-shadow: 0 0 6px rgba(248,113,113,0.35);
 }
 
+/* Featured DJs override the schedule by operator priority. The programme
+   score is intentionally hidden because it does not control this selection. */
+#randomLiveDjMatch.featured-override-active .main-dj-match-label {
+  grid-column: 4 !important;
+  grid-row: 1 / span 2 !important;
+  align-self: center !important;
+  justify-self: stretch !important;
+  color: #a7f3d0 !important;
+  font-size: 1.17rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.06em !important;
+  text-align: center !important;
+  text-shadow: 0 0 8px rgba(52, 211, 153, 0.38);
+}
+
+#randomLiveDjMatch.featured-override-active .main-dj-match-value {
+  display: none !important;
+}
+
 @media (max-width: 640px) {
   #randomLiveDjMatch.main-dj-match-score {
     column-gap: 0.42rem !important;
@@ -726,7 +866,7 @@ window.formspree =
   justify-content: center;
   gap: 0.34rem;
   max-width: 980px;
-  margin: 0 auto 0.72rem;
+  margin: 0 auto 1.35rem;
 }
 
 .rrr-footer-genres span {
@@ -929,7 +1069,7 @@ window.formspree =
 })();
 </script>
 
-<script src="script.js?v=20260927.10"></script>
+<script src="/script.js?v=20260928.36"></script>
 
 <script>
 /*
@@ -940,10 +1080,16 @@ window.formspree =
 (function () {
   "use strict";
 
-  const GENRE_MATCH_URL = "https://stream.radiorrr.com/api/genre-match";
+  const GENRE_MATCH_URL = "https://api.radiorrr.com/api/genre-match";
+  const FEATURED_DJS_URLS = [
+    "https://api.radiorrr.com/api/admin/featured-djs",
+    "https://stream.radiorrr.com/api/admin/featured-djs"
+  ];
   const REFRESH_MS = 30000;
+  const FEATURED_CACHE_MS = 15000;
   let refreshTimer = null;
   let refreshInFlight = false;
+  let featuredCache = { fetchedAt: 0, djs: [] };
 
   function normaliseUsername(value) {
     return String(value || "")
@@ -1043,11 +1189,127 @@ window.formspree =
     return null;
   }
 
+  async function loadFeaturedDjs() {
+    const now = Date.now();
+    if (featuredCache.fetchedAt && (now - featuredCache.fetchedAt) < FEATURED_CACHE_MS) {
+      return featuredCache.djs;
+    }
+
+    let lastError = null;
+    for (const url of FEATURED_DJS_URLS) {
+      try {
+        const response = await fetch(url, { cache: "no-store" });
+        if (!response.ok) throw new Error("Featured DJ API returned " + response.status);
+        const data = await response.json();
+        const djs = Array.isArray(data && data.featured_djs) ? data.featured_djs : [];
+        featuredCache = { fetchedAt: now, djs: djs };
+        return djs;
+      } catch (error) {
+        lastError = error;
+      }
+    }
+
+    console.warn("Radio RRR Featured DJ display warning:", lastError);
+    return featuredCache.djs;
+  }
+
+  function featuredRankForDisplayedDj(featuredDjs, data, item) {
+    if (!item) return null;
+
+    const params = new URLSearchParams(window.location.search);
+    if (normaliseUsername(params.get("dj"))) return null;
+
+    const itemUsername = normaliseUsername(item.username);
+    const itemPlatform = String(item.platform || "TikTok").trim().toLowerCase();
+    const relayUsername = normaliseUsername(data && data.current_relay);
+    const relayPlatform = String(data && data.current_relay_platform || "TikTok").trim().toLowerCase();
+
+    if (!itemUsername || itemUsername !== relayUsername || itemPlatform !== relayPlatform) {
+      return null;
+    }
+
+    const featured = (Array.isArray(featuredDjs) ? featuredDjs : []).find(function (entry) {
+      return normaliseUsername(entry && entry.username) === itemUsername &&
+        String(entry && entry.platform || "TikTok").trim().toLowerCase() === itemPlatform;
+    });
+
+    const rank = Number(featured && featured.rank);
+    return Number.isFinite(rank) && rank > 0 ? Math.round(rank) : null;
+  }
+
+  function renderProgramMatchState(matchEl, matchValueEl, percent, featuredRank, currentBpm, item) {
+    const labelEl = matchEl.querySelector(".main-dj-match-label");
+
+    if (featuredRank) {
+      matchEl.classList.add("featured-override-active");
+      if (window.RadioRRRSetFeaturedHeroMode) {
+        window.RadioRRRSetFeaturedHeroMode(true, currentBpm);
+      }
+      if (labelEl) labelEl.textContent = "💪 FEATURED DJ 💪";
+      matchValueEl.textContent = "";
+      matchValueEl.classList.remove(
+        "program-match-green",
+        "program-match-yellow",
+        "program-match-orange",
+        "program-match-red"
+      );
+      matchEl.title = "Featured DJ priority is active";
+      return;
+    }
+
+    matchEl.classList.remove("featured-override-active");
+    if (window.RadioRRRSetFeaturedHeroMode) {
+      window.RadioRRRSetFeaturedHeroMode(false);
+    }
+
+    const customState = window.RadioRRRGetCustomSoundMatchState
+      ? window.RadioRRRGetCustomSoundMatchState(
+          item && item.username,
+          item && item.platform
+        )
+      : null;
+
+    if (customState && customState.active) {
+      if (labelEl) labelEl.textContent = "🎯 YOUR SOUND MATCH";
+      if (Number.isFinite(Number(customState.score))) {
+        const customPercent = Math.max(0, Math.min(100, Math.round(Number(customState.score))));
+        matchValueEl.textContent = customPercent + "%";
+        matchEl.title = "Match against your Custom Program genres";
+        updateMatchClass(matchEl, customPercent);
+      } else {
+        matchValueEl.textContent = "—";
+        matchEl.title = "Waiting for fresh genre data for your Custom Program";
+      }
+      return;
+    }
+
+    if (labelEl) labelEl.textContent = "🎯 CURRENT PROGRAM MATCH";
+    matchValueEl.textContent = percent + "%";
+    matchEl.title = "RRR genre compatibility score out of 100";
+    updateMatchClass(matchEl, percent);
+  }
+
   function updateMatchClass(matchEl, percent) {
     if (!matchEl || !Number.isFinite(percent)) return;
-    matchEl.classList.remove("match-low", "match-medium", "match-high");
-    if (percent >= 60) matchEl.classList.add("match-high");
-    else if (percent >= 30) matchEl.classList.add("match-medium");
+
+    const valueEl = matchEl.querySelector(".main-dj-match-value");
+    if (valueEl) {
+      valueEl.classList.remove(
+        "program-match-green",
+        "program-match-yellow",
+        "program-match-orange",
+        "program-match-red"
+      );
+
+      if (percent >= 50) valueEl.classList.add("program-match-green");
+      else if (percent >= 30) valueEl.classList.add("program-match-yellow");
+      else if (percent >= 11) valueEl.classList.add("program-match-orange");
+      else valueEl.classList.add("program-match-red");
+    }
+
+    matchEl.classList.remove("match-low", "match-mid", "match-medium", "match-high");
+    if (percent >= 50) matchEl.classList.add("match-high");
+    else if (percent >= 20) matchEl.classList.add("match-mid");
     else matchEl.classList.add("match-low");
   }
 
@@ -1070,6 +1332,7 @@ window.formspree =
 
       const data = await response.json();
       const item = findDisplayedItem(data);
+      const featuredDjs = await loadFeaturedDjs();
       const heroBounds = scheduleBounds(data, item);
 
       if (heroProgramBpmEl) {
@@ -1079,6 +1342,20 @@ window.formspree =
       }
 
       if (!item) {
+        matchEl.classList.remove("featured-override-active");
+        if (window.RadioRRRSetFeaturedHeroMode) {
+          window.RadioRRRSetFeaturedHeroMode(false);
+        }
+        const labelEl = matchEl.querySelector(".main-dj-match-label");
+        const customState = window.RadioRRRGetCustomSoundMatchState
+          ? window.RadioRRRGetCustomSoundMatchState("", "")
+          : null;
+        if (labelEl) {
+          labelEl.textContent = customState && customState.active
+            ? "🎯 YOUR SOUND MATCH"
+            : "🎯 CURRENT PROGRAM MATCH";
+        }
+        if (customState && customState.active) matchValueEl.textContent = "—";
         bpmEl.textContent = "";
         if (talkEl) {
           talkEl.textContent = "";
@@ -1094,8 +1371,8 @@ window.formspree =
       const matchScore = Number(item.raw_score);
       if (Number.isFinite(matchScore)) {
         const percent = Math.max(0, Math.min(100, Math.round(matchScore)));
-        matchValueEl.textContent = percent + "%";
-        updateMatchClass(matchEl, percent);
+        const featuredRank = featuredRankForDisplayedDj(featuredDjs, data, item);
+        renderProgramMatchState(matchEl, matchValueEl, percent, featuredRank, item.bpm, item);
       }
 
       if (Number.isFinite(Number(item.bpm))) {

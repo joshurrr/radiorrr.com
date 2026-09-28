@@ -69,17 +69,6 @@
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "name": "Radio RRR DJ Talk Detector",
-  "url": "https://radiorrr.com/tools/dj-speech-detector/",
-  "applicationCategory": "MultimediaApplication",
-  "operatingSystem": "Web",
-  "description": "Free live DJ voice vs music detector that measures repeated microphone talking and music ducking in current live DJ streams."
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
   "name": "Radio RRR Live DJs",
   "url": "https://radiorrr.com/tools/live-djs/",
   "applicationCategory": "MultimediaApplication",
@@ -87,18 +76,6 @@
   "description": "Discover DJs currently detected live by Radio RRR across supported streaming platforms, see live genre and audio analysis, and listen to a selected DJ."
 }
 </script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "Radio RRR Live Stream BPM Detector",
-  "url": "https://radiorrr.com/tools/bpm-detector/",
-  "applicationCategory": "MultimediaApplication",
-  "operatingSystem": "Web",
-  "description": "Free live stream BPM detector for estimating the tempo of direct online audio and HLS streams."
-}
-</script>
-
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -157,7 +134,7 @@
 <span class="nav-label">Schedule</span>
 </a>
 <!-- TOOLS -->
-<a data-target="tools-section" href="/?view=tools">
+<a data-target="tools-section" href="/tools/">
 <span class="nav-icon">🛠️</span>
 <span class="nav-label">Tools</span>
 </a>
@@ -359,7 +336,7 @@
   <div class="health-count-compact"><span class="health-station-label">FAVOURITE DJs</span><strong id="toolFavouriteDjCount">—</strong></div>
 </div>
 </section>
-<h2 class="tools-section-heading">TOOLS</h2>
+<h2 class="tools-section-heading">Free DJ &amp; Live Music Tools</h2>
 <div class="tools-hub-grid" id="toolsHubGrid" aria-label="Radio RRR tools">
 <button class="tool-hub-tile" id="recommendDjOpen" type="button" aria-label="Submit a DJ">
 <span class="tool-hub-icon" aria-hidden="true">🎧</span>
@@ -381,11 +358,11 @@
 <span class="tool-hub-name">DJ Speech Detector</span>
 <span class="tool-hub-note">Detect talking</span>
 </a>
-<button class="tool-hub-tile" id="openStreamHealthTile" type="button" aria-controls="toolStreamHealthPanel" aria-expanded="false">
+<a class="tool-hub-tile" id="openStreamHealthTile" data-tool-route-link="stream-health" href="/tools/stream-health/">
 <span class="tool-hub-icon" aria-hidden="true">📈</span>
 <span class="tool-hub-name">Stream Health</span>
-<span class="tool-hub-note">Run a 60s test</span>
-</button>
+<span class="tool-hub-note">Test HLS playback stability</span>
+</a>
 <a class="tool-hub-tile" data-tool-route-link="stuck-frame-effect" href="/tools/stuck-frame-effect/">
 <span class="tool-hub-icon" aria-hidden="true">🎞️</span>
 <span class="tool-hub-name">Stuck Frame Effect</span>
@@ -393,7 +370,7 @@
 </a>
 </div>
 <section class="tool-detail-intro live-djs-seo-intro" data-tool-intro="live-djs" hidden>
-<h1>Live DJs Streaming Now</h1>
+<h2>Live DJs Streaming Now</h2>
 <p>Discover DJs currently broadcasting live and detected by Radio RRR. The live DJ finder brings together active streams from supported social and streaming platforms so you can see who is on air now without hunting through separate apps.</p>
 <p>Radio RRR continuously analyses available live audio to identify the current sound. Where detection data is available, the cards below can show live genres, BPM, talking activity and how closely each DJ matches the current Radio RRR program.</p>
 <div class="live-djs-seo-features" aria-label="Live DJ finder features">
@@ -402,7 +379,13 @@
 <div><strong>▶ Listen instantly</strong><span>Choose a DJ and switch your browser directly to that live stream.</span></div>
 </div>
 <p class="live-djs-seo-platforms"><strong>Live DJ discovery:</strong> electronic music, house, techno, trance, drum &amp; bass and other styles across supported platforms including TikTok, Twitch and YouTube.</p>
-<a class="tool-detail-back" data-tool-back href="/?view=tools">← All Radio RRR tools</a>
+<h2>How Radio RRR finds live DJs</h2>
+<p>Radio RRR monitors supported live-streaming sources, checks which DJs are currently broadcasting, then analyses recent audio when detector data is available. The live list can combine current genre detection, BPM estimates and talking activity to help describe what each stream sounds like right now.</p>
+<h2>Live electronic music genres</h2>
+<p>Depending on who is broadcasting, the live finder can surface house, deep house, techno, minimal techno, trance, tech trance, progressive trance, drum &amp; bass, electro, synthwave and other electronic styles.</p>
+<h2>Platforms monitored</h2>
+<p>Radio RRR currently supports live DJ discovery from selected TikTok, Twitch and YouTube sources. Availability changes continuously as DJs start and end their broadcasts.</p>
+<a class="tool-detail-back" data-tool-back href="/tools/">← All Radio RRR tools</a>
 </section>
 <section class="tool-row tool-wide live-djs-tool-panel" id="liveDjsToolPanel" aria-labelledby="liveDjsToolTitle" hidden>
 <div class="tool-row-icon">📡</div>
@@ -424,20 +407,28 @@
 </div>
 </section>
 <section class="tool-detail-intro" data-tool-intro="bpm-detector" hidden>
-<a class="tool-detail-back" data-tool-back href="/?view=tools">← Back to Tools Page</a>
-<h1>Live Stream BPM Detector</h1>
+<a class="tool-detail-back" data-tool-back href="/tools/">← Back to Tools Page</a>
+<h2>Live Stream BPM Detector</h2>
 <p>Detect the BPM of a live online audio or HLS stream. Paste a direct HTTP or HTTPS stream URL and Radio RRR will analyse a short audio sample to estimate its tempo.</p>
 <p>This tool is designed for DJs, online radio stations and live music streams where you want a quick BPM estimate without downloading the audio first.</p>
 </section>
 <section class="tool-detail-intro" data-tool-intro="dj-speech-detector" hidden>
-<h1>DJ Speech Detector</h1>
+<h2>DJ Speech Detector</h2>
 <p>Detect talking in live DJ streams using voice-versus-music analysis. Radio RRR measures repeated microphone speech and music ducking so brief announcements are treated differently from persistent talking.</p>
 <p>The detector scans Radio RRR's latest live DJ audio samples and reports talk activity for the DJs currently being monitored.</p>
-<a class="tool-detail-back" data-tool-back href="/?view=tools">← All Radio RRR tools</a>
+<a class="tool-detail-back" data-tool-back href="/tools/">← All Radio RRR tools</a>
+</section>
+<section class="tool-detail-intro" data-tool-intro="stream-health" hidden>
+<a class="tool-detail-back" data-tool-back href="/tools/">← Back to Tools Page</a>
+<h2>HLS Stream Health Test</h2>
+<p>Test the stability of Radio RRR's current live HLS playback for 60 seconds. The browser monitor records buffering events, total buffering time, dropped frames, HLS errors and recovery after a DJ switch.</p>
+<p>The test is passive: it observes the existing Radio RRR live player instead of opening a second stream, so the measurements reflect the playback session you are actually using.</p>
+<h2>What the stream test measures</h2>
+<p>Use the results to spot repeated buffering, long stalls, excessive dropped frames or slow recovery when the live relay changes from one DJ to another.</p>
 </section>
 <section class="tool-detail-intro" data-tool-intro="stuck-frame-effect" hidden>
-<a class="tool-detail-back" data-tool-back href="/?view=tools">← Back to Tools Page</a>
-<h1>Stuck Frame Effect</h1>
+<a class="tool-detail-back" data-tool-back href="/tools/">← Back to Tools Page</a>
+<h2>Stuck Frame Effect</h2>
 <p>Upload a video and Radio RRR will analyse its soundtrack, detect the beat and add short stuck-frame freezes in time with the music.</p>
 <p>The video is processed on the Radio RRR server and returned as a new MP4. Audio timing is preserved while the visual freeze effect is applied to beat positions.</p>
 </section>
@@ -1039,7 +1030,7 @@ window.formspree =
 })();
 </script>
 
-<script src="script.js?v=20260928.35"></script>
+<script src="script.js?v=20260928.36"></script>
 
 <script>
 /*

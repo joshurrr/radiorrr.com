@@ -703,7 +703,19 @@ document.addEventListener("DOMContentLoaded", function () {
           path: "/tools/stuck-frame-effect/",
           title: "Stuck Frame Effect – Beat-Synced Video Freeze Tool | Radio RRR",
           description: "Upload a video and automatically create short stuck-frame freezes synchronised to the detected beat."
+        },
+        "stream-health": {
+          path: "/tools/stream-health/",
+          title: "HLS Stream Health Test – Check Buffering & Playback | Radio RRR",
+          description: "Run a passive 60-second HLS stream health test that measures buffering, playback stalls, dropped frames, HLS errors and DJ-switch recovery."
         }
+      };
+
+      const TOOLS_HUB_PATH = "/tools/";
+      const TOOLS_HUB_METADATA = {
+        title: "Free DJ & Live Music Tools | Radio RRR",
+        description: "Free browser tools for live DJs and online radio: find DJs live now, detect BPM, detect DJ speech, test HLS stream health and create beat-synced video effects.",
+        canonical: "https://radiorrr.com/tools/"
       };
 
       const DEFAULT_PAGE_METADATA = {
@@ -726,7 +738,8 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       function getTabTargetFromLocation() {
-        if (getToolRouteFromLocation()) return "tools-section";
+        const pathname = normalisePathname(window.location.pathname);
+        if (getToolRouteFromLocation() || pathname === TOOLS_HUB_PATH) return "tools-section";
 
         const params = new URLSearchParams(window.location.search);
         const view = String(params.get("view") || "live").trim().toLowerCase();
@@ -747,7 +760,9 @@ document.addEventListener("DOMContentLoaded", function () {
         // Keep unrelated query parameters such as a manually selected ?dj=.
         copyUnrelatedQueryParams(currentUrl, url);
 
-        if (view !== "live") {
+        if (view === "tools") {
+          url.pathname = TOOLS_HUB_PATH;
+        } else if (view !== "live") {
           url.searchParams.set("view", view);
         }
 
@@ -771,11 +786,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
       function applyRouteMetadata(toolRoute) {
         const config = TOOL_ROUTE_CONFIG[toolRoute];
-        const title = config ? config.title : DEFAULT_PAGE_METADATA.title;
-        const description = config ? config.description : DEFAULT_PAGE_METADATA.description;
+        const onToolsHub = normalisePathname(window.location.pathname) === TOOLS_HUB_PATH;
+        const title = config ? config.title : (onToolsHub ? TOOLS_HUB_METADATA.title : DEFAULT_PAGE_METADATA.title);
+        const description = config ? config.description : (onToolsHub ? TOOLS_HUB_METADATA.description : DEFAULT_PAGE_METADATA.description);
         const canonical = config
           ? new URL(config.path, window.location.origin).href
-          : DEFAULT_PAGE_METADATA.canonical;
+          : (onToolsHub ? TOOLS_HUB_METADATA.canonical : DEFAULT_PAGE_METADATA.canonical);
 
         document.title = title;
         updateMetaContent('meta[name="description"]', description);
@@ -801,12 +817,13 @@ document.addEventListener("DOMContentLoaded", function () {
         const streamHealthPanel = toolsSection.querySelector("#toolStreamHealthPanel");
         const liveDjsPanel = toolsSection.querySelector("#liveDjsToolPanel");
         const isLiveDjsRoute = toolRoute === "live-djs";
+        const isStreamHealthRoute = toolRoute === "stream-health";
 
         if (healthDashboard) healthDashboard.hidden = detailMode;
         if (toolsHeading) toolsHeading.hidden = detailMode;
         if (toolsHubGrid) toolsHubGrid.hidden = detailMode;
-        if (detailList) detailList.hidden = !detailMode || isLiveDjsRoute;
-        if (streamHealthPanel && detailMode) streamHealthPanel.hidden = true;
+        if (detailList) detailList.hidden = !detailMode || isLiveDjsRoute || isStreamHealthRoute;
+        if (streamHealthPanel) streamHealthPanel.hidden = !isStreamHealthRoute;
         if (liveDjsPanel) liveDjsPanel.hidden = !isLiveDjsRoute;
         if (isLiveDjsRoute) window.setTimeout(loadLiveDjsTool, 0);
 
@@ -871,15 +888,17 @@ document.addEventListener("DOMContentLoaded", function () {
           "click",
           function (e) {
 
-            // Keep the media elements mounted while exposing a real,
-            // bookmarkable URL for each existing Radio RRR view.
-            e.preventDefault();
-
             const targetId =
               e.currentTarget.getAttribute(
                 "data-target"
               );
 
+            if (targetId === "tools-section") {
+              return;
+            }
+
+            // Keep the media elements mounted for the existing in-page radio views.
+            e.preventDefault();
             if (targetId) {
               updateTabUrl(targetId);
               applyLocationState();
@@ -894,19 +913,14 @@ document.addEventListener("DOMContentLoaded", function () {
         link.addEventListener("click", function (e) {
           const route = e.currentTarget.getAttribute("data-tool-route-link");
           if (!TOOL_ROUTE_CONFIG[route]) return;
-
-          e.preventDefault();
-          updateToolUrl(route);
-          applyLocationState();
-          window.scrollTo({ top: 0, behavior: "smooth" });
+          // These are real static pages so crawlers and refreshes receive HTTP 200.
+          // Allow the browser to follow the href normally.
         });
       });
 
       document.querySelectorAll("[data-tool-back]").forEach(function (link) {
-        link.addEventListener("click", function (e) {
-          e.preventDefault();
-          updateTabUrl("tools-section");
-          applyLocationState();
+        link.addEventListener("click", function () {
+          // Real /tools/ navigation is intentional for crawlability and clean page metadata.
         });
       });
 
@@ -5518,16 +5532,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
 
-      if (openStreamHealthTile) {
-        openStreamHealthTile.addEventListener("click", function () {
-          setStreamHealthPanelOpen(streamHealthPanel ? streamHealthPanel.hidden : true);
-        });
-      }
-
       if (streamHealthClose) {
         streamHealthClose.addEventListener("click", function () {
-          setStreamHealthPanelOpen(false);
-          if (openStreamHealthTile) openStreamHealthTile.focus();
+          window.location.href = "/tools/";
         });
       }
 
