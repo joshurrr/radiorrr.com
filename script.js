@@ -2959,11 +2959,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const reset = document.getElementById("djDiscoveryReset");
         if (reset) {
-          reset.addEventListener("click", function () {
-            djDiscoverySelectedGenres = djDiscoveryPresetGenres.slice();
+          reset.addEventListener("click", async function () {
             djDiscoveryCustomised = false;
             djDiscoveryAddGenresOpen = false;
             djDiscoveryShowAll = false;
+
+            // Re-read the live schedule before restoring the preset. This avoids
+            // leaving the hero in its initial "Loading current program…" state
+            // when a Custom Program is removed and normal scheduling resumes.
+            await loadPublicSchedule();
+            updateTitles();
+            djDiscoverySelectedGenres = djDiscoveryPresetGenres.slice();
+
             // While actively tuning, keep the editor in place so the listener
             // can immediately see the restored current-program recipe.
             if (!djDiscoveryEditorOpen) {
