@@ -4699,87 +4699,99 @@ document.addEventListener("DOMContentLoaded", function () {
           const profilePic = String(
             dj.profile_pic || dj.profile_picture || dj.avatar || dj.photo || ""
           );
-          const genres = getLiveAIGenres(dj).slice(0, 4);
+          const genres = getLiveAIGenres(dj).slice(0, 5);
           const metrics = item.metrics || {};
-          const bpm = Number(metrics.bpm);
-          const talkRatio = Number(metrics.speech_ratio);
           const matchScore = Number(metrics.raw_score ?? metrics.score);
+          const safeScore = Number.isFinite(matchScore)
+            ? Math.max(0, Math.min(100, Math.round(matchScore)))
+            : null;
+          const matchClass = safeScore === null
+            ? "match-low"
+            : safeScore >= 50
+              ? "match-high"
+              : safeScore >= 20
+                ? "match-mid"
+                : "match-low";
+          const scoreText = safeScore === null ? "—" : safeScore + "%";
+          const fillWidth = safeScore === null ? 0 : safeScore;
 
           const card = document.createElement("article");
-          card.className = "live-djs-tool-card";
+          card.className = "live-djs-tool-card dj-card dj-live-switch-card";
           card.dataset.identity = getDJIdentity(dj);
+          card.setAttribute("role", "button");
+          card.setAttribute("tabindex", "0");
+          card.setAttribute("aria-label", "Listen to " + name + " in this browser");
 
-          const imageHtml = profilePic
-            ? '<img class="live-djs-tool-photo" src="' + escapeAttr(profilePic) + '" alt="" loading="lazy">'
-            : '<div class="live-djs-tool-photo-placeholder" aria-hidden="true">🎧</div>';
+          const photoHtml = profilePic
+            ? '<img class="dj-secondary-photo" src="' + escapeAttr(profilePic) + '" alt="" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'grid\';">' +
+              '<div class="dj-secondary-placeholder" style="display:none;">🎧</div>'
+            : '<div class="dj-secondary-placeholder">🎧</div>';
+
           const genreHtml = genres.length
             ? genres.map(function (genre) {
-                return '<span class="dj-genre-pill ' + getGenreNeonClass(genre) + '">' +
+                return '<span class="rrr-live-genre-bubble" title="Live detected: ' + escapeAttr(genre) + '">' +
                   escapeHtml(genre) + '</span>';
               }).join("")
-            : '<span class="live-djs-tool-muted">Scanning genres…</span>';
-
-          const metricParts = [];
-          if (Number.isFinite(bpm)) metricParts.push("BPM " + Math.round(bpm));
-          if (Number.isFinite(talkRatio)) {
-            metricParts.push("TALK " + Math.max(0, Math.min(100, Math.round(talkRatio * 100))) + "%");
-          }
-          if (Number.isFinite(matchScore)) {
-            metricParts.push("PROGRAM MATCH " + Math.max(0, Math.min(100, Math.round(matchScore))) + "%");
-          }
+            : '<span class="live-djs-tool-muted">Analysing live audio…</span>';
 
           card.innerHTML =
-            '<div class="live-djs-tool-media">' + imageHtml +
-              '<div class="live-djs-tool-live"><span></span>LIVE</div>' +
-              getDJPlatformBadgeHtml(dj, "live-djs-tool-platform") +
-            '</div>' +
-            '<div class="live-djs-tool-body">' +
-              '<div class="live-djs-tool-name">' + escapeHtml(name) + '</div>' +
+            photoHtml +
+            '<div class="dj-secondary-overlay"></div>' +
+            getDJPlatformBadgeHtml(dj, "dj-secondary-platform") +
+            '<div class="dj-secondary-content">' +
+              '<div class="dj-secondary-live"><span class="dj-secondary-live-dot"></span>LIVE</div>' +
+              '<div class="dj-secondary-name" title="' + escapeAttr(name) + '">' + escapeHtml(name) + '</div>' +
               '<div class="live-djs-tool-handle">' +
                 (username ? '@' + escapeHtml(username) + ' · ' : '') + escapeHtml(platform) +
               '</div>' +
-              '<div class="live-djs-tool-genres">' + genreHtml + '</div>' +
-              '<div class="live-djs-tool-metrics">' +
-                (metricParts.length ? escapeHtml(metricParts.join(" · ")) : "Live detection available") +
+              '<div class="dj-secondary-detected-title">LIVE DETECTED</div>' +
+              '<div class="dj-secondary-detected-list live-djs-tool-detected" aria-label="Live detected genres">' + genreHtml + '</div>' +
+              '<div class="dj-secondary-match-label"><span>Program Match</span><span class="dj-secondary-match-value">' + scoreText + '</span></div>' +
+              '<div class="dj-secondary-match-bar" aria-label="Program Match ' + scoreText + '">' +
+                '<div class="dj-secondary-match-fill ' + matchClass + '" style="width:' + fillWidth + '%"></div>' +
               '</div>' +
-              '<button class="tool-button live-djs-tool-listen" type="button">▶ Listen to this DJ</button>' +
             '</div>';
 
-          const listenButton = card.querySelector(".live-djs-tool-listen");
-          if (listenButton) {
-            listenButton.addEventListener("click", async function () {
-              if (!username || listenButton.disabled) return;
-              listenButton.disabled = true;
-              listenButton.textContent = "Switching…";
-              try {
-                manualFeaturedDJIdentity = getDJIdentity(dj);
-                manualFeaturedDJMissingCount = 0;
-                manualDJStreamFailureHandled = false;
-                currentFeaturedDJ = dj;
-                showLiveDjPlayer(dj);
-                await updateLiveGenresDetected(
-                  null,
-                  manualFeaturedDJIdentity,
-                  "",
-                  platform
-                );
-                updateTabUrl("live-section");
-                applyLocationState();
-                await loadLiveDJs();
-              } catch (error) {
-                console.error("Radio RRR Live DJs tool selection failed:", error);
-                manualFeaturedDJIdentity = "";
-                manualFeaturedDJMissingCount = 0;
-                manualDJStreamFailureHandled = false;
-                if (liveDjsToolStatus) {
-                  liveDjsToolStatus.textContent = "Could not switch to that DJ. Refresh and try again.";
-                }
-              } finally {
-                listenButton.disabled = false;
-                listenButton.textContent = "▶ Listen to this DJ";
+          const switchToDj = async function () {
+            if (!username || card.dataset.switching === "1") return;
+            card.dataset.switching = "1";
+            card.setAttribute("aria-busy", "true");
+            try {
+              manualFeaturedDJIdentity = getDJIdentity(dj);
+              manualFeaturedDJMissingCount = 0;
+              manualDJStreamFailureHandled = false;
+              currentFeaturedDJ = dj;
+              showLiveDjPlayer(dj);
+              await updateLiveGenresDetected(
+                null,
+                manualFeaturedDJIdentity,
+                "",
+                platform
+              );
+              updateTabUrl("live-section");
+              applyLocationState();
+              await loadLiveDJs();
+            } catch (error) {
+              console.error("Radio RRR Live DJs tool selection failed:", error);
+              manualFeaturedDJIdentity = "";
+              manualFeaturedDJMissingCount = 0;
+              manualDJStreamFailureHandled = false;
+              if (liveDjsToolStatus) {
+                liveDjsToolStatus.textContent = "Could not switch to that DJ. Refresh and try again.";
               }
-            });
-          }
+            } finally {
+              delete card.dataset.switching;
+              card.removeAttribute("aria-busy");
+            }
+          };
+
+          card.addEventListener("click", switchToDj);
+          card.addEventListener("keydown", function (event) {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              switchToDj();
+            }
+          });
 
           liveDjsToolResults.appendChild(card);
         });
