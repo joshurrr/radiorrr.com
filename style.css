@@ -8164,54 +8164,54 @@
   box-shadow: none;
 }
 
-
-/* 2026-09-28 — secondary DJ card bottom stack alignment.
-   Keep identity directly above live genres and Program Match pinned beneath. */
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-content {
+/* 2026-09-28 — Best Live Matches card footer layout.
+   These are the cards rendered in #djDiscoveryResults below CURRENT PROGRAM.
+   Keep DJ name/handle above live genre bubbles, then Program Match at the bottom. */
+#djDiscoveryResults.dj-discovery-results > .dj-discovery-card .dj-discovery-name-wrap {
   position: absolute !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  width: 100% !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: flex-end !important;
-}
-
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-name {
-  position: relative !important;
-  order: 1 !important;
-  flex: 0 0 auto !important;
-  margin: 0 0 0.08rem !important;
-}
-
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-title {
-  order: 2 !important;
-}
-
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-list {
-  position: relative !important;
-  order: 3 !important;
-  flex: 0 0 auto !important;
-  margin: 0 0 0.16rem !important;
-}
-
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-match-label {
-  position: relative !important;
-  order: 4 !important;
-  flex: 0 0 auto !important;
+  left: 0.65rem !important;
+  right: 0.65rem !important;
+  bottom: 5.45rem !important;
+  z-index: 3 !important;
   margin: 0 !important;
-  font-size: 0.46rem !important;
+}
+
+#djDiscoveryResults.dj-discovery-results > .dj-discovery-card .dj-discovery-genres {
+  position: absolute !important;
+  left: 0.65rem !important;
+  right: 0.65rem !important;
+  bottom: 2.35rem !important;
+  width: auto !important;
+  min-height: 1.05rem !important;
+  max-height: calc(2.66rem + 6px) !important;
+  margin: 0 !important;
+  align-content: flex-start !important;
+}
+
+#djDiscoveryResults.dj-discovery-results > .dj-discovery-card .dj-discovery-match-row {
+  position: absolute !important;
+  left: 0.65rem !important;
+  right: 0.65rem !important;
+  bottom: 1.18rem !important;
+  width: auto !important;
+  margin: 0 !important;
+  gap: 0.25rem !important;
+  font-size: 0.44rem !important;
   line-height: 1 !important;
   letter-spacing: 0.015em !important;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-match-label > span:first-child,
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-match-value {
-  font-size: 0.46rem !important;
+#djDiscoveryResults.dj-discovery-results > .dj-discovery-card .dj-discovery-match-row > span,
+#djDiscoveryResults.dj-discovery-results > .dj-discovery-card .dj-discovery-match-value {
+  font-size: 0.44rem !important;
   line-height: 1 !important;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-match-bar {
-  order: 5 !important;
+#djDiscoveryResults.dj-discovery-results > .dj-discovery-card .dj-discovery-match-bar {
+  position: absolute !important;
+  left: 0.65rem !important;
+  right: 0.65rem !important;
+  bottom: 0.62rem !important;
+  width: auto !important;
+  margin: 0 !important;
 }
