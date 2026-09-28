@@ -8008,3 +8008,65 @@
     min-height: 260px;
   }
 }
+
+
+/* 2026-09-28 — Tune Sound genre search. */
+.dj-discovery-genre-search-wrap {
+  position: relative;
+  width: min(100%, 430px);
+  margin: 0.38rem 0 0.55rem;
+}
+
+.dj-discovery-genre-search-icon {
+  position: absolute;
+  left: 0.72rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #67e8f9;
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1;
+  pointer-events: none;
+  text-shadow: 0 0 7px rgba(34, 211, 238, 0.65);
+}
+
+.dj-discovery-genre-search {
+  width: 100%;
+  min-height: 38px;
+  padding: 0.58rem 0.8rem 0.58rem 2.15rem;
+  border: 1px solid rgba(34, 211, 238, 0.78);
+  border-radius: 9px;
+  outline: none;
+  background: rgba(3, 10, 24, 0.94);
+  color: #ffffff;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  box-shadow:
+    inset 0 0 12px rgba(34, 211, 238, 0.05),
+    0 0 9px rgba(34, 211, 238, 0.16);
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.dj-discovery-genre-search::placeholder {
+  color: rgba(199, 210, 254, 0.62);
+}
+
+.dj-discovery-genre-search:focus {
+  border-color: #67e8f9;
+  box-shadow:
+    inset 0 0 12px rgba(34, 211, 238, 0.08),
+    0 0 0 2px rgba(34, 211, 238, 0.10),
+    0 0 14px rgba(34, 211, 238, 0.28);
+}
+
+@media (max-width: 560px) {
+  .dj-discovery-genre-search-wrap {
+    width: 100%;
+  }
+
+  .dj-discovery-genre-search {
+    min-height: 42px;
+    font-size: 0.82rem;
+  }
+}

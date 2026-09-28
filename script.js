@@ -2354,6 +2354,7 @@ document.addEventListener("DOMContentLoaded", function () {
       let djDiscoveryRenderId = 0;
       let djDiscoveryResizeTimer = null;
       let djDiscoveryScheduledProgramTitle = "";
+      let djDiscoveryGenreSearch = "";
 
       function getDiscoveryGenres(dj) {
         // Detector history supplies the stable list of genre choices shown in
@@ -2557,6 +2558,10 @@ document.addEventListener("DOMContentLoaded", function () {
             '<button type="button" class="dj-discovery-add-toggle" id="djDiscoveryAddToggle" aria-expanded="false">＋ ADD ANOTHER GENRE</button>' +
             '<div class="dj-discovery-add-content" id="djDiscoveryAddContent" hidden>' +
               '<div class="dj-discovery-section-title dj-discovery-add-title">ADD TO YOUR SOUND</div>' +
+              '<div class="dj-discovery-genre-search-wrap">' +
+                '<span class="dj-discovery-genre-search-icon" aria-hidden="true">⌕</span>' +
+                '<input type="search" class="dj-discovery-genre-search" id="djDiscoveryGenreSearch" autocomplete="off" spellcheck="false" placeholder="Search genres — e.g. drum n bass" aria-label="Search available genres">' +
+              '</div>' +
               '<div class="dj-discovery-chips" id="djDiscoveryChips"></div>' +
             '</div>' +
           '</div>' +
@@ -2573,11 +2578,14 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!djDiscoveryCustomised) {
               djDiscoverySelectedGenres = djDiscoveryPresetGenres.slice();
             }
+            djDiscoveryGenreSearch = "";
             djDiscoveryEditorOpen = true;
             djDiscoveryAddGenresOpen = true;
             renderDjDiscoveryProgramContext();
             renderDjDiscoverySelectedGenres();
             renderDjDiscoveryChips();
+            const genreSearch = document.getElementById("djDiscoveryGenreSearch");
+            if (genreSearch) genreSearch.value = "";
           });
         }
 
@@ -2608,6 +2616,15 @@ document.addEventListener("DOMContentLoaded", function () {
             djDiscoveryAddGenresOpen = !djDiscoveryAddGenresOpen;
             renderDjDiscoveryProgramContext();
             if (djDiscoveryAddGenresOpen) renderDjDiscoveryChips();
+          });
+        }
+
+        const genreSearch = document.getElementById("djDiscoveryGenreSearch");
+        if (genreSearch) {
+          genreSearch.value = djDiscoveryGenreSearch;
+          genreSearch.addEventListener("input", function () {
+            djDiscoveryGenreSearch = this.value || "";
+            renderDjDiscoveryChips();
           });
         }
 
@@ -2841,13 +2858,18 @@ document.addEventListener("DOMContentLoaded", function () {
           djDiscoverySelectedGenres.map(normaliseDiscoveryGenre)
         );
 
-        const genres = getDjDiscoveryCatalogueGenres().filter(
-          item => !selectedKeys.has(normaliseDiscoveryGenre(item.label))
-        );
+        const searchKey = normaliseDiscoveryGenre(djDiscoveryGenreSearch);
+        const genres = getDjDiscoveryCatalogueGenres().filter(item => {
+          const genreKey = normaliseDiscoveryGenre(item.label);
+          return !selectedKeys.has(genreKey) &&
+            (!searchKey || genreKey.includes(searchKey));
+        });
 
         if (!genres.length) {
-          chips.innerHTML =
-            '<span class="dj-discovery-selected-empty">No additional detected genres are available right now.</span>';
+          chips.innerHTML = searchKey
+            ? '<span class="dj-discovery-selected-empty">No genres match “' +
+              escapeHtml(djDiscoveryGenreSearch.trim()) + '”.</span>'
+            : '<span class="dj-discovery-selected-empty">No additional detected genres are available right now.</span>';
           return;
         }
 
