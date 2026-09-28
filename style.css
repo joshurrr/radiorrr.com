@@ -8878,3 +8878,26 @@
     white-space: nowrap;
   }
 }
+
+/* Mobile navigation: simplify the top menu to LIVE NOW / SCHEDULE / TOOLS. */
+.nav-label-mobile {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .nav-tabs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .nav-tabs .audio-nav {
+    display: none;
+  }
+
+  .nav-tabs .nav-label-desktop {
+    display: none;
+  }
+
+  .nav-tabs .nav-label-mobile {
+    display: inline;
+  }
+}
