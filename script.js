@@ -2353,6 +2353,7 @@ document.addEventListener("DOMContentLoaded", function () {
       let djDiscoveryShowAll = false;
       let djDiscoveryRenderId = 0;
       let djDiscoveryResizeTimer = null;
+      let djDiscoveryScheduledProgramTitle = "";
 
       function getDiscoveryGenres(dj) {
         // Detector history supplies the stable list of genre choices shown in
@@ -2654,8 +2655,16 @@ document.addEventListener("DOMContentLoaded", function () {
         const addContentEl = document.getElementById("djDiscoveryAddContent");
         const programNoteEl = document.querySelector("#rrrDjDiscovery .dj-discovery-program-note");
 
+        if (heroNowEl && djDiscoveryScheduledProgramTitle) {
+          heroNowEl.textContent = djDiscoveryCustomised
+            ? djDiscoveryScheduledProgramTitle.replace(/\s+[–-]\s+.*$/, " – CUSTOM PROGRAM")
+            : djDiscoveryScheduledProgramTitle;
+        }
+
         if (nameEl) {
-          nameEl.textContent = String(heroNowEl && heroNowEl.textContent || "CURRENT RADIO RRR PROGRAM").trim();
+          nameEl.textContent = djDiscoveryCustomised
+            ? "CUSTOM PROGRAM"
+            : String(heroNowEl && heroNowEl.textContent || "CURRENT RADIO RRR PROGRAM").trim();
         }
 
         if (timeEl) {
@@ -2712,9 +2721,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (editorTitleEl) {
-          editorTitleEl.textContent = djDiscoveryEditorOpen
-            ? "🎚️ TUNE YOUR SOUND"
-            : "🎚️ YOUR SOUND";
+          editorTitleEl.textContent = djDiscoveryCustomised
+            ? "🎚️ CUSTOM PROGRAM"
+            : (djDiscoveryEditorOpen ? "🎚️ TUNE YOUR SOUND" : "🎚️ YOUR SOUND");
         }
 
         if (editorSubtitleEl) {
@@ -4114,6 +4123,8 @@ document.addEventListener("DOMContentLoaded", function () {
           " – " +
           String(block.name || "").toUpperCase();
 
+        djDiscoveryScheduledProgramTitle = blockLabel;
+
         function formatHeroTime(value) {
           const parts = String(value || "").split(":");
           const hour24 = Number(parts[0]);
@@ -4125,7 +4136,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (heroNowEl) {
-          heroNowEl.textContent = blockLabel;
+          heroNowEl.textContent = djDiscoveryCustomised
+            ? dayName.toUpperCase() + " – CUSTOM PROGRAM"
+            : blockLabel;
         }
 
         if (heroProgramTime) {
