@@ -3009,6 +3009,31 @@ document.addEventListener("DOMContentLoaded", function () {
             : djDiscoveryScheduledProgramTitle;
         }
 
+        // Keep the hero in sync with the listener's Custom Program on both
+        // desktop and mobile. The hero shows the requested sound; the live DJ
+        // card below continues to show what is actually being detected.
+        if (djDiscoveryCustomised) {
+          if (heroProgramTargetLabel) {
+            heroProgramTargetLabel.textContent = "YOUR SOUND:";
+          }
+          if (liveProgramTargetGenres) {
+            liveProgramTargetGenres.innerHTML = djDiscoverySelectedGenres.map(getGenrePillHtml).join("");
+          }
+          if (heroProgramExplainer) {
+            heroProgramExplainer.textContent = "Scanning live DJs to find the best match for your sound…";
+          }
+        } else if (!featuredHeroOverrideActive) {
+          if (heroProgramTargetLabel) {
+            heroProgramTargetLabel.textContent = "TARGET SOUND:";
+          }
+          if (liveProgramTargetGenres) {
+            liveProgramTargetGenres.innerHTML = djDiscoveryPresetGenres.map(getGenrePillHtml).join("");
+          }
+          if (heroProgramExplainer) {
+            heroProgramExplainer.textContent = "We find live DJs and automatically tune into the best match for this program.";
+          }
+        }
+
         if (nameEl) {
           nameEl.textContent = djDiscoveryCustomised
             ? "CUSTOM PROGRAM"
@@ -4662,7 +4687,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const heroGenres = block.genres.split("·").map(function (genre) { return genre.trim(); }).filter(Boolean);
 
-        if (featuredHeroOverrideActive) {
+        if (djDiscoveryCustomised) {
+          if (heroProgramTargetLabel) {
+            heroProgramTargetLabel.textContent = "YOUR SOUND:";
+          }
+          if (liveProgramTargetGenres) {
+            liveProgramTargetGenres.innerHTML = djDiscoverySelectedGenres.map(getGenrePillHtml).join("");
+          }
+          if (heroProgramExplainer) {
+            heroProgramExplainer.textContent = "Scanning live DJs to find the best match for your sound…";
+          }
+        } else if (featuredHeroOverrideActive) {
           applyFeaturedHeroOverride();
         } else {
           if (heroProgramTargetLabel) {
@@ -4671,14 +4706,14 @@ document.addEventListener("DOMContentLoaded", function () {
           if (liveProgramTargetGenres) {
             liveProgramTargetGenres.innerHTML = heroGenres.map(getGenrePillHtml).join("");
           }
+          if (heroProgramExplainer) {
+            heroProgramExplainer.textContent = "We find live DJs and automatically tune into the best match for this program.";
+          }
         }
 
         // The listener starts with Radio RRR's tuned current-program sound.
         // Personal edits stay local until they explicitly reset to the preset.
         setDjDiscoveryPresetGenres(heroGenres);
-        if (heroProgramExplainer) {
-          heroProgramExplainer.textContent = "We find live DJs and automatically tune into the best match for this program.";
-        }
 
       }
 
