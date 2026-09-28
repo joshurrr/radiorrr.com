@@ -2151,11 +2151,24 @@ document.addEventListener("DOMContentLoaded", function () {
           valueEl = left.querySelector(".main-dj-match-value");
         }
 
-        const key = getDJMatchKey(dj || {});
+        const labelEl = randomLiveDjMatch.querySelector(".main-dj-match-label");
+        const customSoundActive =
+          djDiscoveryCustomised && djDiscoverySelectedGenres.length > 0;
 
-        const score = Number(
-          key ? currentLiveMatchScores[key] : NaN
-        );
+        let score;
+        if (customSoundActive) {
+          const liveGenres = getLiveAIGenres(dj || {});
+          score = liveGenres.length
+            ? getLiveSoundMatchScore(dj || {}, djDiscoverySelectedGenres) * 100
+            : NaN;
+          if (labelEl) labelEl.textContent = "🎯 YOUR SOUND MATCH";
+          randomLiveDjMatch.title = "Match against your Custom Program genres";
+        } else {
+          const key = getDJMatchKey(dj || {});
+          score = Number(key ? currentLiveMatchScores[key] : NaN);
+          if (labelEl) labelEl.textContent = "🎯 CURRENT PROGRAM MATCH";
+          randomLiveDjMatch.title = "RRR genre compatibility score out of 100";
+        }
 
         if (!Number.isFinite(score)) {
           valueEl.textContent = "—";
@@ -2355,6 +2368,8 @@ document.addEventListener("DOMContentLoaded", function () {
       let djDiscoveryResizeTimer = null;
       let djDiscoveryScheduledProgramTitle = "";
       let djDiscoveryGenreSearch = "";
+      let customSoundAutoRetuneTimer = null;
+      let customSoundAutoRetuneInFlight = false;
 
       function getDiscoveryGenres(dj) {
         // Detector history supplies the stable list of genre choices shown in
@@ -2448,6 +2463,31 @@ document.addEventListener("DOMContentLoaded", function () {
         // genres therefore ranks above one that only matches a single genre.
         return total / selected.length;
       }
+
+      window.RadioRRRGetCustomSoundMatchState = function (username, platform) {
+        if (!djDiscoveryCustomised || !djDiscoverySelectedGenres.length) {
+          return { active: false, score: null };
+        }
+
+        const wantedUsername = String(username || "").replace(/^@/, "").trim().toLowerCase();
+        const wantedPlatform = String(platform || "").trim().toLowerCase();
+        const dj = djDiscoveryDJs.find(item => {
+          const itemUsername = getDJUsername(item).replace(/^@/, "").trim().toLowerCase();
+          const itemPlatform = getDJPlatform(item).trim().toLowerCase();
+          return itemUsername === wantedUsername && (!wantedPlatform || itemPlatform === wantedPlatform);
+        });
+
+        if (!dj || !getLiveAIGenres(dj).length) {
+          return { active: true, score: null };
+        }
+
+        return {
+          active: true,
+          score: Math.max(0, Math.min(100, Math.round(
+            getLiveSoundMatchScore(dj, djDiscoverySelectedGenres) * 100
+          )))
+        };
+      };
 
       function uniqueDiscoveryGenres(genres) {
         const out = [];
@@ -2968,6 +3008,33 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
 
+      function scheduleCustomSoundAutoRetune() {
+        if (customSoundAutoRetuneTimer) {
+          clearTimeout(customSoundAutoRetuneTimer);
+          customSoundAutoRetuneTimer = null;
+        }
+
+        if (
+          !djDiscoveryCustomised ||
+          djDiscoveryEditorOpen ||
+          !djDiscoverySelectedGenres.length ||
+          customSoundAutoRetuneInFlight
+        ) {
+          return;
+        }
+
+        customSoundAutoRetuneTimer = window.setTimeout(async function () {
+          customSoundAutoRetuneTimer = null;
+          if (customSoundAutoRetuneInFlight) return;
+          customSoundAutoRetuneInFlight = true;
+          try {
+            await applyBestCustomSoundDj();
+          } finally {
+            customSoundAutoRetuneInFlight = false;
+          }
+        }, 350);
+      }
+
       function renderDjDiscoveryResults() {
         const resultsEl = document.getElementById("djDiscoveryResults");
         const statusEl = document.getElementById("djDiscoveryScanStatus");
@@ -3074,21 +3141,30 @@ document.addEventListener("DOMContentLoaded", function () {
               ? ' · ' + waitingCount + (waitingCount === 1 ? ' awaiting a Program Match score' : ' awaiting Program Match scores')
               : '');
         } else if (waitingCount > 0) {
-          statusEl.className = "dj-discovery-scan-status scanning";
+          statusEl.className = "dj-discovery-scan-status scanning custom-retuning";
           statusEl.innerHTML =
             '<span class="dj-discovery-scan-dot" aria-hidden="true"></span>' +
-            '<strong>Scanning live DJs to update genres — this may take a few minutes.</strong> ' +
-            'Currently ranked ' + ranked.length + ' of ' + alternativeCount +
-            ' live alternatives · ' + waitingCount +
-            (waitingCount === 1 ? ' awaiting fresh genre data' : ' awaiting fresh genre data');
+            '<span class="dj-discovery-retune-copy">' +
+              '<strong>RETUNING YOUR SOUND</strong>' +
+              '<span>Radio RRR is rescanning live DJs for your new genre mix. ' +
+              'This can take a few minutes while fresh genre data comes in. ' +
+              'The main DJ will change automatically when a better match is found.</span>' +
+              '<small>Currently ranked ' + ranked.length + ' of ' + alternativeCount +
+              ' live alternatives · ' + waitingCount +
+              (waitingCount === 1 ? ' awaiting fresh genre data' : ' awaiting fresh genre data') +
+              '</small>' +
+            '</span>';
         } else {
           const hasCustomMatch = ranked.some(item => Number(item.score) > 0);
-          statusEl.className = "dj-discovery-scan-status complete";
+          statusEl.className = hasCustomMatch
+            ? "dj-discovery-scan-status complete custom-active"
+            : "dj-discovery-scan-status scanning custom-retuning";
           statusEl.innerHTML = hasCustomMatch
-            ? '<strong>Live genre scan complete.</strong> Re-ranked ' + ranked.length + ' live ' +
-              (ranked.length === 1 ? 'alternative' : 'alternatives') +
-              ' against your custom sound'
-            : '<strong>No detected live match yet.</strong> Keeping the current DJ while live genre scans update.';
+            ? '<strong>✓ CUSTOM SOUND ACTIVE</strong> · Live DJs are ranked against your selected genres.'
+            : '<span class="dj-discovery-scan-dot" aria-hidden="true"></span>' +
+              '<span class="dj-discovery-retune-copy"><strong>RETUNING YOUR SOUND</strong>' +
+              '<span>No detected live match yet. Radio RRR will keep rescanning live DJs; ' +
+              'this can take a few minutes after changing genres.</span></span>';
         }
 
         if (!ranked.length) {
@@ -3595,6 +3671,10 @@ document.addEventListener("DOMContentLoaded", function () {
           // Offline RRR favourites are no longer rendered as a long list here.
           // They are available through the searchable DISCOVER DJs section below.
           await renderDjDiscovery(uniqueFavouriteDJs, uniqueLiveDJs);
+
+          // A Custom Program keeps re-evaluating as the 30-second live refresh
+          // brings in fresh genre detections. This is browser-local only.
+          scheduleCustomSoundAutoRetune();
 
         } catch (error) {
           if (error && error.name === "AbortError") return;

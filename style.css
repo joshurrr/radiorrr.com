@@ -7480,6 +7480,58 @@
   color: #a7f3d0;
 }
 
+/* Custom Program retuning is deliberately prominent: the listener needs to
+   know that fresh live genre scans can take a few minutes to settle. */
+#rrrDjDiscovery .dj-discovery-scan-status.custom-retuning {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.68rem;
+  margin: 0.34rem 0 0.72rem;
+  padding: 0.72rem 0.82rem;
+  border: 1px solid rgba(34,211,238,0.56);
+  border-radius: 10px;
+  background:
+    radial-gradient(circle at top left, rgba(34,211,238,0.10), transparent 52%),
+    linear-gradient(135deg, rgba(7,24,42,0.94), rgba(19,8,38,0.92));
+  color: #dffaff;
+  box-shadow: 0 0 14px rgba(34,211,238,0.14), 0 0 18px rgba(168,85,247,0.10);
+}
+
+#rrrDjDiscovery .dj-discovery-scan-status.custom-retuning .dj-discovery-scan-dot {
+  flex: 0 0 auto;
+  margin-top: 0.18rem;
+}
+
+#rrrDjDiscovery .dj-discovery-retune-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  line-height: 1.35;
+}
+
+#rrrDjDiscovery .dj-discovery-retune-copy strong {
+  color: #ffffff;
+  font-size: 0.75rem;
+  letter-spacing: 0.055em;
+  text-shadow: 0 0 7px rgba(34,211,238,0.38);
+}
+
+#rrrDjDiscovery .dj-discovery-retune-copy span {
+  color: #c7d8ee;
+  font-size: 0.71rem;
+}
+
+#rrrDjDiscovery .dj-discovery-retune-copy small {
+  color: #8fa5c5;
+  font-size: 0.64rem;
+}
+
+#rrrDjDiscovery .dj-discovery-scan-status.custom-active {
+  margin-top: 0.18rem;
+  color: #a7f3d0;
+}
+
 /* Keep the compact card footer readable on a single line. */
 #rrrDjDiscovery .dj-discovery-match-row {
   flex-wrap: nowrap !important;
