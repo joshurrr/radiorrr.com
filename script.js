@@ -1326,8 +1326,26 @@ document.addEventListener("DOMContentLoaded", function () {
               percent + '%' +
             '</span>';
 
+          if (window.matchMedia && window.matchMedia("(max-width: 767px)").matches && liveGenresDetectedList.children.length >= 3) {
+            row.classList.add("rrr-mobile-extra-live-genre");
+          }
+
           liveGenresDetectedList.appendChild(row);
         });
+
+        if (window.matchMedia && window.matchMedia("(max-width: 767px)").matches && genres.length > 3) {
+          const moreButton = document.createElement("button");
+          moreButton.type = "button";
+          moreButton.className = "rrr-mobile-live-genres-more";
+          moreButton.textContent = "+" + (genres.length - 3) + " more";
+          moreButton.setAttribute("aria-expanded", "false");
+          moreButton.addEventListener("click", function () {
+            const expanded = liveGenresDetectedList.classList.toggle("rrr-mobile-genres-expanded");
+            moreButton.textContent = expanded ? "Show less" : "+" + (genres.length - 3) + " more";
+            moreButton.setAttribute("aria-expanded", expanded ? "true" : "false");
+          });
+          liveGenresDetectedList.appendChild(moreButton);
+        }
 
         // Genre data has successfully refreshed. Restart the visible
         // countdown from 30 seconds at the moment the new result is rendered.
