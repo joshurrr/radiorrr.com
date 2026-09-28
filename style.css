@@ -8849,3 +8849,32 @@
     display: none !important;
   }
 }
+
+/* 2026-09-28.41 MOBILE HERO TARGET FLOW
+   Let target genre pills and BPM share the full mobile row and wrap naturally. */
+@media (max-width: 720px) {
+  .hero .hero-program-target-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    gap: 0.26rem;
+  }
+
+  .hero .hero-program-target-row > strong {
+    flex: 0 0 100%;
+  }
+
+  .hero .hero-program-targets {
+    display: contents;
+  }
+
+  .hero .hero-program-bpm {
+    flex: 0 0 auto;
+    margin-left: 0;
+    padding-left: 0;
+    border-left: 0;
+    white-space: nowrap;
+  }
+}
