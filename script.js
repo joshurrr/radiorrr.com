@@ -898,10 +898,35 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             // Keep the media elements mounted for the existing in-page radio views.
+            // Snapshot the listener's CURRENT mute state at the moment they click
+            // a tab. Some browsers can alter a hidden video's media state when
+            // its pane becomes display:none; that must not be mistaken for a new
+            // listener mute request.
+            if (liveDjVideo) {
+              userRequestedAudio = !liveDjVideo.muted;
+              liveDjVideo.dataset.rrrUserAudio = userRequestedAudio ? "1" : "0";
+              liveDjVideo.defaultMuted = !userRequestedAudio;
+            }
+
             e.preventDefault();
             if (targetId) {
               updateTabUrl(targetId);
               applyLocationState();
+
+              // Re-assert the explicit audio choice after the pane visibility
+              // changes. This keeps an unmuted DJ audible while viewing Schedule
+              // or Live Audio, without reloading or recreating the HLS player.
+              if (liveDjVideo) {
+                liveDjVideo.muted = !userRequestedAudio;
+                liveDjVideo.defaultMuted = !userRequestedAudio;
+                liveDjVideo.dataset.rrrUserAudio = userRequestedAudio ? "1" : "0";
+                updateLiveDjMuteButton();
+
+                window.requestAnimationFrame(function () {
+                  liveDjVideo.muted = !userRequestedAudio;
+                  updateLiveDjMuteButton();
+                });
+              }
             }
 
           }
