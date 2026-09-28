@@ -3556,7 +3556,7 @@ document.addEventListener("DOMContentLoaded", function () {
             '<div class="dj-discovery-rank">#' + rankNumber + '</div>' +
             '<div class="dj-discovery-card-top">' + photo +
               '<div class="dj-discovery-name-wrap">' +
-                '<div class="dj-discovery-name" title="' + escapeAttr(name) + '">' + escapeHtml(name) + '</div>' +
+                '<div class="dj-discovery-name' + (name.length > 16 ? ' is-long-name' : '') + '" title="' + escapeAttr(name) + '">' + escapeHtml(name) + '</div>' +
                 '<div class="dj-discovery-handle">@' + escapeHtml(username) + '</div>' +
               '</div>' +
             '</div>' +

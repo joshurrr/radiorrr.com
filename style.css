@@ -8750,4 +8750,95 @@
     margin: 0;
   }
 }
-\n\n/* 2026-09-28 — MOBILE ONLY: compact live listening UI. Desktop unchanged. */\n@media (max-width: 767px) {\n  /* Show the three strongest live genres first; JS provides the explicit expander. */\n  #liveGenresDetectedList .rrr-mobile-extra-live-genre {\n    display: none;\n  }\n\n  #liveGenresDetectedList.rrr-mobile-genres-expanded .rrr-mobile-extra-live-genre {\n    display: grid;\n  }\n\n  .rrr-mobile-live-genres-more {\n    display: inline-flex;\n    align-items: center;\n    justify-content: center;\n    width: fit-content;\n    margin-top: 0.22rem;\n    padding: 0.26rem 0.58rem;\n    border: 1px solid rgba(103,232,249,0.5);\n    border-radius: 999px;\n    background: rgba(8,18,40,0.82);\n    color: #a5f3fc;\n    font: inherit;\n    font-size: 0.64rem;\n    font-weight: 900;\n    cursor: pointer;\n  }\n\n  /* The hero already states the current program. Replace the duplicate program\n     summary below the player with one compact tuning action. */\n  #rrrDjDiscovery .dj-discovery-program {\n    margin-bottom: 0.72rem;\n    padding: 0.55rem !important;\n    border-radius: 11px;\n  }\n\n  #rrrDjDiscovery .dj-discovery-program-copy {\n    display: none;\n  }\n\n  #rrrDjDiscovery .dj-discovery-edit-button {\n    width: 100%;\n    min-height: 38px;\n    padding: 0.48rem 0.65rem;\n    font-size: 0;\n  }\n\n  #rrrDjDiscovery .dj-discovery-edit-button::before {\n    content: "🎚 TUNE YOUR SOUND";\n    font-size: 0.72rem;\n    font-weight: 950;\n    letter-spacing: 0.055em;\n  }\n\n  /* Alternative DJs become a true swipeable row instead of tall stacked cards. */\n  #djDiscoveryResults.dj-discovery-results,\n  #liveDjsList.live-djs-grid {\n    display: flex !important;\n    flex-wrap: nowrap !important;\n    gap: 0.65rem !important;\n    overflow-x: auto !important;\n    overflow-y: hidden;\n    scroll-snap-type: x proximity;\n    overscroll-behavior-inline: contain;\n    -webkit-overflow-scrolling: touch;\n    padding: 0.12rem 0 0.55rem;\n    scrollbar-width: thin;\n  }\n\n  #djDiscoveryResults.dj-discovery-results > .dj-discovery-card,\n  #liveDjsList.live-djs-grid > .dj-card.dj-live-switch-card {\n    flex: 0 0 min(68vw, 220px) !important;\n    width: min(68vw, 220px) !important;\n    min-width: min(68vw, 220px) !important;\n    scroll-snap-align: start;\n  }\n\n  #liveDjsList .dj-card.dj-live-switch-card {\n    min-height: 190px !important;\n  }\n\n  /* Slightly shorter phone navigation without changing its two-column layout. */\n  .nav-tabs {\n    gap: 0.34rem;\n    margin-top: 0.28rem;\n    margin-bottom: 0.36rem;\n  }\n\n  .nav-tabs a,\n  .nav-tabs .recommend-dj-button {\n    padding-top: 0.3rem !important;\n    padding-bottom: 0.3rem !important;\n    font-size: 0.72rem !important;\n  }\n\n  .nav-tabs .nav-icon {\n    font-size: 0.86rem;\n  }\n\n  /* Keep the footer useful on phones without a ten-pill genre cloud. */\n  .rrr-footer-genres span:nth-child(n+6) {\n    display: none;\n  }\n\n  .rrr-footer-genres {\n    gap: 0.24rem !important;\n  }\n}\n
+
+
+/* 2026-09-28 — ROUND 3 MOBILE CLEANUP.
+   Scope: mobile only. Desktop presentation and playback behaviour are unchanged. */
+@media (max-width: 767px) {
+  /* Keep the live analysis useful without letting five rows dominate the player. */
+  #liveGenresDetectedList .rrr-mobile-extra-live-genre {
+    display: none;
+  }
+
+  #liveGenresDetectedList.rrr-mobile-genres-expanded .rrr-mobile-extra-live-genre {
+    display: grid;
+  }
+
+  .rrr-mobile-live-genres-more {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    margin-top: 0.22rem;
+    padding: 0.24rem 0.55rem;
+    border: 1px solid rgba(103,232,249,0.45);
+    border-radius: 999px;
+    background: rgba(8,18,40,0.76);
+    color: #a5f3fc;
+    font: inherit;
+    font-size: 0.62rem;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  /* The hero already contains the scheduled program details. On phones this
+     second card is only an action point, not another copy of the schedule. */
+  #rrrDjDiscovery .dj-discovery-program {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.34rem;
+    margin: 0 0 0.62rem;
+    padding: 0.58rem 0.62rem;
+    border-color: rgba(34,211,238,0.28);
+    box-shadow: none;
+  }
+
+  #rrrDjDiscovery .dj-discovery-program-copy {
+    display: none;
+  }
+
+  #rrrDjDiscovery .dj-discovery-program::before {
+    content: "🎚 TUNE YOUR SOUND";
+    color: #e8fbff;
+    font-size: 0.72rem;
+    line-height: 1.1;
+    font-weight: 950;
+    letter-spacing: 0.055em;
+  }
+
+  #rrrDjDiscovery .dj-discovery-program::after {
+    content: "Change what Radio RRR looks for.";
+    margin-top: -0.1rem;
+    color: #8fa5c7;
+    font-size: 0.62rem;
+    line-height: 1.25;
+  }
+
+  #rrrDjDiscovery .dj-discovery-edit-button {
+    width: 100%;
+    min-height: 34px;
+    padding: 0.4rem 0.58rem;
+    font-size: 0.66rem;
+  }
+
+  /* Reduce box-within-box weight around tuning/matches while retaining the
+     existing neon section identity. */
+  #rrrDjDiscovery .dj-discovery-editor,
+  #rrrDjDiscovery .dj-discovery-add-panel,
+  #rrrDjDiscovery .dj-discovery-saved-stations {
+    box-shadow: none;
+  }
+
+  #rrrDjDiscovery .dj-discovery-editor {
+    padding: 0.7rem;
+  }
+
+  #rrrDjDiscovery .dj-discovery-section-title {
+    margin-top: 0.72rem;
+  }
+
+  #rrrDjDiscovery .dj-discovery-name.is-long-name {
+    font-size: 0.72rem !important;
+    letter-spacing: -0.01em !important;
+  }
+}
