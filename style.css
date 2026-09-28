@@ -8842,3 +8842,10 @@
     letter-spacing: -0.01em !important;
   }
 }
+
+/* Mobile footer cleanup: hide scheduled genre bubbles only on phones. */
+@media (max-width: 767px) {
+  .rrr-footer-genres {
+    display: none;
+  }
+}
