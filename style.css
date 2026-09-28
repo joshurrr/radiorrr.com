@@ -7375,17 +7375,29 @@
 }
 
 #rrrDjDiscovery .dj-discovery-edit-button {
-  min-height: 38px;
-  padding: 0.54rem 0.72rem;
-  border-color: rgba(34,211,238,0.48);
-  background: rgba(8,18,40,0.84);
-  color: #dffaff;
-  box-shadow: 0 0 8px rgba(34,211,238,0.10);
+  min-height: 44px;
+  padding: 0.62rem 0.9rem;
+  border: 1px solid rgba(103,232,249,0.92);
+  background: linear-gradient(135deg, rgba(8,145,178,0.40), rgba(67,56,202,0.48));
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 950;
+  letter-spacing: 0.055em;
+  box-shadow:
+    0 0 12px rgba(34,211,238,0.34),
+    0 0 22px rgba(99,102,241,0.20);
+  text-shadow: 0 0 7px rgba(103,232,249,0.42);
 }
 
 #rrrDjDiscovery .dj-discovery-edit-button:hover,
 #rrrDjDiscovery .dj-discovery-edit-button:focus-visible {
-  background: linear-gradient(135deg, rgba(8,145,178,0.25), rgba(67,56,202,0.30));
+  border-color: #a5f3fc;
+  background: linear-gradient(135deg, rgba(8,145,178,0.58), rgba(67,56,202,0.62));
+  box-shadow:
+    0 0 16px rgba(34,211,238,0.50),
+    0 0 28px rgba(99,102,241,0.28);
+  transform: translateY(-1px);
+  outline: none;
 }
 
 #rrrDjDiscovery .dj-discovery-editor {

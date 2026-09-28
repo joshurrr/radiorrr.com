@@ -2536,7 +2536,7 @@ document.addEventListener("DOMContentLoaded", function () {
               '<div class="dj-discovery-program-genres" id="djDiscoveryProgramGenres"></div>' +
               '<div class="dj-discovery-program-state" id="djDiscoveryProgramState" hidden></div>' +
             '</div>' +
-            '<button type="button" class="dj-discovery-edit-button" id="djDiscoveryEditSound">☷ TUNE SOUND</button>' +
+            '<button type="button" class="dj-discovery-edit-button" id="djDiscoveryEditSound">🎚 EDIT / TUNE SOUND</button>' +
           '</div>' +
           '<div class="dj-discovery-editor" id="djDiscoveryEditor" hidden>' +
             '<div class="dj-discovery-editor-head">' +
@@ -2573,7 +2573,7 @@ document.addEventListener("DOMContentLoaded", function () {
               djDiscoverySelectedGenres = djDiscoveryPresetGenres.slice();
             }
             djDiscoveryEditorOpen = true;
-            djDiscoveryAddGenresOpen = false;
+            djDiscoveryAddGenresOpen = true;
             renderDjDiscoveryProgramContext();
             renderDjDiscoverySelectedGenres();
             renderDjDiscoveryChips();
@@ -2584,7 +2584,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (retune) {
           retune.addEventListener("click", function () {
             djDiscoveryEditorOpen = true;
-            djDiscoveryAddGenresOpen = false;
+            djDiscoveryAddGenresOpen = true;
             renderDjDiscoveryProgramContext();
             renderDjDiscoverySelectedGenres();
             renderDjDiscoveryChips();
@@ -2701,7 +2701,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (editEl) {
-          editEl.textContent = "☷ TUNE SOUND";
+          editEl.textContent = "🎚 EDIT / TUNE SOUND";
           editEl.hidden = false;
         }
 
