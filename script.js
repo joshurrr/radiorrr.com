@@ -1856,7 +1856,9 @@ document.addEventListener("DOMContentLoaded", function () {
           } else if (savedAudioChoice === "0") {
             userRequestedAudio = false;
           } else {
-            userRequestedAudio = !liveDjVideo.muted;
+            // No saved preference yet: keep the explicit in-memory choice.
+            // Never infer user intent from video.muted here because HLS/browser
+            // recovery can temporarily force the media element back to muted.
           }
           liveDjVideo.dataset.rrrUserAudio = userRequestedAudio ? "1" : "0";
           liveDjVideo.defaultMuted = !userRequestedAudio;
@@ -2026,6 +2028,15 @@ document.addEventListener("DOMContentLoaded", function () {
             livePlaybackLastProgressAt = Date.now();
             livePlaybackHasProgressed = true;
           }
+        });
+
+        liveDjVideo.addEventListener("canplay", function () {
+          // A MediaSource/HLS rebuild can restore the element's autoplay mute
+          // state before playback resumes. The listener's explicit choice wins.
+          liveDjVideo.muted = !userRequestedAudio;
+          liveDjVideo.defaultMuted = !userRequestedAudio;
+          liveDjVideo.dataset.rrrUserAudio = userRequestedAudio ? "1" : "0";
+          updateLiveDjMuteButton();
         });
 
         liveDjVideo.addEventListener("playing", function () {
@@ -3297,7 +3308,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (liveDjVideo) {
-          userRequestedAudio = !liveDjVideo.muted;
+          // Preserve the explicit MUTE/UNMUTE preference. Do not snapshot
+          // video.muted: automatic HLS recovery can make that state transient.
           liveDjVideo.dataset.rrrUserAudio = userRequestedAudio ? "1" : "0";
           liveDjVideo.defaultMuted = !userRequestedAudio;
         }
@@ -3614,7 +3626,8 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!targetUsername) return;
 
             if (liveDjVideo) {
-              userRequestedAudio = !liveDjVideo.muted;
+              // Preserve the explicit MUTE/UNMUTE preference across this DJ
+              // switch instead of reading a possibly transient browser mute.
               liveDjVideo.dataset.rrrUserAudio = userRequestedAudio ? "1" : "0";
               liveDjVideo.defaultMuted = !userRequestedAudio;
             }
@@ -4294,7 +4307,8 @@ document.addEventListener("DOMContentLoaded", function () {
             // to snapshot the listener's current audio choice before HLS is
             // torn down and attached to the newly selected DJ.
             if (liveDjVideo) {
-              userRequestedAudio = !liveDjVideo.muted;
+              // Preserve the explicit MUTE/UNMUTE preference across this DJ
+              // switch instead of reading a possibly transient browser mute.
               liveDjVideo.dataset.rrrUserAudio = userRequestedAudio ? "1" : "0";
               liveDjVideo.defaultMuted = !userRequestedAudio;
             }
