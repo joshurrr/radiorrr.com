@@ -976,11 +976,16 @@ document.addEventListener("DOMContentLoaded", function () {
       // first chance to recover a short stall. If playback time still stops
       // advancing for 12 seconds, rebuild the existing HLS player and rejoin
       // the live edge without changing DJ or creating a second media element.
-      const LIVE_PLAYBACK_HARD_STALL_MS = 12 * 1000;
+      // Try a non-destructive HLS nudge after 12 seconds without progress.
+      // Rebuilding the MediaSource immediately can make browsers re-apply
+      // autoplay muting even after the listener explicitly chose UNMUTE.
+      const LIVE_PLAYBACK_SOFT_STALL_MS = 12 * 1000;
+      const LIVE_PLAYBACK_HARD_STALL_MS = 28 * 1000;
       const LIVE_PLAYBACK_WATCHDOG_MS = 2 * 1000;
       let livePlaybackLastTime = 0;
       let livePlaybackLastProgressAt = Date.now();
       let livePlaybackHasProgressed = false;
+      let livePlaybackSoftRecoveryAttempted = false;
       let livePlaybackHardRecoveryInProgress = false;
 
       // The backend relay has its own liveness grace period. TikTok can
@@ -1791,6 +1796,28 @@ document.addEventListener("DOMContentLoaded", function () {
         return hls;
       }
 
+      function softRecoverLivePlayback() {
+        if (!liveDjVideo || document.hidden || livePlaybackHardRecoveryInProgress) return;
+
+        livePlaybackSoftRecoveryAttempted = true;
+
+        // Keep the existing MediaSource and media element intact. This avoids
+        // losing the listener's explicit unmute gesture during routine stalls.
+        try {
+          if (window.radioRrrHls) {
+            window.radioRrrHls.startLoad(-1);
+          }
+        } catch (error) {
+          console.warn("Radio RRR soft playback recovery warning:", error);
+        }
+
+        liveDjVideo.muted = !userRequestedAudio;
+        liveDjVideo.defaultMuted = !userRequestedAudio;
+        liveDjVideo.dataset.rrrUserAudio = userRequestedAudio ? "1" : "0";
+        updateLiveDjMuteButton();
+        liveDjVideo.play().catch(() => {});
+      }
+
       function hardRecoverLivePlayback() {
         if (
           livePlaybackHardRecoveryInProgress ||
@@ -1917,6 +1944,7 @@ document.addEventListener("DOMContentLoaded", function () {
         livePlaybackLastTime = Number(liveDjVideo.currentTime) || 0;
         livePlaybackLastProgressAt = Date.now();
         livePlaybackHasProgressed = false;
+        livePlaybackSoftRecoveryAttempted = false;
         liveDjVideo.autoplay = true;
         liveDjVideo.playsInline = true;
         liveDjVideo.muted = !userRequestedAudio;
@@ -2053,6 +2081,7 @@ document.addEventListener("DOMContentLoaded", function () {
             livePlaybackLastTime = currentTime;
             livePlaybackLastProgressAt = Date.now();
             livePlaybackHasProgressed = true;
+            livePlaybackSoftRecoveryAttempted = false;
           }
         });
 
@@ -2070,6 +2099,7 @@ document.addEventListener("DOMContentLoaded", function () {
             Number(liveDjVideo.currentTime) || livePlaybackLastTime;
           livePlaybackLastProgressAt = Date.now();
           livePlaybackHasProgressed = true;
+          livePlaybackSoftRecoveryAttempted = false;
           // Re-assert the user's explicit mute/unmute choice whenever the
           // media element starts playing or recovers.
           liveDjVideo.muted = !userRequestedAudio;
@@ -2115,10 +2145,17 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
           }
 
+          const stalledFor = Date.now() - livePlaybackLastProgressAt;
+
           if (
-            Date.now() - livePlaybackLastProgressAt >=
-            LIVE_PLAYBACK_HARD_STALL_MS
+            stalledFor >= LIVE_PLAYBACK_SOFT_STALL_MS &&
+            !livePlaybackSoftRecoveryAttempted
           ) {
+            softRecoverLivePlayback();
+            return;
+          }
+
+          if (stalledFor >= LIVE_PLAYBACK_HARD_STALL_MS) {
             hardRecoverLivePlayback();
           }
         }, LIVE_PLAYBACK_WATCHDOG_MS);
@@ -2128,6 +2165,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Time spent in a background tab is not a playback stall.
             livePlaybackLastTime = Number(liveDjVideo.currentTime) || 0;
             livePlaybackLastProgressAt = Date.now();
+            livePlaybackSoftRecoveryAttempted = false;
           }
         });
       }
