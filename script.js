@@ -2128,37 +2128,12 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         });
 
-        window.setInterval(function () {
-          if (
-            document.hidden ||
-            !activeLiveStreamUrl ||
-            livePlaybackHardRecoveryInProgress ||
-            !livePlaybackHasProgressed
-          ) {
-            return;
-          }
-
-          // Respect an intentional pause when the browser still has playable
-          // media. A wedged player commonly reports paused with low readyState,
-          // so that state remains eligible for recovery.
-          if (liveDjVideo.paused && liveDjVideo.readyState >= 3) {
-            return;
-          }
-
-          const stalledFor = Date.now() - livePlaybackLastProgressAt;
-
-          if (
-            stalledFor >= LIVE_PLAYBACK_SOFT_STALL_MS &&
-            !livePlaybackSoftRecoveryAttempted
-          ) {
-            softRecoverLivePlayback();
-            return;
-          }
-
-          if (stalledFor >= LIVE_PLAYBACK_HARD_STALL_MS) {
-            hardRecoverLivePlayback();
-          }
-        }, LIVE_PLAYBACK_WATCHDOG_MS);
+        // Do not run a separate time-based playback watchdog here.
+        // hls.js already reports buffer stalls and fatal network/media errors
+        // through the HLS error handler above. The old 12-second watchdog
+        // called startLoad(-1) even during ordinary live-edge waits, which
+        // could make Chromium rebuild/restart playback and re-apply autoplay
+        // muting after the listener had explicitly unmuted the DJ.
 
         document.addEventListener("visibilitychange", function () {
           if (!document.hidden) {
