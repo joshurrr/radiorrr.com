@@ -485,8 +485,8 @@ document.addEventListener("DOMContentLoaded", function () {
         featuredHeroOverrideActive = nextActive;
 
         if (nextActive) {
-          const bpmNumber = Number(bpm);
-          featuredHeroBpm = Number.isFinite(bpmNumber)
+          const bpmNumber = bpm == null ? NaN : Number(bpm);
+          featuredHeroBpm = Number.isFinite(bpmNumber) && bpmNumber > 0
             ? String(Math.round(bpmNumber))
             : "";
           applyFeaturedHeroOverride();
@@ -1118,6 +1118,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
       function updateLiveGenreRefreshCountdown() {
         if (!liveGenresDetectedStatus) return;
+        if (liveGenresDetectedList && liveGenresDetectedList.dataset.awaiting === "true") {
+          liveGenresDetectedStatus.textContent = "Awaiting current audio analysis";
+          return;
+        }
 
         const remaining = Math.max(
           0,
@@ -1204,6 +1208,27 @@ document.addEventListener("DOMContentLoaded", function () {
           .replace(/\s+/g, " ");
       }
 
+      const LIVE_AUDIO_MAX_AGE_MS = 15 * 60 * 1000;
+
+      function isCurrentLiveAnalysis(data, dj, now = Date.now()) {
+        const detectedAt = Date.parse(data && (data.detected_at || data.ai_genre_detected_at));
+        const startedAt = Date.parse(dj && dj.started_at);
+        return Number.isFinite(detectedAt) && detectedAt <= now &&
+          now - detectedAt <= LIVE_AUDIO_MAX_AGE_MS &&
+          (!Number.isFinite(startedAt) || detectedAt >= startedAt);
+      }
+
+      function clearLiveGenreReadings() {
+        liveGenresDetectedList.innerHTML = "";
+        liveGenresDetectedList.dataset.detectedAt = "";
+        liveGenresDetectedList.dataset.awaiting = "true";
+        if (liveGenresDetectedStatus) {
+          liveGenresDetectedStatus.textContent = "Awaiting current audio analysis";
+        }
+        featuredHeroGenres = [];
+        applyFeaturedHeroOverride();
+      }
+
       async function updateLiveGenresDetected(aiGenre, featuredIdentity, relayIdentity, featuredPlatform) {
         if (!liveGenresDetected || !liveGenresDetectedList) return;
 
@@ -1219,6 +1244,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         liveGenresDetected.style.display = "block";
+
+        const selectedDj = currentFeaturedDJ;
+        if (liveGenresDetectedList.dataset.identity !== selectedIdentity ||
+            !isCurrentLiveAnalysis({ detected_at: liveGenresDetectedList.dataset.detectedAt }, selectedDj)) {
+          clearLiveGenreReadings();
+        }
+        liveGenresDetectedList.dataset.identity = selectedIdentity;
 
         // Keep the previous genre rows visible while the fresh detector result
         // is being fetched. Clearing them here caused the Current DJ card to
@@ -1277,12 +1309,14 @@ document.addEventListener("DOMContentLoaded", function () {
         // Ignore a result belonging to an older DJ selection.
         if (requestId !== liveGenreRequestId) return;
 
-        if (!genreData || !Array.isArray(genreData.genres)) {
-          if (liveGenresDetectedStatus) {
-            liveGenresDetectedStatus.textContent = "Analysing live audio…";
-          }
+        if (!genreData || !Array.isArray(genreData.genres) ||
+            !isCurrentLiveAnalysis(genreData, selectedDj)) {
+          clearLiveGenreReadings();
           return;
         }
+
+        liveGenresDetectedList.dataset.detectedAt = genreData.detected_at || genreData.ai_genre_detected_at;
+        liveGenresDetectedList.dataset.awaiting = "false";
 
       liveGenresDetectedStatus.textContent = "AI detected · live audio";
               const genres = genreData.genres
@@ -1307,9 +1341,7 @@ document.addEventListener("DOMContentLoaded", function () {
           .slice(0, 5);
 
         if (!genres.length) {
-          if (liveGenresDetectedStatus) {
-            liveGenresDetectedStatus.textContent = "Analysing live audio…";
-          }
+          clearLiveGenreReadings();
           return;
         }
 
@@ -1447,6 +1479,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       function getLiveAIGenres(dj) {
+        if (!isCurrentLiveAnalysis(dj, dj)) return [];
         const raw = Array.isArray(dj && dj.ai_genres)
           ? dj.ai_genres
           : [];
@@ -1548,17 +1581,20 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!username) return [];
 
         const platform = getDJPlatform(dj);
-        const cacheKey = platform.toLowerCase() + ":" + username.toLowerCase();
+        const cacheKey = platform.toLowerCase() + ":" + username.toLowerCase() + ":" + String(dj.started_at || "");
         const cached = liveDetectedGenreCache.get(cacheKey);
         const now = Date.now();
-        if (cached && (now - cached.timestamp) < LIVE_DETECTED_GENRE_CACHE_TTL) {
+        if (cached && (now - cached.timestamp) < LIVE_DETECTED_GENRE_CACHE_TTL &&
+            isCurrentLiveAnalysis(cached.data, dj, now)) {
           return cached.genres.map(item => ({ ...item }));
         }
 
         // Prefer the full AI result already attached to /api/live when
         // available. Otherwise read the Scout-published result from the
         // per-DJ /api/ai-genre endpoint.
-        let genres = parseLiveDetectedGenres(dj && dj.ai_genres ? { genres: dj.ai_genres } : null);
+        let analysisData = dj;
+        let genres = isCurrentLiveAnalysis(dj, dj, now)
+          ? parseLiveDetectedGenres({ genres: dj.ai_genres }) : [];
 
         if (!genres.length) {
           try {
@@ -1578,14 +1614,16 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
             if (response.ok) {
-              genres = parseLiveDetectedGenres(await response.json());
+              analysisData = await response.json();
+              genres = isCurrentLiveAnalysis(analysisData, dj)
+                ? parseLiveDetectedGenres(analysisData) : [];
             }
           } catch (error) {
             console.warn("Could not load live Scout genre data for @" + username + ":", error);
           }
         }
 
-        liveDetectedGenreCache.set(cacheKey, { timestamp: now, genres });
+        liveDetectedGenreCache.set(cacheKey, { timestamp: now, genres, data: analysisData });
         return genres.map(item => ({ ...item }));
       }
 
@@ -2726,6 +2764,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       function getLiveSoundMatchScore(dj, selectedGenres) {
+        if (!isCurrentLiveAnalysis(dj, dj)) return 0;
         const selected = Array.isArray(selectedGenres) ? selectedGenres : [];
         if (!selected.length) return 0;
 
@@ -2758,7 +2797,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       function getLiveSoundMatchEvidence(dj, selectedGenres) {
         const selected = Array.isArray(selectedGenres) ? selectedGenres : [];
-        const raw = Array.isArray(dj && dj.ai_genres) ? dj.ai_genres : [];
+        const raw = isCurrentLiveAnalysis(dj, dj) && Array.isArray(dj && dj.ai_genres) ? dj.ai_genres : [];
 
         return selected.map(selectedGenre => {
           let bestConfidence = 0;
@@ -4100,7 +4139,7 @@ document.addEventListener("DOMContentLoaded", function () {
               // extra per-DJ HTTP requests; one slow/missing AI result was able
               // to delay every secondary LIVE card indefinitely.
               merged.rrr_live_detected_genres = parseLiveDetectedGenres(
-                merged && merged.ai_genres
+                merged && merged.ai_genres && isCurrentLiveAnalysis(merged, merged)
                   ? { genres: merged.ai_genres }
                   : null
               );

@@ -1031,7 +1031,7 @@ window.formspree =
 })();
 </script>
 
-<script src="script.js?v=20260929.3"></script>
+<script src="script.js?v=20261003.1"></script>
 
 <script>
 /*
@@ -1245,9 +1245,12 @@ window.formspree =
       return;
     }
 
-    if (labelEl) labelEl.textContent = "🎯 CURRENT PROGRAM MATCH";
+    if (labelEl) labelEl.textContent = item && item.profile_driven
+      ? "🎯 PROGRAM MATCH · HISTORY" : "🎯 CURRENT PROGRAM MATCH";
     matchValueEl.textContent = percent + "%";
-    matchEl.title = "RRR genre compatibility score out of 100";
+    matchEl.title = item && item.profile_driven
+      ? "Based on this DJ's historical genre profile; awaiting current audio analysis"
+      : "RRR genre compatibility score out of 100";
     updateMatchClass(matchEl, percent);
   }
 
@@ -1337,7 +1340,8 @@ window.formspree =
         renderProgramMatchState(matchEl, matchValueEl, percent, featuredRank, item.bpm, item);
       }
 
-      if (Number.isFinite(Number(item.bpm))) {
+      const hasLiveAnalysis = Number(item.ai_freshness) > 0 && !item.profile_driven;
+      if (hasLiveAnalysis && item.bpm != null && Number.isFinite(Number(item.bpm)) && Number(item.bpm) > 0) {
         const bpmValue = Number(item.bpm);
         const bpm = formatBpm(bpmValue);
         const bounds = scheduleBounds(data, item);
@@ -1365,7 +1369,7 @@ window.formspree =
           bpmHealthEl.textContent = "Running";
         }
       } else {
-        bpmEl.textContent = "";
+        bpmEl.innerHTML = '<span class="rrr-bpm-label">BPM</span><span class="rrr-current-bpm">—</span>';
         if (bpmHealthEl) {
           bpmHealthEl.className = "tool-health pending";
           bpmHealthEl.textContent = "No reading";
@@ -1374,7 +1378,7 @@ window.formspree =
 
       if (talkEl) {
         const talkRatio = Number(item.speech_ratio);
-        if (Number.isFinite(talkRatio)) {
+        if (hasLiveAnalysis && item.speech_ratio != null && Number(item.speech_confidence) > 0 && Number.isFinite(talkRatio)) {
           const talkPercent = Math.max(0, Math.min(100, Math.round(talkRatio * 100)));
           talkEl.textContent = talkPercent + "%";
           talkEl.className = "rrr-current-talk";
@@ -1389,7 +1393,7 @@ window.formspree =
             talkEl.classList.add("talk-low");
           }
         } else {
-          talkEl.textContent = "";
+          talkEl.textContent = "—";
           talkEl.className = "rrr-current-talk talk-low";
         }
       }
