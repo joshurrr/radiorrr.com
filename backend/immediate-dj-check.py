@@ -84,6 +84,10 @@ async def _check_added_dj_live(username, platform):
                     updated_at=excluded.updated_at
             ''', (username, name, platform, live_url, favourite.get('genre'), viewers, started_at, now))
             conn.commit()
+            try:
+                request_priority_audio_scan(username, platform)
+            except Exception as error:
+                print(f'[Priority Audio] Could not queue newly added DJ: {error}')
             print(f'[New DJ] LIVE: {platform} @{username} added to the live list')
             return {'status': 'live', 'live': True}
         # A single offline observation must not remove an already-live DJ.

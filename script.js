@@ -1951,6 +1951,25 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 1500);
       }
 
+      const priorityAudioRequestTimes = new Map();
+      function requestSelectedDjAudioScan(dj) {
+        const username = getDJUsername(dj);
+        const platform = getDJPlatform(dj);
+        const key = platform.toLowerCase() + ":" + username.toLowerCase();
+        const now = Date.now();
+        if (!username || now - (priorityAudioRequestTimes.get(key) || 0) < 60000) return;
+        priorityAudioRequestTimes.set(key, now);
+        fetch("https://api.radiorrr.com/api/ai-genre/scan-priority", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: username, platform: platform })
+        }).then(response => {
+          if (!response.ok) throw new Error("Priority scan returned " + response.status);
+        }).catch(error => {
+          priorityAudioRequestTimes.delete(key);
+          console.warn("Could not prioritise selected DJ audio:", error);
+        });
+      }
+
       function showLiveDjPlayer(dj) {
         if (!liveDjVideo || !randomLiveDj) return;
 
@@ -1984,6 +2003,7 @@ document.addEventListener("DOMContentLoaded", function () {
           Boolean(manualFeaturedDJIdentity) &&
           getDJIdentity(dj) === manualFeaturedDJIdentity;
         const platform = getDJPlatform(dj);
+        if (isManualSelection && username) requestSelectedDjAudioScan(dj);
         const streamUrl = isManualSelection && username
           ? RADIO_ROUTER_STREAM_URL + "?dj=" + encodeURIComponent(username) +
             "&platform=" + encodeURIComponent(platform)

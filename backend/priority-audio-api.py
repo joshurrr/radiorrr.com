@@ -1,0 +1,109 @@
+"""Priority audio jobs for new and browser-selected live DJs."""
+
+def ensure_priority_scan_schema(conn):
+    conn.execute('''CREATE TABLE IF NOT EXISTS priority_audio_scans (
+        platform TEXT NOT NULL, username TEXT NOT NULL, request_id TEXT NOT NULL,
+        requested_at REAL NOT NULL, status TEXT NOT NULL, lease_until REAL NOT NULL DEFAULT 0,
+        attempts INTEGER NOT NULL DEFAULT 0, completed_at REAL NOT NULL DEFAULT 0,
+        PRIMARY KEY(platform, username))''')
+
+
+def request_priority_audio_scan(username, platform='TikTok'):
+    username = str(username or '').strip().lstrip('@')
+    platform = str(platform or 'TikTok').strip()
+    if not username or platform.casefold() not in {'tiktok', 'twitch', 'youtube'}:
+        raise HTTPException(status_code=400, detail='A supported platform and DJ username are required')
+    now = time.time()
+    conn = get_db()
+    try:
+        ensure_priority_scan_schema(conn)
+        conn.execute('BEGIN IMMEDIATE')
+        dj = conn.execute('''SELECT l.username,l.name,l.platform FROM live_djs l
+            JOIN favourite_djs f ON lower(f.username)=lower(l.username) AND lower(f.platform)=lower(l.platform)
+            WHERE lower(l.username)=lower(?) AND lower(l.platform)=lower(?) AND f.enabled=1''',
+            (username,platform)).fetchone()
+        if dj is None:
+            raise HTTPException(status_code=404, detail='This DJ is not currently in the enabled live list')
+        username,platform = dj['username'],dj['platform']
+        conn.execute('DELETE FROM priority_audio_scans WHERE requested_at < ?', (now-900,))
+        job = conn.execute('SELECT * FROM priority_audio_scans WHERE platform=? AND username=?', (platform,username)).fetchone()
+        if job and (job['status'] in {'queued','scanning'} or now-job['completed_at']<60):
+            return {'status':job['status'], 'request_id':job['request_id']}
+        count=conn.execute("SELECT count(*) FROM priority_audio_scans WHERE status IN ('queued','scanning')").fetchone()[0]
+        if count>=128:
+            raise HTTPException(status_code=429, detail='The priority scan queue is full. Try again shortly.')
+        request_id=uuid4().hex
+        conn.execute('''INSERT INTO priority_audio_scans
+            (platform,username,request_id,requested_at,status,lease_until,attempts,completed_at)
+            VALUES (?,?,?,?,'queued',0,0,0)
+            ON CONFLICT(platform,username) DO UPDATE SET request_id=excluded.request_id,
+              requested_at=excluded.requested_at,status='queued',lease_until=0,attempts=0,completed_at=0''',
+            (platform,username,request_id,now))
+        conn.commit()
+        print(f'[Priority Audio] Queued {platform} @{username}')
+        return {'status':'queued','request_id':request_id}
+    finally:
+        conn.close()
+
+
+def claim_priority_audio_scan():
+    now=time.time()
+    conn=get_db()
+    try:
+        ensure_priority_scan_schema(conn)
+        conn.execute('BEGIN IMMEDIATE')
+        conn.execute('DELETE FROM priority_audio_scans WHERE requested_at < ?', (now-900,))
+        conn.execute("UPDATE priority_audio_scans SET status='error',completed_at=? WHERE status='scanning' AND lease_until<? AND attempts>=3", (now,now))
+        job=conn.execute('''SELECT q.*, l.name FROM priority_audio_scans q
+            JOIN live_djs l ON lower(l.username)=lower(q.username) AND lower(l.platform)=lower(q.platform)
+            JOIN favourite_djs f ON lower(f.username)=lower(q.username) AND lower(f.platform)=lower(q.platform)
+            WHERE f.enabled=1 AND q.attempts<3 AND
+              (q.status='queued' OR (q.status='scanning' AND q.lease_until<?))
+            ORDER BY q.requested_at LIMIT 1''',(now,)).fetchone()
+        if job is None:
+            conn.commit()
+            return None
+        conn.execute("UPDATE priority_audio_scans SET status='scanning',lease_until=?,attempts=attempts+1 WHERE request_id=?",(now+180,job['request_id']))
+        conn.commit()
+        return {'username':job['username'],'platform':job['platform'],'name':job['name'], 'request_id':job['request_id']}
+    finally:
+        conn.close()
+
+
+def complete_priority_audio_scan(request_id, success):
+    conn=get_db()
+    try:
+        ensure_priority_scan_schema(conn)
+        conn.execute('''UPDATE priority_audio_scans SET status=?,completed_at=?,lease_until=0
+            WHERE request_id=? AND status='scanning' ''',('complete' if success else 'error',time.time(),request_id))
+        conn.commit()
+    finally:
+        conn.close()
+
+
+@app.post('/api/ai-genre/scan-priority')
+async def priority_audio_request(request: Request):
+    try:
+        data=await request.json()
+    except Exception:
+        raise HTTPException(status_code=400,detail='Invalid JSON request')
+    if not isinstance(data,dict):
+        raise HTTPException(status_code=400,detail='Expected a DJ username and platform')
+    return await asyncio.to_thread(request_priority_audio_scan,data.get('username'),data.get('platform','TikTok'))
+
+
+@app.post('/api/ai-genre/scan-priority/next')
+def priority_audio_next():
+    return {'dj':claim_priority_audio_scan()}
+
+
+@app.post('/api/ai-genre/scan-priority/{request_id}/complete')
+async def priority_audio_complete(request_id: str, request: Request):
+    try:
+        data=await request.json()
+    except Exception:
+        raise HTTPException(status_code=400,detail='Invalid JSON request')
+    if not isinstance(data,dict) or not isinstance(data.get('success'),bool):
+        raise HTTPException(status_code=400,detail='A success boolean is required')
+    await asyncio.to_thread(complete_priority_audio_scan,request_id,data['success'])
+    return {'ok':True}

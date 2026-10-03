@@ -58,7 +58,7 @@ async function run() {
     const html=fs.readFileSync(file,'utf8');
     assert.equal((html.match(/id="allDjsToolPanel"/g)||[]).length,1,file);
     assert.match(html,/data-tool-route-link="djs" href="\/tools\/djs\/"/);
-    assert.match(html,/src="\/script.js\?v=20261004.3"/);
+    assert.match(html,/src="\/script.js\?v=20261004.5"/);
     for(const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
       if(match[1].includes('application/ld+json')) JSON.parse(match[2]);
       else if(match[2].trim()) new vm.Script(match[2]);

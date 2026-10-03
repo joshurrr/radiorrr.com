@@ -18,6 +18,7 @@ with tempfile.TemporaryDirectory() as folder:
  CREATE TABLE live_djs(username TEXT,name TEXT,platform TEXT,url TEXT,genre TEXT,viewers INTEGER,started_at TEXT,updated_at TEXT,UNIQUE(platform,username));
  CREATE TABLE tiktok_live_stats(username TEXT UNIQUE,auto_dormant INTEGER,next_check_at TEXT,last_result TEXT);
  ''');conn.close()
+ queued=[]
  observed=True;fail=False;disable=False
  def check(username):
   conn=get_db();assert conn.execute('SELECT 1 FROM favourite_djs WHERE username=?',(username,)).fetchone();conn.close()
@@ -36,6 +37,7 @@ with tempfile.TemporaryDirectory() as folder:
  namespace=dict(asyncio=asyncio,get_db=get_db,datetime=datetime,timezone=timezone,
   _run_tiktok_is_live_check=check,_record_tiktok_live_check=lambda *args:None,
   invalid_tiktok_account_counts={},offline_miss_counts={},fetch_twitch_live_streams=twitch,get_youtube_live_info=youtube,
+  request_priority_audio_scan=lambda username,platform:queued.append((username,platform)),
   sqlite3=sqlite3,Request=Request,HTTPException=HTTPException,_admin_dj_account=account,
   _ensure_tiktok_stats_row=stats,import_tiktok_dj=import_dj)
  exec(Path('backend/immediate-dj-check.py').read_text(),namespace)
@@ -61,5 +63,6 @@ with tempfile.TemporaryDirectory() as folder:
   result=await namespace['add_favourite'](Request({'username':'generic','name':'Generic DJ','profile_url':'https://example.com/generic','live_url':'https://example.com/generic/live'}));assert result['live_check']['live'] is True
   result=await namespace['import_tiktok_favourite'](Request({'username':'imported'}));assert result['live_check']['live'] is True
   conn=get_db();assert not conn.execute('SELECT 1 FROM live_djs WHERE username IN ("offline","error","disabled")').fetchone();assert conn.execute('SELECT viewers FROM live_djs WHERE username="twitchdj"').fetchone()[0]==42;conn.close()
-  print('PASS: all add routes check after saving; live promotion, offline/error handling, session preservation, disabled-during-check guard, Twitch and YouTube metadata.')
+  assert len(queued)==6 and ('newdj','TikTok') in queued
+  print('PASS: priority audio queued for confirmed live adds; all add routes check after saving; live promotion, offline/error handling, session preservation, disabled-during-check guard, Twitch and YouTube metadata.')
  asyncio.run(run())

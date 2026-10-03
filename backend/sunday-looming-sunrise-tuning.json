@@ -1,0 +1,96 @@
+{
+  "before": {
+    "id": 38,
+    "day": "Sunday",
+    "start": "04:00",
+    "end": "08:00",
+    "name": "Looming Sunrise",
+    "genres": [
+      "Deep House",
+      "Chill",
+      "Downtempo",
+      "Ambient",
+      "Progressive House",
+      "Melodic"
+    ],
+    "genre_weights": {
+      "Deep House": 35,
+      "Chill": 25,
+      "Downtempo": 15,
+      "Ambient": 10,
+      "Progressive House": 10,
+      "Melodic": 5
+    },
+    "anti_genres": [
+      "Spoken Word",
+      "Talk",
+      "Talking",
+      "Dialogue",
+      "Comedy",
+      "Audiobook",
+      "Radioplay",
+      "Education",
+      "Poetry",
+      "Religious",
+      "Field Recording",
+      "Hard Trance",
+      "Happy Hardcore",
+      "Hardcore",
+      "Hardstyle",
+      "Speed Garage",
+      "Tech Trance",
+      "Progressive Trance",
+      "Trance",
+      "Parody"
+    ],
+    "bpm_min": 90,
+    "bpm_max": 120,
+    "enabled": true
+  },
+  "after": {
+    "id": 38,
+    "day": "Sunday",
+    "start": "04:00",
+    "end": "08:00",
+    "name": "Looming Sunrise",
+    "genres": [
+      "House",
+      "Electro",
+      "Techno",
+      "Deep House",
+      "Tech House"
+    ],
+    "genre_weights": {
+      "House": 30,
+      "Electro": 30,
+      "Techno": 20,
+      "Deep House": 15,
+      "Tech House": 5
+    },
+    "anti_genres": [
+      "Spoken Word",
+      "Talk",
+      "Talking",
+      "Dialogue",
+      "Comedy",
+      "Audiobook",
+      "Radioplay",
+      "Education",
+      "Poetry",
+      "Religious",
+      "Field Recording",
+      "Hard Trance",
+      "Happy Hardcore",
+      "Hardcore",
+      "Hardstyle",
+      "Speed Garage",
+      "Tech Trance",
+      "Progressive Trance",
+      "Trance",
+      "Parody"
+    ],
+    "bpm_min": 122,
+    "bpm_max": 130,
+    "enabled": true
+  }
+}
