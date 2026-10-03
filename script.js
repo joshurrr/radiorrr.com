@@ -684,6 +684,11 @@ document.addEventListener("DOMContentLoaded", function () {
       };
 
       const TOOL_ROUTE_CONFIG = {
+        "djs": {
+          path: "/tools/djs/",
+          title: "Search All DJs – Browse Live & Offline DJs | Radio RRR",
+          description: "Search all DJs in the Radio RRR catalogue, live or offline. Filter by name, platform and status, or explore stored and learned genres with clickable coloured bubbles."
+        },
         "live-djs": {
           path: "/tools/live-djs/",
           title: "Live DJs Streaming Now – Find Live DJ Sets | Radio RRR",
@@ -822,6 +827,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const streamHealthPanel = toolsSection.querySelector("#toolStreamHealthPanel");
         const liveDjsPanel = toolsSection.querySelector("#liveDjsToolPanel");
         const offlineDjsPanel = toolsSection.querySelector("#offlineDjsToolPanel");
+        const allDjsPanel = toolsSection.querySelector("#allDjsToolPanel");
+        const isAllDjsRoute = toolRoute === "djs";
         const isLiveDjsRoute = toolRoute === "live-djs";
         const isOfflineDjsRoute = toolRoute === "offline-djs";
         const isStreamHealthRoute = toolRoute === "stream-health";
@@ -829,10 +836,12 @@ document.addEventListener("DOMContentLoaded", function () {
         if (healthDashboard) healthDashboard.hidden = detailMode;
         if (toolsHeading) toolsHeading.hidden = detailMode;
         if (toolsHubGrid) toolsHubGrid.hidden = detailMode;
-        if (detailList) detailList.hidden = !detailMode || isLiveDjsRoute || isOfflineDjsRoute || isStreamHealthRoute;
+        if (detailList) detailList.hidden = !detailMode || isAllDjsRoute || isLiveDjsRoute || isOfflineDjsRoute || isStreamHealthRoute;
         if (streamHealthPanel) streamHealthPanel.hidden = !isStreamHealthRoute;
         if (liveDjsPanel) liveDjsPanel.hidden = !isLiveDjsRoute;
         if (offlineDjsPanel) offlineDjsPanel.hidden = !isOfflineDjsRoute;
+        if (allDjsPanel) allDjsPanel.hidden = !isAllDjsRoute;
+        if (isAllDjsRoute) window.setTimeout(loadAllDjsTool, 0);
         if (isLiveDjsRoute) window.setTimeout(loadLiveDjsTool, 0);
         if (isOfflineDjsRoute) window.setTimeout(loadOfflineDjsTool, 0);
 
@@ -5912,6 +5921,160 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       if (offlineDjsToolRefresh) offlineDjsToolRefresh.addEventListener("click", loadOfflineDjsTool);
       if (offlineDjsToolSearch) offlineDjsToolSearch.addEventListener("input", renderOfflineDjsTool);
+
+      /* All-DJ catalogue: stored/learned genres, including offline profiles. */
+      const allDjsSearch = document.getElementById("allDjsSearch");
+      const allDjsPlatform = document.getElementById("allDjsPlatform");
+      const allDjsLive = document.getElementById("allDjsLive");
+      const allDjsGenres = document.getElementById("allDjsGenres");
+      const allDjsResults = document.getElementById("allDjsResults");
+      const allDjsStatus = document.getElementById("allDjsStatus");
+      const allDjsRefresh = document.getElementById("allDjsRefresh");
+      const allDjsSelectedGenres = new Set();
+      let allDjsItems = [];
+      let allDjsLoading = false;
+      let allDjsError = "";
+
+      function getAllDjGenres(dj) {
+        const values = [];
+        function add(value) {
+          if (Array.isArray(value)) { value.forEach(add); return; }
+          if (value && typeof value === "object") { add(value.genre || value.name); return; }
+          String(value || "").split(/[,·|]/).forEach(function (part) {
+            const genre = part.split("---").pop().trim();
+            if (genre && !values.some(g => g.toLowerCase() === genre.toLowerCase())) values.push(genre);
+          });
+        }
+        add(dj.rrr_learned_genres);
+        add(dj.genre);
+        add(dj.genre_keywords);
+        add(dj.genres);
+        return values;
+      }
+
+      function matchesAllDjFilters(dj, query, platform, status, genres) {
+        const text = [dj.name, dj.display_name, getDJUsername(dj), dj.bio]
+          .concat(getAllDjGenres(dj)).filter(Boolean).join(" ").toLowerCase();
+        return (!query || query.split(/\s+/).every(word => text.includes(word.replace(/^@/, "")))) &&
+          (!platform || getDJPlatform(dj).toLowerCase() === platform.toLowerCase()) &&
+          (!status || (dj.live === true ? "live" : "offline") === status) &&
+          (!genres.size || getAllDjGenres(dj).some(g => genres.has(g.toLowerCase())));
+      }
+
+      function allDjGenreStyle(genre) {
+        let hash = 0;
+        for (const char of genre.toLowerCase()) hash = (hash * 31 + char.charCodeAt(0)) | 0;
+        return "--genre-hue:" + ((hash >>> 0) % 360);
+      }
+
+      function renderAllDjsGenres() {
+        const counts = new Map();
+        allDjsItems.forEach(dj => getAllDjGenres(dj).forEach(genre => {
+          const key = genre.toLowerCase();
+          const entry = counts.get(key) || { name: genre, count: 0 };
+          entry.count += 1;
+          counts.set(key, entry);
+        }));
+        allDjsGenres.replaceChildren();
+        Array.from(counts).sort((a, b) => a[1].name.localeCompare(b[1].name)).forEach(([key, entry]) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "all-djs-genre-bubble";
+          button.setAttribute("style", allDjGenreStyle(entry.name));
+          button.setAttribute("aria-pressed", String(allDjsSelectedGenres.has(key)));
+          button.textContent = entry.name + " · " + entry.count;
+          button.addEventListener("click", function () {
+            if (allDjsSelectedGenres.has(key)) allDjsSelectedGenres.delete(key);
+            else allDjsSelectedGenres.add(key);
+            button.setAttribute("aria-pressed", String(allDjsSelectedGenres.has(key)));
+            renderAllDjsTool();
+          });
+          allDjsGenres.appendChild(button);
+        });
+      }
+
+      function safeAllDjUrl(value) {
+        try {
+          const url = new URL(value);
+          return ["https:", "http:"].includes(url.protocol) ? url.href : "";
+        } catch (_) { return ""; }
+      }
+
+      function renderAllDjsTool() {
+        if (!allDjsResults) return;
+        const visible = allDjsItems.filter(dj => matchesAllDjFilters(dj,
+          allDjsSearch.value.trim().toLowerCase(), allDjsPlatform.value, allDjsLive.value, allDjsSelectedGenres));
+        allDjsStatus.textContent = allDjsError || visible.length + " of " + allDjsItems.length + " DJs" +
+          (allDjsSelectedGenres.size ? " · " + allDjsSelectedGenres.size + " genre filter(s) selected" : " · " + (allDjsLive.value === "live" ? "live profiles" : allDjsLive.value === "offline" ? "offline profiles" : "live and offline profiles"));
+        allDjsResults.replaceChildren();
+        if (!visible.length) {
+          const empty = document.createElement("p");
+          empty.className = "live-djs-tool-empty";
+          empty.textContent = allDjsError ? "Use Refresh to try again." : allDjsItems.length ?
+            "No DJs match these filters. Try another genre or clear the filters." : "No DJ profiles are available yet.";
+          allDjsResults.appendChild(empty);
+        }
+        visible.forEach(dj => {
+          const card = document.createElement("article");
+          card.className = "live-djs-tool-card offline-djs-tool-card";
+          const username = getDJUsername(dj);
+          const photo = safeAllDjUrl(dj.profile_pic || dj.profile_picture || dj.avatar);
+          const profile = safeAllDjUrl(getOfflineDjProfileUrl(dj));
+          const genres = getAllDjGenres(dj);
+          card.innerHTML = '<div class="live-djs-tool-media">' +
+            (photo ? '<img class="live-djs-tool-photo" src="' + escapeAttr(photo) + '" alt="" loading="lazy" referrerpolicy="no-referrer">' : '<div class="live-djs-tool-photo-placeholder" aria-hidden="true">🎧</div>') +
+            '<span class="offline-djs-tool-badge ' + (dj.live === true ? 'all-djs-live-badge' : '') + '">' + (dj.live === true ? 'LIVE NOW' : 'OFFLINE') + '</span>' +
+            '<span class="dj-platform-badge live-djs-tool-platform">' + escapeHtml(getDJPlatform(dj)) + '</span></div>' +
+            '<div class="live-djs-tool-body"><h2 class="live-djs-tool-name">' + escapeHtml(String(dj.name || dj.display_name || username || 'DJ')) + '</h2>' +
+            '<div class="live-djs-tool-handle">@' + escapeHtml(username) + '</div>' +
+            (dj.bio ? '<p class="all-djs-bio">' + escapeHtml(String(dj.bio)) + '</p>' : '') +
+            '<div class="live-djs-tool-genres">' + (genres.length ? genres.map(g => '<span class="all-djs-genre-bubble all-djs-card-genre" style="' + allDjGenreStyle(g) + '">' + escapeHtml(g) + '</span>').join('') : '<span class="live-djs-tool-muted">No stored genres yet</span>') + '</div>' +
+            (profile ? '<a class="tool-button secondary offline-djs-tool-profile" target="_blank" rel="noopener noreferrer" href="' + escapeAttr(profile) + '">Open profile ↗</a>' : '') + '</div>';
+          allDjsResults.appendChild(card);
+        });
+      }
+
+      async function loadAllDjsTool() {
+        if (!allDjsResults || allDjsLoading) return;
+        allDjsLoading = true;
+        allDjsRefresh.disabled = true;
+        allDjsStatus.textContent = "Loading the DJ catalogue…";
+        try {
+          const response = await fetch(getFreshUrl("https://api.radiorrr.com/api/live"), { cache: "no-store" });
+          if (!response.ok) throw new Error("Catalogue returned " + response.status);
+          const data = await response.json();
+          if (!Array.isArray(data.favourites)) throw new Error("Catalogue is missing DJ profiles");
+          allDjsItems = data.favourites.filter(dj => dj && typeof dj === "object")
+            .sort((a, b) => String(a.name || getDJUsername(a)).localeCompare(String(b.name || getDJUsername(b))));
+          const platform = allDjsPlatform.value;
+          allDjsPlatform.innerHTML = '<option value="">All platforms</option>';
+          Array.from(new Set(allDjsItems.map(getDJPlatform))).sort().forEach(name => {
+            const option = document.createElement("option");
+            option.value = name; option.textContent = name;
+            allDjsPlatform.appendChild(option);
+          });
+          allDjsPlatform.value = platform;
+          allDjsError = "";
+          renderAllDjsGenres();
+        } catch (error) {
+          console.error("Radio RRR DJ catalogue error:", error);
+          allDjsError = allDjsItems.length ? "Could not refresh. Showing the previously loaded catalogue." : "Could not load the DJ catalogue.";
+        } finally {
+          allDjsLoading = false;
+          allDjsRefresh.disabled = false;
+          renderAllDjsTool();
+        }
+      }
+      if (allDjsResults) {
+        allDjsSearch.addEventListener("input", renderAllDjsTool);
+        allDjsPlatform.addEventListener("change", renderAllDjsTool);
+        allDjsLive.addEventListener("change", renderAllDjsTool);
+        allDjsRefresh.addEventListener("click", loadAllDjsTool);
+        document.getElementById("allDjsClear").addEventListener("click", function () {
+          allDjsSearch.value = ""; allDjsPlatform.value = ""; allDjsLive.value = "";
+          allDjsSelectedGenres.clear(); renderAllDjsGenres(); renderAllDjsTool();
+        });
+      }
 
       /* RRR TOOLS — PASSIVE STREAM HEALTH TEST
          This observes the existing liveDjVideo/HLS instance only while the

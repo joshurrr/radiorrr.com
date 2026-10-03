@@ -6,7 +6,7 @@
 <title>Free DJ & Live Music Tools | Radio RRR</title>
 <link href="/favicon.ico" rel="icon" type="image/x-icon"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<link rel="stylesheet" href="/style.css?v=20260928.35">
+<link rel="stylesheet" href="/style.css?v=20261004.1">
 <meta content="Free browser tools for live DJs and online radio: find DJs live now, detect BPM, detect DJ speech, test HLS stream health and create beat-synced video effects." name="description"/>
 <meta content="index, follow, max-image-preview:large" name="robots"/>
 <meta content="#070818" name="theme-color"/>
@@ -378,6 +378,11 @@
 <span class="tool-hub-name">Live DJs</span>
 <span class="tool-hub-note">See who’s live now</span>
 </a>
+<a class="tool-hub-tile" data-tool-route-link="djs" href="/tools/djs/">
+<span class="tool-hub-icon" aria-hidden="true">🔎</span>
+<span class="tool-hub-name">Search All DJs</span>
+<span class="tool-hub-note">Find live and offline DJs by genre</span>
+</a>
 <a class="tool-hub-tile" data-tool-route-link="bpm-detector" href="/tools/bpm-detector/">
 <span class="tool-hub-icon" aria-hidden="true">🥁</span>
 <span class="tool-hub-name">BPM Detector</span>
@@ -436,6 +441,26 @@
 <div class="live-djs-tool-grid" id="liveDjsToolResults"></div>
 </div>
 </section>
+<section class="tool-row tool-wide live-djs-tool-panel all-djs-tool-panel" id="allDjsToolPanel" aria-labelledby="allDjsToolTitle" hidden>
+<div class="tool-row-icon" aria-hidden="true">🔎</div>
+<div class="tool-row-main">
+<div class="live-djs-tool-heading">
+<div><h1 class="tool-row-title" id="allDjsToolTitle">Search All DJs</h1>
+<p class="tool-row-description">Discover every DJ in the Radio RRR catalogue, live or offline. Search their profiles and explore their stored and learned genres.</p></div>
+<a class="tool-button secondary" data-tool-back href="/tools/">All tools</a>
+</div>
+<div class="all-djs-filters">
+<label>Search DJs<input id="allDjsSearch" type="search" placeholder="Name, @username, bio or genre" autocomplete="off"></label>
+<label>Platform<select id="allDjsPlatform"><option value="">All platforms</option></select></label>
+<label>Live status<select id="allDjsLive"><option value="">Live and offline</option><option value="live">Live now</option><option value="offline">Offline</option></select></label>
+<button class="tool-button secondary" id="allDjsClear" type="button">Clear filters</button>
+<button class="tool-button secondary" id="allDjsRefresh" type="button">↻ Refresh</button>
+</div>
+<div class="all-djs-genre-heading"><h2>Explore genres</h2><span>Choose one or more genres. DJs matching any selected genre appear below.</span></div>
+<div id="allDjsGenres" class="all-djs-genre-list" aria-label="Filter DJs by genre"></div>
+<div class="live-djs-tool-status" id="allDjsStatus" role="status" aria-live="polite">Loading the DJ catalogue…</div>
+<div class="live-djs-tool-grid offline-djs-tool-grid" id="allDjsResults"></div>
+</div></section>
 <section class="tool-detail-intro" data-tool-intro="bpm-detector" hidden>
 <a class="tool-detail-back" data-tool-back href="/tools/">← Back to Tools Page</a>
 <h2>Live Stream BPM Detector</h2>
@@ -1060,7 +1085,7 @@ window.formspree =
 })();
 </script>
 
-<script src="/script.js?v=20260928.36"></script>
+<script src="/script.js?v=20261004.1"></script>
 
 <script>
 /*

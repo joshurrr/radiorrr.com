@@ -8962,3 +8962,24 @@
     font-size: clamp(1.2rem, 2.1vw, 1.75rem);
   }
 }
+
+/* All-DJ search */
+.all-djs-filters { display:flex; flex-wrap:wrap; align-items:end; gap:12px; margin:20px 0; }
+.all-djs-filters label { display:flex; flex-direction:column; gap:8px; font-size:13px; color:#d8d9ed; flex:1 1 150px; }
+.all-djs-filters label:first-child { flex:2 1 260px; }
+.all-djs-filters input, .all-djs-filters select { width:100%; box-sizing:border-box; min-height:44px; padding:10px 12px; border:1px solid #454668; border-radius:10px; background:#111329; color:#fff; font:inherit; }
+.all-djs-genre-heading { margin:24px 0 14px; }
+.all-djs-genre-heading h2 { margin:0 0 8px; font-size:18px; }
+.all-djs-genre-heading span { color:#b7b9cd; font-size:13px; }
+.all-djs-genre-list { display:flex; flex-wrap:wrap; gap:9px; margin-bottom:22px; }
+.all-djs-genre-bubble { border:1px solid hsl(var(--genre-hue) 75% 65% / .65); border-radius:999px; padding:9px 13px; background:hsl(var(--genre-hue) 65% 35% / .2); color:hsl(var(--genre-hue) 90% 85%); font:inherit; font-size:12px; line-height:1.4; }
+button.all-djs-genre-bubble { cursor:pointer; min-height:40px; }
+button.all-djs-genre-bubble:hover, button.all-djs-genre-bubble[aria-pressed="true"] { background:hsl(var(--genre-hue) 65% 40% / .55); border-color:hsl(var(--genre-hue) 90% 80%); box-shadow:0 0 12px hsl(var(--genre-hue) 80% 60% / .3); }
+button.all-djs-genre-bubble[aria-pressed="true"]::before { content:"✓ "; }
+.all-djs-filters :focus-visible, .all-djs-genre-bubble:focus-visible { outline:2px solid #fff; outline-offset:3px; }
+.all-djs-card-genre { display:inline-block; padding:5px 9px; }
+.all-djs-live-badge { color:#a7ffcb; border-color:#41d78e; background:#123c2b; }
+.all-djs-bio { white-space:pre-line; overflow-wrap:anywhere; color:#c5c7db; font-size:13px; line-height:1.5; }
+.all-djs-tool-panel .live-djs-tool-name { margin:0; }
+.all-djs-tool-panel .tool-row-main { min-width:0; }
+@media (max-width:600px) { .all-djs-filters label { flex-basis:100%; } .all-djs-tool-panel { padding:16px; } }

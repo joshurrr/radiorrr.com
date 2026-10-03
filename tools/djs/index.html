@@ -3,25 +3,25 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<title>DJ Speech Detector – Detect Talking in Live DJ Streams | Radio RRR</title>
+<title>Search All DJs – Browse Live & Offline DJs | Radio RRR</title>
 <link href="/favicon.ico" rel="icon" type="image/x-icon"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <link rel="stylesheet" href="/style.css?v=20261004.1">
-<meta content="Detect talking in live DJ streams with voice-versus-music analysis that measures repeated microphone speech and music ducking." name="description"/>
+<meta content="Search all DJs in the Radio RRR catalogue, live or offline. Filter by name, platform and status, or explore stored and learned genres with clickable coloured bubbles." name="description"/>
 <meta content="index, follow, max-image-preview:large" name="robots"/>
 <meta content="#070818" name="theme-color"/>
-<link href="https://radiorrr.com/tools/dj-speech-detector/" rel="canonical"/>
-<meta content="DJ Speech Detector – Detect Talking in Live DJ Streams | Radio RRR" property="og:title"/>
-<meta content="Detect talking in live DJ streams with voice-versus-music analysis that measures repeated microphone speech and music ducking." property="og:description"/>
+<link href="https://radiorrr.com/tools/djs/" rel="canonical"/>
+<meta content="Search All DJs – Browse Live & Offline DJs | Radio RRR" property="og:title"/>
+<meta content="Search all DJs in the Radio RRR catalogue, live or offline. Filter by name, platform and status, or explore stored and learned genres with clickable coloured bubbles." property="og:description"/>
 <meta content="website" property="og:type"/>
-<meta content="https://radiorrr.com/tools/dj-speech-detector/" property="og:url"/>
+<meta content="https://radiorrr.com/tools/djs/" property="og:url"/>
 <meta content="RadioRRR" property="og:site_name"/>
 <meta content="en_AU" property="og:locale"/>
 <meta content="https://radiorrr.com/radiorrr-logo-20260926.png" property="og:image"/>
 <meta content="RadioRRR logo" property="og:image:alt"/>
 <meta content="summary_large_image" name="twitter:card"/>
-<meta content="DJ Speech Detector – Detect Talking in Live DJ Streams | Radio RRR" name="twitter:title"/>
-<meta content="Detect talking in live DJ streams with voice-versus-music analysis that measures repeated microphone speech and music ducking." name="twitter:description"/>
+<meta content="Search All DJs – Browse Live & Offline DJs | Radio RRR" name="twitter:title"/>
+<meta content="Search all DJs in the Radio RRR catalogue, live or offline. Filter by name, platform and status, or explore stored and learned genres with clickable coloured bubbles." name="twitter:description"/>
 <meta content="https://radiorrr.com/radiorrr-logo-20260926.png" name="twitter:image"/>
 <meta content="RadioRRR logo" name="twitter:image:alt"/>
 <!-- Google tag (gtag.js) -->
@@ -93,13 +93,10 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "Radio RRR DJ Speech Detector",
-  "url": "https://radiorrr.com/tools/dj-speech-detector/",
-  "description": "Detect talking in live DJ streams with voice-versus-music analysis that measures repeated microphone speech and music ducking.",
-  "applicationCategory": "MultimediaApplication",
-  "operatingSystem": "Web",
-  "isAccessibleForFree": true
+  "@type": "CollectionPage",
+  "name": "Search All DJs",
+  "url": "https://radiorrr.com/tools/djs/",
+  "description": "Search all DJs in the Radio RRR catalogue, live or offline, by name, platform, status and genre."
 }
 </script>
 <script type="application/ld+json">
@@ -122,8 +119,8 @@
     {
       "@type": "ListItem",
       "position": 3,
-      "name": "DJ Speech Detector",
-      "item": "https://radiorrr.com/tools/dj-speech-detector/"
+      "name": "Search All DJs",
+      "item": "https://radiorrr.com/tools/djs/"
     }
   ]
 }
@@ -132,7 +129,7 @@
 <body>
 <main class="wrapper">
 <!-- HERO BANNER -->
-    <section class="hero" data-nosnippet>
+    <section class="hero">
       <div class="hero-left">
         <a href="/" aria-label="Reset Radio RRR and return to the live radio home page" title="Reset Radio RRR">
           <img
@@ -200,7 +197,7 @@
 </div>
 </div>
 <!-- LIVE AUDIO TAB -->
-<div class="content-pane hidden-pane" id="stream-section" data-nosnippet>
+<div class="content-pane hidden-pane" id="stream-section">
 <div class="channel live-audio-channel">
 <div class="live-audio-header">
 <div class="live-audio-title">🔊 LIVE AUDIO</div>
@@ -227,7 +224,7 @@
 </div>
 </div>
 <!-- LIVE DJs TAB -->
-<div class="content-pane hidden-pane" id="live-section" data-nosnippet>
+<div class="content-pane hidden-pane" id="live-section">
 <div class="channel">
 <!-- RADIO ROUTER LIVE DJ -->
 <div class="random-live-dj" id="randomLiveDj">
@@ -290,7 +287,7 @@
 </div>
 </div>
 <!-- SCHEDULE TAB -->
-<div class="content-pane hidden-pane" id="events-section" data-nosnippet>
+<div class="content-pane hidden-pane" id="events-section">
 <div class="channel">
 <span>Radio RRR Schedule</span>
 <div class="schedule-table" role="table" aria-label="Radio RRR weekly schedule">
@@ -302,7 +299,7 @@
 </div>
 </div>
 <!-- SOCIALS TAB -->
-<div class="content-pane hidden-pane" id="video-section" data-nosnippet>
+<div class="content-pane hidden-pane" id="video-section">
 <div class="channel">
 <span>TikTok Clips</span><br/>
 <small>
@@ -375,7 +372,7 @@
   <div class="health-count-compact"><span class="health-station-label">FAVOURITE DJs</span><strong id="toolFavouriteDjCount">—</strong></div>
 </div>
 </section>
-<h2 class="tools-section-heading">Free DJ &amp; Live Music Tools</h2>
+<h1 class="tools-section-heading">Free DJ &amp; Live Music Tools</h1>
 <div class="tools-hub-grid" id="toolsHubGrid" aria-label="Radio RRR tools">
 <button class="tool-hub-tile" id="recommendDjOpen" type="button" aria-label="Submit a DJ">
 <span class="tool-hub-icon" aria-hidden="true">🎧</span>
@@ -413,7 +410,7 @@
 <span class="tool-hub-note">Beat-sync a video freeze effect</span>
 </a>
 </div>
-<section class="tool-detail-intro live-djs-seo-intro" data-tool-intro="live-djs" hidden data-nosnippet>
+<section class="tool-detail-intro live-djs-seo-intro" data-tool-intro="live-djs" hidden>
 <h2>Live DJs Streaming Now</h2>
 <p>Discover DJs currently broadcasting live and detected by Radio RRR. The live DJ finder brings together active streams from supported social and streaming platforms so you can see who is on air now without hunting through separate apps.</p>
 <p>Radio RRR continuously analyses available live audio to identify the current sound. Where detection data is available, the cards below can show live genres, BPM, talking activity and how closely each DJ matches the current Radio RRR program.</p>
@@ -470,19 +467,19 @@
 <div class="live-djs-tool-status" id="allDjsStatus" role="status" aria-live="polite">Loading the DJ catalogue…</div>
 <div class="live-djs-tool-grid offline-djs-tool-grid" id="allDjsResults"></div>
 </div></section>
-<section class="tool-detail-intro" data-tool-intro="bpm-detector" hidden data-nosnippet>
+<section class="tool-detail-intro" data-tool-intro="bpm-detector" hidden>
 <a class="tool-detail-back" data-tool-back href="/tools/">← Back to Tools Page</a>
 <h2>Live Stream BPM Detector</h2>
 <p>Detect the BPM of a live online audio or HLS stream. Paste a direct HTTP or HTTPS stream URL and Radio RRR will analyse a short audio sample to estimate its tempo.</p>
 <p>This tool is designed for DJs, online radio stations and live music streams where you want a quick BPM estimate without downloading the audio first.</p>
 </section>
 <section class="tool-detail-intro" data-tool-intro="dj-speech-detector" hidden>
-<h1>DJ Speech Detector</h1>
+<h2>DJ Speech Detector</h2>
 <p>Detect talking in live DJ streams using voice-versus-music analysis. Radio RRR measures repeated microphone speech and music ducking so brief announcements are treated differently from persistent talking.</p>
 <p>The detector scans Radio RRR's latest live DJ audio samples and reports talk activity for the DJs currently being monitored.</p>
 <a class="tool-detail-back" data-tool-back href="/tools/">← All Radio RRR tools</a>
 </section>
-<section class="tool-detail-intro" data-tool-intro="stream-health" hidden data-nosnippet>
+<section class="tool-detail-intro" data-tool-intro="stream-health" hidden>
 <a class="tool-detail-back" data-tool-back href="/tools/">← Back to Tools Page</a>
 <h2>HLS Stream Health Test</h2>
 <p>Test the stability of Radio RRR's current live HLS playback for 60 seconds. The browser monitor records buffering events, total buffering time, dropped frames, HLS errors and recovery after a DJ switch.</p>
@@ -490,7 +487,7 @@
 <h2>What the stream test measures</h2>
 <p>Use the results to spot repeated buffering, long stalls, excessive dropped frames or slow recovery when the live relay changes from one DJ to another.</p>
 </section>
-<section class="tool-detail-intro" data-tool-intro="stuck-frame-effect" hidden data-nosnippet>
+<section class="tool-detail-intro" data-tool-intro="stuck-frame-effect" hidden>
 <a class="tool-detail-back" data-tool-back href="/tools/">← Back to Tools Page</a>
 <h2>Stuck Frame Effect</h2>
 <p>Upload a video and Radio RRR will analyse its soundtrack, detect the beat and add short stuck-frame freezes in time with the music.</p>
