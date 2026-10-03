@@ -6,7 +6,7 @@
 <title>Search All DJs – Browse Live & Offline DJs | Radio RRR</title>
 <link href="/favicon.ico" rel="icon" type="image/x-icon"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<link rel="stylesheet" href="/style.css?v=20261004.1">
+<link rel="stylesheet" href="/style.css?v=20261004.2">
 <meta content="Search all DJs in the Radio RRR catalogue, live or offline. Filter by name, platform and status, or explore stored and learned genres with clickable coloured bubbles." name="description"/>
 <meta content="index, follow, max-image-preview:large" name="robots"/>
 <meta content="#070818" name="theme-color"/>
@@ -443,6 +443,7 @@
 <input id="liveDjsToolSearch" type="search" autocomplete="off" placeholder="Search @username or DJ name">
 <button class="tool-button secondary" id="liveDjsToolRefresh" type="button">↻ Refresh</button>
 </div>
+<div class="dj-genre-filter-list" id="liveDjsToolGenres" aria-label="Filter live DJs by genre"></div>
 <div class="live-djs-tool-status" id="liveDjsToolStatus" role="status" aria-live="polite">Loading DJs currently detected live…</div>
 <div class="live-djs-tool-grid" id="liveDjsToolResults"></div>
 </div>
@@ -462,7 +463,7 @@
 <button class="tool-button secondary" id="allDjsClear" type="button">Clear filters</button>
 <button class="tool-button secondary" id="allDjsRefresh" type="button">↻ Refresh</button>
 </div>
-<div class="all-djs-genre-heading"><h2>Explore genres</h2><span>Choose one or more genres. DJs matching any selected genre appear below.</span></div>
+<div class="all-djs-genre-heading"><h2>Explore genres</h2><span>Genres with at least four DJs. Choose one or more to show DJs matching any selected genre.</span></div>
 <div id="allDjsGenres" class="all-djs-genre-list" aria-label="Filter DJs by genre"></div>
 <div class="live-djs-tool-status" id="allDjsStatus" role="status" aria-live="polite">Loading the DJ catalogue…</div>
 <div class="live-djs-tool-grid offline-djs-tool-grid" id="allDjsResults"></div>
@@ -1091,7 +1092,7 @@ window.formspree =
 })();
 </script>
 
-<script src="/script.js?v=20261004.1"></script>
+<script src="/script.js?v=20261004.2"></script>
 
 <script>
 /*

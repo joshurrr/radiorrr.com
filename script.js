@@ -5518,6 +5518,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const liveDjsToolSearch = document.getElementById("liveDjsToolSearch");
       const liveDjsToolStatus = document.getElementById("liveDjsToolStatus");
       const liveDjsToolResults = document.getElementById("liveDjsToolResults");
+      const liveDjsToolGenres = document.getElementById("liveDjsToolGenres");
+      let liveDjsToolSelectedGenre = "";
       let liveDjsToolItems = [];
       let liveDjsToolLoading = false;
 
@@ -5535,13 +5537,50 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
 
+      function renderLiveDjsToolGenres() {
+        if (!liveDjsToolGenres) return;
+        const counts = new Map();
+        liveDjsToolItems.forEach(item => getLiveAIGenres(item.dj).forEach(genre => {
+          const key = genre.toLowerCase();
+          const entry = counts.get(key) || { name: genre, count: 0 };
+          entry.count += 1;
+          counts.set(key, entry);
+        }));
+        const available = Array.from(counts).filter(([key, entry]) => entry.count > 3)
+          .sort((a, b) => a[1].name.localeCompare(b[1].name));
+        if (!available.some(([key]) => key === liveDjsToolSelectedGenre)) liveDjsToolSelectedGenre = "";
+        liveDjsToolGenres.replaceChildren();
+        if (!available.length) {
+          const note = document.createElement("span");
+          note.className = "live-djs-tool-muted";
+          note.textContent = "Genre filters appear when at least four live DJs share a detected genre.";
+          liveDjsToolGenres.appendChild(note);
+          return;
+        }
+        function addButton(key, label, genre) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "dj-genre-pill dj-genre-filter " + getGenreNeonClass(genre);
+          button.textContent = label;
+          button.setAttribute("aria-pressed", String(liveDjsToolSelectedGenre === key));
+          button.addEventListener("click", function () {
+            liveDjsToolSelectedGenre = liveDjsToolSelectedGenre === key ? "" : key;
+            renderLiveDjsToolGenres();
+            renderLiveDjsTool();
+          });
+          liveDjsToolGenres.appendChild(button);
+        }
+        addButton("", "All genres", "");
+        available.forEach(([key, entry]) => addButton(key, entry.name + " · " + entry.count, entry.name));
+      }
+
       function getLiveDjsToolSearchText(dj) {
         return [
           dj && dj.name,
           dj && dj.display_name,
           getDJUsername(dj),
           getDJPlatform(dj)
-        ].filter(Boolean).join(" ").toLowerCase();
+        ].concat(getLiveAIGenres(dj)).filter(Boolean).join(" ").toLowerCase();
       }
 
       function renderLiveDjsTool() {
@@ -5550,9 +5589,14 @@ document.addEventListener("DOMContentLoaded", function () {
         const query = String(liveDjsToolSearch && liveDjsToolSearch.value || "")
           .trim().toLowerCase().replace(/^@/, "");
         const visible = liveDjsToolItems.filter(function (item) {
-          return !query || getLiveDjsToolSearchText(item.dj).includes(query);
+          return (!query || getLiveDjsToolSearchText(item.dj).includes(query)) &&
+            (!liveDjsToolSelectedGenre || getLiveAIGenres(item.dj).some(genre => genre.toLowerCase() === liveDjsToolSelectedGenre));
         });
 
+        if (liveDjsToolStatus && !liveDjsToolLoading) {
+          liveDjsToolStatus.textContent = visible.length + " of " + liveDjsToolItems.length + " live DJs" +
+            (liveDjsToolSelectedGenre ? " · " + liveDjsToolSelectedGenre : "");
+        }
         liveDjsToolResults.innerHTML = "";
 
         if (!visible.length) {
@@ -5603,7 +5647,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           const genreHtml = genres.length
             ? genres.map(function (genre) {
-                return '<span class="rrr-live-genre-bubble" title="Live detected: ' + escapeAttr(genre) + '">' +
+                return '<span class="rrr-live-genre-bubble dj-genre-pill ' + getGenreNeonClass(genre) + '" title="Live detected: ' + escapeAttr(genre) + '">' +
                   escapeHtml(genre) + '</span>';
               }).join("")
             : '<span class="live-djs-tool-muted">Analysing live audio…</span>';
@@ -5716,10 +5760,12 @@ document.addEventListener("DOMContentLoaded", function () {
               ? liveDjsToolItems.length + " DJ" + (liveDjsToolItems.length === 1 ? "" : "s") + " currently detected live."
               : "No DJs are currently detected live.";
           }
+          renderLiveDjsToolGenres();
           renderLiveDjsTool();
         } catch (error) {
           console.error("Radio RRR Live DJs tool error:", error);
           liveDjsToolItems = [];
+          renderLiveDjsToolGenres();
           if (liveDjsToolStatus) liveDjsToolStatus.textContent = "Could not load the current live DJ list.";
           renderLiveDjsTool();
         } finally {
@@ -5961,12 +6007,6 @@ document.addEventListener("DOMContentLoaded", function () {
           (!genres.size || getAllDjGenres(dj).some(g => genres.has(g.toLowerCase())));
       }
 
-      function allDjGenreStyle(genre) {
-        let hash = 0;
-        for (const char of genre.toLowerCase()) hash = (hash * 31 + char.charCodeAt(0)) | 0;
-        return "--genre-hue:" + ((hash >>> 0) % 360);
-      }
-
       function renderAllDjsGenres() {
         const counts = new Map();
         allDjsItems.forEach(dj => getAllDjGenres(dj).forEach(genre => {
@@ -5975,12 +6015,14 @@ document.addEventListener("DOMContentLoaded", function () {
           entry.count += 1;
           counts.set(key, entry);
         }));
+        allDjsSelectedGenres.forEach(key => {
+          if (!counts.has(key) || counts.get(key).count <= 3) allDjsSelectedGenres.delete(key);
+        });
         allDjsGenres.replaceChildren();
-        Array.from(counts).sort((a, b) => a[1].name.localeCompare(b[1].name)).forEach(([key, entry]) => {
+        Array.from(counts).filter(([key, entry]) => entry.count > 3).sort((a, b) => a[1].name.localeCompare(b[1].name)).forEach(([key, entry]) => {
           const button = document.createElement("button");
           button.type = "button";
-          button.className = "all-djs-genre-bubble";
-          button.setAttribute("style", allDjGenreStyle(entry.name));
+          button.className = "dj-genre-pill dj-genre-filter " + getGenreNeonClass(entry.name);
           button.setAttribute("aria-pressed", String(allDjsSelectedGenres.has(key)));
           button.textContent = entry.name + " · " + entry.count;
           button.addEventListener("click", function () {
@@ -6028,7 +6070,7 @@ document.addEventListener("DOMContentLoaded", function () {
             '<div class="live-djs-tool-body"><h2 class="live-djs-tool-name">' + escapeHtml(String(dj.name || dj.display_name || username || 'DJ')) + '</h2>' +
             '<div class="live-djs-tool-handle">@' + escapeHtml(username) + '</div>' +
             (dj.bio ? '<p class="all-djs-bio">' + escapeHtml(String(dj.bio)) + '</p>' : '') +
-            '<div class="live-djs-tool-genres">' + (genres.length ? genres.map(g => '<span class="all-djs-genre-bubble all-djs-card-genre" style="' + allDjGenreStyle(g) + '">' + escapeHtml(g) + '</span>').join('') : '<span class="live-djs-tool-muted">No stored genres yet</span>') + '</div>' +
+            '<div class="live-djs-tool-genres">' + (genres.length ? genres.map(getGenrePillHtml).join('') : '<span class="live-djs-tool-muted">No stored genres yet</span>') + '</div>' +
             (profile ? '<a class="tool-button secondary offline-djs-tool-profile" target="_blank" rel="noopener noreferrer" href="' + escapeAttr(profile) + '">Open profile ↗</a>' : '') + '</div>';
           allDjsResults.appendChild(card);
         });
