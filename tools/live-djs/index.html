@@ -7,7 +7,7 @@
 <link href="/favicon.ico" rel="icon" type="image/x-icon"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <link rel="stylesheet" href="/style.css?v=20261004.3">
-<link rel="stylesheet" href="/tools/tools.css?v=20261004.3">
+<link rel="stylesheet" href="/tools/tools.css?v=20261004.4">
 <meta content="Discover DJs streaming live now across supported platforms. Browse live genres, BPM and audio analysis, then listen directly through Radio RRR." name="description"/>
 <meta content="index, follow, max-image-preview:large" name="robots"/>
 <meta content="#070818" name="theme-color"/>
@@ -342,8 +342,8 @@
   <div class="health-refresh"><span>Updated <span id="toolLastRefresh">—</span></span><button class="tool-button secondary tools-refresh-button" id="refreshTools" type="button">↻ Refresh</button></div>
 </div>
 
-<details class="health-details">
-<summary>Service checks &amp; stream links <span>Updates every 30 seconds</span></summary>
+<div class="health-details">
+<p class="health-update-note">Service checks &amp; stream links · Updates every 30 seconds</p>
 <h3 class="health-group-title">SERVICES</h3>
 <div class="health-services health-services-compact">
   <div class="health-service-compact"><span>RadioRouter API</span><span class="tool-health pending" id="toolApiHealth">Checking…</span></div>
@@ -351,6 +351,7 @@
   <div class="health-service-compact"><span>Genre detection</span><span class="tool-health pending" id="toolDetectorEngine">Checking…</span></div>
   <div class="health-service-compact"><span>Genre detection scout</span><span class="tool-health pending" id="toolScoutEngine">Checking…</span></div>
   <div class="health-service-compact"><span>BPM detection</span><span class="tool-health pending" id="toolBpmDetector">Checking…</span></div>
+  <div class="health-service-compact"><span>Voice detection</span><span class="tool-health pending" id="toolVoiceDetection">Checking…</span></div>
 </div>
 
 <h3 class="health-group-title" id="toolStreamStatusTitle">STREAMS</h3>
@@ -377,7 +378,7 @@
   <div class="health-count-compact"><span class="health-station-label">LIVE DJs</span><strong id="toolLiveDjCount">—</strong></div>
   <div class="health-count-compact"><span class="health-station-label">FAVOURITE DJs</span><strong id="toolFavouriteDjCount">—</strong></div>
 </div>
-</details>
+</div>
 </section>
 <div class="tools-section-heading tools-intro">
 <p class="tools-eyebrow">THE RADIO RRR TOOLKIT</p>
@@ -1116,7 +1117,7 @@ window.formspree =
 })();
 </script>
 
-<script src="/script.js?v=20261004.6"></script>
+<script src="/script.js?v=20261004.7"></script>
 
 <script>
 /*

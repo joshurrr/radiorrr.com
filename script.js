@@ -5474,6 +5474,37 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
 
+      async function refreshVoiceDetection(statusData, signal) {
+        const el = document.getElementById("toolVoiceDetection");
+        if (!el) return;
+        el.removeAttribute("title");
+        const username = statusData && statusData.relay_username;
+        if (!username) {
+          setToolHealth("toolVoiceDetection", false, "Running", "No reading");
+          return;
+        }
+        try {
+          const url = new URL("https://api.radiorrr.com/api/ai-genre");
+          url.searchParams.set("username", username);
+          url.searchParams.set("platform", statusData.relay_platform || "TikTok");
+          const response = await fetch(getFreshUrl(url.href), { cache: "no-store", signal: signal });
+          if (!response.ok) throw new Error("Voice analysis unavailable");
+          const data = await response.json();
+          const speech = Array.isArray(data.genres) && data.genres.find(function (item) {
+            return item && item.analysis === "speech" &&
+              typeof item.speech_ratio === "number" && Number.isFinite(item.speech_ratio) &&
+              item.speech_ratio >= 0 && item.speech_ratio <= 1;
+          });
+          const detectedAt = Date.parse(data.detected_at);
+          const age = Date.now() - detectedAt;
+          const recent = Number.isFinite(detectedAt) && age >= -60000 && age <= 10 * 60 * 1000;
+          setToolHealth("toolVoiceDetection", Boolean(speech && recent), "Running", speech ? "Not reporting" : "No reading");
+          if (Number.isFinite(detectedAt)) el.title = "Latest voice analysis: " + new Date(detectedAt).toLocaleString();
+        } catch (error) {
+          setToolHealth("toolVoiceDetection", false, "Running", "Unavailable");
+        }
+      }
+
       async function refreshToolsData() {
         const controller = new AbortController();
         const timeout = setTimeout(function () { controller.abort(); }, 8000);
@@ -5492,6 +5523,7 @@ document.addEventListener("DOMContentLoaded", function () {
           if (responses[1].status === "fulfilled" && responses[1].value.ok) {
             liveData = await responses[1].value.json();
           }
+          await refreshVoiceDetection(statusData, controller.signal);
           setToolHealth("toolApiHealth", !!statusData, "Healthy", "Unavailable");
 
           setToolHealth("toolVideoHealth", !!(statusData && statusData.video && statusData.video.healthy), "Healthy", statusData && statusData.video && typeof statusData.video.healthy === "boolean" ? "Offline" : "Unavailable");
@@ -5531,6 +5563,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         } catch (error) {
           console.warn("Radio RRR tools refresh failed:", error);
+          setToolHealth("toolVoiceDetection", false, "Running", "Unavailable");
           setToolHealth("toolApiHealth", false, "Healthy", "Unavailable");
           setToolHealth("toolAudioHealth", false, "Healthy", "Unavailable");
           setToolHealth("toolVideoHealth", false, "Healthy", "Unavailable");
@@ -5539,7 +5572,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
 
-      const monitoredHealthIds = ["toolApiHealth", "toolRouterEngine", "toolDetectorEngine", "toolScoutEngine", "toolAudioHealth", "toolVideoHealth"];
+      const monitoredHealthIds = ["toolApiHealth", "toolRouterEngine", "toolDetectorEngine", "toolScoutEngine", "toolVoiceDetection", "toolAudioHealth", "toolVideoHealth"];
 
       function updateOverallHealth() {
         const checks = monitoredHealthIds.map(function (id) { return document.getElementById(id); });

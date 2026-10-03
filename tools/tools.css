@@ -43,8 +43,7 @@
 .tools-page .health-refresh { font-size: 11px; color: #aabbce; }
 .tools-page .tools-refresh-button, .tools-page .health-stream-copy { min-height: 44px; font-size: 12px; padding: 8px 14px; box-shadow: none; }
 .health-details { border-top: 1px solid #29374d; margin-top: 16px; padding-top: 14px; }
-.health-details summary { cursor: pointer; font-size: 13px; color: #c7d4ea; padding: 8px 0; min-height: 40px; }
-.health-details summary span { float: right; color: #a7b6cc; font-size: 11px; }
+.health-update-note { font-size: 12px; color: #a7b6cc; line-height: 1.5; margin-bottom: 12px; }
 .tools-page .health-services.health-services-compact { grid-template-columns: repeat(3,minmax(0,1fr)); }
 .tools-page .health-services .health-service-compact { background: #121d2e; border: 1px solid #2c3b51; border-radius: 8px; padding: 12px; gap: 8px; box-shadow: none; }
 .tools-page .health-services .health-service-compact > span:first-child { color: #cdd9ed; font-size: 13px; text-shadow: none; }
@@ -65,7 +64,6 @@
   .tools-page .tool-contribute .tool-hub-action { grid-column: 2; grid-row: 3; margin-top: 14px; }
   .tools-page .health-compact-header { align-items: flex-start; gap: 14px; }
   .tools-page .health-refresh { flex-wrap: wrap; }
-  .health-details summary span { display: block; float: none; margin: 6px 0 0 16px; }
   .tools-page .health-services.health-services-compact { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
