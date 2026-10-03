@@ -7033,6 +7033,7 @@
 .tool-hub-tile:nth-child(4)::before { background-position: 65% 44%; filter: saturate(1.30) hue-rotate(286deg) contrast(1.08); }
 .tool-hub-tile:nth-child(5)::before { background-position: 82% 48%; filter: saturate(1.30) hue-rotate(128deg) contrast(1.08); }
 .tool-hub-tile:nth-child(6)::before { background-position: 96% 43%; filter: saturate(1.32) hue-rotate(228deg) contrast(1.08); }
+.tool-hub-tile:nth-child(7)::before { background-position: 15% 70%; filter: saturate(1.18) hue-rotate(205deg) contrast(1.08) brightness(0.78); }
 
 .tool-hub-tile:hover,
 .tool-hub-tile:focus-visible {
@@ -7988,6 +7989,59 @@
   .live-djs-tool-controls .tool-button {
     width: 100%;
   }
+}
+
+
+
+/* OFFLINE DJs TOOL — reuses the Live DJs card/grid language without any
+   playback or relay interaction. */
+.offline-djs-tool-panel {
+  margin-top: 1rem;
+}
+
+.offline-djs-tool-card {
+  border-color: rgba(148,163,184,0.34);
+  box-shadow: 0 0 12px rgba(71,85,105,0.12);
+}
+
+.offline-djs-tool-card .live-djs-tool-media {
+  filter: saturate(0.82);
+}
+
+.offline-djs-tool-badge {
+  position: absolute;
+  left: 0.5rem;
+  top: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.42rem;
+  border: 1px solid rgba(148,163,184,0.55);
+  border-radius: 5px;
+  background: rgba(15,23,42,0.9);
+  color: #cbd5e1;
+  font-size: 0.56rem;
+  font-weight: 900;
+  letter-spacing: 0.07em;
+  box-shadow: 0 0 8px rgba(15,23,42,0.55);
+}
+
+.offline-djs-tool-genre-label {
+  margin-top: 0.52rem;
+  color: #94a3b8;
+  font-size: 0.52rem;
+  font-weight: 850;
+  letter-spacing: 0.07em;
+}
+
+.offline-djs-tool-profile {
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
+}
+
+.offline-djs-tool-grid .live-djs-tool-genres {
+  min-height: 1.55rem;
 }
 
 /* RRR: secondary LIVE DJ cards — bottom-align DJ identity + live genres.

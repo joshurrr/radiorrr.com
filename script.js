@@ -689,6 +689,11 @@ document.addEventListener("DOMContentLoaded", function () {
           title: "Live DJs Streaming Now – Find Live DJ Sets | Radio RRR",
           description: "Discover DJs streaming live now across supported platforms. Browse live genres, BPM and audio analysis, then listen directly through Radio RRR."
         },
+        "offline-djs": {
+          path: "/tools/offline-djs/",
+          title: "Offline DJs – Browse the Radio RRR DJ Catalogue",
+          description: "Browse DJs saved in the Radio RRR catalogue who are not currently detected live. Search by DJ name, username, platform or genre."
+        },
         "bpm-detector": {
           path: "/tools/bpm-detector/",
           title: "Live Stream BPM Detector – Detect BPM from Online Audio | Radio RRR",
@@ -816,16 +821,20 @@ document.addEventListener("DOMContentLoaded", function () {
         const detailList = toolsSection.querySelector(".tool-detail-list");
         const streamHealthPanel = toolsSection.querySelector("#toolStreamHealthPanel");
         const liveDjsPanel = toolsSection.querySelector("#liveDjsToolPanel");
+        const offlineDjsPanel = toolsSection.querySelector("#offlineDjsToolPanel");
         const isLiveDjsRoute = toolRoute === "live-djs";
+        const isOfflineDjsRoute = toolRoute === "offline-djs";
         const isStreamHealthRoute = toolRoute === "stream-health";
 
         if (healthDashboard) healthDashboard.hidden = detailMode;
         if (toolsHeading) toolsHeading.hidden = detailMode;
         if (toolsHubGrid) toolsHubGrid.hidden = detailMode;
-        if (detailList) detailList.hidden = !detailMode || isLiveDjsRoute || isStreamHealthRoute;
+        if (detailList) detailList.hidden = !detailMode || isLiveDjsRoute || isOfflineDjsRoute || isStreamHealthRoute;
         if (streamHealthPanel) streamHealthPanel.hidden = !isStreamHealthRoute;
         if (liveDjsPanel) liveDjsPanel.hidden = !isLiveDjsRoute;
+        if (offlineDjsPanel) offlineDjsPanel.hidden = !isOfflineDjsRoute;
         if (isLiveDjsRoute) window.setTimeout(loadLiveDjsTool, 0);
+        if (isOfflineDjsRoute) window.setTimeout(loadOfflineDjsTool, 0);
 
         toolsSection.querySelectorAll("[data-tool-intro]").forEach(function (intro) {
           intro.hidden = !detailMode || intro.getAttribute("data-tool-intro") !== toolRoute;
@@ -5718,6 +5727,191 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       if (liveDjsToolRefresh) liveDjsToolRefresh.addEventListener("click", loadLiveDjsTool);
       if (liveDjsToolSearch) liveDjsToolSearch.addEventListener("input", renderLiveDjsTool);
+
+
+      /* RRR TOOLS — OFFLINE DJs
+         Read-only catalogue browser. This consumes /api/live favourites and
+         deliberately never calls the DJ switch or relay endpoints. */
+      const offlineDjsToolPanel = document.getElementById("offlineDjsToolPanel");
+      const offlineDjsToolClose = document.getElementById("offlineDjsToolClose");
+      const offlineDjsToolRefresh = document.getElementById("offlineDjsToolRefresh");
+      const offlineDjsToolSearch = document.getElementById("offlineDjsToolSearch");
+      const offlineDjsToolStatus = document.getElementById("offlineDjsToolStatus");
+      const offlineDjsToolResults = document.getElementById("offlineDjsToolResults");
+      let offlineDjsToolItems = [];
+      let offlineDjsToolLoading = false;
+
+      function getOfflineDjGenres(dj) {
+        const values = [];
+
+        if (Array.isArray(dj && dj.rrr_learned_genres)) {
+          dj.rrr_learned_genres.forEach(function (genre) {
+            if (genre) values.push(String(genre).trim());
+          });
+        }
+
+        [dj && dj.genre, dj && dj.genre_keywords].forEach(function (value) {
+          if (!value) return;
+          String(value).split(/[,·|]/).forEach(function (genre) {
+            const cleaned = genre.replace(/^.*---/, "").trim();
+            if (cleaned) values.push(cleaned);
+          });
+        });
+
+        const seen = new Set();
+        return values.filter(function (genre) {
+          const key = genre.toLowerCase();
+          if (!key || seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        }).slice(0, 6);
+      }
+
+      function getOfflineDjsToolSearchText(dj) {
+        return [
+          dj && dj.name,
+          dj && dj.display_name,
+          getDJUsername(dj),
+          getDJPlatform(dj)
+        ].concat(getOfflineDjGenres(dj)).filter(Boolean).join(" ").toLowerCase();
+      }
+
+      function getOfflineDjProfileUrl(dj) {
+        const explicit = String(dj && (dj.profile_url || dj.url) || "").trim();
+        if (explicit) return explicit;
+
+        const username = getDJUsername(dj);
+        const platform = getDJPlatform(dj).toLowerCase();
+
+        if (!username) return "";
+        if (platform === "tiktok") return "https://www.tiktok.com/@" + encodeURIComponent(username);
+        if (platform === "twitch") return "https://www.twitch.tv/" + encodeURIComponent(username);
+        if (platform === "youtube") return String(dj && dj.live_url || "").replace(/\/live\/?$/, "");
+        return "";
+      }
+
+      function renderOfflineDjsTool() {
+        if (!offlineDjsToolResults) return;
+
+        const query = String(offlineDjsToolSearch && offlineDjsToolSearch.value || "")
+          .trim().toLowerCase().replace(/^@/, "");
+        const visible = offlineDjsToolItems.filter(function (dj) {
+          return !query || getOfflineDjsToolSearchText(dj).includes(query);
+        });
+
+        offlineDjsToolResults.innerHTML = "";
+
+        if (!visible.length) {
+          const empty = document.createElement("div");
+          empty.className = "live-djs-tool-empty";
+          empty.textContent = offlineDjsToolItems.length
+            ? "No offline DJs match that search."
+            : "No saved DJs are currently offline.";
+          offlineDjsToolResults.appendChild(empty);
+          return;
+        }
+
+        visible.forEach(function (dj) {
+          const username = getDJUsername(dj);
+          const platform = getDJPlatform(dj);
+          const name = String(dj.name || dj.display_name || username || "DJ");
+          const profilePic = String(
+            dj.profile_pic || dj.profile_picture || dj.avatar || dj.photo || ""
+          );
+          const profileUrl = getOfflineDjProfileUrl(dj);
+          const genres = getOfflineDjGenres(dj);
+
+          const card = document.createElement("article");
+          card.className = "live-djs-tool-card offline-djs-tool-card";
+
+          const photoHtml = profilePic
+            ? '<img class="live-djs-tool-photo" src="' + escapeAttr(profilePic) + '" alt="" loading="lazy" referrerpolicy="no-referrer">'
+            : '<div class="live-djs-tool-photo-placeholder" aria-hidden="true">🎧</div>';
+
+          const genreHtml = genres.length
+            ? genres.map(function (genre) {
+                return '<span class="dj-genre-pill">' + escapeHtml(genre) + '</span>';
+              }).join("")
+            : '<span class="live-djs-tool-muted">No stored genre profile yet</span>';
+
+          const learnedSamples = Number(dj && dj.rrr_learned_samples);
+          const learnedText = Number.isFinite(learnedSamples) && learnedSamples > 0
+            ? learnedSamples + " learned sample" + (learnedSamples === 1 ? "" : "s")
+            : "Saved DJ profile";
+
+          card.innerHTML =
+            '<div class="live-djs-tool-media">' +
+              photoHtml +
+              '<span class="offline-djs-tool-badge">OFFLINE</span>' +
+              '<span class="dj-platform-badge live-djs-tool-platform">' + escapeHtml(platform) + '</span>' +
+            '</div>' +
+            '<div class="live-djs-tool-body">' +
+              '<div class="live-djs-tool-name">' + escapeHtml(name) + '</div>' +
+              '<div class="live-djs-tool-handle">@' + escapeHtml(username) + '</div>' +
+              '<div class="offline-djs-tool-genre-label">PROFILE / LEARNED GENRES</div>' +
+              '<div class="live-djs-tool-genres">' + genreHtml + '</div>' +
+              '<div class="live-djs-tool-metrics">' + escapeHtml(learnedText) + '</div>' +
+              (profileUrl
+                ? '<a class="tool-button secondary offline-djs-tool-profile" href="' + escapeAttr(profileUrl) + '" target="_blank" rel="noopener">Open profile ↗</a>'
+                : '<span class="live-djs-tool-muted">Profile link unavailable</span>') +
+            '</div>';
+
+          offlineDjsToolResults.appendChild(card);
+        });
+      }
+
+      async function loadOfflineDjsTool() {
+        if (!offlineDjsToolResults || offlineDjsToolLoading) return;
+
+        offlineDjsToolLoading = true;
+        if (offlineDjsToolRefresh) offlineDjsToolRefresh.disabled = true;
+        if (offlineDjsToolStatus) offlineDjsToolStatus.textContent = "Loading saved DJs currently offline…";
+
+        try {
+          const response = await fetch(
+            getFreshUrl("https://api.radiorrr.com/api/live"),
+            { cache: "no-store" }
+          );
+          if (!response.ok) throw new Error("Live API returned " + response.status);
+
+          const data = await response.json();
+          const favourites = Array.isArray(data && data.favourites) ? data.favourites : [];
+
+          offlineDjsToolItems = favourites
+            .filter(function (dj) { return dj && dj.live !== true; })
+            .sort(function (a, b) {
+              return String(a.name || getDJUsername(a))
+                .localeCompare(String(b.name || getDJUsername(b)));
+            });
+
+          if (offlineDjsToolStatus) {
+            offlineDjsToolStatus.textContent = offlineDjsToolItems.length
+              ? offlineDjsToolItems.length + " saved DJ" + (offlineDjsToolItems.length === 1 ? "" : "s") + " currently offline."
+              : "No saved DJs are currently offline.";
+          }
+
+          renderOfflineDjsTool();
+        } catch (error) {
+          console.error("Radio RRR Offline DJs tool error:", error);
+          offlineDjsToolItems = [];
+          if (offlineDjsToolStatus) {
+            offlineDjsToolStatus.textContent = "Could not load the offline DJ catalogue.";
+          }
+          renderOfflineDjsTool();
+        } finally {
+          offlineDjsToolLoading = false;
+          if (offlineDjsToolRefresh) offlineDjsToolRefresh.disabled = false;
+        }
+      }
+
+      if (offlineDjsToolClose) {
+        offlineDjsToolClose.addEventListener("click", function () {
+          updateTabUrl("tools-section");
+          applyLocationState();
+        });
+      }
+      if (offlineDjsToolRefresh) offlineDjsToolRefresh.addEventListener("click", loadOfflineDjsTool);
+      if (offlineDjsToolSearch) offlineDjsToolSearch.addEventListener("input", renderOfflineDjsTool);
 
       /* RRR TOOLS — PASSIVE STREAM HEALTH TEST
          This observes the existing liveDjVideo/HLS instance only while the
