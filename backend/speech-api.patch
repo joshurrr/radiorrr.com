@@ -1,0 +1,351 @@
+--- a/app/main.py
++++ b/app/main.py
+@@ -8168,6 +8168,348 @@
+ # Public BPM detector tool API
+ # ---------------------------------------------------------
+ 
++def _analyse_public_speech(audio_file):
++    """Estimate persistent DJ mic/talk activity from the captured WAV.
++
++    WebRTC VAD is only supporting evidence because electronic music can trigger
++    it heavily. A duck must now be a deeper, sustained loudness reduction that
++    recovers promptly, and speech activity must increase inside the duck versus
++    the surrounding audio. This makes ordinary beats/breakdowns much less likely
++    to be mistaken for DJ mic chatter.
++    """
++    try:
++        import webrtcvad
++    except ImportError as error:
++        raise RuntimeError("Speech detector dependency is unavailable; rebuild the router image") from error
++    convert = subprocess.run(
++        [
++            "ffmpeg",
++            "-hide_banner",
++            "-loglevel", "error",
++            "-i", audio_file,
++            "-vn",
++            "-ac", "1",
++            "-ar", "16000",
++            "-f", "s16le",
++            "pipe:1",
++        ],
++        stdout=subprocess.PIPE,
++        stderr=subprocess.PIPE,
++        timeout=20,
++        check=False,
++    )
++
++    if convert.returncode != 0 or not convert.stdout:
++        return None
++
++    pcm = convert.stdout
++    sample_rate = 16000
++    frame_ms = 20
++    frame_bytes = int(sample_rate * frame_ms / 1000) * 2
++
++    vad = webrtcvad.Vad(3)
++
++    flags = []
++    for offset in range(0, len(pcm) - frame_bytes + 1, frame_bytes):
++        frame = pcm[offset:offset + frame_bytes]
++        try:
++            flags.append(bool(vad.is_speech(frame, sample_rate)))
++        except Exception:
++            flags.append(False)
++
++    if not flags:
++        return None
++
++    # Require at least 5 consecutive positive 20 ms frames (100 ms) before
++    # counting a run as speech. This removes many isolated musical transients.
++    qualified = [False] * len(flags)
++    run_start = None
++
++    for index, is_speech in enumerate(flags + [False]):
++        if is_speech and run_start is None:
++            run_start = index
++        elif not is_speech and run_start is not None:
++            run_length = index - run_start
++            if run_length >= 5:
++                for pos in range(run_start, index):
++                    qualified[pos] = True
++            run_start = None
++
++    speech_frames = sum(1 for value in qualified if value)
++    speech_ratio = speech_frames / len(flags)
++
++    samples = array("h")
++    samples.frombytes(pcm)
++    if sys.byteorder != "little":
++        samples.byteswap()
++
++    loudness_frame_ms = 100
++    loudness_samples = int(sample_rate * loudness_frame_ms / 1000)
++    loudness_db = []
++
++    for start in range(0, len(samples) - loudness_samples + 1, loudness_samples):
++        chunk = samples[start:start + loudness_samples]
++        if not chunk:
++            continue
++        mean_square = sum(float(value) * float(value) for value in chunk) / len(chunk)
++        rms = math.sqrt(mean_square) / 32768.0
++        loudness_db.append(20.0 * math.log10(max(rms, 1e-6)))
++
++    def median(values):
++        ordered = sorted(values)
++        if not ordered:
++            return -120.0
++        middle = len(ordered) // 2
++        if len(ordered) % 2:
++            return ordered[middle]
++        return (ordered[middle - 1] + ordered[middle]) / 2.0
++
++    def vad_ratio(start_loudness, end_loudness):
++        vad_frames_per_loudness = max(1, loudness_frame_ms // frame_ms)
++        vad_start = max(0, start_loudness * vad_frames_per_loudness)
++        vad_end = min(len(qualified), end_loudness * vad_frames_per_loudness)
++        if vad_end <= vad_start:
++            return 0.0
++        return (
++            sum(1 for value in qualified[vad_start:vad_end] if value)
++            / (vad_end - vad_start)
++        )
++
++    # First find plausible loudness ducks. Thresholds are intentionally
++    # conservative: at least 6 dB deep and 0.7-5.0 seconds long.
++    raw_duck_events = []
++    index = 10
++
++    while index + 5 < len(loudness_db):
++        pre_level = median(loudness_db[index - 10:index])
++        low_level = median(loudness_db[index:index + 5])
++        drop_db = pre_level - low_level
++
++        if drop_db < 6.0 or low_level < -55.0:
++            index += 1
++            continue
++
++        recovery_index = None
++        max_recovery = min(len(loudness_db) - 3, index + 50)
++
++        for candidate in range(index + 7, max_recovery + 1):
++            recovered_level = median(loudness_db[candidate:candidate + 5])
++            if recovered_level >= pre_level - 1.0:
++                recovery_index = candidate
++                break
++
++        if recovery_index is None:
++            index += 1
++            continue
++
++        duration_frames = recovery_index - index
++        duration_seconds = duration_frames * (loudness_frame_ms / 1000.0)
++
++        if 0.7 <= duration_seconds <= 5.0:
++            valley_level = median(loudness_db[index:recovery_index])
++            depth_db = max(0.0, pre_level - valley_level)
++            if depth_db >= 6.0:
++                raw_duck_events.append((index, recovery_index, depth_db))
++                index = recovery_index + 5
++                continue
++
++        index += 1
++
++    # A real mic duck should have stronger speech evidence inside the duck than
++    # in the nearby music. This relative test is important when WebRTC VAD is
++    # already firing heavily on the music itself.
++    duck_events = []
++    event_overlaps = []
++
++    for start, end, depth in raw_duck_events:
++        inside_ratio = vad_ratio(start, end)
++
++        context_start = max(0, start - 10)
++        context_end = min(len(loudness_db), end + 10)
++        before_ratio = vad_ratio(context_start, start)
++        after_ratio = vad_ratio(end, context_end)
++
++        context_parts = []
++        if start > context_start:
++            context_parts.append(before_ratio)
++        if context_end > end:
++            context_parts.append(after_ratio)
++        context_ratio = (
++            sum(context_parts) / len(context_parts)
++            if context_parts
++            else speech_ratio
++        )
++
++        if (
++            inside_ratio >= 0.55
++            and inside_ratio >= context_ratio + 0.12
++        ):
++            duck_events.append((start, end, depth))
++            event_overlaps.append(inside_ratio)
++
++    ducked_loudness_frames = sum(end - start for start, end, _ in duck_events)
++    ducking_ratio = (
++        ducked_loudness_frames / len(loudness_db)
++        if loudness_db
++        else 0.0
++    )
++
++    speech_duck_overlap = (
++        sum(event_overlaps) / len(event_overlaps)
++        if event_overlaps
++        else 0.0
++    )
++
++    average_depth = (
++        sum(depth for _start, _end, depth in duck_events) / len(duck_events)
++        if duck_events
++        else 0.0
++    )
++
++    event_factor = min(1.0, len(duck_events) / 3.0)
++    depth_factor = min(1.0, average_depth / 10.0)
++    ducking_confidence = (
++        0.50 * event_factor
++        + 0.25 * depth_factor
++        + 0.25 * speech_duck_overlap
++    )
++
++    # Do not score one isolated duck as persistent chatter. Two or more
++    # speech-correlated ducks are required before talk_ratio can affect ranking.
++    if len(duck_events) >= 2:
++        talk_ratio = ducking_ratio * (0.65 + 0.35 * speech_duck_overlap)
++        talk_confidence = ducking_confidence
++    else:
++        talk_ratio = 0.0
++        talk_confidence = 0.0
++
++    return {
++        "analysis": "speech",
++        "speech_ratio": round(speech_ratio, 4),
++        "speech_confidence": round(min(1.0, speech_ratio * 2.0), 4),
++        "ducking_ratio": round(min(1.0, ducking_ratio), 4),
++        "ducking_events": len(duck_events),
++        "ducking_candidates": len(raw_duck_events),
++        "ducking_confidence": round(min(1.0, ducking_confidence), 4),
++        "talk_ratio": round(min(1.0, talk_ratio), 4),
++        "talk_confidence": round(min(1.0, talk_confidence), 4),
++    }
++
++"""Functions inserted into RadioRouter main.py by the accompanying patch."""
++speech_tool_semaphore = asyncio.Semaphore(2)
++SPEECH_TOOL_SAMPLE_SECONDS = 30
++SPEECH_TOOL_DIR = Path('/tmp/radiorouter-speech-tool')
++
++
++async def _resolve_public_speech_stream(url):
++    parsed = urlparse(url)
++    host = parsed.hostname.casefold().rstrip('.')
++    if host in {'tiktok.com', 'www.tiktok.com'}:
++        match = re.fullmatch(r'/@([A-Za-z0-9._]{1,24})(?:/live)?/?', parsed.path)
++        if not match:
++            raise ValueError('Use a TikTok channel live URL, such as https://www.tiktok.com/@username/live')
++        return await get_tiktok_stream(match.group(1))
++    if host in {'twitch.tv', 'www.twitch.tv', 'm.twitch.tv'}:
++        match = re.fullmatch(r'/([A-Za-z0-9_]{2,25})/?', parsed.path)
++        if not match:
++            raise ValueError('Use a Twitch channel URL, such as https://www.twitch.tv/username')
++        return await get_twitch_stream(match.group(1))
++    if host in {'youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be'}:
++        if not (parsed.path == '/watch' or re.fullmatch(r'/(?:live/|@|channel/)?[A-Za-z0-9_-]+(?:/live)?/?', parsed.path)):
++            raise ValueError('Use a YouTube live video or channel URL')
++        source = url
++        if parsed.path.startswith(('/@', '/channel/')) and not parsed.path.rstrip('/').endswith('/live'):
++            source = url.split('?', 1)[0].rstrip('/') + '/live'
++        result = await asyncio.to_thread(_run_ytdlp, [
++            '--dump-single-json', '--no-playlist', '--skip-download',
++            '--format', 'bestaudio/best', source,
++        ])
++        if result.returncode != 0:
++            raise RuntimeError('Could not resolve this YouTube live stream. Check that it is public and live.')
++        try:
++            info = json.loads(result.stdout)
++        except (TypeError, ValueError) as error:
++            raise RuntimeError('YouTube returned invalid stream metadata') from error
++        if not isinstance(info, dict) or info.get('is_live') is not True:
++            raise RuntimeError('This YouTube video is not currently live')
++        return {'url': info.get('url'), 'headers': info.get('http_headers') or {}}
++    return {'url': url, 'headers': {}}
++
++
++def _capture_public_speech_sample(stream, output_path):
++    headers = dict(stream.get('headers') or {})
++    cookies = stream.get('cookies') or {}
++    if cookies:
++        headers['Cookie'] = '; '.join(f'{key}={value}' for key, value in cookies.items())
++    header_lines = []
++    for name, value in headers.items():
++        if not re.fullmatch(r'[A-Za-z0-9-]+', str(name)) or '\r' in str(value) or '\n' in str(value):
++            raise RuntimeError('Invalid headers returned by the stream resolver')
++        header_lines.append(f'{name}: {value}\r\n')
++    command = [
++        'ffmpeg', '-hide_banner', '-loglevel', 'error', '-y',
++        '-reconnect', '1', '-reconnect_streamed', '1',
++        '-reconnect_on_network_error', '1', '-reconnect_delay_max', '3',
++        '-rw_timeout', '15000000', '-protocol_whitelist', 'http,https,tcp,tls,crypto',
++    ]
++    if header_lines:
++        command += ['-headers', ''.join(header_lines)]
++    command += [
++        '-i', stream['url'], '-t', str(SPEECH_TOOL_SAMPLE_SECONDS), '-vn',
++        '-ac', '1', '-ar', '16000', '-c:a', 'pcm_s16le', str(output_path),
++    ]
++    result = subprocess.run(command, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE,
++                            timeout=SPEECH_TOOL_SAMPLE_SECONDS + 30, check=False)
++    if result.returncode != 0 or not output_path.exists():
++        raise RuntimeError('Could not read audio from this URL. Use a public direct stream or a supported live platform page.')
++    with wave.open(str(output_path), 'rb') as sample:
++        duration = sample.getnframes() / sample.getframerate()
++    if duration < 5:
++        raise RuntimeError('The stream did not provide at least five seconds of audio')
++    analysis = _analyse_public_speech(str(output_path))
++    if not analysis:
++        raise RuntimeError('The speech detector could not analyse this audio sample')
++    return analysis, duration
++
++
++@app.post('/api/tools/speech')
++async def public_speech_detector(request: Request):
++    try:
++        data = await request.json()
++    except Exception:
++        raise HTTPException(status_code=400, detail='Invalid JSON request')
++    if not isinstance(data, dict):
++        raise HTTPException(status_code=400, detail='Expected a JSON object with a URL')
++    try:
++        url = await asyncio.to_thread(_validate_public_stream_url, data.get('url'))
++    except ValueError as error:
++        raise HTTPException(status_code=400, detail=str(error))
++    if speech_tool_semaphore.locked():
++        raise HTTPException(status_code=429, detail='The speech detector is busy. Try again shortly.')
++    SPEECH_TOOL_DIR.mkdir(parents=True, exist_ok=True)
++    wav_path = SPEECH_TOOL_DIR / f'{uuid4().hex}.wav'
++    try:
++        async with speech_tool_semaphore:
++            stream = await _resolve_public_speech_stream(url)
++            if not isinstance(stream, dict):
++                raise RuntimeError('This stream is not currently available')
++            stream['url'] = await asyncio.to_thread(
++                _validate_public_stream_url, stream.get('audio_url') or stream.get('url'))
++            analysis, duration = await asyncio.to_thread(_capture_public_speech_sample, stream, wav_path)
++    except ValueError as error:
++        raise HTTPException(status_code=400, detail=str(error))
++    except subprocess.TimeoutExpired:
++        raise HTTPException(status_code=504, detail='The stream timed out while sampling audio')
++    except (RuntimeError, OSError) as error:
++        raise HTTPException(status_code=422, detail=str(error) if isinstance(error, RuntimeError) else 'Stream analysis is temporarily unavailable')
++    finally:
++        try:
++            wav_path.unlink(missing_ok=True)
++        except OSError:
++            pass
++    return {'ok': True, **analysis, 'sample_seconds': round(duration, 2)}
++
++
+ @app.post("/api/tools/bpm")
+ async def public_bpm_detector(request: Request):
+     try:

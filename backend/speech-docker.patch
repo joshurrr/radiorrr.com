@@ -1,0 +1,11 @@
+--- a/app/Dockerfile
++++ b/app/Dockerfile
+@@ -11,7 +11,7 @@
+ 
+ COPY requirements.txt .
+ RUN pip install --no-cache-dir -r requirements.txt \
+-    && pip install --no-cache-dir streamlink==8.6.1 yt-dlp==2026.8.19
++    && pip install --no-cache-dir streamlink==8.6.1 yt-dlp==2026.8.19 webrtcvad-wheels==2.0.14
+ 
+ COPY main.py .
+ COPY radio_rrr_genre_matcher.py .

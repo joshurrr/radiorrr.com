@@ -5127,6 +5127,68 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
 
+      /* User-selected stream speech analysis, separate from monitored DJ scans. */
+      const streamSpeechForm = document.getElementById("streamSpeechForm");
+      const streamSpeechUrl = document.getElementById("streamSpeechUrl");
+      const streamSpeechStart = document.getElementById("streamSpeechStart");
+      const streamSpeechResult = document.getElementById("streamSpeechResult");
+      const streamSpeechValue = document.getElementById("streamSpeechValue");
+      const streamSpeechDetails = document.getElementById("streamSpeechDetails");
+      const streamSpeechStatus = document.getElementById("streamSpeechStatus");
+      let streamSpeechBusy = false;
+
+      function setStreamSpeechStatus(message, state) {
+        streamSpeechStatus.textContent = message;
+        streamSpeechStatus.classList.remove("error", "success");
+        if (state) streamSpeechStatus.classList.add(state);
+      }
+
+      async function analyseStreamSpeech(event) {
+        if (event) event.preventDefault();
+        if (streamSpeechBusy) return;
+        streamSpeechResult.hidden = true;
+        let url;
+        try {
+          url = new URL(streamSpeechUrl.value.trim());
+          if (!["http:", "https:"].includes(url.protocol) || url.username || url.password) throw new Error();
+        } catch (_) {
+          setStreamSpeechStatus("Enter a public http:// or https:// live stream URL.", "error");
+          streamSpeechUrl.focus();
+          return;
+        }
+        streamSpeechBusy = true;
+        streamSpeechStart.disabled = true;
+        streamSpeechStart.textContent = "Analysing…";
+        setStreamSpeechStatus("Resolving your stream and sampling about 30 seconds of audio…");
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 120000);
+        try {
+          const response = await fetch("https://api.radiorrr.com/api/tools/speech", {
+            method: "POST", cache: "no-store", signal: controller.signal,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url: url.href })
+          });
+          const data = await response.json().catch(() => null);
+          if (!response.ok) throw new Error(data && typeof data.detail === "string" ? data.detail : "Could not analyse this stream.");
+          const ratio = data && data.speech_ratio;
+          if (typeof ratio !== "number" || !Number.isFinite(ratio) || ratio < 0 || ratio > 1) {
+            throw new Error("The detector did not return a speech reading.");
+          }
+          streamSpeechValue.textContent = Math.round(ratio * 100) + "% speech";
+          streamSpeechDetails.textContent = "Estimated voice activity in " + Number(data.sample_seconds).toFixed(1) + " seconds of audio";
+          streamSpeechResult.hidden = false;
+          setStreamSpeechStatus("Analysis complete. Voice detection can also respond to singing and music; this is an estimate of the sampled audio.", "success");
+        } catch (error) {
+          setStreamSpeechStatus(error.name === "AbortError" ? "Analysis timed out. Check the stream is live and try again." : error.message || "Could not analyse this stream.", "error");
+        } finally {
+          clearTimeout(timeout);
+          streamSpeechBusy = false;
+          streamSpeechStart.disabled = false;
+          streamSpeechStart.textContent = "Analyse speech";
+        }
+      }
+      if (streamSpeechForm) streamSpeechForm.addEventListener("submit", analyseStreamSpeech);
+
       /* RRR TOOLS — DJ TALK DETECTOR */
       const talkDetectorStart = document.getElementById("talkDetectorStart");
       const talkDetectorStatus = document.getElementById("talkDetectorStatus");

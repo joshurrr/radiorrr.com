@@ -6,7 +6,7 @@
 <title>DJ Speech Detector – Detect Talking in Live DJ Streams | Radio RRR</title>
 <link href="/favicon.ico" rel="icon" type="image/x-icon"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<link rel="stylesheet" href="/style.css?v=20261004.2">
+<link rel="stylesheet" href="/style.css?v=20261004.3">
 <meta content="Detect talking in live DJ streams with voice-versus-music analysis that measures repeated microphone speech and music ducking." name="description"/>
 <meta content="index, follow, max-image-preview:large" name="robots"/>
 <meta content="#070818" name="theme-color"/>
@@ -515,6 +515,21 @@
 <div class="bpm-detector-status" id="bpmDetectorStatus" role="status" aria-live="polite">Direct http:// and https:// stream URLs are supported.</div>
 </div>
 </section>
+<section class="tool-row tool-wide tool-stream-speech" data-tool-route="dj-speech-detector" aria-labelledby="streamSpeechTitle">
+<div class="tool-row-icon" aria-hidden="true">🔗</div>
+<div class="tool-row-main">
+<h2 class="tool-row-title" id="streamSpeechTitle">Analyse your stream</h2>
+<p class="tool-row-description">Paste a public live audio or video stream URL, or a TikTok, Twitch or YouTube live page. Analyse a 30-second sample to estimate speech activity.</p>
+<form class="bpm-detector-form" id="streamSpeechForm">
+<label class="sr-only" for="streamSpeechUrl">Live stream URL</label>
+<input id="streamSpeechUrl" type="url" required maxlength="2048" placeholder="https://… live stream URL" aria-describedby="streamSpeechStatus">
+<button class="tool-button" id="streamSpeechStart" type="submit">Analyse speech</button>
+</form>
+<div class="bpm-detector-result" id="streamSpeechResult" hidden>
+<strong id="streamSpeechValue"></strong><span id="streamSpeechDetails"></span>
+</div>
+<div class="talk-detector-status" id="streamSpeechStatus" role="status" aria-live="polite">Public streams only. Private, login-only or unsupported web pages may not provide playable audio.</div>
+</div></section>
 <section class="tool-row tool-wide tool-talk-detector" id="dj-talk-detector" data-tool-route="dj-speech-detector" aria-labelledby="toolTalkDetectorTitle">
 <div class="tool-row-icon">🗣️</div>
 <div class="tool-row-main">
@@ -1077,7 +1092,7 @@ window.formspree =
 })();
 </script>
 
-<script src="/script.js?v=20261004.2"></script>
+<script src="/script.js?v=20261004.3"></script>
 
 <script>
 /*

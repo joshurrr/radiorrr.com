@@ -8983,3 +8983,8 @@ button.dj-genre-filter:hover { filter:brightness(1.25); }
 .all-djs-tool-panel .live-djs-tool-name { margin:0; }
 .all-djs-tool-panel .tool-row-main { min-width:0; }
 @media (max-width:600px) { .all-djs-filters label { flex-basis:100%; } .all-djs-tool-panel { padding:16px; } }
+
+.tool-stream-speech .tool-row-main { display:block; width:100%; grid-column:2 / -1; }
+.tool-stream-speech .bpm-detector-form { margin-top:14px; }
+.tool-stream-speech .bpm-detector-result { margin-top:14px; }
+@media (max-width:640px) { .tool-stream-speech .tool-row-main { grid-column:auto; } }
