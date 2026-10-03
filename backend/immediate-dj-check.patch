@@ -1,0 +1,177 @@
+--- a/app/main.py
++++ b/app/main.py
+@@ -9234,9 +9234,127 @@
+     }
+ 
+ 
++"""Immediate live check after saving or re-enabling a DJ."""
++
++async def _check_added_dj_live(username, platform):
++    platform_key = str(platform or 'TikTok').strip().casefold()
++    conn = get_db()
++    try:
++        row = conn.execute('''
++            SELECT * FROM favourite_djs
++            WHERE lower(username) = lower(?) AND lower(platform) = lower(?)
++              AND enabled = 1
++        ''', (username, platform)).fetchone()
++    finally:
++        conn.close()
++    if row is None:
++        return {'status': 'skipped', 'live': None}
++    favourite = dict(row)
++    username = favourite['username']
++    platform = favourite['platform']
++    now = datetime.now(timezone.utc).isoformat()
++    name = favourite.get('name') or username
++    live_url = favourite.get('live_url') or favourite.get('profile_url')
++    viewers = 0
++    started_at = None
++
++    if platform_key == 'tiktok':
++        is_live = bool(await asyncio.to_thread(_run_tiktok_is_live_check, username))
++        _record_tiktok_live_check(username, is_live)
++        invalid_tiktok_account_counts.pop(username, None)
++        live_url = live_url or f'https://www.tiktok.com/@{username}/live'
++        if is_live:
++            offline_miss_counts.pop(username, None)
++    elif platform_key == 'twitch':
++        streams = await fetch_twitch_live_streams([username])
++        info = streams.get(username.lower())
++        is_live = info is not None
++        if info:
++            name = info.get('user_name') or name
++            viewers = info.get('viewer_count') or 0
++            started_at = info.get('started_at')
++        live_url = live_url or f'https://www.twitch.tv/{username}'
++    elif platform_key == 'youtube':
++        live_url = favourite.get('live_url') or str(favourite.get('profile_url') or '').rstrip('/') + '/live'
++        info = await get_youtube_live_info(live_url)
++        is_live = info is not None
++        if info:
++            name = info.get('channel') or info.get('uploader') or name
++            live_url = info.get('webpage_url') or info.get('original_url') or live_url
++            viewers = info.get('concurrent_view_count') or 0
++            timestamp = info.get('release_timestamp') or info.get('timestamp')
++            try:
++                started_at = datetime.fromtimestamp(float(timestamp), timezone.utc).isoformat()
++            except (TypeError, ValueError, OSError, OverflowError):
++                pass
++    else:
++        return {'status': 'unsupported', 'live': None}
++
++    try:
++        viewers = max(0, int(viewers))
++    except (TypeError, ValueError):
++        viewers = 0
++    conn = get_db()
++    try:
++        # Do not resurrect a DJ disabled/deleted while the network check ran.
++        enabled = conn.execute('''
++            SELECT 1 FROM favourite_djs
++            WHERE lower(username) = lower(?) AND lower(platform) = lower(?)
++              AND enabled = 1
++        ''', (username, platform)).fetchone()
++        if enabled is None:
++            return {'status': 'skipped', 'live': None}
++        existing = conn.execute('''
++            SELECT started_at FROM live_djs
++            WHERE lower(username) = lower(?) AND lower(platform) = lower(?)
++        ''', (username, platform)).fetchone()
++        if is_live:
++            started_at = (existing['started_at'] if existing else None) or started_at or now
++            conn.execute('''
++                INSERT INTO live_djs
++                (username, name, platform, url, genre, viewers, started_at, updated_at)
++                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
++                ON CONFLICT(platform, username) DO UPDATE SET
++                    name=excluded.name, url=excluded.url, genre=excluded.genre,
++                    viewers=excluded.viewers, started_at=excluded.started_at,
++                    updated_at=excluded.updated_at
++            ''', (username, name, platform, live_url, favourite.get('genre'), viewers, started_at, now))
++            conn.commit()
++            print(f'[New DJ] LIVE: {platform} @{username} added to the live list')
++            return {'status': 'live', 'live': True}
++        # A single offline observation must not remove an already-live DJ.
++        if existing:
++            return {'status': 'retained_live', 'live': True}
++        print(f'[New DJ] OFFLINE: {platform} @{username}; saved for future monitoring')
++        return {'status': 'offline', 'live': False}
++    finally:
++        conn.close()
++
++
++async def scan_added_dj_immediately(username, platform):
++    try:
++        return await asyncio.wait_for(_check_added_dj_live(username, platform), timeout=45)
++    except asyncio.TimeoutError:
++        print(f'[New DJ] CHECK TIMED OUT: {platform} @{username}; scheduled monitoring will retry')
++        return {'status': 'error', 'live': None, 'message': 'Live check timed out. Scheduled monitoring will retry.'}
++    except Exception as error:
++        print(f'[New DJ] CHECK ERROR: {platform} @{username}: {error}')
++        return {'status': 'error', 'live': None, 'message': 'Could not check live status. Scheduled monitoring will retry.'}
++
++
++def added_dj_live_message(check):
++    if check['status'] == 'live':
++        return 'Checked immediately: LIVE and added to the live DJ list.'
++    if check['status'] == 'offline':
++        return 'Checked immediately: currently offline. Scheduled monitoring will continue.'
++    if check['status'] == 'retained_live':
++        return 'The existing live DJ listing was retained after an inconclusive offline check.'
++    return check.get('message') or 'Saved. Scheduled monitoring will continue.'
++
++
+ @app.post("/api/admin/djs/add")
+ async def admin_add_dj(request: Request):
+-    """Add or re-enable a TikTok or Twitch DJ without doing a network lookup."""
++    """Save/re-enable a DJ, then check live status immediately."""
+     try:
+         data = await request.json()
+     except Exception:
+@@ -9346,8 +9464,12 @@
+     finally:
+         conn.close()
+ 
++    live_check = await scan_added_dj_immediately(actual_username, platform)
++    message += " " + added_dj_live_message(live_check)
++
+     return {
+         "ok": True,
++        "live_check": live_check,
+         "action": action,
+         "message": message,
+         "platform": platform,
+@@ -10256,7 +10378,7 @@
+   }catch(e){djTestSetState(e.message||'Could not read DJ test status',true);$('djTestButton').disabled=false;djTestTimer=null}
+ }
+ async function addTestedDj(){if(!djTestUsername)return;$('manageUsername').value='@'+djTestUsername;await addDj()}
+-async function addDj(){let value,account;try{value=manageValue();account=parseManageAccount(value)}catch(e){showManageResult('error','Cannot add DJ',e.message);return}const button=$('addDjButton');button.disabled=true;showManageResult('info',`Adding ${account.platform} @${account.username}…`,'Updating the Radio RRR DJ database.');try{const result=await api('/api/admin/djs/add',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:value})});const actual=result.username||account.username;const platform=result.platform||account.platform;$('manageUsername').value=result.profile_url||value;updateManageDetected();if(result.action==='added')showManageResult('success',`Added ${platform} @${actual}`,result.message||'The DJ is now enabled in Radio RRR.');else if(result.action==='re_enabled')showManageResult('success',`Re-enabled ${platform} @${actual}`,result.message||'The existing DJ has been re-enabled.');else if(result.action==='already_enabled')showManageResult('warning',`${platform} @${actual} was already enabled`,result.message||'No enable-state change was required.');else showManageResult('success',`Updated ${platform} @${actual}`,result.message||'The DJ record was updated.');toast(result.message||`Updated ${platform} @${actual}`)}catch(e){showManageResult('error',`Could not add ${account.platform} @${account.username}`,e.message||'Unknown backend error.')}finally{button.disabled=false}}
++async function addDj(){let value,account;try{value=manageValue();account=parseManageAccount(value)}catch(e){showManageResult('error','Cannot add DJ',e.message);return}const button=$('addDjButton');button.disabled=true;showManageResult('info',`Adding ${account.platform} @${account.username}…`,'Saving the DJ and checking live status immediately…');try{const result=await api('/api/admin/djs/add',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:value})});const actual=result.username||account.username;const platform=result.platform||account.platform;$('manageUsername').value=result.profile_url||value;updateManageDetected();if(result.action==='added')showManageResult('success',`Added ${platform} @${actual}`,result.message||'The DJ is now enabled in Radio RRR.');else if(result.action==='re_enabled')showManageResult('success',`Re-enabled ${platform} @${actual}`,result.message||'The existing DJ has been re-enabled.');else if(result.action==='already_enabled')showManageResult('warning',`${platform} @${actual} was already enabled`,result.message||'No enable-state change was required.');else showManageResult('success',`Updated ${platform} @${actual}`,result.message||'The DJ record was updated.');toast(result.message||`Updated ${platform} @${actual}`)}catch(e){showManageResult('error',`Could not add ${account.platform} @${account.username}`,e.message||'Unknown backend error.')}finally{button.disabled=false}}
+ async function disableDj(){let value,account;try{value=manageValue();account=parseManageAccount(value)}catch(e){showManageResult('error','Cannot disable DJ',e.message);return}if(!confirm(`Disable ${account.platform} @${account.username}? Their database/profile data will be kept.`))return;try{const result=await api('/api/admin/djs/disable',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:value})});showManageResult('warning',`Disabled ${result.platform} @${result.username}`,'The DJ remains in the database and can be re-enabled later.');toast(`Disabled ${result.platform} @${result.username}`)}catch(e){showManageResult('error',`Could not disable ${account.platform} @${account.username}`,e.message||'Unknown backend error.')}}
+ let deleteDjValue=null,deleteDjAccount=null;
+ function confirmDeleteDj(){try{deleteDjValue=manageValue();deleteDjAccount=parseManageAccount(deleteDjValue)}catch(e){return alert(e.message)}$('deleteCopy').textContent=`This permanently removes ${deleteDjAccount.platform} @${deleteDjAccount.username}'s favourite/profile database record.`;$('deleteConfirmation').value='';$('overlay').classList.add('open');setTimeout(()=>$('deleteConfirmation').focus(),0)}
+@@ -12173,8 +12295,11 @@
+     conn.commit()
+     conn.close()
+ 
++    live_check = await scan_added_dj_immediately(username, platform)
++
+     return {
+         "status": "ok",
++        "live_check": live_check,
+         "username": username,
+     }
+ 
+@@ -12203,8 +12328,11 @@
+             username
+         )
+ 
++        live_check = await scan_added_dj_immediately(profile.get("username") or str(username).lstrip("@"), "TikTok")
++
+         return {
+             "status": "ok",
++            "live_check": live_check,
+             "dj": profile,
+         }
+ 
