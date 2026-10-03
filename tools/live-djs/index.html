@@ -7,6 +7,7 @@
 <link href="/favicon.ico" rel="icon" type="image/x-icon"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <link rel="stylesheet" href="/style.css?v=20261004.3">
+<link rel="stylesheet" href="/tools/tools.css?v=20261004.2">
 <meta content="Discover DJs streaming live now across supported platforms. Browse live genres, BPM and audio analysis, then listen directly through Radio RRR." name="description"/>
 <meta content="index, follow, max-image-preview:large" name="robots"/>
 <meta content="#070818" name="theme-color"/>
@@ -332,15 +333,74 @@
 <!-- TOOLS TAB -->
 <div class="content-pane hidden-pane" id="tools-section">
 <div class="channel tools-card">
+<div class="tools-section-heading tools-intro">
+<p class="tools-eyebrow">THE RADIO RRR TOOLKIT</p>
+<h1>Find your next DJ.<br><span>Fine-tune your sound.</span></h1>
+<p>Discover live sets, analyse your stream and create something new.</p>
+<span class="tools-free-note">Free tools · Open any tool to get started</span>
+</div>
+<div class="tools-hub-grid" id="toolsHubGrid" aria-label="Radio RRR tools">
+<a class="tool-hub-tile" id="openLiveDjsTool" data-tool-route-link="live-djs" href="/tools/live-djs/">
+<span class="tool-hub-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4m4-7v10m4-13v16m4-13v10m4-7v4"/></svg></span>
+<span class="tool-hub-category">DISCOVER</span>
+<span class="tool-hub-name">Live DJs</span>
+<span class="tool-hub-note">Explore DJs broadcasting right now.</span>
+<span class="tool-hub-action" aria-hidden="true">Open tool <span>↗</span></span>
+</a>
+<a class="tool-hub-tile" data-tool-route-link="djs" href="/tools/djs/">
+<span class="tool-hub-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg></span>
+<span class="tool-hub-category">DISCOVER</span>
+<span class="tool-hub-name">Search All DJs</span>
+<span class="tool-hub-note">Find live and offline DJs by name or genre.</span>
+<span class="tool-hub-action" aria-hidden="true">Open tool <span>↗</span></span>
+</a>
+<a class="tool-hub-tile" data-tool-route-link="bpm-detector" href="/tools/bpm-detector/">
+<span class="tool-hub-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></span>
+<span class="tool-hub-category">ANALYSE</span>
+<span class="tool-hub-name">BPM Detector</span>
+<span class="tool-hub-note">Paste a stream URL to estimate its tempo.</span>
+<span class="tool-hub-action" aria-hidden="true">Open tool <span>↗</span></span>
+</a>
+<a class="tool-hub-tile" data-tool-route-link="dj-speech-detector" href="/tools/dj-speech-detector/">
+<span class="tool-hub-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-4 0h8"/></svg></span>
+<span class="tool-hub-category">ANALYSE</span>
+<span class="tool-hub-name">DJ Speech Detector</span>
+<span class="tool-hub-note">Measure speech activity in a live stream.</span>
+<span class="tool-hub-action" aria-hidden="true">Open tool <span>↗</span></span>
+</a>
+<a class="tool-hub-tile" id="openStreamHealthTile" data-tool-route-link="stream-health" href="/tools/stream-health/">
+<span class="tool-hub-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 22h8m-4-4v4M6 11h3l2-4 3 8 2-4h2"/></svg></span>
+<span class="tool-hub-category">MONITOR</span>
+<span class="tool-hub-name">Stream Health</span>
+<span class="tool-hub-note">Check buffering and HLS playback stability.</span>
+<span class="tool-hub-action" aria-hidden="true">Open tool <span>↗</span></span>
+</a>
+<a class="tool-hub-tile" data-tool-route-link="stuck-frame-effect" href="/tools/stuck-frame-effect/">
+<span class="tool-hub-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 3v18M17 3v18M3 8h4m-4 8h4m10-8h4m-4 8h4m-10-6 4 2-4 2z"/></svg></span>
+<span class="tool-hub-category">CREATE</span>
+<span class="tool-hub-name">Stuck Frame Effect</span>
+<span class="tool-hub-note">Turn your video into a beat-synced freeze effect.</span>
+<span class="tool-hub-action" aria-hidden="true">Open tool <span>↗</span></span>
+</a>
+<button class="tool-hub-tile tool-contribute" id="recommendDjOpen" type="button" aria-label="Submit a DJ">
+<span class="tool-hub-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="12" width="4" height="8" rx="2"/><rect x="17" y="12" width="4" height="8" rx="2"/><path d="M10 12h4m-2-2v4"/></svg></span>
+<span class="tool-hub-category">GROW THE COMMUNITY</span>
+<span class="tool-hub-name">Add DJ</span>
+<span class="tool-hub-note">Know a great DJ? Recommend them for Radio RRR.</span>
+<span class="tool-hub-action" aria-hidden="true">Recommend a DJ <span>↗</span></span>
+</button>
+</div>
 <section class="system-health-dashboard health-dashboard-compact" aria-labelledby="systemHealthTitle">
 <div class="health-compact-header">
   <div class="health-compact-heading">
-    <h2 id="systemHealthTitle">SYSTEM HEALTH</h2>
+    <h2 id="systemHealthTitle">Station status</h2>
     <div class="tool-health pending health-overall-inline" id="toolOverallHealth" role="status">Checking monitored services…</div>
   </div>
   <div class="health-refresh"><span>Updated <span id="toolLastRefresh">—</span></span><button class="tool-button secondary tools-refresh-button" id="refreshTools" type="button">↻ Refresh</button></div>
 </div>
 
+<details class="health-details">
+<summary>Service checks &amp; stream links <span>Updates every 30 seconds</span></summary>
 <h3 class="health-group-title">SERVICES</h3>
 <div class="health-services health-services-compact">
   <div class="health-service-compact"><span>RadioRouter API</span><span class="tool-health pending" id="toolApiHealth">Checking…</span></div>
@@ -374,45 +434,8 @@
   <div class="health-count-compact"><span class="health-station-label">LIVE DJs</span><strong id="toolLiveDjCount">—</strong></div>
   <div class="health-count-compact"><span class="health-station-label">FAVOURITE DJs</span><strong id="toolFavouriteDjCount">—</strong></div>
 </div>
+</details>
 </section>
-<h2 class="tools-section-heading">Free DJ &amp; Live Music Tools</h2>
-<div class="tools-hub-grid" id="toolsHubGrid" aria-label="Radio RRR tools">
-<button class="tool-hub-tile" id="recommendDjOpen" type="button" aria-label="Submit a DJ">
-<span class="tool-hub-icon" aria-hidden="true">🎧</span>
-<span class="tool-hub-name">Add DJ</span>
-<span class="tool-hub-note">Submit a live DJ</span>
-</button>
-<a class="tool-hub-tile" id="openLiveDjsTool" data-tool-route-link="live-djs" href="/tools/live-djs/">
-<span class="tool-hub-icon" aria-hidden="true">📡</span>
-<span class="tool-hub-name">Live DJs</span>
-<span class="tool-hub-note">See who’s live now</span>
-</a>
-<a class="tool-hub-tile" data-tool-route-link="djs" href="/tools/djs/">
-<span class="tool-hub-icon" aria-hidden="true">🔎</span>
-<span class="tool-hub-name">Search All DJs</span>
-<span class="tool-hub-note">Find live and offline DJs by genre</span>
-</a>
-<a class="tool-hub-tile" data-tool-route-link="bpm-detector" href="/tools/bpm-detector/">
-<span class="tool-hub-icon" aria-hidden="true">🥁</span>
-<span class="tool-hub-name">BPM Detector</span>
-<span class="tool-hub-note">Analyse live tempo</span>
-</a>
-<a class="tool-hub-tile" data-tool-route-link="dj-speech-detector" href="/tools/dj-speech-detector/">
-<span class="tool-hub-icon" aria-hidden="true">🗣️</span>
-<span class="tool-hub-name">DJ Speech Detector</span>
-<span class="tool-hub-note">Detect talking</span>
-</a>
-<a class="tool-hub-tile" id="openStreamHealthTile" data-tool-route-link="stream-health" href="/tools/stream-health/">
-<span class="tool-hub-icon" aria-hidden="true">📈</span>
-<span class="tool-hub-name">Stream Health</span>
-<span class="tool-hub-note">Test HLS playback stability</span>
-</a>
-<a class="tool-hub-tile" data-tool-route-link="stuck-frame-effect" href="/tools/stuck-frame-effect/">
-<span class="tool-hub-icon" aria-hidden="true">🎞️</span>
-<span class="tool-hub-name">Stuck Frame Effect</span>
-<span class="tool-hub-note">Beat-sync a video freeze effect</span>
-</a>
-</div>
 <section class="tool-row tool-wide live-djs-tool-panel" id="liveDjsToolPanel" aria-labelledby="liveDjsToolTitle" hidden>
 <div class="tool-row-icon">📡</div>
 <div class="tool-row-main">
@@ -1092,7 +1115,7 @@ window.formspree =
 })();
 </script>
 
-<script src="/script.js?v=20261004.5"></script>
+<script src="/script.js?v=20261004.6"></script>
 
 <script>
 /*

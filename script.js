@@ -895,79 +895,70 @@ document.addEventListener("DOMContentLoaded", function () {
 
       function applyLocationState() {
         const toolRoute = getToolRouteFromLocation();
+        // Every static entry page includes the same tools hub. Activate its
+        // presentation only while browsing tools, without replacing any media.
+        document.body.classList.toggle("tools-page", getTabTargetFromLocation() === "tools-section");
         switchTab(getTabTargetFromLocation());
         applyToolRoute(toolRoute);
         applyRouteMetadata(toolRoute);
       }
 
-      navLinks.forEach(link => {
+      function isInPageNavigation(event) {
+        const link = event.currentTarget;
+        return !event.defaultPrevented && event.button === 0 &&
+          !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey &&
+          !link.hasAttribute("download") &&
+          (!link.target || link.target === "_self") &&
+          new URL(link.href, window.location.href).origin === window.location.origin;
+      }
 
-        link.addEventListener(
-          "click",
-          function (e) {
+      function navigateWithPlayback(updateLocation) {
+        // Keep the actual player and current mute choice through tabs, tools,
+        // and browser history. A document reload would destroy both players.
+        if (liveDjVideo) {
+          userRequestedAudio = !liveDjVideo.muted;
+          liveDjVideo.dataset.rrrUserAudio = userRequestedAudio ? "1" : "0";
+          liveDjVideo.defaultMuted = !userRequestedAudio;
+        }
+        if (updateLocation) updateLocation();
+        applyLocationState();
+        if (liveDjVideo) {
+          liveDjVideo.muted = !userRequestedAudio;
+          updateLiveDjMuteButton();
+          window.requestAnimationFrame(function () {
+            liveDjVideo.muted = !userRequestedAudio;
+            updateLiveDjMuteButton();
+          });
+        }
+      }
 
-            const targetId =
-              e.currentTarget.getAttribute(
-                "data-target"
-              );
-
-            if (targetId === "tools-section") {
-              return;
-            }
-
-            // Keep the media elements mounted for the existing in-page radio views.
-            // Snapshot the listener's CURRENT mute state at the moment they click
-            // a tab. Some browsers can alter a hidden video's media state when
-            // its pane becomes display:none; that must not be mistaken for a new
-            // listener mute request.
-            if (liveDjVideo) {
-              userRequestedAudio = !liveDjVideo.muted;
-              liveDjVideo.dataset.rrrUserAudio = userRequestedAudio ? "1" : "0";
-              liveDjVideo.defaultMuted = !userRequestedAudio;
-            }
-
-            e.preventDefault();
-            if (targetId) {
-              updateTabUrl(targetId);
-              applyLocationState();
-
-              // Re-assert the explicit audio choice after the pane visibility
-              // changes. This keeps an unmuted DJ audible while viewing Schedule
-              // or Live Audio, without reloading or recreating the HLS player.
-              if (liveDjVideo) {
-                liveDjVideo.muted = !userRequestedAudio;
-                liveDjVideo.defaultMuted = !userRequestedAudio;
-                liveDjVideo.dataset.rrrUserAudio = userRequestedAudio ? "1" : "0";
-                updateLiveDjMuteButton();
-
-                window.requestAnimationFrame(function () {
-                  liveDjVideo.muted = !userRequestedAudio;
-                  updateLiveDjMuteButton();
-                });
-              }
-            }
-
-          }
-        );
-
+      navLinks.forEach(function (link) {
+        link.addEventListener("click", function (event) {
+          const targetId = event.currentTarget.getAttribute("data-target");
+          if (!targetId || !isInPageNavigation(event)) return;
+          event.preventDefault();
+          navigateWithPlayback(function () { updateTabUrl(targetId); });
+        });
       });
 
       document.querySelectorAll("[data-tool-route-link]").forEach(function (link) {
-        link.addEventListener("click", function (e) {
-          const route = e.currentTarget.getAttribute("data-tool-route-link");
-          if (!TOOL_ROUTE_CONFIG[route]) return;
-          // These are real static pages so crawlers and refreshes receive HTTP 200.
-          // Allow the browser to follow the href normally.
+        link.addEventListener("click", function (event) {
+          const route = event.currentTarget.getAttribute("data-tool-route-link");
+          if (!TOOL_ROUTE_CONFIG[route] || !isInPageNavigation(event)) return;
+          event.preventDefault();
+          navigateWithPlayback(function () { updateToolUrl(route); });
         });
       });
 
       document.querySelectorAll("[data-tool-back]").forEach(function (link) {
-        link.addEventListener("click", function () {
-          // Real /tools/ navigation is intentional for crawlability and clean page metadata.
+        link.addEventListener("click", function (event) {
+          if (!isInPageNavigation(event)) return;
+          event.preventDefault();
+          navigateWithPlayback(function () { updateTabUrl("tools-section"); });
         });
       });
 
-      window.addEventListener("popstate", applyLocationState);
+      window.addEventListener("popstate", function () { navigateWithPlayback(); });
 
       // Direct visits and browser refreshes open the requested view without
       // reconstructing the page or touching either media element.
@@ -5858,8 +5849,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (liveDjsToolClose) {
         liveDjsToolClose.addEventListener("click", function () {
-          updateTabUrl("tools-section");
-          applyLocationState();
+          navigateWithPlayback(function () { updateTabUrl("tools-section"); });
         });
       }
       if (liveDjsToolRefresh) liveDjsToolRefresh.addEventListener("click", loadLiveDjsTool);
@@ -6043,8 +6033,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (offlineDjsToolClose) {
         offlineDjsToolClose.addEventListener("click", function () {
-          updateTabUrl("tools-section");
-          applyLocationState();
+          navigateWithPlayback(function () { updateTabUrl("tools-section"); });
         });
       }
       if (offlineDjsToolRefresh) offlineDjsToolRefresh.addEventListener("click", loadOfflineDjsTool);
@@ -6227,7 +6216,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (streamHealthClose) {
         streamHealthClose.addEventListener("click", function () {
-          window.location.href = "/tools/";
+          navigateWithPlayback(function () { updateTabUrl("tools-section"); });
         });
       }
 
