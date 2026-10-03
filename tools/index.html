@@ -7,7 +7,7 @@
 <link href="/favicon.ico" rel="icon" type="image/x-icon"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <link rel="stylesheet" href="/style.css?v=20261004.3">
-<link rel="stylesheet" href="/tools/tools.css?v=20261004.2">
+<link rel="stylesheet" href="/tools/tools.css?v=20261004.3">
 <meta content="Free browser tools for live DJs and online radio: find DJs live now, detect BPM, detect DJ speech, test HLS stream health and create beat-synced video effects." name="description"/>
 <meta content="index, follow, max-image-preview:large" name="robots"/>
 <meta content="#070818" name="theme-color"/>
@@ -324,6 +324,52 @@
 <!-- TOOLS TAB -->
 <div class="content-pane hidden-pane" id="tools-section">
 <div class="channel tools-card">
+<section class="system-health-dashboard health-dashboard-compact" aria-labelledby="systemHealthTitle">
+<div class="health-compact-header">
+  <div class="health-compact-heading">
+    <h2 id="systemHealthTitle">Station status</h2>
+    <div class="tool-health pending health-overall-inline" id="toolOverallHealth" role="status">Checking monitored services…</div>
+  </div>
+  <div class="health-refresh"><span>Updated <span id="toolLastRefresh">—</span></span><button class="tool-button secondary tools-refresh-button" id="refreshTools" type="button">↻ Refresh</button></div>
+</div>
+
+<details class="health-details">
+<summary>Service checks &amp; stream links <span>Updates every 30 seconds</span></summary>
+<h3 class="health-group-title">SERVICES</h3>
+<div class="health-services health-services-compact">
+  <div class="health-service-compact"><span>RadioRouter API</span><span class="tool-health pending" id="toolApiHealth">Checking…</span></div>
+  <div class="health-service-compact"><span>RadioRouter engine</span><span class="tool-health pending" id="toolRouterEngine">Checking…</span></div>
+  <div class="health-service-compact"><span>Genre detection</span><span class="tool-health pending" id="toolDetectorEngine">Checking…</span></div>
+  <div class="health-service-compact"><span>Genre detection scout</span><span class="tool-health pending" id="toolScoutEngine">Checking…</span></div>
+  <div class="health-service-compact"><span>BPM detection</span><span class="tool-health pending" id="toolBpmDetector">Checking…</span></div>
+</div>
+
+<h3 class="health-group-title" id="toolStreamStatusTitle">STREAMS</h3>
+<div class="health-streams health-streams-compact" aria-labelledby="toolStreamStatusTitle" aria-describedby="toolStreamUptimeNote">
+  <div class="health-stream health-stream-compact">
+    <strong>MP3 audio</strong>
+    <span class="tool-health pending" id="toolAudioHealth">Checking…</span>
+    <span class="health-stream-count"><span id="toolListenerCount">—</span> listeners</span>
+    <span class="health-stream-detail" id="toolAudioDetails">—</span>
+    <button class="tool-button secondary tool-copy-button health-stream-copy" type="button" data-copy-value="https://stream.radiorrr.com/radio.mp3">Copy URL</button>
+  </div>
+  <div class="health-stream health-stream-compact">
+    <strong>Video</strong>
+    <span class="tool-health pending" id="toolVideoHealth">Checking…</span>
+    <span class="health-stream-count"><span id="toolVideoViewerCount">—</span> viewers</span>
+    <span class="health-stream-detail" id="toolVideoDetails">—</span>
+    <button class="tool-button secondary tool-copy-button health-stream-copy" type="button" data-copy-value="https://stream.radiorrr.com/api/live-stream">Copy URL</button>
+  </div>
+</div>
+<p class="health-note" id="toolStreamUptimeNote">Video viewers count active website playback, including muted video.</p>
+
+<div class="health-station health-station-compact">
+  <div class="health-relay-compact"><span class="health-station-label">CURRENT RELAY</span><strong id="toolRelayDj">—</strong></div>
+  <div class="health-count-compact"><span class="health-station-label">LIVE DJs</span><strong id="toolLiveDjCount">—</strong></div>
+  <div class="health-count-compact"><span class="health-station-label">FAVOURITE DJs</span><strong id="toolFavouriteDjCount">—</strong></div>
+</div>
+</details>
+</section>
 <div class="tools-section-heading tools-intro">
 <p class="tools-eyebrow">THE RADIO RRR TOOLKIT</p>
 <h1>Find your next DJ.<br><span>Fine-tune your sound.</span></h1>
@@ -381,52 +427,7 @@
 <span class="tool-hub-action" aria-hidden="true">Recommend a DJ <span>↗</span></span>
 </button>
 </div>
-<section class="system-health-dashboard health-dashboard-compact" aria-labelledby="systemHealthTitle">
-<div class="health-compact-header">
-  <div class="health-compact-heading">
-    <h2 id="systemHealthTitle">Station status</h2>
-    <div class="tool-health pending health-overall-inline" id="toolOverallHealth" role="status">Checking monitored services…</div>
-  </div>
-  <div class="health-refresh"><span>Updated <span id="toolLastRefresh">—</span></span><button class="tool-button secondary tools-refresh-button" id="refreshTools" type="button">↻ Refresh</button></div>
-</div>
 
-<details class="health-details">
-<summary>Service checks &amp; stream links <span>Updates every 30 seconds</span></summary>
-<h3 class="health-group-title">SERVICES</h3>
-<div class="health-services health-services-compact">
-  <div class="health-service-compact"><span>RadioRouter API</span><span class="tool-health pending" id="toolApiHealth">Checking…</span></div>
-  <div class="health-service-compact"><span>RadioRouter engine</span><span class="tool-health pending" id="toolRouterEngine">Checking…</span></div>
-  <div class="health-service-compact"><span>Genre detection</span><span class="tool-health pending" id="toolDetectorEngine">Checking…</span></div>
-  <div class="health-service-compact"><span>Genre detection scout</span><span class="tool-health pending" id="toolScoutEngine">Checking…</span></div>
-  <div class="health-service-compact"><span>BPM detection</span><span class="tool-health pending" id="toolBpmDetector">Checking…</span></div>
-</div>
-
-<h3 class="health-group-title" id="toolStreamStatusTitle">STREAMS</h3>
-<div class="health-streams health-streams-compact" aria-labelledby="toolStreamStatusTitle" aria-describedby="toolStreamUptimeNote">
-  <div class="health-stream health-stream-compact">
-    <strong>MP3 audio</strong>
-    <span class="tool-health pending" id="toolAudioHealth">Checking…</span>
-    <span class="health-stream-count"><span id="toolListenerCount">—</span> listeners</span>
-    <span class="health-stream-detail" id="toolAudioDetails">—</span>
-    <button class="tool-button secondary tool-copy-button health-stream-copy" type="button" data-copy-value="https://stream.radiorrr.com/radio.mp3">Copy URL</button>
-  </div>
-  <div class="health-stream health-stream-compact">
-    <strong>Video</strong>
-    <span class="tool-health pending" id="toolVideoHealth">Checking…</span>
-    <span class="health-stream-count"><span id="toolVideoViewerCount">—</span> viewers</span>
-    <span class="health-stream-detail" id="toolVideoDetails">—</span>
-    <button class="tool-button secondary tool-copy-button health-stream-copy" type="button" data-copy-value="https://stream.radiorrr.com/api/live-stream">Copy URL</button>
-  </div>
-</div>
-<p class="health-note" id="toolStreamUptimeNote">Video viewers count active website playback, including muted video.</p>
-
-<div class="health-station health-station-compact">
-  <div class="health-relay-compact"><span class="health-station-label">CURRENT RELAY</span><strong id="toolRelayDj">—</strong></div>
-  <div class="health-count-compact"><span class="health-station-label">LIVE DJs</span><strong id="toolLiveDjCount">—</strong></div>
-  <div class="health-count-compact"><span class="health-station-label">FAVOURITE DJs</span><strong id="toolFavouriteDjCount">—</strong></div>
-</div>
-</details>
-</section>
 <section class="tool-row tool-wide live-djs-tool-panel" id="liveDjsToolPanel" aria-labelledby="liveDjsToolTitle" hidden>
 <div class="tool-row-icon">📡</div>
 <div class="tool-row-main">
