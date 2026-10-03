@@ -1,0 +1,74 @@
+/* Tools landing page: scoped to this document; routed tool controls keep their shared styles. */
+.tools-page { background-image: linear-gradient(rgba(3,8,17,.75), rgba(3,8,17,.9)), url('/radiorrr_egypt_background.png'); }
+.tools-page .wrapper { max-width: 1240px; background: #090d1b; box-shadow: 0 20px 80px #0008; border-color: #283147; }
+.tools-page .hero { box-shadow: none; border-color: #35405c; }
+.tools-page .nav-tabs a { min-height: 44px; box-shadow: none; }
+.tools-page .nav-tabs a.active { box-shadow: 0 0 14px #e63bb52b; }
+.tools-page #tools-section .tools-card { padding: 28px; background: #0b1020; border-color: #2b3450; text-align: left; }
+.tools-page #tools-section .tools-intro { margin: 0 0 28px; padding: 0; border: 0; letter-spacing: normal; }
+.tools-eyebrow { color: #6ee7f2; font-size: 11px; font-weight: 750; letter-spacing: .16em; margin-bottom: 14px; }
+.tools-intro h1 { font-size: clamp(28px, 3.5vw, 44px); line-height: 1.15; letter-spacing: -.035em; font-weight: 800; color: #f4f6ff; }
+.tools-page #tools-section .tools-intro h1 span { font: inherit; letter-spacing: inherit; color: #a9b5ce; text-shadow: none; }
+.tools-intro > p:not(.tools-eyebrow) { font-size: 15px; color: #bec8dc; margin-top: 16px; line-height: 1.6; }
+.tools-free-note { display: block; color: #98a8c4; font-size: 12px; margin-top: 8px; }
+.tools-page .tools-hub-grid { grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; margin: 0; }
+.tools-page .tool-hub-tile { min-height: 220px; padding: 22px; align-items: flex-start; justify-content: flex-start; text-align: left; border: 1px solid #303c55; border-radius: 14px; background: linear-gradient(135deg,#151e33,#101728); box-shadow: none; gap: 0; transition: border-color .16s, transform .16s, background .16s; }
+.tools-page .tool-hub-tile::before, .tools-page .tool-hub-tile::after { display: none; }
+.tools-page .tool-hub-icon { width: 42px; height: 42px; background: #6ee7f20c; border: 1px solid #6ee7f22b; border-radius: 11px; color: #78e5ef; box-shadow: none; margin-bottom: 18px; }
+.tools-page .tool-hub-icon svg { width: 24px; height: 24px; }
+.tools-page .tool-hub-category { position: absolute; top: 28px; right: 22px; color: #94a7c6; font-size: 10px; letter-spacing: .12em; font-weight: 700; }
+.tools-page .tool-hub-name { font-size: 18px; line-height: 1.3; font-weight: 750; text-shadow: none; }
+.tools-page .tool-hub-note { font-size: 13px; line-height: 1.6; color: #b1bfd7; font-weight: 400; text-shadow: none; margin-top: 7px; margin-bottom: 22px; }
+.tool-hub-action { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: auto; color: #8ce8f1; font-size: 12px; font-weight: 650; }
+.tool-hub-action > span { font-size: 20px; line-height: 1; }
+.tools-page .tool-hub-tile:nth-child(3) .tool-hub-icon, .tools-page .tool-hub-tile:nth-child(4) .tool-hub-icon { color: #c4aeff; background: #b49afa0d; border-color: #b49afa30; }
+.tools-page .tool-hub-tile:nth-child(6) .tool-hub-icon { color: #ffb4d8; background: #ffb4d80d; border-color: #ffb4d830; }
+.tools-page .tool-hub-tile:hover { border-color: #70deed; background: #18253b; box-shadow: 0 8px 24px #0003; transform: translateY(-2px); }
+.tools-page .tool-hub-tile:focus-visible, .tools-page summary:focus-visible, .tools-page .tool-button:focus-visible { outline: 3px solid #7ee9f3; outline-offset: 4px; }
+.tools-page .tool-contribute { grid-column: 1 / -1; min-height: 110px; display: grid; grid-template-columns: 44px 1fr auto; column-gap: 20px; align-content: center; }
+.tools-page .tool-contribute .tool-hub-icon { grid-column: 1; grid-row: 1 / 3; margin: 0; align-self: center; }
+.tools-page .tool-contribute .tool-hub-category { display: none; }
+.tools-page .tool-contribute .tool-hub-name { grid-column: 2; }
+.tools-page .tool-contribute .tool-hub-note { grid-column: 2; margin: 4px 0 0; }
+.tools-page .tool-contribute .tool-hub-action { grid-column: 3; grid-row: 1 / 3; align-self: center; margin: 0; gap: 22px; }
+.tools-page #tools-section .system-health-dashboard { margin: 28px 0 0; padding: 20px; background: #0d1525; border: 1px solid #2c3c50; box-shadow: none; border-radius: 12px; }
+.tools-page .health-compact-header { margin-bottom: 0; }
+.tools-page .health-compact-heading { flex-direction: column; align-items: flex-start; gap: 6px; }
+.tools-page #systemHealthTitle { font-size: 15px; letter-spacing: normal; }
+.tools-page #toolOverallHealth { font-size: 12px; line-height: 1.5; text-shadow: none; }
+.tools-page #toolOverallHealth::before { display: none; }
+.tools-page #toolOverallHealth.pending { color: #f0ce8b; }
+.tools-page #toolOverallHealth.healthy { color: #8be0b5; }
+.tools-page #toolOverallHealth.unhealthy { color: #ffaaaa; }
+.tools-page .health-refresh { font-size: 11px; color: #aabbce; }
+.tools-page .tools-refresh-button, .tools-page .health-stream-copy { min-height: 44px; font-size: 12px; padding: 8px 14px; box-shadow: none; }
+.health-details { border-top: 1px solid #29374d; margin-top: 16px; padding-top: 14px; }
+.health-details summary { cursor: pointer; font-size: 13px; color: #c7d4ea; padding: 8px 0; min-height: 40px; }
+.health-details summary span { float: right; color: #a7b6cc; font-size: 11px; }
+.tools-page .health-services.health-services-compact { grid-template-columns: repeat(3,minmax(0,1fr)); }
+.tools-page .health-services .health-service-compact { background: #121d2e; border: 1px solid #2c3b51; border-radius: 8px; padding: 12px; gap: 8px; box-shadow: none; }
+.tools-page .health-services .health-service-compact > span:first-child { color: #cdd9ed; font-size: 13px; text-shadow: none; }
+.tools-page .health-services .health-service-compact .tool-health { font-size: 11px; text-shadow: none; }
+.tools-page .health-services .health-service-compact .tool-health::before { box-shadow: none; text-shadow: none; }
+.tools-page .health-stream-count, .tools-page .health-stream-detail, .tools-page .health-stream-compact > strong { font-size: 12px; }
+.tools-page .health-note { font-size: 11px; color: #aabbd3; line-height: 1.5; }
+@media (max-width: 850px) {
+  .tools-page .tools-hub-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .tools-page #tools-section .tools-card { padding: 20px; }
+}
+@media (max-width: 560px) {
+  .tools-page .wrapper { padding: 12px; }
+  .tools-page #tools-section .tools-card { padding: 18px 14px; }
+  .tools-page .tools-hub-grid { grid-template-columns: 1fr; gap: 12px; }
+  .tools-page .tool-hub-tile { min-height: 200px; padding: 20px; }
+  .tools-page .tool-contribute { grid-template-columns: 42px 1fr; min-height: 150px; gap: 0 14px; }
+  .tools-page .tool-contribute .tool-hub-action { grid-column: 2; grid-row: 3; margin-top: 14px; }
+  .tools-page .health-compact-header { align-items: flex-start; gap: 14px; }
+  .tools-page .health-refresh { flex-wrap: wrap; }
+  .health-details summary span { display: block; float: none; margin: 6px 0 0 16px; }
+  .tools-page .health-services.health-services-compact { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tools-page .tool-hub-tile { transition: none; }
+  .tools-page .tool-hub-tile:hover { transform: none; }
+}
