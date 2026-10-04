@@ -3,7 +3,6 @@ STUCK_FRAME_MAX_UPLOAD_BYTES = 100 * 1024 * 1024
 STUCK_FRAME_MAX_DURATION_SECONDS = 10 * 60
 STUCK_FRAME_SAMPLE_RATE = 8000
 STUCK_FRAME_MAX_EFFECTS = 240
-STUCK_FRAME_MUSIC_BPMS = {"drum-and-bass": 174, "electro": 128, "techno": 132, "chill": 90}
 stuck_frame_tool_semaphore = asyncio.Semaphore(1)
 
 
@@ -100,18 +99,7 @@ def _stuck_frame_extract_audio(input_path, wav_path, duration):
         raise RuntimeError("The video does not contain enough usable audio to detect a beat")
 
 
-def _stuck_frame_detect_beat_grid(wav_path, duration, preset_bpm=None):
-    if preset_bpm is not None:
-        # Our synthesised tracks begin on beat zero and retain this exact tempo.
-        # Use every second beat, matching the usual freeze cadence, then cap work.
-        period = 120.0 / preset_bpm
-        beats = [index * period for index in range(1, int(math.ceil(duration / period)))
-                 if index * period < duration]
-        if len(beats) > STUCK_FRAME_MAX_EFFECTS:
-            beats = beats[::int(math.ceil(len(beats) / STUCK_FRAME_MAX_EFFECTS))]
-        if not beats:
-            raise RuntimeError("The video is too short to add a beat-synchronised freeze")
-        return preset_bpm, 1.0, beats
+def _stuck_frame_detect_beat_grid(wav_path, duration):
     bpm, confidence = _estimate_bpm_from_wav(wav_path)
 
     with wave.open(str(wav_path), "rb") as wav:
@@ -263,12 +251,12 @@ def _stuck_frame_render_video(input_path, output_path, fps, beats, audio_path=No
         raise RuntimeError("The processed video was not created correctly")
 
 
-def _stuck_frame_process_video(input_path, wav_path, output_path, audio_path=None, preset_bpm=None):
+def _stuck_frame_process_video(input_path, wav_path, output_path, audio_path=None):
     duration, fps = _stuck_frame_probe_video(input_path)
     audio_source = audio_path or input_path
     _stuck_frame_require_audio(audio_source)
     _stuck_frame_extract_audio(audio_source, wav_path, duration)
-    bpm, confidence, beats = _stuck_frame_detect_beat_grid(wav_path, duration, preset_bpm)
+    bpm, confidence, beats = _stuck_frame_detect_beat_grid(wav_path, duration)
     _stuck_frame_render_video(input_path, output_path, fps, beats, audio_path, duration)
     return bpm, confidence, len(beats)
 
@@ -295,12 +283,6 @@ async def public_stuck_frame_effect(request: Request):
     # Raw video uploads remain supported. When adding audio, the browser sends
     # video bytes followed by audio bytes, with a bounded video length header.
     video_bytes_header = request.headers.get("X-RRR-Video-Bytes")
-    music_preset = request.headers.get("X-RRR-Music-Preset")
-    preset_bpm = None
-    if music_preset is not None:
-        if music_preset not in STUCK_FRAME_MUSIC_BPMS or video_bytes_header is None:
-            raise HTTPException(status_code=400, detail="Choose a supported built-in music track with added audio")
-        preset_bpm = STUCK_FRAME_MUSIC_BPMS[music_preset]
     video_bytes = None
     if video_bytes_header is not None:
         try:
@@ -355,7 +337,6 @@ async def public_stuck_frame_effect(request: Request):
                     wav_path,
                     output_path,
                     added_audio_path,
-                    preset_bpm,
                 )
             except subprocess.TimeoutExpired:
                 raise HTTPException(

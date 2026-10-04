@@ -512,13 +512,23 @@
 </div>
 <div class="stuck-frame-file-name" id="stuckFrameFileName">No video selected.</div>
 <div id="stuckFrameAudioOffer" class="stuck-frame-audio-offer" hidden>
-<p>Add music or another audio track to use for the beat detection and finished video. Short tracks end in silence; long tracks are trimmed to the video length.</p>
+<label class="stuck-frame-music-label" for="stuckFrameMusic">Soundtrack</label>
+<p>Keep your video's audio, pick a Radio RRR track, or upload your own. Your chosen music is used for the beat detection and finished video.</p>
+<select id="stuckFrameMusic" class="stuck-frame-music-select">
+<option value="">Video audio / upload your own</option>
+<option value="drum-and-bass">Drum and bass · 174 BPM</option>
+<option value="electro">Electro · 128 BPM</option>
+<option value="techno">Techno · 132 BPM</option>
+<option value="chill">Chill · 90 BPM</option>
+</select>
+<audio id="stuckFrameMusicPreview" class="stuck-frame-music-preview" controls preload="none" aria-label="Preview selected soundtrack" hidden></audio>
+<p class="stuck-frame-music-note">Original Radio RRR tracks, free to use in your videos. Built-in music repeats to cover your video and is trimmed to its length.</p>
 <label class="stuck-frame-file-label" for="stuckFrameAudio">
 <span>Choose audio</span>
 <input id="stuckFrameAudio" type="file" accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.aiff">
 </label>
 <div class="stuck-frame-file-name" id="stuckFrameAudioName">No audio selected.</div>
-<p>Maximum audio upload size: 100 MB.</p>
+<p>Maximum audio upload size: 100 MB. Short uploaded tracks end in silence; long tracks are trimmed.</p>
 </div>
 <div class="stuck-frame-progress" id="stuckFrameProgress" hidden aria-hidden="true"><span></span></div>
 <div class="stuck-frame-status" id="stuckFrameStatus" role="status" aria-live="polite">MP4, MOV, M4V, WebM and MKV videos are supported. Maximum upload size: 100 MB.</div>

@@ -1,13 +1,17 @@
 """Apply only the reviewed stuck-frame functions, preserving other router edits."""
 import ast
+import argparse
 from datetime import datetime
 from pathlib import Path
 import shutil
-import sys
 
 root = Path(__file__).resolve().parent
-target = Path(sys.argv[1] if len(sys.argv) > 1 else r'\\192.168.7.10\radiorouter\app\main.py')
-before = (root / 'stuck-frame-original-functions.py').read_text(encoding='utf-8')
+parser = argparse.ArgumentParser()
+parser.add_argument('path', nargs='?', default=r'\\192.168.7.10\radiorouter\app\main.py')
+parser.add_argument('--music', action='store_true', help='Upgrade an already installed audio-upload fix')
+args = parser.parse_args()
+target = Path(args.path)
+before = (root / ('stuck-frame-before-music.py' if args.music else 'stuck-frame-original-functions.py')).read_text(encoding='utf-8')
 after = (root / 'stuck-frame-api-functions.py').read_text(encoding='utf-8')
 marker = '@app.post("/api/tools/stuck-frame-effect")'
 before_helpers, before_api = before.split(marker, 1)

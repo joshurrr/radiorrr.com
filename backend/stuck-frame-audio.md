@@ -29,3 +29,29 @@ audio, adding audio, output duration, upload boundaries, limits and job cleanup.
 reviewed tool functions. It refuses to write if those functions have changed.
 The website changes must be published, and RadioRouter must load the updated
 main.py before the added-audio retry can work on the live site.
+
+## Built-in music
+
+The picker offers four original, synthesised tracks at `/audio/stuck-frame/`:
+drum and bass (174 BPM), electro (128 BPM), techno (132 BPM) and chill (90 BPM).
+Each has a 16-second preview and a ten-minute full track. Tracks are documented
+and dedicated under CC0 in `audio/stuck-frame/README.md`. No third-party samples
+or songs are used. Publish the complete audio directory with the frontend.
+
+The browser downloads the selected full track only when Create Effect is clicked
+and submits it using the existing added-audio upload. A bounded
+`X-RRR-Music-Preset` identifier selects its exact known tempo in the backend.
+These tracks start at beat zero, so preset beat positions are calculated
+directly. Uploaded audio continues to use automatic tempo and phase detection.
+
+For a backend that already has the audio-upload fix, apply this update with
+`python backend/apply-stuck-frame-audio.py --music`, then run on the NAS:
+
+```sh
+docker cp /mnt/user/radiorouter/app/main.py radiorouter:/app/main.py && docker restart radiorouter
+```
+
+Additional checks: `node tests/stuck-frame-browser.cjs` with Playwright available,
+and `python tests/stuck-frame-music.py` with FFmpeg/FFprobe on PATH. They exercise
+preview playback, desktop/mobile layout, real processing with each built-in
+track, and exact preset beat positions.

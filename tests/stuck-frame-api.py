@@ -62,6 +62,8 @@ async def run():
         await failure([raw],headers,422,'no_audio')
         await failure([raw],dict(headers, **{'X-RRR-Video-Bytes':'bad'}),400)
         await failure([raw],dict(headers, **{'X-RRR-Video-Bytes':str(len(raw))}),400)
+        await failure([raw],dict(headers, **{'X-RRR-Music-Preset':'unknown'}),400)
+        await failure([raw],dict(headers, **{'X-RRR-Music-Preset':'chill'}),400)
         ns['STUCK_FRAME_MAX_UPLOAD_BYTES'] = 2048
         await failure([raw],headers,413)
         ns['STUCK_FRAME_MAX_UPLOAD_BYTES'] = 100*1024*1024
@@ -82,6 +84,11 @@ async def run():
         assert not list(ns['STUCK_FRAME_TOOL_DIR'].glob('*'))
         # Invalid added audio must produce the same actionable result.
         await failure([raw,raw], dict(headers, **{'X-RRR-Video-Bytes':str(len(raw))}),422,'no_audio')
+        result = await endpoint(Request([raw,music.read_bytes()], dict(headers, **{
+            'X-RRR-Video-Bytes':str(len(raw)), 'X-RRR-Music-Preset':'drum-and-bass'})))
+        assert result.options['headers']['X-RRR-Detected-BPM'] == '174'
+        result.options['background'].call()
+        assert not list(ns['STUCK_FRAME_TOOL_DIR'].glob('*'))
     print('PASS: missing audio, added audio, original audio, real rendering, video duration, chunk boundaries, limits and cleanup')
 
 asyncio.run(run())

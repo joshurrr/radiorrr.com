@@ -5012,10 +5012,25 @@ document.addEventListener("DOMContentLoaded", function () {
       const stuckFrameAudioOffer = document.getElementById("stuckFrameAudioOffer");
       const stuckFrameAudio = document.getElementById("stuckFrameAudio");
       const stuckFrameAudioName = document.getElementById("stuckFrameAudioName");
+      const stuckFrameMusic = document.getElementById("stuckFrameMusic");
+      const stuckFrameMusicPreview = document.getElementById("stuckFrameMusicPreview");
+      const stuckFrameMusicTracks = {
+        "drum-and-bass": { name: "Drum and bass", bpm: 174 },
+        electro: { name: "Electro", bpm: 128 },
+        techno: { name: "Techno", bpm: 132 },
+        chill: { name: "Chill", bpm: 90 }
+      };
       let stuckFrameDownloadUrl = "";
       let stuckFrameNeedsAudio = false;
 
+      function selectedStuckFrameTrack() {
+        const key = stuckFrameMusic && stuckFrameMusic.value;
+        return Object.prototype.hasOwnProperty.call(stuckFrameMusicTracks, key)
+          ? { key: key, ...stuckFrameMusicTracks[key] } : null;
+      }
+
       function selectedStuckFrameAudio() {
+        if (selectedStuckFrameTrack()) return null;
         return stuckFrameAudio && stuckFrameAudio.files && stuckFrameAudio.files[0]
           ? stuckFrameAudio.files[0] : null;
       }
@@ -5024,7 +5039,15 @@ document.addEventListener("DOMContentLoaded", function () {
         const video = selectedStuckFrameFile();
         const audio = selectedStuckFrameAudio();
         return !!video && video.size <= 100 * 1024 * 1024 &&
-          (!stuckFrameNeedsAudio || !!audio) && (!audio || audio.size <= 100 * 1024 * 1024);
+          (!stuckFrameNeedsAudio || !!audio || !!selectedStuckFrameTrack()) && (!audio || audio.size <= 100 * 1024 * 1024);
+      }
+
+      function resetStuckFramePreview() {
+        if (!stuckFrameMusicPreview) return;
+        stuckFrameMusicPreview.pause();
+        stuckFrameMusicPreview.removeAttribute("src");
+        stuckFrameMusicPreview.load();
+        stuckFrameMusicPreview.hidden = true;
       }
 
       function setStuckFrameStatus(message, state) {
@@ -5059,6 +5082,8 @@ document.addEventListener("DOMContentLoaded", function () {
           if (stuckFrameAudioOffer) stuckFrameAudioOffer.hidden = true;
           if (stuckFrameAudio) stuckFrameAudio.value = "";
           if (stuckFrameAudioName) stuckFrameAudioName.textContent = "No audio selected.";
+          if (stuckFrameMusic) stuckFrameMusic.value = "";
+          resetStuckFramePreview();
           const file = selectedStuckFrameFile();
 
           if (!file) {
@@ -5080,6 +5105,7 @@ document.addEventListener("DOMContentLoaded", function () {
           }
 
           if (stuckFrameStart) stuckFrameStart.disabled = false;
+          if (stuckFrameAudioOffer) stuckFrameAudioOffer.hidden = false;
           setStuckFrameStatus("Ready to analyse the beat and render the stuck-frame effect.");
         });
       }
@@ -5087,6 +5113,8 @@ document.addEventListener("DOMContentLoaded", function () {
       if (stuckFrameAudio) {
         stuckFrameAudio.addEventListener("change", function () {
           clearStuckFrameDownload();
+          if (stuckFrameMusic) stuckFrameMusic.value = "";
+          resetStuckFramePreview();
           const audio = selectedStuckFrameAudio();
           if (stuckFrameAudioName) stuckFrameAudioName.textContent = audio ? audio.name : "No audio selected.";
           if (stuckFrameStart) stuckFrameStart.disabled = !validStuckFrameSelection();
@@ -5098,11 +5126,30 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       }
 
+      if (stuckFrameMusic) {
+        stuckFrameMusic.addEventListener("change", function () {
+          clearStuckFrameDownload();
+          resetStuckFramePreview();
+          const track = selectedStuckFrameTrack();
+          if (stuckFrameAudio) stuckFrameAudio.value = "";
+          if (stuckFrameAudioName) stuckFrameAudioName.textContent = "No audio selected.";
+          if (track && stuckFrameMusicPreview) {
+            stuckFrameMusicPreview.src = "/audio/stuck-frame/" + track.key + "-preview.mp3";
+            stuckFrameMusicPreview.hidden = false;
+          }
+          if (stuckFrameStart) stuckFrameStart.disabled = !validStuckFrameSelection();
+          setStuckFrameStatus(track ? "Ready to create the effect with " + track.name + " (" + track.bpm + " BPM)." :
+            stuckFrameNeedsAudio ? "This video has no audio track. Choose built-in music or upload an audio file." :
+            "Ready to create the effect using your video's audio.");
+        });
+      }
+
       async function createStuckFrameEffect() {
         const file = selectedStuckFrameFile();
         if (!file || !stuckFrameStart) return;
         if (!validStuckFrameSelection()) return;
-        const audio = selectedStuckFrameAudio();
+        let audio = selectedStuckFrameAudio();
+        const track = selectedStuckFrameTrack();
 
         if (file.size > 100 * 1024 * 1024) {
           setStuckFrameStatus("This video is larger than the 100 MB upload limit.", "error");
@@ -5114,15 +5161,28 @@ document.addEventListener("DOMContentLoaded", function () {
         stuckFrameStart.textContent = "Processing…";
         if (stuckFrameVideo) stuckFrameVideo.disabled = true;
         if (stuckFrameAudio) stuckFrameAudio.disabled = true;
+        if (stuckFrameMusic) stuckFrameMusic.disabled = true;
+        if (stuckFrameMusicPreview) stuckFrameMusicPreview.pause();
         if (stuckFrameProgress) stuckFrameProgress.hidden = false;
         setStuckFrameStatus("Uploading the video, detecting the beat and rendering the effect. This can take a minute or two.");
 
         try {
+          if (track) {
+            setStuckFrameStatus("Loading " + track.name + ", then uploading your video and rendering the effect…");
+            const musicResponse = await fetch("/audio/stuck-frame/" + track.key + ".mp3");
+            if (!musicResponse.ok) throw new Error("Could not load the built-in music. Try again or upload your own audio.");
+            audio = await musicResponse.blob();
+            if (!audio.size || audio.size > 100 * 1024 * 1024) {
+              throw new Error("The built-in music could not be loaded. Try again or upload your own audio.");
+            }
+            setStuckFrameStatus("Uploading the video with " + track.name + " and rendering the effect. This can take a minute or two.");
+          }
           const headers = {
             "Content-Type": audio ? "application/octet-stream" : file.type || "application/octet-stream",
             "X-RRR-Filename": encodeURIComponent(file.name)
           };
           if (audio) headers["X-RRR-Video-Bytes"] = String(file.size);
+          if (track) headers["X-RRR-Music-Preset"] = track.key;
           const response = await fetch(
             "https://api.radiorrr.com/api/tools/stuck-frame-effect",
             {
@@ -5144,7 +5204,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 stuckFrameNeedsAudio = true;
                 if (stuckFrameAudioOffer) stuckFrameAudioOffer.hidden = false;
                 detail = audio ? "The selected audio file has no audio track. Choose another audio file." :
-                  "This video has no audio track. Add an audio file below to create the effect.";
+                  "This video has no audio track. Choose built-in music or upload an audio file below to create the effect.";
               }
             } catch (e) {
               try { detail = await response.text(); } catch (ignore) {}
@@ -5178,6 +5238,7 @@ document.addEventListener("DOMContentLoaded", function () {
           stuckFrameStart.disabled = !validStuckFrameSelection();
           if (stuckFrameVideo) stuckFrameVideo.disabled = false;
           if (stuckFrameAudio) stuckFrameAudio.disabled = false;
+          if (stuckFrameMusic) stuckFrameMusic.disabled = false;
           stuckFrameStart.textContent = "Create Effect";
           if (stuckFrameProgress) stuckFrameProgress.hidden = true;
         }

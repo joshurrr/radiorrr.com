@@ -6208,6 +6208,12 @@
 
 
 /* STUCK FRAME EFFECT TOOL */
+.tools-action-list .tool-stuck-frame-effect .tool-row-main {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
 .stuck-frame-form {
   display: flex;
   align-items: center;
@@ -6279,6 +6285,47 @@
 
 .stuck-frame-audio-offer p:last-child {
   margin: 0.5rem 0 0;
+}
+
+.stuck-frame-audio-offer[hidden],
+.stuck-frame-music-preview[hidden] {
+  display: none !important;
+}
+
+.stuck-frame-music-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.stuck-frame-music-select {
+  display: block;
+  width: min(100%, 380px);
+  padding: 0.7rem;
+  margin-bottom: 0.6rem;
+  border: 1px solid rgba(129,140,248,0.58);
+  border-radius: 10px;
+  background: #080d1e;
+  color: #e0e7ff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.stuck-frame-music-select:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 2px;
+}
+
+.stuck-frame-music-preview {
+  display: block;
+  width: min(100%, 380px);
+  height: 40px;
+  margin-bottom: 0.6rem;
+}
+
+.stuck-frame-music-note {
+  color: #a5b4fc;
 }
 
 .stuck-frame-status.error {
