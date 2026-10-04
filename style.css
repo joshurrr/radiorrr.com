@@ -1505,7 +1505,7 @@
     }
 
     @media (min-width: 1200px) {
-      #liveDjsList .dj-card.dj-live-switch-card {
+      :is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card {
         min-height: 184px;
       }
 
@@ -1516,7 +1516,7 @@
     }
 
     @media (min-width: 768px) and (max-width: 1199px) {
-      #liveDjsList .dj-card.dj-live-switch-card {
+      :is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card {
         min-height: 190px;
       }
 
@@ -1527,7 +1527,7 @@
     }
 
     @media (max-width: 767px) {
-      #liveDjsList .dj-card.dj-live-switch-card {
+      :is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card {
         min-height: 205px;
       }
 
@@ -3984,7 +3984,7 @@
       gap: 14px;
     }
 
-    #liveDjsList .dj-card.dj-live-switch-card {
+    :is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card {
       width: 176px;
       height: 264px;
       min-width: 176px;
@@ -3995,7 +3995,7 @@
       box-sizing: border-box;
     }
 
-    #liveDjsList .dj-card.dj-live-switch-card .dj-secondary-photo {
+    :is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-photo {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -4181,7 +4181,7 @@
   gap: 14px !important;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card {
   width: 176px !important;
   min-width: 176px !important;
   max-width: 176px !important;
@@ -4448,7 +4448,7 @@
   grid-template-columns: repeat(auto-fill, minmax(min(176px, 100%), 1fr)) !important;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card,
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card,
 #rrrDjDiscovery .dj-discovery-card {
   width: 100% !important;
   min-width: 0 !important;
@@ -4495,7 +4495,7 @@
 /* RRR: secondary LIVE cards — Scout's current live AI genres.
    Presentation only: script.js still supplies the existing detected genre
    rows, while CSS turns those rows into compact vertical genre bubbles. */
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-title {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-detected-title {
   margin-top: 0.08rem;
   color: #fde68a;
   font-size: 0.47rem;
@@ -4505,7 +4505,7 @@
   text-transform: uppercase;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-list {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-detected-list {
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -4515,7 +4515,7 @@
   margin: 0.05rem 0 0.08rem;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-row {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-detected-row {
   display: flex;
   align-items: center;
   width: 100%;
@@ -4534,7 +4534,7 @@
   line-height: 1;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-name {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-detected-name {
   display: block;
   flex: 1 1 auto;
   min-width: 0;
@@ -4548,37 +4548,37 @@
   text-transform: uppercase;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-bar,
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-confidence {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-detected-bar,
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-detected-confidence {
   display: none;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-row:nth-child(2) {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-detected-row:nth-child(2) {
   border-color: rgba(168,85,247,0.58);
   background:
     linear-gradient(90deg, rgba(168,85,247,0.16), rgba(124,58,237,0.12)),
     rgba(5,10,25,0.82);
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-row:nth-child(3) {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-detected-row:nth-child(3) {
   border-color: rgba(255,23,111,0.58);
   background:
     linear-gradient(90deg, rgba(255,23,111,0.15), rgba(168,85,247,0.12)),
     rgba(5,10,25,0.82);
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-row:nth-child(4) {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-detected-row:nth-child(4) {
   border-color: rgba(34,211,238,0.58);
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-row:nth-child(5) {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-detected-row:nth-child(5) {
   border-color: rgba(52,211,153,0.58);
   background:
     linear-gradient(90deg, rgba(52,211,153,0.14), rgba(34,211,238,0.11)),
     rgba(5,10,25,0.82);
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-empty {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-detected-empty {
   display: inline-flex;
   align-items: center;
   min-height: 1.15rem;
@@ -4596,19 +4596,19 @@
    Presentation only. The main/current DJ card, JS, HLS/audio and matching logic
    are intentionally untouched. */
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-content {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-content {
   position: static !important;
   padding: 0.55rem 0.65rem 0.6rem !important;
   gap: 0.16rem !important;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-content > * {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-content > * {
   position: relative !important;
   z-index: 2 !important;
 }
 
 /* LIVE badge — fixed to the top-left of the card. */
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-live {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-live {
   position: absolute !important;
   top: 0.55rem !important;
   left: 0.65rem !important;
@@ -4620,7 +4620,7 @@
 }
 
 /* DJ information remains anchored at the bottom-left. */
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-name {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-name {
   font-size: 0.84rem !important;
   line-height: 1.08 !important;
   margin: 0 !important;
@@ -4628,11 +4628,11 @@
 
 /* The genre bubbles already communicate that these are detected genres,
    so the redundant LIVE DETECTED heading is hidden. */
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-title {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-detected-title {
   display: none !important;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-list {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-detected-list {
   display: flex !important;
   flex-direction: column !important;
   align-items: flex-start !important;
@@ -4643,7 +4643,7 @@
   min-height: 0 !important;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .rrr-live-genre-bubble {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .rrr-live-genre-bubble {
   display: inline-flex !important;
   align-items: center !important;
   align-self: flex-start !important;
@@ -4662,7 +4662,7 @@
   text-overflow: ellipsis !important;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-match-label {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-match-label {
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
@@ -4679,17 +4679,17 @@
   white-space: nowrap !important;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-match-label > * {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-match-label > * {
   white-space: nowrap !important;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-match-label > span:first-child {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-match-label > span:first-child {
   font-size: 0.54rem !important;
   line-height: 1 !important;
   font-weight: 800 !important;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-match-value {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-match-value {
   flex: 0 0 auto !important;
   margin-left: auto !important;
   color: #fff !important;
@@ -4697,11 +4697,11 @@
   font-weight: 900 !important;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-match-bar {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-match-bar {
   display: none !important;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-match-fill {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-match-fill {
   height: 100% !important;
 }
 
@@ -5398,7 +5398,7 @@
 }
 
 /* Secondary LIVE cards: opposite the existing LIVE badge. */
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-platform {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-platform {
   position: absolute !important;
   top: 0.55rem !important;
   right: 0.65rem !important;
@@ -5408,17 +5408,17 @@
   pointer-events: none;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-platform.platform-twitch {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-platform.platform-twitch {
   width: auto;
   min-width: 3rem;
   padding: 0 0.36rem;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-platform.platform-twitch .dj-platform-wordmark {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-platform.platform-twitch .dj-platform-wordmark {
   font-size: 0.58rem;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-platform img {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-platform img {
   width: 0.8rem;
   height: 0.8rem;
 }
@@ -8112,7 +8112,7 @@
 /* RRR: secondary LIVE DJ cards — bottom-align DJ identity + live genres.
    Presentation only. Keeps the DJ name immediately above the genre bubbles,
    with Program Match directly below them at the bottom of every card. */
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-content {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-content {
   position: absolute !important;
   left: 0 !important;
   right: 0 !important;
@@ -8125,17 +8125,17 @@
   gap: 0.16rem !important;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-name {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-name {
   flex: 0 0 auto !important;
   margin: 0 !important;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-detected-list {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-detected-list {
   flex: 0 0 auto !important;
   margin: 0.02rem 0 0.16rem !important;
 }
 
-#liveDjsList .dj-card.dj-live-switch-card .dj-secondary-match-label {
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-match-label {
   flex: 0 0 auto !important;
   margin-top: 0 !important;
 }
@@ -8291,131 +8291,28 @@
   }
 }
 
-/* LIVE DJs TOOL — match the main Live Video secondary DJ cards. */
+/* Live DJ tools share the home-page card layout and appearance. */
 #liveDjsToolResults.live-djs-tool-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.8rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(176px, 100%), 1fr));
+  gap: 14px;
 }
 
-#liveDjsToolResults .live-djs-tool-card.dj-live-switch-card {
-  min-height: 205px;
-  aspect-ratio: 0.84 / 1;
+#liveDjsToolResults .dj-card.dj-live-switch-card {
+  background-image:
+    radial-gradient(circle at top left, rgba(56,189,248,0.14), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(251,146,60,0.1), transparent 58%), none;
+  border-color: rgba(34,211,238,0.82);
+  box-shadow: 0 0 18px rgba(34,211,238,0.36);
 }
 
-#liveDjsToolResults .live-djs-tool-card .dj-secondary-content {
-  position: absolute !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  z-index: 2 !important;
-  justify-content: flex-end !important;
-  min-height: 58% !important;
-  padding: 0.65rem 0.7rem 0.7rem !important;
-  background: linear-gradient(
-    to bottom,
-    rgba(4,7,18,0) 0%,
-    rgba(4,7,18,0.34) 18%,
-    rgba(4,7,18,0.82) 48%,
-    rgba(4,7,18,0.98) 100%
-  ) !important;
+#liveDjsToolResults .live-djs-tool-handle {
+  display: none;
 }
 
-#liveDjsToolResults .live-djs-tool-card .live-djs-tool-handle {
-  margin: -0.05rem 0 0.04rem;
-  color: rgba(199,210,254,0.78);
-  font-size: 0.52rem;
-  line-height: 1.1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-#liveDjsToolResults .live-djs-tool-card .dj-secondary-detected-title {
-  margin-top: 0.08rem;
-}
-
-#liveDjsToolResults .live-djs-tool-card .live-djs-tool-detected {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  align-items: flex-start !important;
-  gap: 0.16rem !important;
-  min-height: 1.05rem !important;
-  margin: 0.02rem 0 0.12rem !important;
-  overflow: hidden !important;
-}
-
-#liveDjsToolResults .live-djs-tool-card .rrr-live-genre-bubble {
-  display: inline-flex !important;
-  flex: 0 0 auto !important;
-  align-items: center !important;
-  width: fit-content !important;
-  max-width: calc(100% - 2px) !important;
-  min-height: 1.02rem !important;
-  padding: 0.12rem 0.42rem !important;
-  border-radius: 999px !important;
-  border: 1px solid rgba(103,232,249,0.75) !important;
-  background: rgba(5,20,35,0.78) !important;
-  color: #e0f7ff !important;
-  font-size: 0.54rem !important;
-  font-weight: 800 !important;
-  line-height: 1 !important;
-  letter-spacing: 0.02em !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  box-shadow: 0 0 7px rgba(56,189,248,0.20) !important;
-}
-
-#liveDjsToolResults .live-djs-tool-card .rrr-live-genre-bubble:nth-child(2n) {
-  border-color: rgba(255,77,171,0.78) !important;
-  box-shadow: 0 0 7px rgba(255,0,102,0.20) !important;
-}
-
-#liveDjsToolResults .live-djs-tool-card .rrr-live-genre-bubble:nth-child(3n) {
-  border-color: rgba(167,139,250,0.82) !important;
-  box-shadow: 0 0 7px rgba(139,92,246,0.20) !important;
-}
-
-#liveDjsToolResults .live-djs-tool-card .rrr-live-genre-bubble:nth-child(4n) {
-  border-color: rgba(74,222,128,0.78) !important;
-  box-shadow: 0 0 7px rgba(34,197,94,0.18) !important;
-}
-
-#liveDjsToolResults .live-djs-tool-card .live-djs-tool-muted {
-  align-self: flex-start;
-  padding: 0.14rem 0;
+#liveDjsToolResults .live-djs-tool-muted {
   color: #cbd5e1;
   font-size: 0.52rem;
 }
-
-@media (min-width: 768px) and (max-width: 899px) {
-  #liveDjsToolResults.live-djs-tool-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 767px) {
-  #liveDjsToolResults.live-djs-tool-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.65rem;
-  }
-
-  #liveDjsToolResults .live-djs-tool-card.dj-live-switch-card {
-    min-height: 205px;
-  }
-}
-
-@media (max-width: 420px) {
-  #liveDjsToolResults.live-djs-tool-grid {
-    grid-template-columns: 1fr;
-  }
-
-  #liveDjsToolResults .live-djs-tool-card.dj-live-switch-card {
-    aspect-ratio: auto;
-    min-height: 260px;
-  }
-}
-
 
 /* 2026-09-28 — Tune Sound genre search. */
 .dj-discovery-genre-search-wrap {
@@ -9053,3 +8950,61 @@ button.dj-genre-filter:hover { filter:brightness(1.25); }
 .tool-stream-speech .bpm-detector-form { margin-top:14px; }
 .tool-stream-speech .bpm-detector-result { margin-top:14px; }
 @media (max-width:640px) { .tool-stream-speech .tool-row-main { grid-column:auto; } }
+
+
+/* Secondary LIVE DJ cards: presentation only. The main/current DJ card is untouched. */
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-detected-list {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: 0.16rem !important;
+  width: 100% !important;
+  margin: 0.02rem 0 0.16rem !important;
+  min-height: 0 !important;
+}
+
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .rrr-live-genre-bubble {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  align-self: flex-start !important;
+  width: fit-content !important;
+  max-width: calc(100% - 2px) !important;
+  min-height: 1.02rem !important;
+  box-sizing: border-box !important;
+  padding: 0.12rem 0.42rem !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(103,232,249,0.75) !important;
+  background: rgba(5,20,35,0.78) !important;
+  color: #e0f7ff !important;
+  font-size: 0.54rem !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  letter-spacing: 0.02em !important;
+  text-align: left !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  box-shadow: 0 0 7px rgba(56,189,248,0.20) !important;
+}
+
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .rrr-live-genre-bubble:nth-child(2n) {
+  border-color: rgba(255,77,171,0.78) !important;
+  box-shadow: 0 0 7px rgba(255,0,102,0.20) !important;
+}
+
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .rrr-live-genre-bubble:nth-child(3n) {
+  border-color: rgba(167,139,250,0.82) !important;
+  box-shadow: 0 0 7px rgba(139,92,246,0.20) !important;
+}
+
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .rrr-live-genre-bubble:nth-child(4n) {
+  border-color: rgba(74,222,128,0.78) !important;
+  box-shadow: 0 0 7px rgba(34,197,94,0.18) !important;
+}
+
+:is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-detected-row {
+  display: none !important;
+}

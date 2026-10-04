@@ -1,0 +1,3659 @@
+{
+  "ok": true,
+  "stage": 3,
+  "diagnostic_only": true,
+  "automatic_selection_enabled": true,
+  "live_count": 10,
+  "targets": [
+    {
+      "genre": "Deep House",
+      "weight": 30.0
+    },
+    {
+      "genre": "Melodic House",
+      "weight": 25.0
+    },
+    {
+      "genre": "Progressive House",
+      "weight": 20.0
+    },
+    {
+      "genre": "Organic House",
+      "weight": 15.0
+    },
+    {
+      "genre": "Chill",
+      "weight": 10.0
+    }
+  ],
+  "anti_genres": [
+    "Spoken Word",
+    "Talk",
+    "Talking",
+    "Dialogue",
+    "Comedy",
+    "Audiobook",
+    "Radioplay",
+    "Education",
+    "Poetry",
+    "Religious",
+    "Field Recording",
+    "Parody"
+  ],
+  "current_program": {
+    "day": "Sunday",
+    "start": 16.0,
+    "end": 20.0,
+    "name": "Sunny Sets",
+    "genres": [
+      "Deep House",
+      "Melodic House",
+      "Progressive House",
+      "Organic House",
+      "Chill"
+    ],
+    "genre_weights": {
+      "Deep House": 30.0,
+      "Melodic House": 25.0,
+      "Progressive House": 20.0,
+      "Organic House": 15.0,
+      "Chill": 10.0
+    },
+    "anti_genres": [
+      "Spoken Word",
+      "Talk",
+      "Talking",
+      "Dialogue",
+      "Comedy",
+      "Audiobook",
+      "Radioplay",
+      "Education",
+      "Poetry",
+      "Religious",
+      "Field Recording",
+      "Parody"
+    ],
+    "bpm_min": 108,
+    "bpm_max": 124
+  },
+  "current_relay": "cashmeresounduk",
+  "current_relay_platform": "TikTok",
+  "proposed_relay": {
+    "username": "cashmeresounduk",
+    "name": "CashmereSound",
+    "score": 33.79,
+    "ai_score": 51.33,
+    "genre_ai_score": 51.33,
+    "ai_evidence": true,
+    "ai_relevance": [
+      {
+        "genre": "Electronic---House",
+        "confidence": 0.3485,
+        "matched_target": "Deep House",
+        "match_strength": 0.6,
+        "target_preference": 1.0,
+        "relevance": 0.6
+      },
+      {
+        "genre": "Electronic---Deep House",
+        "confidence": 0.1976,
+        "matched_target": "Deep House",
+        "match_strength": 1.0,
+        "target_preference": 1.0,
+        "relevance": 1.0
+      },
+      {
+        "genre": "Electronic---Tech House",
+        "confidence": 0.1361,
+        "matched_target": null,
+        "match_strength": 0.0,
+        "target_preference": 0.0,
+        "relevance": 0.0
+      },
+      {
+        "genre": "Electronic---Progressive House",
+        "confidence": 0.0915,
+        "matched_target": "Progressive House",
+        "match_strength": 1.0,
+        "target_preference": 0.6667,
+        "relevance": 0.6667
+      },
+      {
+        "genre": "Electronic---Tribal House",
+        "confidence": 0.0809,
+        "matched_target": null,
+        "match_strength": 0.0,
+        "target_preference": 0.0,
+        "relevance": 0.0
+      },
+      {
+        "genre": "Electronic---Techno",
+        "confidence": 0.0565,
+        "matched_target": null,
+        "match_strength": 0.0,
+        "target_preference": 0.0,
+        "relevance": 0.0
+      }
+    ],
+    "bpm": 128.11,
+    "effective_bpm": 128.11,
+    "bpm_confidence": 0.5416,
+    "bpm_score": 79.45,
+    "bpm_weight": 8.124,
+    "bpm_target": {
+      "min": 107.0,
+      "max": 124.5
+    },
+    "profile_score": 19.9,
+    "profile_evidence": true,
+    "profile_relevance": [
+      {
+        "genre": "House",
+        "confidence": 0.1357,
+        "matched_target": "Deep House",
+        "match_strength": 0.6,
+        "target_preference": 1.0,
+        "relevance": 0.6
+      },
+      {
+        "genre": "Speed Garage",
+        "confidence": 0.0472,
+        "matched_target": null,
+        "match_strength": 0.0,
+        "target_preference": 0.0,
+        "relevance": 0.0
+      },
+      {
+        "genre": "Techno",
+        "confidence": 0.0457,
+        "matched_target": null,
+        "match_strength": 0.0,
+        "target_preference": 0.0,
+        "relevance": 0.0
+      },
+      {
+        "genre": "Tech House",
+        "confidence": 0.0405,
+        "matched_target": null,
+        "match_strength": 0.0,
+        "target_preference": 0.0,
+        "relevance": 0.0
+      },
+      {
+        "genre": "Progressive House",
+        "confidence": 0.0398,
+        "matched_target": "Progressive House",
+        "match_strength": 1.0,
+        "target_preference": 0.6667,
+        "relevance": 0.6667
+      },
+      {
+        "genre": "UK Garage",
+        "confidence": 0.039,
+        "matched_target": null,
+        "match_strength": 0.0,
+        "target_preference": 0.0,
+        "relevance": 0.0
+      },
+      {
+        "genre": "Bassline",
+        "confidence": 0.0375,
+        "matched_target": null,
+        "match_strength": 0.0,
+        "target_preference": 0.0,
+        "relevance": 0.0
+      },
+      {
+        "genre": "Tribal House",
+        "confidence": 0.0345,
+        "matched_target": null,
+        "match_strength": 0.0,
+        "target_preference": 0.0,
+        "relevance": 0.0
+      },
+      {
+        "genre": "Euro House",
+        "confidence": 0.0345,
+        "matched_target": null,
+        "match_strength": 0.0,
+        "target_preference": 0.0,
+        "relevance": 0.0
+      },
+      {
+        "genre": "Trance",
+        "confidence": 0.027,
+        "matched_target": null,
+        "match_strength": 0.0,
+        "target_preference": 0.0,
+        "relevance": 0.0
+      },
+      {
+        "genre": "Deep House",
+        "confidence": 0.0255,
+        "matched_target": "Deep House",
+        "match_strength": 1.0,
+        "target_preference": 1.0,
+        "relevance": 1.0
+      },
+      {
+        "genre": "Progressive Trance",
+        "confidence": 0.024,
+        "matched_target": null,
+        "match_strength": 0.0,
+        "target_preference": 0.0,
+        "relevance": 0.0
+      },
+      {
+        "genre": "Garage House",
+        "confidence": 0.024,
+        "matched_target": null,
+        "match_strength": 0.0,
+        "target_preference": 0.0,
+        "relevance": 0.0
+      },
+      {
+        "genre": "Tech Trance",
+        "confidence": 0.0233,
+        "matched_target": null,
+        "match_strength": 0.0,
+        "target_preference": 0.0,
+        "relevance": 0.0
+      },
+      {
+        "genre": "Electro",
+        "confidence": 0.021,
+        "matched_target": null,
+        "match_strength": 0.0,
+        "target_preference": 0.0,
+        "relevance": 0.0
+      },
+      {
+        "genre": "Italodance",
+        "confidence": 0.0187,
+        "matched_target": null,
+        "match_strength": 0.0,
+        "target_preference": 0.0,
+        "relevance": 0.0
+      },
+      {
+        "genre": "Electro House",
+        "confidence": 0.015,
+        "matched_target": null,
+        "match_strength": 0.0,
+        "target_preference": 0.0,
+        "relevance": 0.0
+      },
+      {
+        "genre": "Breakbeat",
+        "confidence": 0.0135,
+        "matched_target": null,
+        "match_strength": 0.0,
+        "target_preference": 0.0,
+        "relevance": 0.0
+      },
+      {
+        "genre": "Breaks",
+        "confidence": 0.012,
+        "matched_target": null,
+        "match_strength": 0.0,
+        "target_preference": 0.0,
+        "relevance": 0.0
+      },
+      {
+        "genre": "Eurodance",
+        "confidence": 0.012,
+        "matched_target": null,
+        "match_strength": 0.0,
+        "target_preference": 0.0,
+        "relevance": 0.0
+      }
+    ],
+    "profile_maturity": 0.75,
+    "viewer_bonus": 0.0,
+    "profile_source": "learned",
+    "learned_samples": 13,
+    "targets": [
+      {
+        "target": "Deep House",
+        "weight": 30.0,
+        "ai_match": 0.2091,
+        "ai_genre": "Electronic---House",
+        "profile_match": 0.0814,
+        "profile_genre": "House"
+      },
+      {
+        "target": "Melodic House",
+        "weight": 25.0,
+        "ai_match": 0.0,
+        "ai_genre": null,
+        "profile_match": 0.0,
+        "profile_genre": null
+      },
+      {
+        "target": "Progressive House",
+        "weight": 20.0,
+        "ai_match": 0.2091,
+        "ai_genre": "Electronic---House",
+        "profile_match": 0.0814,
+        "profile_genre": "House"
+      },
+      {
+        "target": "Organic House",
+        "weight": 15.0,
+        "ai_match": 0.0,
+        "ai_genre": null,
+        "profile_match": 0.0,
+        "profile_genre": null
+      },
+      {
+        "target": "Chill",
+        "weight": 10.0,
+        "ai_match": 0.0,
+        "ai_genre": null,
+        "profile_match": 0.0,
+        "profile_genre": null
+      }
+    ],
+    "rank": 1,
+    "platform": "TikTok",
+    "anti_genre_hits": [],
+    "anti_genre_excluded": false,
+    "speech_ratio": 0.4795,
+    "speech_confidence": 0.9498,
+    "speech_recent_ratio": 0.4795,
+    "speech_recent_confidence": 0.9498,
+    "speech_recent_excluded": false,
+    "speech_excluded_until": null,
+    "speech_penalty": 18.31,
+    "speech_excluded": false,
+    "pre_anti_score": 52.31,
+    "anti_genre_penalty": 0.0,
+    "bpm_min": 108.0,
+    "bpm_max": 124.0,
+    "bpm_distance": 4.110000000000014,
+    "bpm_adjustment": -20.55,
+    "bpm_matching_enabled": true,
+    "bpm_status": "known",
+    "raw_score": 34.0,
+    "ai_freshness": 1.0,
+    "score_components": {
+      "live_genre": {
+        "score": 51.33,
+        "weight": 80.0
+      },
+      "profile": {
+        "score": 19.9,
+        "weight": 5.0
+      },
+      "bpm": {
+        "score": 79.45,
+        "weight": 8.12
+      }
+    },
+    "profile_driven": false
+  },
+  "decision_reason": "current_relay_is_best",
+  "ranked": [
+    {
+      "username": "cashmeresounduk",
+      "name": "CashmereSound",
+      "score": 33.79,
+      "ai_score": 51.33,
+      "genre_ai_score": 51.33,
+      "ai_evidence": true,
+      "ai_relevance": [
+        {
+          "genre": "Electronic---House",
+          "confidence": 0.3485,
+          "matched_target": "Deep House",
+          "match_strength": 0.6,
+          "target_preference": 1.0,
+          "relevance": 0.6
+        },
+        {
+          "genre": "Electronic---Deep House",
+          "confidence": 0.1976,
+          "matched_target": "Deep House",
+          "match_strength": 1.0,
+          "target_preference": 1.0,
+          "relevance": 1.0
+        },
+        {
+          "genre": "Electronic---Tech House",
+          "confidence": 0.1361,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Progressive House",
+          "confidence": 0.0915,
+          "matched_target": "Progressive House",
+          "match_strength": 1.0,
+          "target_preference": 0.6667,
+          "relevance": 0.6667
+        },
+        {
+          "genre": "Electronic---Tribal House",
+          "confidence": 0.0809,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Techno",
+          "confidence": 0.0565,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        }
+      ],
+      "bpm": 128.11,
+      "effective_bpm": 128.11,
+      "bpm_confidence": 0.5416,
+      "bpm_score": 79.45,
+      "bpm_weight": 8.124,
+      "bpm_target": {
+        "min": 107.0,
+        "max": 124.5
+      },
+      "profile_score": 19.9,
+      "profile_evidence": true,
+      "profile_relevance": [
+        {
+          "genre": "House",
+          "confidence": 0.1357,
+          "matched_target": "Deep House",
+          "match_strength": 0.6,
+          "target_preference": 1.0,
+          "relevance": 0.6
+        },
+        {
+          "genre": "Speed Garage",
+          "confidence": 0.0472,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Techno",
+          "confidence": 0.0457,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Tech House",
+          "confidence": 0.0405,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Progressive House",
+          "confidence": 0.0398,
+          "matched_target": "Progressive House",
+          "match_strength": 1.0,
+          "target_preference": 0.6667,
+          "relevance": 0.6667
+        },
+        {
+          "genre": "UK Garage",
+          "confidence": 0.039,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Bassline",
+          "confidence": 0.0375,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Tribal House",
+          "confidence": 0.0345,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Euro House",
+          "confidence": 0.0345,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Trance",
+          "confidence": 0.027,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Deep House",
+          "confidence": 0.0255,
+          "matched_target": "Deep House",
+          "match_strength": 1.0,
+          "target_preference": 1.0,
+          "relevance": 1.0
+        },
+        {
+          "genre": "Progressive Trance",
+          "confidence": 0.024,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Garage House",
+          "confidence": 0.024,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Tech Trance",
+          "confidence": 0.0233,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electro",
+          "confidence": 0.021,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Italodance",
+          "confidence": 0.0187,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electro House",
+          "confidence": 0.015,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Breakbeat",
+          "confidence": 0.0135,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Breaks",
+          "confidence": 0.012,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Eurodance",
+          "confidence": 0.012,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        }
+      ],
+      "profile_maturity": 0.75,
+      "viewer_bonus": 0.0,
+      "profile_source": "learned",
+      "learned_samples": 13,
+      "targets": [
+        {
+          "target": "Deep House",
+          "weight": 30.0,
+          "ai_match": 0.2091,
+          "ai_genre": "Electronic---House",
+          "profile_match": 0.0814,
+          "profile_genre": "House"
+        },
+        {
+          "target": "Melodic House",
+          "weight": 25.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        },
+        {
+          "target": "Progressive House",
+          "weight": 20.0,
+          "ai_match": 0.2091,
+          "ai_genre": "Electronic---House",
+          "profile_match": 0.0814,
+          "profile_genre": "House"
+        },
+        {
+          "target": "Organic House",
+          "weight": 15.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        },
+        {
+          "target": "Chill",
+          "weight": 10.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        }
+      ],
+      "rank": 1,
+      "platform": "TikTok",
+      "anti_genre_hits": [],
+      "anti_genre_excluded": false,
+      "speech_ratio": 0.4795,
+      "speech_confidence": 0.9498,
+      "speech_recent_ratio": 0.4795,
+      "speech_recent_confidence": 0.9498,
+      "speech_recent_excluded": false,
+      "speech_excluded_until": null,
+      "speech_penalty": 18.31,
+      "speech_excluded": false,
+      "pre_anti_score": 52.31,
+      "anti_genre_penalty": 0.0,
+      "bpm_min": 108.0,
+      "bpm_max": 124.0,
+      "bpm_distance": 4.110000000000014,
+      "bpm_adjustment": -20.55,
+      "bpm_matching_enabled": true,
+      "bpm_status": "known",
+      "raw_score": 34.0,
+      "ai_freshness": 1.0,
+      "score_components": {
+        "live_genre": {
+          "score": 51.33,
+          "weight": 80.0
+        },
+        "profile": {
+          "score": 19.9,
+          "weight": 5.0
+        },
+        "bpm": {
+          "score": 79.45,
+          "weight": 8.12
+        }
+      },
+      "profile_driven": false,
+      "relay_cooldown_until": null
+    },
+    {
+      "username": "djlefty8.8",
+      "name": "DJ LEFTY🇯🇵",
+      "score": 27.58,
+      "ai_score": 25.5,
+      "genre_ai_score": 25.5,
+      "ai_evidence": true,
+      "ai_relevance": [
+        {
+          "genre": "Electronic---House",
+          "confidence": 0.4064,
+          "matched_target": "Deep House",
+          "match_strength": 0.6,
+          "target_preference": 1.0,
+          "relevance": 0.6
+        },
+        {
+          "genre": "Electronic---Euro House",
+          "confidence": 0.1669,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Trance",
+          "confidence": 0.1076,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Eurodance",
+          "confidence": 0.1072,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Techno",
+          "confidence": 0.0975,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Tech House",
+          "confidence": 0.0648,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Speed Garage",
+          "confidence": 0.0611,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Deep House",
+          "confidence": 0.0587,
+          "matched_target": "Deep House",
+          "match_strength": 1.0,
+          "target_preference": 1.0,
+          "relevance": 1.0
+        },
+        {
+          "genre": "Electronic---Tribal House",
+          "confidence": 0.0587,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Tech Trance",
+          "confidence": 0.0574,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        }
+      ],
+      "bpm": 133.67,
+      "effective_bpm": 133.67,
+      "bpm_confidence": 0.6677,
+      "bpm_score": 51.65,
+      "bpm_weight": 10.0155,
+      "bpm_target": {
+        "min": 107.0,
+        "max": 124.5
+      },
+      "profile_score": 12.73,
+      "profile_evidence": true,
+      "profile_relevance": [
+        {
+          "genre": "House",
+          "confidence": 0.122,
+          "matched_target": "Deep House",
+          "match_strength": 0.6,
+          "target_preference": 1.0,
+          "relevance": 0.6
+        },
+        {
+          "genre": "Psy-Trance",
+          "confidence": 0.113,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Goa Trance",
+          "confidence": 0.081,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Trance",
+          "confidence": 0.071,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Techno",
+          "confidence": 0.061,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Tech Trance",
+          "confidence": 0.053,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Euro House",
+          "confidence": 0.051,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Progressive Trance",
+          "confidence": 0.031,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Tribal House",
+          "confidence": 0.03,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Interview",
+          "confidence": 0.028,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Progressive House",
+          "confidence": 0.027,
+          "matched_target": "Progressive House",
+          "match_strength": 1.0,
+          "target_preference": 0.6667,
+          "relevance": 0.6667
+        },
+        {
+          "genre": "Eurodance",
+          "confidence": 0.022,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Tech House",
+          "confidence": 0.02,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electro",
+          "confidence": 0.017,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Hard Trance",
+          "confidence": 0.017,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Schranz",
+          "confidence": 0.015,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Hard Techno",
+          "confidence": 0.014,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Speed Garage",
+          "confidence": 0.013,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electro House",
+          "confidence": 0.013,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Deep House",
+          "confidence": 0.012,
+          "matched_target": "Deep House",
+          "match_strength": 1.0,
+          "target_preference": 1.0,
+          "relevance": 1.0
+        }
+      ],
+      "profile_maturity": 1.0,
+      "viewer_bonus": 0.0,
+      "profile_source": "learned",
+      "learned_samples": 239,
+      "targets": [
+        {
+          "target": "Deep House",
+          "weight": 30.0,
+          "ai_match": 0.2439,
+          "ai_genre": "Electronic---House",
+          "profile_match": 0.0732,
+          "profile_genre": "House"
+        },
+        {
+          "target": "Melodic House",
+          "weight": 25.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        },
+        {
+          "target": "Progressive House",
+          "weight": 20.0,
+          "ai_match": 0.2439,
+          "ai_genre": "Electronic---House",
+          "profile_match": 0.0732,
+          "profile_genre": "House"
+        },
+        {
+          "target": "Organic House",
+          "weight": 15.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        },
+        {
+          "target": "Chill",
+          "weight": 10.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        }
+      ],
+      "rank": 2,
+      "platform": "TikTok",
+      "anti_genre_hits": [],
+      "anti_genre_excluded": false,
+      "speech_ratio": 0.0,
+      "speech_confidence": 0.0,
+      "speech_recent_ratio": 0.0,
+      "speech_recent_confidence": 0.0,
+      "speech_recent_excluded": false,
+      "speech_excluded_until": null,
+      "speech_penalty": 0.0,
+      "speech_excluded": false,
+      "pre_anti_score": 27.85,
+      "anti_genre_penalty": 0.0,
+      "bpm_min": 108.0,
+      "bpm_max": 124.0,
+      "bpm_distance": 9.669999999999987,
+      "bpm_adjustment": -48.35,
+      "bpm_matching_enabled": true,
+      "bpm_status": "known",
+      "raw_score": 27.85,
+      "ai_freshness": 1.0,
+      "score_components": {
+        "live_genre": {
+          "score": 25.5,
+          "weight": 80.0
+        },
+        "profile": {
+          "score": 12.73,
+          "weight": 5.0
+        },
+        "bpm": {
+          "score": 51.65,
+          "weight": 10.02
+        }
+      },
+      "profile_driven": false,
+      "relay_cooldown_until": null
+    },
+    {
+      "username": "seriouzink1312",
+      "name": "Seriouz Ink",
+      "score": 22.78,
+      "ai_score": 15.25,
+      "genre_ai_score": 15.25,
+      "ai_evidence": true,
+      "ai_relevance": [
+        {
+          "genre": "Electronic---Minimal Techno",
+          "confidence": 0.341,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Tech House",
+          "confidence": 0.3044,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Techno",
+          "confidence": 0.2745,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---House",
+          "confidence": 0.2206,
+          "matched_target": "Deep House",
+          "match_strength": 0.6,
+          "target_preference": 1.0,
+          "relevance": 0.6
+        },
+        {
+          "genre": "Electronic---Minimal",
+          "confidence": 0.1847,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Deep House",
+          "confidence": 0.1366,
+          "matched_target": "Deep House",
+          "match_strength": 1.0,
+          "target_preference": 1.0,
+          "relevance": 1.0
+        },
+        {
+          "genre": "Electronic---Electro",
+          "confidence": 0.106,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Disco",
+          "confidence": 0.0689,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Deep Techno",
+          "confidence": 0.0683,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Tribal House",
+          "confidence": 0.0586,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        }
+      ],
+      "bpm": 127.05,
+      "effective_bpm": 127.05,
+      "bpm_confidence": 0.6945,
+      "bpm_score": 84.75,
+      "bpm_weight": 10.4175,
+      "bpm_target": {
+        "min": 107.0,
+        "max": 124.5
+      },
+      "profile_score": 14.15,
+      "profile_evidence": true,
+      "profile_relevance": [
+        {
+          "genre": "Techno",
+          "confidence": 0.166,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Tech House",
+          "confidence": 0.129,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "House",
+          "confidence": 0.118,
+          "matched_target": "Deep House",
+          "match_strength": 0.6,
+          "target_preference": 1.0,
+          "relevance": 0.6
+        },
+        {
+          "genre": "Minimal Techno",
+          "confidence": 0.092,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Minimal",
+          "confidence": 0.081,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electro",
+          "confidence": 0.042,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Tribal House",
+          "confidence": 0.041,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Deep House",
+          "confidence": 0.035,
+          "matched_target": "Deep House",
+          "match_strength": 1.0,
+          "target_preference": 1.0,
+          "relevance": 1.0
+        },
+        {
+          "genre": "Progressive House",
+          "confidence": 0.03,
+          "matched_target": "Progressive House",
+          "match_strength": 1.0,
+          "target_preference": 0.6667,
+          "relevance": 0.6667
+        },
+        {
+          "genre": "Electro House",
+          "confidence": 0.023,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Synth-pop",
+          "confidence": 0.02,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Tech Trance",
+          "confidence": 0.018,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Deep Techno",
+          "confidence": 0.014,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Schranz",
+          "confidence": 0.013,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Experimental",
+          "confidence": 0.013,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Field Recording",
+          "confidence": 0.012,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Hard Techno",
+          "confidence": 0.012,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Trance",
+          "confidence": 0.011,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Folk",
+          "confidence": 0.01,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Disco",
+          "confidence": 0.009,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        }
+      ],
+      "profile_maturity": 1.0,
+      "viewer_bonus": 0.0,
+      "profile_source": "learned",
+      "learned_samples": 299,
+      "targets": [
+        {
+          "target": "Deep House",
+          "weight": 30.0,
+          "ai_match": 0.1366,
+          "ai_genre": "Electronic---Deep House",
+          "profile_match": 0.0708,
+          "profile_genre": "House"
+        },
+        {
+          "target": "Melodic House",
+          "weight": 25.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        },
+        {
+          "target": "Progressive House",
+          "weight": 20.0,
+          "ai_match": 0.1324,
+          "ai_genre": "Electronic---House",
+          "profile_match": 0.0708,
+          "profile_genre": "House"
+        },
+        {
+          "target": "Organic House",
+          "weight": 15.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        },
+        {
+          "target": "Chill",
+          "weight": 10.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        }
+      ],
+      "rank": 3,
+      "platform": "TikTok",
+      "anti_genre_hits": [],
+      "anti_genre_excluded": false,
+      "speech_ratio": 0.0,
+      "speech_confidence": 0.0,
+      "speech_recent_ratio": 0.0,
+      "speech_recent_confidence": 0.0,
+      "speech_recent_excluded": false,
+      "speech_excluded_until": null,
+      "speech_penalty": 0.0,
+      "speech_excluded": false,
+      "pre_anti_score": 23.05,
+      "anti_genre_penalty": 0.0,
+      "bpm_min": 108.0,
+      "bpm_max": 124.0,
+      "bpm_distance": 3.049999999999997,
+      "bpm_adjustment": -15.25,
+      "bpm_matching_enabled": true,
+      "bpm_status": "known",
+      "raw_score": 23.05,
+      "ai_freshness": 1.0,
+      "score_components": {
+        "live_genre": {
+          "score": 15.25,
+          "weight": 80.0
+        },
+        "profile": {
+          "score": 14.15,
+          "weight": 5.0
+        },
+        "bpm": {
+          "score": 84.75,
+          "weight": 10.42
+        }
+      },
+      "profile_driven": false,
+      "relay_cooldown_until": null
+    },
+    {
+      "username": "eagle_fligh7",
+      "name": "DJ EAGLE FLIGHT",
+      "score": 21.9,
+      "ai_score": 13.45,
+      "genre_ai_score": 13.45,
+      "ai_evidence": true,
+      "ai_relevance": [
+        {
+          "genre": "Electronic---Progressive House",
+          "confidence": 0.3137,
+          "matched_target": "Progressive House",
+          "match_strength": 1.0,
+          "target_preference": 0.6667,
+          "relevance": 0.6667
+        },
+        {
+          "genre": "Electronic---Tech Trance",
+          "confidence": 0.2715,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Psy-Trance",
+          "confidence": 0.2619,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Progressive Trance",
+          "confidence": 0.2348,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Trance",
+          "confidence": 0.1964,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Techno",
+          "confidence": 0.1029,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Tech House",
+          "confidence": 0.0988,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Progressive Breaks",
+          "confidence": 0.0749,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        }
+      ],
+      "bpm": 126.86,
+      "effective_bpm": 126.86,
+      "bpm_confidence": 0.7249,
+      "bpm_score": 85.7,
+      "bpm_weight": 10.8735,
+      "bpm_target": {
+        "min": 107.0,
+        "max": 124.5
+      },
+      "profile_score": 18.45,
+      "profile_evidence": true,
+      "profile_relevance": [
+        {
+          "genre": "House",
+          "confidence": 0.123,
+          "matched_target": "Deep House",
+          "match_strength": 0.6,
+          "target_preference": 1.0,
+          "relevance": 0.6
+        },
+        {
+          "genre": "Techno",
+          "confidence": 0.101,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Progressive House",
+          "confidence": 0.094,
+          "matched_target": "Progressive House",
+          "match_strength": 1.0,
+          "target_preference": 0.6667,
+          "relevance": 0.6667
+        },
+        {
+          "genre": "Tech House",
+          "confidence": 0.069,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electro",
+          "confidence": 0.065,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Tech Trance",
+          "confidence": 0.05,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Trance",
+          "confidence": 0.045,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electro House",
+          "confidence": 0.044,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Progressive Trance",
+          "confidence": 0.042,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Tribal House",
+          "confidence": 0.04,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Progressive Breaks",
+          "confidence": 0.032,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Euro House",
+          "confidence": 0.027,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Deep House",
+          "confidence": 0.02,
+          "matched_target": "Deep House",
+          "match_strength": 1.0,
+          "target_preference": 1.0,
+          "relevance": 1.0
+        },
+        {
+          "genre": "Psy-Trance",
+          "confidence": 0.018,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Minimal Techno",
+          "confidence": 0.017,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "EBM",
+          "confidence": 0.016,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Breaks",
+          "confidence": 0.012,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Ambient",
+          "confidence": 0.011,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Industrial",
+          "confidence": 0.011,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Synth-pop",
+          "confidence": 0.011,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        }
+      ],
+      "profile_maturity": 1.0,
+      "viewer_bonus": 0.0,
+      "profile_source": "learned",
+      "learned_samples": 240,
+      "targets": [
+        {
+          "target": "Deep House",
+          "weight": 30.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0738,
+          "profile_genre": "House"
+        },
+        {
+          "target": "Melodic House",
+          "weight": 25.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        },
+        {
+          "target": "Progressive House",
+          "weight": 20.0,
+          "ai_match": 0.3137,
+          "ai_genre": "Electronic---Progressive House",
+          "profile_match": 0.094,
+          "profile_genre": "Progressive House"
+        },
+        {
+          "target": "Organic House",
+          "weight": 15.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        },
+        {
+          "target": "Chill",
+          "weight": 10.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        }
+      ],
+      "rank": 4,
+      "platform": "TikTok",
+      "anti_genre_hits": [],
+      "anti_genre_excluded": false,
+      "speech_ratio": 0.0,
+      "speech_confidence": 0.0,
+      "speech_recent_ratio": 0.0,
+      "speech_recent_confidence": 0.0,
+      "speech_recent_excluded": false,
+      "speech_excluded_until": null,
+      "speech_penalty": 0.0,
+      "speech_excluded": false,
+      "pre_anti_score": 22.19,
+      "anti_genre_penalty": 0.0,
+      "bpm_min": 108.0,
+      "bpm_max": 124.0,
+      "bpm_distance": 2.8599999999999994,
+      "bpm_adjustment": -14.3,
+      "bpm_matching_enabled": true,
+      "bpm_status": "known",
+      "raw_score": 22.19,
+      "ai_freshness": 1.0,
+      "score_components": {
+        "live_genre": {
+          "score": 13.45,
+          "weight": 80.0
+        },
+        "profile": {
+          "score": 18.45,
+          "weight": 5.0
+        },
+        "bpm": {
+          "score": 85.7,
+          "weight": 10.87
+        }
+      },
+      "profile_driven": false,
+      "relay_cooldown_until": null
+    },
+    {
+      "username": "guenthervictor",
+      "name": "🕛TIMELESS TECHNO🕛",
+      "score": 20.62,
+      "ai_score": 15.49,
+      "genre_ai_score": 15.49,
+      "ai_evidence": true,
+      "ai_relevance": [
+        {
+          "genre": "Electronic---Progressive Breaks",
+          "confidence": 0.5581,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Progressive House",
+          "confidence": 0.4873,
+          "matched_target": "Progressive House",
+          "match_strength": 1.0,
+          "target_preference": 0.6667,
+          "relevance": 0.6667
+        },
+        {
+          "genre": "Electronic---Progressive Trance",
+          "confidence": 0.2588,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Trance",
+          "confidence": 0.2231,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Breaks",
+          "confidence": 0.1709,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Tech Trance",
+          "confidence": 0.0996,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Ambient",
+          "confidence": 0.0795,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Techno",
+          "confidence": 0.077,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Downtempo",
+          "confidence": 0.0717,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Tech House",
+          "confidence": 0.0711,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        }
+      ],
+      "bpm": 127.24,
+      "effective_bpm": 127.24,
+      "bpm_confidence": 0.4561,
+      "bpm_score": 83.8,
+      "bpm_weight": 6.8415,
+      "bpm_target": {
+        "min": 107.0,
+        "max": 124.5
+      },
+      "profile_score": 16.2,
+      "profile_evidence": true,
+      "profile_relevance": [
+        {
+          "genre": "Progressive House",
+          "confidence": 0.125,
+          "matched_target": "Progressive House",
+          "match_strength": 1.0,
+          "target_preference": 0.6667,
+          "relevance": 0.6667
+        },
+        {
+          "genre": "Techno",
+          "confidence": 0.117,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Tech Trance",
+          "confidence": 0.115,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Progressive Breaks",
+          "confidence": 0.082,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Trance",
+          "confidence": 0.069,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Deep Techno",
+          "confidence": 0.044,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "House",
+          "confidence": 0.039,
+          "matched_target": "Deep House",
+          "match_strength": 0.6,
+          "target_preference": 1.0,
+          "relevance": 0.6
+        },
+        {
+          "genre": "Progressive Trance",
+          "confidence": 0.038,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Tech House",
+          "confidence": 0.036,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Deep House",
+          "confidence": 0.035,
+          "matched_target": "Deep House",
+          "match_strength": 1.0,
+          "target_preference": 1.0,
+          "relevance": 1.0
+        },
+        {
+          "genre": "Psy-Trance",
+          "confidence": 0.023,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electro House",
+          "confidence": 0.022,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Minimal Techno",
+          "confidence": 0.022,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Ambient",
+          "confidence": 0.019,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Audiobook",
+          "confidence": 0.017,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Tropical House",
+          "confidence": 0.016,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Downtempo",
+          "confidence": 0.016,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electro",
+          "confidence": 0.015,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Hard Techno",
+          "confidence": 0.014,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Comedy",
+          "confidence": 0.011,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        }
+      ],
+      "profile_maturity": 1.0,
+      "viewer_bonus": 0.0,
+      "profile_source": "learned",
+      "learned_samples": 594,
+      "targets": [
+        {
+          "target": "Deep House",
+          "weight": 30.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.035,
+          "profile_genre": "Deep House"
+        },
+        {
+          "target": "Melodic House",
+          "weight": 25.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        },
+        {
+          "target": "Progressive House",
+          "weight": 20.0,
+          "ai_match": 0.4873,
+          "ai_genre": "Electronic---Progressive House",
+          "profile_match": 0.125,
+          "profile_genre": "Progressive House"
+        },
+        {
+          "target": "Organic House",
+          "weight": 15.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        },
+        {
+          "target": "Chill",
+          "weight": 10.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        }
+      ],
+      "rank": 5,
+      "platform": "TikTok",
+      "anti_genre_hits": [],
+      "anti_genre_excluded": false,
+      "speech_ratio": 0.0,
+      "speech_confidence": 0.0,
+      "speech_recent_ratio": 0.0,
+      "speech_recent_confidence": 0.0,
+      "speech_recent_excluded": false,
+      "speech_excluded_until": null,
+      "speech_penalty": 0.0,
+      "speech_excluded": false,
+      "pre_anti_score": 20.8,
+      "anti_genre_penalty": 0.0,
+      "bpm_min": 108.0,
+      "bpm_max": 124.0,
+      "bpm_distance": 3.239999999999995,
+      "bpm_adjustment": -16.2,
+      "bpm_matching_enabled": true,
+      "bpm_status": "known",
+      "raw_score": 20.8,
+      "ai_freshness": 1.0,
+      "score_components": {
+        "live_genre": {
+          "score": 15.49,
+          "weight": 80.0
+        },
+        "profile": {
+          "score": 16.2,
+          "weight": 5.0
+        },
+        "bpm": {
+          "score": 83.8,
+          "weight": 6.84
+        }
+      },
+      "profile_driven": false,
+      "relay_cooldown_until": null
+    },
+    {
+      "username": "hospitalrecords",
+      "name": "Hospital Records",
+      "score": 7.97,
+      "ai_score": 9.42,
+      "genre_ai_score": 9.42,
+      "ai_evidence": true,
+      "ai_relevance": [
+        {
+          "genre": "Electronic---Drum n Bass",
+          "confidence": 0.7914,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Progressive House",
+          "confidence": 0.2532,
+          "matched_target": "Progressive House",
+          "match_strength": 1.0,
+          "target_preference": 0.6667,
+          "relevance": 0.6667
+        },
+        {
+          "genre": "Electronic---Jungle",
+          "confidence": 0.16,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Downtempo",
+          "confidence": 0.1027,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Progressive Breaks",
+          "confidence": 0.0972,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Progressive Trance",
+          "confidence": 0.0948,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Trance",
+          "confidence": 0.0826,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Ambient",
+          "confidence": 0.0724,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Breakcore",
+          "confidence": 0.0719,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Breaks",
+          "confidence": 0.0653,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        }
+      ],
+      "bpm": 86.0,
+      "effective_bpm": 86.0,
+      "bpm_confidence": 0.7547,
+      "bpm_score": 0.0,
+      "bpm_weight": 11.3205,
+      "bpm_target": {
+        "min": 107.0,
+        "max": 124.5
+      },
+      "profile_score": 2.88,
+      "profile_evidence": true,
+      "profile_relevance": [
+        {
+          "genre": "Drum n Bass",
+          "confidence": 0.378,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Halftime",
+          "confidence": 0.143,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Jungle",
+          "confidence": 0.105,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Dubstep",
+          "confidence": 0.067,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Ambient",
+          "confidence": 0.03,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Downtempo",
+          "confidence": 0.03,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Hardcore",
+          "confidence": 0.021,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "House",
+          "confidence": 0.021,
+          "matched_target": "Deep House",
+          "match_strength": 0.6,
+          "target_preference": 1.0,
+          "relevance": 0.6
+        },
+        {
+          "genre": "Happy Hardcore",
+          "confidence": 0.018,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Breakcore",
+          "confidence": 0.015,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Experimental",
+          "confidence": 0.015,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Ragga",
+          "confidence": 0.014,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Juke",
+          "confidence": 0.012,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Progressive House",
+          "confidence": 0.01,
+          "matched_target": "Progressive House",
+          "match_strength": 1.0,
+          "target_preference": 0.6667,
+          "relevance": 0.6667
+        },
+        {
+          "genre": "Deep House",
+          "confidence": 0.007,
+          "matched_target": "Deep House",
+          "match_strength": 1.0,
+          "target_preference": 1.0,
+          "relevance": 1.0
+        },
+        {
+          "genre": "Breakbeat",
+          "confidence": 0.006,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Chillwave",
+          "confidence": 0.006,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Bassline",
+          "confidence": 0.005,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Trance",
+          "confidence": 0.005,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Progressive Trance",
+          "confidence": 0.004,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        }
+      ],
+      "profile_maturity": 1.0,
+      "viewer_bonus": 0.0,
+      "profile_source": "learned",
+      "learned_samples": 661,
+      "targets": [
+        {
+          "target": "Deep House",
+          "weight": 30.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0126,
+          "profile_genre": "House"
+        },
+        {
+          "target": "Melodic House",
+          "weight": 25.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        },
+        {
+          "target": "Progressive House",
+          "weight": 20.0,
+          "ai_match": 0.2532,
+          "ai_genre": "Electronic---Progressive House",
+          "profile_match": 0.0126,
+          "profile_genre": "House"
+        },
+        {
+          "target": "Organic House",
+          "weight": 15.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        },
+        {
+          "target": "Chill",
+          "weight": 10.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        }
+      ],
+      "rank": 6,
+      "platform": "YouTube",
+      "anti_genre_hits": [],
+      "anti_genre_excluded": false,
+      "speech_ratio": 0.0,
+      "speech_confidence": 0.0,
+      "speech_recent_ratio": 0.0,
+      "speech_recent_confidence": 0.0,
+      "speech_recent_excluded": false,
+      "speech_excluded_until": null,
+      "speech_penalty": 0.0,
+      "speech_excluded": false,
+      "pre_anti_score": 7.97,
+      "anti_genre_penalty": 0.0,
+      "bpm_min": 108.0,
+      "bpm_max": 124.0,
+      "bpm_distance": 22.0,
+      "bpm_adjustment": -100.0,
+      "bpm_matching_enabled": true,
+      "bpm_status": "known",
+      "raw_score": 7.97,
+      "ai_freshness": 1.0,
+      "score_components": {
+        "live_genre": {
+          "score": 9.42,
+          "weight": 80.0
+        },
+        "profile": {
+          "score": 2.88,
+          "weight": 5.0
+        },
+        "bpm": {
+          "score": 0.0,
+          "weight": 11.32
+        }
+      },
+      "profile_driven": false,
+      "relay_cooldown_until": null
+    },
+    {
+      "username": "juliaonair",
+      "name": "JULIAONAIR",
+      "score": 5.89,
+      "ai_score": 5.99,
+      "genre_ai_score": 5.99,
+      "ai_evidence": true,
+      "ai_relevance": [
+        {
+          "genre": "Electronic---Hardcore",
+          "confidence": 0.1161,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Hardstyle",
+          "confidence": 0.0922,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Techno",
+          "confidence": 0.0691,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Jumpstyle",
+          "confidence": 0.0668,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Trance",
+          "confidence": 0.0649,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Speedcore",
+          "confidence": 0.0618,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---House",
+          "confidence": 0.058,
+          "matched_target": "Deep House",
+          "match_strength": 0.6,
+          "target_preference": 1.0,
+          "relevance": 0.6
+        },
+        {
+          "genre": "Electronic---Gabber",
+          "confidence": 0.0522,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        }
+      ],
+      "bpm": 143.04,
+      "effective_bpm": 143.04,
+      "bpm_confidence": 0.1321,
+      "bpm_score": 4.8,
+      "bpm_weight": 1.9815,
+      "bpm_target": {
+        "min": 107.0,
+        "max": 124.5
+      },
+      "profile_score": 4.67,
+      "profile_evidence": true,
+      "profile_relevance": [
+        {
+          "genre": "Trance",
+          "confidence": 0.184,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Tech Trance",
+          "confidence": 0.182,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Techno",
+          "confidence": 0.079,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Hard Trance",
+          "confidence": 0.067,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "House",
+          "confidence": 0.054,
+          "matched_target": "Deep House",
+          "match_strength": 0.6,
+          "target_preference": 1.0,
+          "relevance": 0.6
+        },
+        {
+          "genre": "Psy-Trance",
+          "confidence": 0.054,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Progressive Trance",
+          "confidence": 0.05,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Euro House",
+          "confidence": 0.043,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Hands Up",
+          "confidence": 0.035,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electro",
+          "confidence": 0.023,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Goa Trance",
+          "confidence": 0.022,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Hardstyle",
+          "confidence": 0.019,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Eurodance",
+          "confidence": 0.016,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Hard House",
+          "confidence": 0.015,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Progressive House",
+          "confidence": 0.015,
+          "matched_target": "Progressive House",
+          "match_strength": 1.0,
+          "target_preference": 0.6667,
+          "relevance": 0.6667
+        },
+        {
+          "genre": "Speed Garage",
+          "confidence": 0.012,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electro House",
+          "confidence": 0.012,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Donk",
+          "confidence": 0.009,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Italodance",
+          "confidence": 0.008,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Tech House",
+          "confidence": 0.008,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        }
+      ],
+      "profile_maturity": 1.0,
+      "viewer_bonus": 0.0,
+      "profile_source": "learned",
+      "learned_samples": 241,
+      "targets": [
+        {
+          "target": "Deep House",
+          "weight": 30.0,
+          "ai_match": 0.0348,
+          "ai_genre": "Electronic---House",
+          "profile_match": 0.0324,
+          "profile_genre": "House"
+        },
+        {
+          "target": "Melodic House",
+          "weight": 25.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        },
+        {
+          "target": "Progressive House",
+          "weight": 20.0,
+          "ai_match": 0.0348,
+          "ai_genre": "Electronic---House",
+          "profile_match": 0.0324,
+          "profile_genre": "House"
+        },
+        {
+          "target": "Organic House",
+          "weight": 15.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        },
+        {
+          "target": "Chill",
+          "weight": 10.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        }
+      ],
+      "rank": 7,
+      "platform": "TikTok",
+      "anti_genre_hits": [],
+      "anti_genre_excluded": false,
+      "speech_ratio": 0.0,
+      "speech_confidence": 0.0,
+      "speech_recent_ratio": 0.0,
+      "speech_recent_confidence": 0.0,
+      "speech_recent_excluded": false,
+      "speech_excluded_until": null,
+      "speech_penalty": 0.0,
+      "speech_excluded": false,
+      "pre_anti_score": 5.94,
+      "anti_genre_penalty": 0.0,
+      "bpm_min": 108.0,
+      "bpm_max": 124.0,
+      "bpm_distance": 19.039999999999992,
+      "bpm_adjustment": -95.2,
+      "bpm_matching_enabled": true,
+      "bpm_status": "known",
+      "raw_score": 5.94,
+      "ai_freshness": 1.0,
+      "score_components": {
+        "live_genre": {
+          "score": 5.99,
+          "weight": 80.0
+        },
+        "profile": {
+          "score": 4.67,
+          "weight": 5.0
+        },
+        "bpm": {
+          "score": 4.8,
+          "weight": 1.98
+        }
+      },
+      "profile_driven": false,
+      "relay_cooldown_until": null
+    },
+    {
+      "username": "indigirl027",
+      "name": "Dj Sweetly💕💕",
+      "score": 5.49,
+      "ai_score": 0.0,
+      "genre_ai_score": 0.0,
+      "ai_evidence": false,
+      "ai_relevance": [],
+      "bpm": null,
+      "effective_bpm": null,
+      "bpm_confidence": 0.0,
+      "bpm_score": null,
+      "bpm_weight": 0.0,
+      "bpm_target": {
+        "min": 107.0,
+        "max": 124.5
+      },
+      "profile_score": 5.49,
+      "profile_evidence": true,
+      "profile_relevance": [
+        {
+          "genre": "Hands Up",
+          "confidence": 0.241,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Hard Trance",
+          "confidence": 0.133,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Trance",
+          "confidence": 0.118,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "House",
+          "confidence": 0.087,
+          "matched_target": "Deep House",
+          "match_strength": 0.6,
+          "target_preference": 1.0,
+          "relevance": 0.6
+        },
+        {
+          "genre": "Euro House",
+          "confidence": 0.083,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Donk",
+          "confidence": 0.069,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Hard House",
+          "confidence": 0.069,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Eurodance",
+          "confidence": 0.037,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Jumpstyle",
+          "confidence": 0.02,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Happy Hardcore",
+          "confidence": 0.014,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Techno",
+          "confidence": 0.011,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "J-pop",
+          "confidence": 0.01,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Downtempo",
+          "confidence": 0.01,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Hardstyle",
+          "confidence": 0.009,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Disco Polo",
+          "confidence": 0.009,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electro",
+          "confidence": 0.007,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Italodance",
+          "confidence": 0.007,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Dance-pop",
+          "confidence": 0.006,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electro House",
+          "confidence": 0.005,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Psy-Trance",
+          "confidence": 0.005,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        }
+      ],
+      "profile_maturity": 1.0,
+      "viewer_bonus": 0.0,
+      "profile_source": "learned",
+      "learned_samples": 34,
+      "targets": [
+        {
+          "target": "Deep House",
+          "weight": 30.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0522,
+          "profile_genre": "House"
+        },
+        {
+          "target": "Melodic House",
+          "weight": 25.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        },
+        {
+          "target": "Progressive House",
+          "weight": 20.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0522,
+          "profile_genre": "House"
+        },
+        {
+          "target": "Organic House",
+          "weight": 15.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        },
+        {
+          "target": "Chill",
+          "weight": 10.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        }
+      ],
+      "rank": 8,
+      "platform": "TikTok",
+      "anti_genre_hits": [],
+      "anti_genre_excluded": false,
+      "speech_ratio": 0.0,
+      "speech_confidence": 0.0,
+      "speech_recent_ratio": 0.0,
+      "speech_recent_confidence": 0.0,
+      "speech_recent_excluded": false,
+      "speech_excluded_until": null,
+      "speech_penalty": 0.0,
+      "speech_excluded": false,
+      "pre_anti_score": 5.49,
+      "anti_genre_penalty": 0.0,
+      "bpm_min": 108.0,
+      "bpm_max": 124.0,
+      "bpm_distance": null,
+      "bpm_adjustment": 0.0,
+      "bpm_matching_enabled": true,
+      "bpm_status": "unknown",
+      "raw_score": 5.49,
+      "ai_freshness": 0.0,
+      "score_components": {
+        "profile": {
+          "score": 5.49,
+          "weight": 85.0
+        }
+      },
+      "profile_driven": true,
+      "relay_cooldown_until": null
+    },
+    {
+      "username": "cksone",
+      "name": "CK-SONE",
+      "score": 0.1,
+      "ai_score": 0.0,
+      "genre_ai_score": 0.0,
+      "ai_evidence": true,
+      "ai_relevance": [
+        {
+          "genre": "Electronic---Hardstyle",
+          "confidence": 0.2561,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Goa Trance",
+          "confidence": 0.1618,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Psy-Trance",
+          "confidence": 0.1358,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Hard Trance",
+          "confidence": 0.0766,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Hardcore",
+          "confidence": 0.064,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Trance",
+          "confidence": 0.0586,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Tech Trance",
+          "confidence": 0.055,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        }
+      ],
+      "bpm": 153.59,
+      "effective_bpm": 153.59,
+      "bpm_confidence": 0.2912,
+      "bpm_score": 0.0,
+      "bpm_weight": 4.368,
+      "bpm_target": {
+        "min": 107.0,
+        "max": 124.5
+      },
+      "profile_score": 1.85,
+      "profile_evidence": true,
+      "profile_relevance": [
+        {
+          "genre": "Techno",
+          "confidence": 0.197,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Hard Techno",
+          "confidence": 0.135,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Schranz",
+          "confidence": 0.121,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Tech Trance",
+          "confidence": 0.092,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Trance",
+          "confidence": 0.07,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Hardcore",
+          "confidence": 0.047,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Psy-Trance",
+          "confidence": 0.044,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Hard Trance",
+          "confidence": 0.023,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Acid",
+          "confidence": 0.023,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Hardstyle",
+          "confidence": 0.019,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Goa Trance",
+          "confidence": 0.017,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "House",
+          "confidence": 0.015,
+          "matched_target": "Deep House",
+          "match_strength": 0.6,
+          "target_preference": 1.0,
+          "relevance": 0.6
+        },
+        {
+          "genre": "Progressive Trance",
+          "confidence": 0.015,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Progressive House",
+          "confidence": 0.011,
+          "matched_target": "Progressive House",
+          "match_strength": 1.0,
+          "target_preference": 0.6667,
+          "relevance": 0.6667
+        },
+        {
+          "genre": "Happy Hardcore",
+          "confidence": 0.01,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Deep Techno",
+          "confidence": 0.01,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Tech House",
+          "confidence": 0.01,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Gabber",
+          "confidence": 0.008,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Tribal",
+          "confidence": 0.008,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Minimal Techno",
+          "confidence": 0.008,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        }
+      ],
+      "profile_maturity": 1.0,
+      "viewer_bonus": 0.0,
+      "profile_source": "learned",
+      "learned_samples": 623,
+      "targets": [
+        {
+          "target": "Deep House",
+          "weight": 30.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.009,
+          "profile_genre": "House"
+        },
+        {
+          "target": "Melodic House",
+          "weight": 25.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        },
+        {
+          "target": "Progressive House",
+          "weight": 20.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.011,
+          "profile_genre": "Progressive House"
+        },
+        {
+          "target": "Organic House",
+          "weight": 15.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        },
+        {
+          "target": "Chill",
+          "weight": 10.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        }
+      ],
+      "rank": 9,
+      "platform": "TikTok",
+      "anti_genre_hits": [],
+      "anti_genre_excluded": false,
+      "speech_ratio": 0.0,
+      "speech_confidence": 0.0,
+      "speech_recent_ratio": 0.0,
+      "speech_recent_confidence": 0.0,
+      "speech_recent_excluded": false,
+      "speech_excluded_until": null,
+      "speech_penalty": 0.0,
+      "speech_excluded": false,
+      "pre_anti_score": 0.1,
+      "anti_genre_penalty": 0.0,
+      "bpm_min": 108.0,
+      "bpm_max": 124.0,
+      "bpm_distance": 29.590000000000003,
+      "bpm_adjustment": -100.0,
+      "bpm_matching_enabled": true,
+      "bpm_status": "known",
+      "raw_score": 0.1,
+      "ai_freshness": 1.0,
+      "score_components": {
+        "live_genre": {
+          "score": 0.0,
+          "weight": 80.0
+        },
+        "profile": {
+          "score": 1.85,
+          "weight": 5.0
+        },
+        "bpm": {
+          "score": 0.0,
+          "weight": 4.37
+        }
+      },
+      "profile_driven": false,
+      "relay_cooldown_until": null
+    },
+    {
+      "username": "uc7etk_o4bn9qumfgrm2auva",
+      "name": "LiquidHour DnB",
+      "score": 0.0,
+      "ai_score": 0.0,
+      "genre_ai_score": 0.0,
+      "ai_evidence": true,
+      "ai_relevance": [
+        {
+          "genre": "Electronic---Chillwave",
+          "confidence": 0.4198,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Downtempo",
+          "confidence": 0.4184,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Ambient",
+          "confidence": 0.2999,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Drum n Bass",
+          "confidence": 0.2602,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Halftime",
+          "confidence": 0.234,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Electronic---Vaporwave",
+          "confidence": 0.068,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        }
+      ],
+      "bpm": 172.27,
+      "effective_bpm": 86.14,
+      "bpm_confidence": 0.4333,
+      "bpm_score": 0.0,
+      "bpm_weight": 6.4995,
+      "bpm_target": {
+        "min": 107.0,
+        "max": 124.5
+      },
+      "profile_score": 0.0,
+      "profile_evidence": true,
+      "profile_relevance": [
+        {
+          "genre": "Chillwave",
+          "confidence": 0.223,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Downtempo",
+          "confidence": 0.223,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Ambient",
+          "confidence": 0.185,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Drum n Bass",
+          "confidence": 0.119,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Halftime",
+          "confidence": 0.087,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Experimental",
+          "confidence": 0.038,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Vaporwave",
+          "confidence": 0.03,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Trip Hop",
+          "confidence": 0.018,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Synthwave",
+          "confidence": 0.01,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Cloud Rap",
+          "confidence": 0.009,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Dubstep",
+          "confidence": 0.008,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "New Age",
+          "confidence": 0.007,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Minimal",
+          "confidence": 0.006,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "IDM",
+          "confidence": 0.005,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Berlin-School",
+          "confidence": 0.005,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Drone",
+          "confidence": 0.004,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Glitch",
+          "confidence": 0.003,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Instrumental",
+          "confidence": 0.003,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Beatdown",
+          "confidence": 0.003,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        },
+        {
+          "genre": "Trap",
+          "confidence": 0.002,
+          "matched_target": null,
+          "match_strength": 0.0,
+          "target_preference": 0.0,
+          "relevance": 0.0
+        }
+      ],
+      "profile_maturity": 1.0,
+      "viewer_bonus": 0.0,
+      "profile_source": "learned",
+      "learned_samples": 672,
+      "targets": [
+        {
+          "target": "Deep House",
+          "weight": 30.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        },
+        {
+          "target": "Melodic House",
+          "weight": 25.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        },
+        {
+          "target": "Progressive House",
+          "weight": 20.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        },
+        {
+          "target": "Organic House",
+          "weight": 15.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        },
+        {
+          "target": "Chill",
+          "weight": 10.0,
+          "ai_match": 0.0,
+          "ai_genre": null,
+          "profile_match": 0.0,
+          "profile_genre": null
+        }
+      ],
+      "rank": 10,
+      "platform": "YouTube",
+      "anti_genre_hits": [],
+      "anti_genre_excluded": false,
+      "speech_ratio": 0.0,
+      "speech_confidence": 0.0,
+      "speech_recent_ratio": 0.0,
+      "speech_recent_confidence": 0.0,
+      "speech_recent_excluded": false,
+      "speech_excluded_until": null,
+      "speech_penalty": 0.0,
+      "speech_excluded": false,
+      "pre_anti_score": 0.0,
+      "anti_genre_penalty": 0.0,
+      "bpm_min": 108.0,
+      "bpm_max": 124.0,
+      "bpm_distance": 48.27000000000001,
+      "bpm_adjustment": -100.0,
+      "bpm_matching_enabled": true,
+      "bpm_status": "known",
+      "raw_score": 0.0,
+      "ai_freshness": 1.0,
+      "score_components": {
+        "live_genre": {
+          "score": 0.0,
+          "weight": 80.0
+        },
+        "profile": {
+          "score": 0.0,
+          "weight": 5.0
+        },
+        "bpm": {
+          "score": 0.0,
+          "weight": 6.5
+        }
+      },
+      "profile_driven": false,
+      "relay_cooldown_until": null
+    }
+  ]
+}

@@ -1,0 +1,2912 @@
+{
+  "schedule": [
+    {
+      "id": 1,
+      "day": "Monday",
+      "start": "00:00",
+      "end": "04:00",
+      "name": "Late Night",
+      "genres": [
+        "Progressive House",
+        "House",
+        "Tech House",
+        "Deep House",
+        "Melodic",
+        "Electro House"
+      ],
+      "genre_weights": {
+        "Progressive House": 30.0,
+        "House": 25.0,
+        "Tech House": 20.0,
+        "Deep House": 10.0,
+        "Melodic": 10.0,
+        "Electro House": 5.0
+      },
+      "anti_genres": [
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Dialogue",
+        "Comedy",
+        "Audiobook",
+        "Radioplay",
+        "Education",
+        "Poetry",
+        "Religious",
+        "Field Recording",
+        "Psy-Trance",
+        "Hard Trance",
+        "Hardcore",
+        "Happy Hardcore",
+        "Hardstyle",
+        "Speed Garage",
+        "Goa Trance",
+        "Parody"
+      ],
+      "bpm_min": 116,
+      "bpm_max": 126,
+      "enabled": true
+    },
+    {
+      "id": 2,
+      "day": "Monday",
+      "start": "04:00",
+      "end": "08:00",
+      "name": "Looming Sunrise",
+      "genres": [
+        "Deep House",
+        "Melodic",
+        "Chill",
+        "Downtempo",
+        "Progressive House"
+      ],
+      "genre_weights": {
+        "Deep House": 30.0,
+        "Melodic": 25.0,
+        "Chill": 20.0,
+        "Downtempo": 15.0,
+        "Progressive House": 10.0
+      },
+      "anti_genres": [
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Dialogue",
+        "Comedy",
+        "Audiobook",
+        "Radioplay",
+        "Education",
+        "Poetry",
+        "Religious",
+        "Field Recording",
+        "Hard Trance",
+        "Psy-Trance",
+        "Hardcore",
+        "Happy Hardcore",
+        "Hardstyle",
+        "Speed Garage",
+        "Tech Trance",
+        "Parody"
+      ],
+      "bpm_min": 100,
+      "bpm_max": 120,
+      "enabled": true
+    },
+    {
+      "id": 3,
+      "day": "Monday",
+      "start": "08:00",
+      "end": "12:00",
+      "name": "Breaky Fuel",
+      "genres": [
+        "Nu-Disco",
+        "Chill Electro",
+        "Synthwave",
+        "80s",
+        "Funk",
+        "Indie Dance"
+      ],
+      "genre_weights": {
+        "Nu-Disco": 25.0,
+        "Chill Electro": 25.0,
+        "Synthwave": 20.0,
+        "80s": 15.0,
+        "Funk": 10.0,
+        "Indie Dance": 5.0
+      },
+      "anti_genres": [
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Dialogue",
+        "Comedy",
+        "Audiobook",
+        "Radioplay",
+        "Education",
+        "Poetry",
+        "Religious",
+        "Field Recording",
+        "Psy-Trance",
+        "Tech Trance",
+        "Progressive Trance",
+        "Hard Trance",
+        "Hardcore",
+        "Happy Hardcore",
+        "Hardstyle",
+        "Hard House",
+        "Gabber",
+        "Speedcore",
+        "Parody"
+      ],
+      "bpm_min": 105,
+      "bpm_max": 124,
+      "enabled": true
+    },
+    {
+      "id": 4,
+      "day": "Monday",
+      "start": "12:00",
+      "end": "16:00",
+      "name": "Arvo Beats",
+      "genres": [
+        "House",
+        "Deep House",
+        "Progressive",
+        "Funky House"
+      ],
+      "genre_weights": {},
+      "anti_genres": [
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Dialogue",
+        "Comedy",
+        "Audiobook",
+        "Radioplay",
+        "Education",
+        "Poetry",
+        "Religious",
+        "Field Recording",
+        "Parody"
+      ],
+      "bpm_min": 114,
+      "bpm_max": 126,
+      "enabled": true
+    },
+    {
+      "id": 5,
+      "day": "Monday",
+      "start": "16:00",
+      "end": "20:00",
+      "name": "Sunny Sets",
+      "genres": [
+        "House",
+        "Progressive House",
+        "Tech House",
+        "Trance",
+        "Tech Trance",
+        "Progressive Trance"
+      ],
+      "genre_weights": {
+        "House": 25.0,
+        "Progressive House": 20.0,
+        "Tech House": 15.0,
+        "Trance": 15.0,
+        "Tech Trance": 15.0,
+        "Progressive Trance": 10.0
+      },
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Gabber",
+        "Hardcore",
+        "Hardstyle",
+        "Poetry",
+        "Radioplay",
+        "Religious",
+        "Speedcore",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Parody"
+      ],
+      "bpm_min": 118,
+      "bpm_max": 132,
+      "enabled": true
+    },
+    {
+      "id": 6,
+      "day": "Monday",
+      "start": "20:00",
+      "end": "00:00",
+      "name": "Night Circuit",
+      "genres": [
+        "BASSLINE",
+        "Electro",
+        "Progressive",
+        "Progressive House",
+        "Tech House",
+        "Techno"
+      ],
+      "genre_weights": {},
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Hands Up",
+        "Happy Hardcore",
+        "Hardcore",
+        "Hardcore Hip-Hop",
+        "Hardstyle",
+        "Heavy Metal",
+        "Jumpstyle",
+        "Poetry",
+        "Radioplay",
+        "Religious",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Vocal",
+        "Parody"
+      ],
+      "bpm_min": 122,
+      "bpm_max": 134,
+      "enabled": true
+    },
+    {
+      "id": 7,
+      "day": "Tuesday",
+      "start": "00:00",
+      "end": "04:00",
+      "name": "Late Night",
+      "genres": [
+        "Progressive House",
+        "House",
+        "Tech House",
+        "Deep House",
+        "Melodic",
+        "Electro House"
+      ],
+      "genre_weights": {
+        "Progressive House": 30.0,
+        "House": 25.0,
+        "Tech House": 20.0,
+        "Deep House": 10.0,
+        "Melodic": 10.0,
+        "Electro House": 5.0
+      },
+      "anti_genres": [
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Dialogue",
+        "Comedy",
+        "Audiobook",
+        "Radioplay",
+        "Education",
+        "Poetry",
+        "Religious",
+        "Field Recording",
+        "Psy-Trance",
+        "Hard Trance",
+        "Hardcore",
+        "Happy Hardcore",
+        "Hardstyle",
+        "Speed Garage",
+        "Goa Trance",
+        "Parody"
+      ],
+      "bpm_min": 116,
+      "bpm_max": 126,
+      "enabled": true
+    },
+    {
+      "id": 8,
+      "day": "Tuesday",
+      "start": "04:00",
+      "end": "08:00",
+      "name": "Looming Sunrise",
+      "genres": [
+        "Deep House",
+        "Melodic",
+        "Chill",
+        "Downtempo",
+        "Progressive House"
+      ],
+      "genre_weights": {
+        "Deep House": 30.0,
+        "Melodic": 25.0,
+        "Chill": 20.0,
+        "Downtempo": 15.0,
+        "Progressive House": 10.0
+      },
+      "anti_genres": [
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Dialogue",
+        "Comedy",
+        "Audiobook",
+        "Radioplay",
+        "Education",
+        "Poetry",
+        "Religious",
+        "Field Recording",
+        "Hard Trance",
+        "Psy-Trance",
+        "Hardcore",
+        "Happy Hardcore",
+        "Hardstyle",
+        "Speed Garage",
+        "Tech Trance",
+        "Parody"
+      ],
+      "bpm_min": 100,
+      "bpm_max": 120,
+      "enabled": true
+    },
+    {
+      "id": 9,
+      "day": "Tuesday",
+      "start": "08:00",
+      "end": "12:00",
+      "name": "Breaky Fuel",
+      "genres": [
+        "80s",
+        "Synthwave",
+        "Chill Electro",
+        "Nu-Disco"
+      ],
+      "genre_weights": {},
+      "anti_genres": [
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Dialogue",
+        "Comedy",
+        "Audiobook",
+        "Radioplay",
+        "Education",
+        "Poetry",
+        "Religious",
+        "Field Recording",
+        "Parody"
+      ],
+      "bpm_min": 105,
+      "bpm_max": 124,
+      "enabled": true
+    },
+    {
+      "id": 10,
+      "day": "Tuesday",
+      "start": "12:00",
+      "end": "16:00",
+      "name": "Arvo Beats",
+      "genres": [
+        "House",
+        "Deep House",
+        "Progressive",
+        "Funky House"
+      ],
+      "genre_weights": {},
+      "anti_genres": [
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Dialogue",
+        "Comedy",
+        "Audiobook",
+        "Radioplay",
+        "Education",
+        "Poetry",
+        "Religious",
+        "Field Recording",
+        "Parody"
+      ],
+      "bpm_min": 114,
+      "bpm_max": 126,
+      "enabled": true
+    },
+    {
+      "id": 11,
+      "day": "Tuesday",
+      "start": "16:00",
+      "end": "20:00",
+      "name": "Sunny Sets",
+      "genres": [
+        "House",
+        "Progressive House",
+        "Tech House",
+        "Trance",
+        "Tech Trance",
+        "Progressive Trance"
+      ],
+      "genre_weights": {
+        "House": 25.0,
+        "Progressive House": 20.0,
+        "Tech House": 15.0,
+        "Trance": 15.0,
+        "Tech Trance": 15.0,
+        "Progressive Trance": 10.0
+      },
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Gabber",
+        "Hardcore",
+        "Hardstyle",
+        "Poetry",
+        "Radioplay",
+        "Religious",
+        "Speedcore",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Parody"
+      ],
+      "bpm_min": 118,
+      "bpm_max": 132,
+      "enabled": true
+    },
+    {
+      "id": 12,
+      "day": "Tuesday",
+      "start": "20:00",
+      "end": "00:00",
+      "name": "Night Circuit",
+      "genres": [
+        "BASSLINE",
+        "Electro",
+        "Progressive",
+        "Progressive House",
+        "Tech House",
+        "Techno"
+      ],
+      "genre_weights": {},
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Hands Up",
+        "Happy Hardcore",
+        "Hardcore",
+        "Hardcore Hip-Hop",
+        "Hardstyle",
+        "Heavy Metal",
+        "Jumpstyle",
+        "Poetry",
+        "Radioplay",
+        "Religious",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Vocal",
+        "Parody"
+      ],
+      "bpm_min": 122,
+      "bpm_max": 134,
+      "enabled": true
+    },
+    {
+      "id": 13,
+      "day": "Wednesday",
+      "start": "00:00",
+      "end": "04:00",
+      "name": "Late Night",
+      "genres": [
+        "Progressive House",
+        "House",
+        "Tech House",
+        "Deep House",
+        "Melodic",
+        "Electro House"
+      ],
+      "genre_weights": {
+        "Progressive House": 30.0,
+        "House": 25.0,
+        "Tech House": 20.0,
+        "Deep House": 10.0,
+        "Melodic": 10.0,
+        "Electro House": 5.0
+      },
+      "anti_genres": [
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Dialogue",
+        "Comedy",
+        "Audiobook",
+        "Radioplay",
+        "Education",
+        "Poetry",
+        "Religious",
+        "Field Recording",
+        "Psy-Trance",
+        "Hard Trance",
+        "Hardcore",
+        "Happy Hardcore",
+        "Hardstyle",
+        "Speed Garage",
+        "Goa Trance",
+        "Parody"
+      ],
+      "bpm_min": 116,
+      "bpm_max": 126,
+      "enabled": true
+    },
+    {
+      "id": 14,
+      "day": "Wednesday",
+      "start": "04:00",
+      "end": "08:00",
+      "name": "Looming Sunrise",
+      "genres": [
+        "Deep House",
+        "Melodic",
+        "Chill",
+        "Downtempo",
+        "Progressive House"
+      ],
+      "genre_weights": {
+        "Deep House": 30.0,
+        "Melodic": 25.0,
+        "Chill": 20.0,
+        "Downtempo": 15.0,
+        "Progressive House": 10.0
+      },
+      "anti_genres": [
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Dialogue",
+        "Comedy",
+        "Audiobook",
+        "Radioplay",
+        "Education",
+        "Poetry",
+        "Religious",
+        "Field Recording",
+        "Hard Trance",
+        "Psy-Trance",
+        "Hardcore",
+        "Happy Hardcore",
+        "Hardstyle",
+        "Speed Garage",
+        "Tech Trance",
+        "Parody"
+      ],
+      "bpm_min": 100,
+      "bpm_max": 120,
+      "enabled": true
+    },
+    {
+      "id": 15,
+      "day": "Wednesday",
+      "start": "08:00",
+      "end": "12:00",
+      "name": "Breaky Fuel",
+      "genres": [
+        "Electro",
+        "Electro House",
+        "House",
+        "Minimal"
+      ],
+      "genre_weights": {},
+      "anti_genres": [
+        "80s",
+        "Acid",
+        "African",
+        "Alternative Rock",
+        "Audiobook",
+        "Bass Music",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Happy Hardcore",
+        "Hard Techno",
+        "Hardcore Hip-Hop",
+        "Hardstyle",
+        "Heavy Metal",
+        "Poetry",
+        "Radioplay",
+        "Religious",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Parody"
+      ],
+      "bpm_min": 116,
+      "bpm_max": 128,
+      "enabled": true
+    },
+    {
+      "id": 16,
+      "day": "Wednesday",
+      "start": "12:00",
+      "end": "16:00",
+      "name": "Arvo Beats",
+      "genres": [
+        "House",
+        "Deep House",
+        "Progressive",
+        "Funky House"
+      ],
+      "genre_weights": {},
+      "anti_genres": [
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Dialogue",
+        "Comedy",
+        "Audiobook",
+        "Radioplay",
+        "Education",
+        "Poetry",
+        "Religious",
+        "Field Recording",
+        "Parody"
+      ],
+      "bpm_min": 114,
+      "bpm_max": 126,
+      "enabled": true
+    },
+    {
+      "id": 17,
+      "day": "Wednesday",
+      "start": "16:00",
+      "end": "20:00",
+      "name": "Sunny Sets",
+      "genres": [
+        "House",
+        "Progressive House",
+        "Tech House",
+        "Trance",
+        "Tech Trance",
+        "Progressive Trance"
+      ],
+      "genre_weights": {
+        "House": 25.0,
+        "Progressive House": 20.0,
+        "Tech House": 15.0,
+        "Trance": 15.0,
+        "Tech Trance": 15.0,
+        "Progressive Trance": 10.0
+      },
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Gabber",
+        "Hardcore",
+        "Hardstyle",
+        "Poetry",
+        "Radioplay",
+        "Religious",
+        "Speedcore",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Parody"
+      ],
+      "bpm_min": 118,
+      "bpm_max": 132,
+      "enabled": true
+    },
+    {
+      "id": 18,
+      "day": "Wednesday",
+      "start": "20:00",
+      "end": "00:00",
+      "name": "Night Circuit",
+      "genres": [
+        "BASSLINE",
+        "Electro",
+        "Progressive",
+        "Progressive House",
+        "Tech House",
+        "Techno"
+      ],
+      "genre_weights": {},
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Hands Up",
+        "Happy Hardcore",
+        "Hardcore",
+        "Hardcore Hip-Hop",
+        "Hardstyle",
+        "Heavy Metal",
+        "Jumpstyle",
+        "Poetry",
+        "Radioplay",
+        "Religious",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Vocal",
+        "Parody"
+      ],
+      "bpm_min": 122,
+      "bpm_max": 134,
+      "enabled": true
+    },
+    {
+      "id": 19,
+      "day": "Thursday",
+      "start": "00:00",
+      "end": "04:00",
+      "name": "Late Night",
+      "genres": [
+        "Progressive House",
+        "House",
+        "Tech House",
+        "Deep House",
+        "Melodic",
+        "Electro House"
+      ],
+      "genre_weights": {
+        "Progressive House": 30.0,
+        "House": 25.0,
+        "Tech House": 20.0,
+        "Deep House": 10.0,
+        "Melodic": 10.0,
+        "Electro House": 5.0
+      },
+      "anti_genres": [
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Dialogue",
+        "Comedy",
+        "Audiobook",
+        "Radioplay",
+        "Education",
+        "Poetry",
+        "Religious",
+        "Field Recording",
+        "Psy-Trance",
+        "Hard Trance",
+        "Hardcore",
+        "Happy Hardcore",
+        "Hardstyle",
+        "Speed Garage",
+        "Goa Trance",
+        "Parody"
+      ],
+      "bpm_min": 116,
+      "bpm_max": 126,
+      "enabled": true
+    },
+    {
+      "id": 20,
+      "day": "Thursday",
+      "start": "04:00",
+      "end": "08:00",
+      "name": "Looming Sunrise",
+      "genres": [
+        "Deep House",
+        "Melodic",
+        "Chill",
+        "Downtempo",
+        "Progressive House"
+      ],
+      "genre_weights": {
+        "Deep House": 30.0,
+        "Melodic": 25.0,
+        "Chill": 20.0,
+        "Downtempo": 15.0,
+        "Progressive House": 10.0
+      },
+      "anti_genres": [
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Dialogue",
+        "Comedy",
+        "Audiobook",
+        "Radioplay",
+        "Education",
+        "Poetry",
+        "Religious",
+        "Field Recording",
+        "Hard Trance",
+        "Psy-Trance",
+        "Hardcore",
+        "Happy Hardcore",
+        "Hardstyle",
+        "Speed Garage",
+        "Tech Trance",
+        "Parody"
+      ],
+      "bpm_min": 100,
+      "bpm_max": 120,
+      "enabled": true
+    },
+    {
+      "id": 21,
+      "day": "Thursday",
+      "start": "08:00",
+      "end": "12:00",
+      "name": "Breaky Fuel",
+      "genres": [
+        "80s",
+        "Synthwave",
+        "Chill Electro",
+        "Nu-Disco"
+      ],
+      "genre_weights": {},
+      "anti_genres": [
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Dialogue",
+        "Comedy",
+        "Audiobook",
+        "Radioplay",
+        "Education",
+        "Poetry",
+        "Religious",
+        "Field Recording",
+        "Parody"
+      ],
+      "bpm_min": 105,
+      "bpm_max": 124,
+      "enabled": true
+    },
+    {
+      "id": 22,
+      "day": "Thursday",
+      "start": "12:00",
+      "end": "16:00",
+      "name": "Arvo Beats",
+      "genres": [
+        "House",
+        "Deep House",
+        "Progressive",
+        "Funky House"
+      ],
+      "genre_weights": {},
+      "anti_genres": [
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Dialogue",
+        "Comedy",
+        "Audiobook",
+        "Radioplay",
+        "Education",
+        "Poetry",
+        "Religious",
+        "Field Recording",
+        "Parody"
+      ],
+      "bpm_min": 114,
+      "bpm_max": 126,
+      "enabled": true
+    },
+    {
+      "id": 23,
+      "day": "Thursday",
+      "start": "16:00",
+      "end": "20:00",
+      "name": "Sunny Sets",
+      "genres": [
+        "House",
+        "Progressive House",
+        "Tech House",
+        "Trance",
+        "Tech Trance",
+        "Progressive Trance"
+      ],
+      "genre_weights": {
+        "House": 25.0,
+        "Progressive House": 20.0,
+        "Tech House": 15.0,
+        "Trance": 15.0,
+        "Tech Trance": 15.0,
+        "Progressive Trance": 10.0
+      },
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Gabber",
+        "Hardcore",
+        "Hardstyle",
+        "Poetry",
+        "Radioplay",
+        "Religious",
+        "Speedcore",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Parody"
+      ],
+      "bpm_min": 118,
+      "bpm_max": 132,
+      "enabled": true
+    },
+    {
+      "id": 24,
+      "day": "Thursday",
+      "start": "20:00",
+      "end": "00:00",
+      "name": "Night Circuit",
+      "genres": [
+        "BASSLINE",
+        "Electro",
+        "Progressive",
+        "Progressive House",
+        "Tech House",
+        "Techno"
+      ],
+      "genre_weights": {},
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Hands Up",
+        "Happy Hardcore",
+        "Hardcore",
+        "Hardcore Hip-Hop",
+        "Hardstyle",
+        "Heavy Metal",
+        "Jumpstyle",
+        "Poetry",
+        "Radioplay",
+        "Religious",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Vocal",
+        "Parody"
+      ],
+      "bpm_min": 122,
+      "bpm_max": 134,
+      "enabled": true
+    },
+    {
+      "id": 25,
+      "day": "Friday",
+      "start": "00:00",
+      "end": "04:00",
+      "name": "Late Night",
+      "genres": [
+        "Techno",
+        "Tech House",
+        "Progressive House",
+        "Deep Techno",
+        "Minimal Techno"
+      ],
+      "genre_weights": {
+        "Minimal Techno": 16.0,
+        "Progressive House": 16.0,
+        "Tech House": 21.0,
+        "Deep Techno": 16.0,
+        "Techno": 31.0
+      },
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Poetry",
+        "Radioplay",
+        "Religious",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Gabber",
+        "Happy Hardcore",
+        "Hard Techno",
+        "Hard Trance",
+        "Hardcore",
+        "Hardstyle",
+        "Psy-Trance",
+        "Parody"
+      ],
+      "bpm_min": 122,
+      "bpm_max": 134,
+      "enabled": true
+    },
+    {
+      "id": 26,
+      "day": "Friday",
+      "start": "04:00",
+      "end": "08:00",
+      "name": "Looming Sunrise",
+      "genres": [
+        "Chill",
+        "Deep House",
+        "House",
+        "Melodic",
+        "Progressive",
+        "80s"
+      ],
+      "genre_weights": {
+        "Chill": 19.0,
+        "Deep House": 19.0,
+        "House": 19.0,
+        "Melodic": 19.0,
+        "Progressive": 19.0,
+        "80s": 5.0
+      },
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Poetry",
+        "Radioplay",
+        "Religious",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Gabber",
+        "Happy Hardcore",
+        "Hard Techno",
+        "Hard Trance",
+        "Hardcore",
+        "Hardstyle",
+        "Psy-Trance",
+        "Parody"
+      ],
+      "bpm_min": 100,
+      "bpm_max": 120,
+      "enabled": true
+    },
+    {
+      "id": 27,
+      "day": "Friday",
+      "start": "08:00",
+      "end": "12:00",
+      "name": "Breaky Fuel",
+      "genres": [
+        "Chill",
+        "House",
+        "Funky House",
+        "Nu-Disco",
+        "Melodic",
+        "80s"
+      ],
+      "genre_weights": {
+        "Chill": 19.0,
+        "House": 19.0,
+        "Funky House": 19.0,
+        "Nu-Disco": 19.0,
+        "Melodic": 19.0,
+        "80s": 5.0
+      },
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Poetry",
+        "Radioplay",
+        "Religious",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Gabber",
+        "Hard Techno",
+        "Hard Trance",
+        "Hardcore",
+        "Hardstyle",
+        "Psy-Trance",
+        "Parody"
+      ],
+      "bpm_min": 105,
+      "bpm_max": 124,
+      "enabled": true
+    },
+    {
+      "id": 28,
+      "day": "Friday",
+      "start": "12:00",
+      "end": "16:00",
+      "name": "TGIF Arvo",
+      "genres": [
+        "House",
+        "Funky House",
+        "Nu-Disco",
+        "Tech House",
+        "80s"
+      ],
+      "genre_weights": {},
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Poetry",
+        "Radioplay",
+        "Religious",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Gabber",
+        "Hard Techno",
+        "Hard Trance",
+        "Hardcore",
+        "Hardstyle",
+        "Psy-Trance",
+        "Parody"
+      ],
+      "bpm_min": 112,
+      "bpm_max": 128,
+      "enabled": true
+    },
+    {
+      "id": 29,
+      "day": "Friday",
+      "start": "16:00",
+      "end": "20:00",
+      "name": "Sunny Sets",
+      "genres": [
+        "80s",
+        "Deep House",
+        "Funky House",
+        "House",
+        "Nu-Disco",
+        "Progressive House"
+      ],
+      "genre_weights": {
+        "House": 25.0,
+        "Deep House": 20.0,
+        "Funky House": 20.0,
+        "Progressive House": 15.0,
+        "Nu-Disco": 15.0,
+        "80s": 5.0
+      },
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Gabber",
+        "Hard Techno",
+        "Hard Trance",
+        "Hardcore",
+        "Poetry",
+        "Psy-Trance",
+        "Radioplay",
+        "Religious",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Parody"
+      ],
+      "bpm_min": 116,
+      "bpm_max": 130,
+      "enabled": true
+    },
+    {
+      "id": 30,
+      "day": "Friday",
+      "start": "20:00",
+      "end": "23:00",
+      "name": "Night Transmission",
+      "genres": [
+        "House",
+        "Tech House",
+        "Progressive House",
+        "Deep House",
+        "Tribal House",
+        "Techno"
+      ],
+      "genre_weights": {
+        "House": 30,
+        "Tech House": 25,
+        "Progressive House": 20,
+        "Deep House": 15,
+        "Tribal House": 5,
+        "Techno": 5
+      },
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Gabber",
+        "Hard Techno",
+        "Hard Trance",
+        "Hardcore",
+        "Hardstyle",
+        "Poetry",
+        "Radioplay",
+        "Religious",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Parody"
+      ],
+      "bpm_min": 122,
+      "bpm_max": 134,
+      "enabled": true
+    },
+    {
+      "id": 43,
+      "day": "Friday",
+      "start": "23:00",
+      "end": "00:00",
+      "name": "Midnight Countdown",
+      "genres": [
+        "Psy-Trance",
+        "Tech Trance",
+        "Progressive Trance",
+        "Minimal Techno",
+        "Techno",
+        "Trance",
+        "Goa Trance"
+      ],
+      "genre_weights": {
+        "Psy-Trance": 30.0,
+        "Tech Trance": 25.0,
+        "Progressive Trance": 20.0,
+        "Minimal Techno": 10.0,
+        "Techno": 5.0,
+        "Trance": 5.0,
+        "Goa Trance": 5.0
+      },
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Poetry",
+        "Radioplay",
+        "Religious",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Parody",
+        "Euro House",
+        "Hard Techno",
+        "Schranz"
+      ],
+      "bpm_min": 128,
+      "bpm_max": 144,
+      "enabled": true
+    },
+    {
+      "id": 44,
+      "day": "Saturday",
+      "start": "00:00",
+      "end": "04:00",
+      "name": "After Dark",
+      "genres": [
+        "Tech Trance",
+        "Techno",
+        "Minimal Techno",
+        "Deep Techno",
+        "Psy-Trance",
+        "Progressive Trance",
+        "Trance"
+      ],
+      "genre_weights": {
+        "Tech Trance": 25.0,
+        "Techno": 20.0,
+        "Minimal Techno": 15.0,
+        "Deep Techno": 15.0,
+        "Psy-Trance": 10.0,
+        "Progressive Trance": 10.0,
+        "Trance": 5.0
+      },
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Poetry",
+        "Radioplay",
+        "Religious",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Gabber",
+        "Happy Hardcore",
+        "Hard Techno",
+        "Hard Trance",
+        "Hardcore",
+        "Hardstyle",
+        "Parody",
+        "Euro House",
+        "Schranz",
+        "Garage House"
+      ],
+      "bpm_min": 126,
+      "bpm_max": 134,
+      "enabled": true
+    },
+    {
+      "id": 45,
+      "day": "Saturday",
+      "start": "04:00",
+      "end": "08:00",
+      "name": "Looming Sunrise",
+      "genres": [
+        "Chill",
+        "Deep House",
+        "House",
+        "Melodic",
+        "Progressive",
+        "80s"
+      ],
+      "genre_weights": {
+        "Chill": 19.0,
+        "Deep House": 19.0,
+        "House": 19.0,
+        "Melodic": 19.0,
+        "Progressive": 19.0,
+        "80s": 5.0
+      },
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Poetry",
+        "Radioplay",
+        "Religious",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Gabber",
+        "Happy Hardcore",
+        "Hard Techno",
+        "Hard Trance",
+        "Hardcore",
+        "Hardstyle",
+        "Psy-Trance",
+        "Parody"
+      ],
+      "bpm_min": 100,
+      "bpm_max": 120,
+      "enabled": true
+    },
+    {
+      "id": 46,
+      "day": "Saturday",
+      "start": "08:00",
+      "end": "12:00",
+      "name": "Breaky Fuel",
+      "genres": [
+        "House",
+        "Electro House",
+        "Tech House",
+        "Electro",
+        "Techno",
+        "Melodic"
+      ],
+      "genre_weights": {
+        "House": 30.0,
+        "Electro House": 25.0,
+        "Tech House": 15.0,
+        "Electro": 15.0,
+        "Techno": 10.0,
+        "Melodic": 5.0
+      },
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Poetry",
+        "Radioplay",
+        "Religious",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Gabber",
+        "Hard Techno",
+        "Hard Trance",
+        "Hardcore",
+        "Hardstyle",
+        "Psy-Trance",
+        "Parody"
+      ],
+      "bpm_min": 105,
+      "bpm_max": 124,
+      "enabled": true
+    },
+    {
+      "id": 47,
+      "day": "Saturday",
+      "start": "12:00",
+      "end": "16:00",
+      "name": "Arvo Beats",
+      "genres": [
+        "House",
+        "Funky House",
+        "Nu-Disco",
+        "Tech House",
+        "80s"
+      ],
+      "genre_weights": {},
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Poetry",
+        "Radioplay",
+        "Religious",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Gabber",
+        "Hard Techno",
+        "Hard Trance",
+        "Hardcore",
+        "Hardstyle",
+        "Psy-Trance",
+        "Parody"
+      ],
+      "bpm_min": 112,
+      "bpm_max": 128,
+      "enabled": true
+    },
+    {
+      "id": 48,
+      "day": "Saturday",
+      "start": "16:00",
+      "end": "20:00",
+      "name": "Sunny Sets",
+      "genres": [
+        "80s",
+        "Deep House",
+        "Funky House",
+        "House",
+        "Nu-Disco",
+        "Progressive House"
+      ],
+      "genre_weights": {
+        "House": 25.0,
+        "Deep House": 20.0,
+        "Funky House": 20.0,
+        "Progressive House": 15.0,
+        "Nu-Disco": 15.0,
+        "80s": 5.0
+      },
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Gabber",
+        "Hard Techno",
+        "Hard Trance",
+        "Hardcore",
+        "Poetry",
+        "Psy-Trance",
+        "Radioplay",
+        "Religious",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Parody"
+      ],
+      "bpm_min": 116,
+      "bpm_max": 130,
+      "enabled": true
+    },
+    {
+      "id": 49,
+      "day": "Saturday",
+      "start": "20:00",
+      "end": "23:00",
+      "name": "Night Transmission",
+      "genres": [
+        "House",
+        "Tech House",
+        "Progressive House",
+        "Deep House",
+        "Tribal House",
+        "Techno"
+      ],
+      "genre_weights": {
+        "House": 30,
+        "Tech House": 25,
+        "Progressive House": 20,
+        "Deep House": 15,
+        "Tribal House": 5,
+        "Techno": 5
+      },
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Gabber",
+        "Hard Techno",
+        "Hard Trance",
+        "Hardcore",
+        "Hardstyle",
+        "Poetry",
+        "Radioplay",
+        "Religious",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Parody"
+      ],
+      "bpm_min": 122,
+      "bpm_max": 134,
+      "enabled": true
+    },
+    {
+      "id": 50,
+      "day": "Saturday",
+      "start": "23:00",
+      "end": "00:00",
+      "name": "Midnight Countdown",
+      "genres": [
+        "Psy-Trance",
+        "Tech Trance",
+        "Progressive Trance",
+        "Minimal Techno",
+        "Techno",
+        "Trance",
+        "Goa Trance"
+      ],
+      "genre_weights": {
+        "Psy-Trance": 30.0,
+        "Tech Trance": 25.0,
+        "Progressive Trance": 20.0,
+        "Minimal Techno": 10.0,
+        "Techno": 5.0,
+        "Trance": 5.0,
+        "Goa Trance": 5.0
+      },
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Poetry",
+        "Radioplay",
+        "Religious",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Parody",
+        "Euro House",
+        "Hard Techno",
+        "Schranz"
+      ],
+      "bpm_min": 124,
+      "bpm_max": 138,
+      "enabled": true
+    },
+    {
+      "id": 37,
+      "day": "Sunday",
+      "start": "00:00",
+      "end": "04:00",
+      "name": "After Dark",
+      "genres": [
+        "Tech Trance",
+        "Techno",
+        "Trance",
+        "Progressive House",
+        "Progressive Trance",
+        "House",
+        "Tech House"
+      ],
+      "genre_weights": {
+        "Tech Trance": 25,
+        "Techno": 20,
+        "Trance": 20,
+        "Progressive House": 15,
+        "Progressive Trance": 10,
+        "House": 5,
+        "Tech House": 5
+      },
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Poetry",
+        "Radioplay",
+        "Religious",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Gabber",
+        "Happy Hardcore",
+        "Hard Techno",
+        "Hard Trance",
+        "Hardcore",
+        "Hardstyle",
+        "Parody",
+        "Euro House",
+        "Schranz",
+        "Garage House",
+        "Psy-Trance",
+        "Uplifting Trance",
+        "Hands Up",
+        "Speed Garage"
+      ],
+      "bpm_min": 126,
+      "bpm_max": 134,
+      "enabled": true
+    },
+    {
+      "id": 38,
+      "day": "Sunday",
+      "start": "04:00",
+      "end": "08:00",
+      "name": "Looming Sunrise",
+      "genres": [
+        "House",
+        "Electro",
+        "Techno",
+        "Deep House",
+        "Tech House"
+      ],
+      "genre_weights": {
+        "House": 30.0,
+        "Electro": 30.0,
+        "Techno": 20.0,
+        "Deep House": 15.0,
+        "Tech House": 5.0
+      },
+      "anti_genres": [
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Dialogue",
+        "Comedy",
+        "Audiobook",
+        "Radioplay",
+        "Education",
+        "Poetry",
+        "Religious",
+        "Field Recording",
+        "Hard Trance",
+        "Happy Hardcore",
+        "Hardcore",
+        "Hardstyle",
+        "Speed Garage",
+        "Tech Trance",
+        "Progressive Trance",
+        "Trance",
+        "Parody"
+      ],
+      "bpm_min": 122,
+      "bpm_max": 130,
+      "enabled": true
+    },
+    {
+      "id": 39,
+      "day": "Sunday",
+      "start": "08:00",
+      "end": "12:00",
+      "name": "Breaky Fuel",
+      "genres": [
+        "Deep House",
+        "Organic House",
+        "Progressive House",
+        "Melodic",
+        "Chill",
+        "Downtempo"
+      ],
+      "genre_weights": {
+        "Deep House": 30.0,
+        "Organic House": 20.0,
+        "Progressive House": 15.0,
+        "Melodic": 15.0,
+        "Chill": 10.0,
+        "Downtempo": 10.0
+      },
+      "anti_genres": [
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Dialogue",
+        "Comedy",
+        "Audiobook",
+        "Radioplay",
+        "Education",
+        "Poetry",
+        "Religious",
+        "Field Recording",
+        "Parody"
+      ],
+      "bpm_min": 100,
+      "bpm_max": 122,
+      "enabled": true
+    },
+    {
+      "id": 40,
+      "day": "Sunday",
+      "start": "12:00",
+      "end": "16:00",
+      "name": "Arvo Beats",
+      "genres": [
+        "House",
+        "Deep House",
+        "Progressive House",
+        "Organic House",
+        "Melodic"
+      ],
+      "genre_weights": {
+        "House": 30.0,
+        "Deep House": 25.0,
+        "Progressive House": 20.0,
+        "Organic House": 15.0,
+        "Melodic": 10.0
+      },
+      "anti_genres": [
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Dialogue",
+        "Comedy",
+        "Audiobook",
+        "Radioplay",
+        "Education",
+        "Poetry",
+        "Religious",
+        "Field Recording",
+        "Parody"
+      ],
+      "bpm_min": 112,
+      "bpm_max": 126,
+      "enabled": true
+    },
+    {
+      "id": 41,
+      "day": "Sunday",
+      "start": "16:00",
+      "end": "20:00",
+      "name": "Sunny Sets",
+      "genres": [
+        "Deep House",
+        "Melodic House",
+        "Progressive House",
+        "Organic House",
+        "Chill"
+      ],
+      "genre_weights": {
+        "Deep House": 30.0,
+        "Melodic House": 25.0,
+        "Progressive House": 20.0,
+        "Organic House": 15.0,
+        "Chill": 10.0
+      },
+      "anti_genres": [
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Dialogue",
+        "Comedy",
+        "Audiobook",
+        "Radioplay",
+        "Education",
+        "Poetry",
+        "Religious",
+        "Field Recording",
+        "Parody"
+      ],
+      "bpm_min": 108,
+      "bpm_max": 124,
+      "enabled": true
+    },
+    {
+      "id": 42,
+      "day": "Sunday",
+      "start": "20:00",
+      "end": "00:00",
+      "name": "Last Session",
+      "genres": [
+        "80s",
+        "Chill",
+        "Deep House",
+        "Downtempo",
+        "Melodic"
+      ],
+      "genre_weights": {
+        "80s": 5.0,
+        "Chill": 25.0,
+        "Deep House": 40.0,
+        "Downtempo": 20.0,
+        "Melodic": 10.0
+      },
+      "anti_genres": [
+        "Audiobook",
+        "Comedy",
+        "Dialogue",
+        "Education",
+        "Field Recording",
+        "Happy Hardcore",
+        "Hard Trance",
+        "Hardcore",
+        "Hardstyle",
+        "Parody",
+        "Poetry",
+        "Progressive Trance",
+        "Psy-Trance",
+        "Radioplay",
+        "Religious",
+        "Speed Garage",
+        "Spoken Word",
+        "Talk",
+        "Talking",
+        "Tech Trance",
+        "Techno",
+        "Trance"
+      ],
+      "bpm_min": 90,
+      "bpm_max": 116,
+      "enabled": true
+    }
+  ],
+  "genres": [
+    "80s",
+    "Abstract",
+    "Acid",
+    "Acid House",
+    "Acid Jazz",
+    "Alternative Rock",
+    "Ambient",
+    "AOR",
+    "Arena Rock",
+    "Audiobook",
+    "Ballad",
+    "BASSLINE",
+    "Berlin-School",
+    "Big Beat",
+    "Black Metal",
+    "Bleep",
+    "Boom Bap",
+    "Breakbeat",
+    "Breakcore",
+    "Breaks",
+    "Brit Pop",
+    "Broken Beat",
+    "Bubblegum",
+    "Celtic",
+    "Chanson",
+    "Chill",
+    "Chill Electro",
+    "Chillwave",
+    "Cloud Rap",
+    "Comedy",
+    "Conscious",
+    "Contemporary",
+    "Contemporary R&B",
+    "Dance-pop",
+    "Dancehall",
+    "Dark Ambient",
+    "Deep House",
+    "Deep Techno",
+    "Depressive Black Metal",
+    "Dialogue",
+    "Disco",
+    "Disco Polo",
+    "DJ Battle Tool",
+    "Donk",
+    "Downtempo",
+    "Drone",
+    "Drum & Bass",
+    "Drum n Bass",
+    "Dub Techno",
+    "Dubstep",
+    "EBM",
+    "Education",
+    "Electro",
+    "Electro House",
+    "Euro House",
+    "Euro-Disco",
+    "Eurobeat",
+    "Eurodance",
+    "Europop",
+    "Experimental",
+    "Field Recording",
+    "Folk",
+    "Folk Rock",
+    "Free Improvisation",
+    "Freestyle",
+    "Funk",
+    "Funky House",
+    "Gabber",
+    "Gangsta",
+    "Garage House",
+    "Ghetto",
+    "Ghetto House",
+    "Glam",
+    "Glitch",
+    "Goa Trance",
+    "Gospel",
+    "Grime",
+    "Gypsy Jazz",
+    "Halftime",
+    "Hands Up",
+    "Happy Hardcore",
+    "Hard House",
+    "Hard Rock",
+    "Hard Techno",
+    "Hard Trance",
+    "Hardcore",
+    "Hardcore Hip-Hop",
+    "Hardstyle",
+    "Heavy Metal",
+    "Hi NRG",
+    "Hip Hop",
+    "Hip-House",
+    "Horrorcore",
+    "House",
+    "Indie Rock",
+    "Industrial",
+    "Interview",
+    "Italo House",
+    "Italo-Disco",
+    "Italodance",
+    "J-pop",
+    "Jazzdance",
+    "Juke",
+    "Jumpstyle",
+    "Jungle",
+    "K-pop",
+    "Latin",
+    "Laïkó",
+    "Makina",
+    "Melodic",
+    "Melodic House",
+    "Minimal",
+    "Minimal Techno",
+    "Musique Concrète",
+    "Neo Soul",
+    "Neo-Classical",
+    "New Age",
+    "New Beat",
+    "Noise",
+    "Nu-Disco",
+    "Organic House",
+    "Poetry",
+    "Polka",
+    "Pop Rock",
+    "Post-Modern",
+    "Power Electronics",
+    "Progressive",
+    "Progressive Breaks",
+    "Progressive House",
+    "Progressive Trance",
+    "Psy-Trance",
+    "Punk",
+    "Radioplay",
+    "Ragga",
+    "Reggae",
+    "Reggae-Pop",
+    "Rhythmic Noise",
+    "RnB/Swing",
+    "Rock & Roll",
+    "Schranz",
+    "Shoegaze",
+    "Ska",
+    "Soca",
+    "Soft Rock",
+    "Soul",
+    "Sound Collage",
+    "Soundtrack",
+    "Speed Garage",
+    "Speedcore",
+    "Spoken Word",
+    "Story",
+    "Swingbeat",
+    "Synth-pop",
+    "Synthwave",
+    "Tech House",
+    "Tech Trance",
+    "Techno",
+    "Theme",
+    "Thug Rap",
+    "Trance",
+    "Trap",
+    "Tribal",
+    "Tribal House",
+    "Trip Hop",
+    "Tropical House",
+    "Turntablism",
+    "UK Garage",
+    "Vaporwave",
+    "Vocal",
+    "Éntekhno"
+  ],
+  "genre_sources": [
+    {
+      "name": "80s",
+      "source": "configured"
+    },
+    {
+      "name": "Abstract",
+      "source": "ai"
+    },
+    {
+      "name": "Acid",
+      "source": "ai"
+    },
+    {
+      "name": "Acid House",
+      "source": "ai"
+    },
+    {
+      "name": "Acid Jazz",
+      "source": "ai"
+    },
+    {
+      "name": "Alternative Rock",
+      "source": "ai"
+    },
+    {
+      "name": "Ambient",
+      "source": "configured"
+    },
+    {
+      "name": "AOR",
+      "source": "ai"
+    },
+    {
+      "name": "Arena Rock",
+      "source": "ai"
+    },
+    {
+      "name": "Audiobook",
+      "source": "ai"
+    },
+    {
+      "name": "Ballad",
+      "source": "ai"
+    },
+    {
+      "name": "BASSLINE",
+      "source": "configured"
+    },
+    {
+      "name": "Berlin-School",
+      "source": "ai"
+    },
+    {
+      "name": "Big Beat",
+      "source": "ai"
+    },
+    {
+      "name": "Black Metal",
+      "source": "ai"
+    },
+    {
+      "name": "Bleep",
+      "source": "ai"
+    },
+    {
+      "name": "Boom Bap",
+      "source": "ai"
+    },
+    {
+      "name": "Breakbeat",
+      "source": "ai"
+    },
+    {
+      "name": "Breakcore",
+      "source": "ai"
+    },
+    {
+      "name": "Breaks",
+      "source": "ai"
+    },
+    {
+      "name": "Brit Pop",
+      "source": "ai"
+    },
+    {
+      "name": "Broken Beat",
+      "source": "ai"
+    },
+    {
+      "name": "Bubblegum",
+      "source": "ai"
+    },
+    {
+      "name": "Celtic",
+      "source": "ai"
+    },
+    {
+      "name": "Chanson",
+      "source": "ai"
+    },
+    {
+      "name": "Chill",
+      "source": "configured"
+    },
+    {
+      "name": "Chill Electro",
+      "source": "configured"
+    },
+    {
+      "name": "Chillwave",
+      "source": "ai"
+    },
+    {
+      "name": "Cloud Rap",
+      "source": "ai"
+    },
+    {
+      "name": "Comedy",
+      "source": "ai"
+    },
+    {
+      "name": "Conscious",
+      "source": "ai"
+    },
+    {
+      "name": "Contemporary",
+      "source": "ai"
+    },
+    {
+      "name": "Contemporary R&B",
+      "source": "ai"
+    },
+    {
+      "name": "Dance-pop",
+      "source": "ai"
+    },
+    {
+      "name": "Dancehall",
+      "source": "ai"
+    },
+    {
+      "name": "Dark Ambient",
+      "source": "ai"
+    },
+    {
+      "name": "Deep House",
+      "source": "configured"
+    },
+    {
+      "name": "Deep Techno",
+      "source": "ai"
+    },
+    {
+      "name": "Depressive Black Metal",
+      "source": "ai"
+    },
+    {
+      "name": "Dialogue",
+      "source": "ai"
+    },
+    {
+      "name": "Disco",
+      "source": "ai"
+    },
+    {
+      "name": "Disco Polo",
+      "source": "ai"
+    },
+    {
+      "name": "DJ Battle Tool",
+      "source": "ai"
+    },
+    {
+      "name": "Donk",
+      "source": "ai"
+    },
+    {
+      "name": "Downtempo",
+      "source": "configured"
+    },
+    {
+      "name": "Drone",
+      "source": "ai"
+    },
+    {
+      "name": "Drum & Bass",
+      "source": "configured"
+    },
+    {
+      "name": "Drum n Bass",
+      "source": "ai"
+    },
+    {
+      "name": "Dub Techno",
+      "source": "ai"
+    },
+    {
+      "name": "Dubstep",
+      "source": "ai"
+    },
+    {
+      "name": "EBM",
+      "source": "ai"
+    },
+    {
+      "name": "Education",
+      "source": "ai"
+    },
+    {
+      "name": "Electro",
+      "source": "configured"
+    },
+    {
+      "name": "Electro House",
+      "source": "ai"
+    },
+    {
+      "name": "Euro House",
+      "source": "ai"
+    },
+    {
+      "name": "Euro-Disco",
+      "source": "ai"
+    },
+    {
+      "name": "Eurobeat",
+      "source": "ai"
+    },
+    {
+      "name": "Eurodance",
+      "source": "ai"
+    },
+    {
+      "name": "Europop",
+      "source": "ai"
+    },
+    {
+      "name": "Experimental",
+      "source": "ai"
+    },
+    {
+      "name": "Field Recording",
+      "source": "ai"
+    },
+    {
+      "name": "Folk",
+      "source": "ai"
+    },
+    {
+      "name": "Folk Rock",
+      "source": "ai"
+    },
+    {
+      "name": "Free Improvisation",
+      "source": "ai"
+    },
+    {
+      "name": "Freestyle",
+      "source": "ai"
+    },
+    {
+      "name": "Funk",
+      "source": "ai"
+    },
+    {
+      "name": "Funky House",
+      "source": "configured"
+    },
+    {
+      "name": "Gabber",
+      "source": "ai"
+    },
+    {
+      "name": "Gangsta",
+      "source": "ai"
+    },
+    {
+      "name": "Garage House",
+      "source": "ai"
+    },
+    {
+      "name": "Ghetto",
+      "source": "ai"
+    },
+    {
+      "name": "Ghetto House",
+      "source": "ai"
+    },
+    {
+      "name": "Glam",
+      "source": "ai"
+    },
+    {
+      "name": "Glitch",
+      "source": "ai"
+    },
+    {
+      "name": "Goa Trance",
+      "source": "ai"
+    },
+    {
+      "name": "Gospel",
+      "source": "ai"
+    },
+    {
+      "name": "Grime",
+      "source": "ai"
+    },
+    {
+      "name": "Gypsy Jazz",
+      "source": "ai"
+    },
+    {
+      "name": "Halftime",
+      "source": "ai"
+    },
+    {
+      "name": "Hands Up",
+      "source": "ai"
+    },
+    {
+      "name": "Happy Hardcore",
+      "source": "ai"
+    },
+    {
+      "name": "Hard House",
+      "source": "ai"
+    },
+    {
+      "name": "Hard Rock",
+      "source": "ai"
+    },
+    {
+      "name": "Hard Techno",
+      "source": "configured"
+    },
+    {
+      "name": "Hard Trance",
+      "source": "ai"
+    },
+    {
+      "name": "Hardcore",
+      "source": "ai"
+    },
+    {
+      "name": "Hardcore Hip-Hop",
+      "source": "ai"
+    },
+    {
+      "name": "Hardstyle",
+      "source": "ai"
+    },
+    {
+      "name": "Heavy Metal",
+      "source": "ai"
+    },
+    {
+      "name": "Hi NRG",
+      "source": "ai"
+    },
+    {
+      "name": "Hip Hop",
+      "source": "ai"
+    },
+    {
+      "name": "Hip-House",
+      "source": "ai"
+    },
+    {
+      "name": "Horrorcore",
+      "source": "ai"
+    },
+    {
+      "name": "House",
+      "source": "configured"
+    },
+    {
+      "name": "Indie Rock",
+      "source": "ai"
+    },
+    {
+      "name": "Industrial",
+      "source": "ai"
+    },
+    {
+      "name": "Interview",
+      "source": "ai"
+    },
+    {
+      "name": "Italo House",
+      "source": "ai"
+    },
+    {
+      "name": "Italo-Disco",
+      "source": "ai"
+    },
+    {
+      "name": "Italodance",
+      "source": "ai"
+    },
+    {
+      "name": "J-pop",
+      "source": "ai"
+    },
+    {
+      "name": "Jazzdance",
+      "source": "ai"
+    },
+    {
+      "name": "Juke",
+      "source": "ai"
+    },
+    {
+      "name": "Jumpstyle",
+      "source": "ai"
+    },
+    {
+      "name": "Jungle",
+      "source": "ai"
+    },
+    {
+      "name": "K-pop",
+      "source": "ai"
+    },
+    {
+      "name": "Latin",
+      "source": "ai"
+    },
+    {
+      "name": "Laïkó",
+      "source": "ai"
+    },
+    {
+      "name": "Makina",
+      "source": "ai"
+    },
+    {
+      "name": "Melodic",
+      "source": "configured"
+    },
+    {
+      "name": "Melodic House",
+      "source": "configured"
+    },
+    {
+      "name": "Minimal",
+      "source": "ai"
+    },
+    {
+      "name": "Minimal Techno",
+      "source": "ai"
+    },
+    {
+      "name": "Musique Concrète",
+      "source": "ai"
+    },
+    {
+      "name": "Neo Soul",
+      "source": "ai"
+    },
+    {
+      "name": "Neo-Classical",
+      "source": "ai"
+    },
+    {
+      "name": "New Age",
+      "source": "ai"
+    },
+    {
+      "name": "New Beat",
+      "source": "ai"
+    },
+    {
+      "name": "Noise",
+      "source": "ai"
+    },
+    {
+      "name": "Nu-Disco",
+      "source": "configured"
+    },
+    {
+      "name": "Organic House",
+      "source": "configured"
+    },
+    {
+      "name": "Poetry",
+      "source": "ai"
+    },
+    {
+      "name": "Polka",
+      "source": "ai"
+    },
+    {
+      "name": "Pop Rock",
+      "source": "ai"
+    },
+    {
+      "name": "Post-Modern",
+      "source": "ai"
+    },
+    {
+      "name": "Power Electronics",
+      "source": "ai"
+    },
+    {
+      "name": "Progressive",
+      "source": "configured"
+    },
+    {
+      "name": "Progressive Breaks",
+      "source": "ai"
+    },
+    {
+      "name": "Progressive House",
+      "source": "configured"
+    },
+    {
+      "name": "Progressive Trance",
+      "source": "ai"
+    },
+    {
+      "name": "Psy-Trance",
+      "source": "configured"
+    },
+    {
+      "name": "Punk",
+      "source": "ai"
+    },
+    {
+      "name": "Radioplay",
+      "source": "ai"
+    },
+    {
+      "name": "Ragga",
+      "source": "ai"
+    },
+    {
+      "name": "Reggae",
+      "source": "ai"
+    },
+    {
+      "name": "Reggae-Pop",
+      "source": "ai"
+    },
+    {
+      "name": "Rhythmic Noise",
+      "source": "ai"
+    },
+    {
+      "name": "RnB/Swing",
+      "source": "ai"
+    },
+    {
+      "name": "Rock & Roll",
+      "source": "ai"
+    },
+    {
+      "name": "Schranz",
+      "source": "ai"
+    },
+    {
+      "name": "Shoegaze",
+      "source": "ai"
+    },
+    {
+      "name": "Ska",
+      "source": "ai"
+    },
+    {
+      "name": "Soca",
+      "source": "ai"
+    },
+    {
+      "name": "Soft Rock",
+      "source": "ai"
+    },
+    {
+      "name": "Soul",
+      "source": "ai"
+    },
+    {
+      "name": "Sound Collage",
+      "source": "ai"
+    },
+    {
+      "name": "Soundtrack",
+      "source": "ai"
+    },
+    {
+      "name": "Speed Garage",
+      "source": "ai"
+    },
+    {
+      "name": "Speedcore",
+      "source": "ai"
+    },
+    {
+      "name": "Spoken Word",
+      "source": "ai"
+    },
+    {
+      "name": "Story",
+      "source": "ai"
+    },
+    {
+      "name": "Swingbeat",
+      "source": "ai"
+    },
+    {
+      "name": "Synth-pop",
+      "source": "ai"
+    },
+    {
+      "name": "Synthwave",
+      "source": "configured"
+    },
+    {
+      "name": "Tech House",
+      "source": "configured"
+    },
+    {
+      "name": "Tech Trance",
+      "source": "ai"
+    },
+    {
+      "name": "Techno",
+      "source": "configured"
+    },
+    {
+      "name": "Theme",
+      "source": "ai"
+    },
+    {
+      "name": "Thug Rap",
+      "source": "ai"
+    },
+    {
+      "name": "Trance",
+      "source": "configured"
+    },
+    {
+      "name": "Trap",
+      "source": "ai"
+    },
+    {
+      "name": "Tribal",
+      "source": "ai"
+    },
+    {
+      "name": "Tribal House",
+      "source": "ai"
+    },
+    {
+      "name": "Trip Hop",
+      "source": "ai"
+    },
+    {
+      "name": "Tropical House",
+      "source": "ai"
+    },
+    {
+      "name": "Turntablism",
+      "source": "ai"
+    },
+    {
+      "name": "UK Garage",
+      "source": "ai"
+    },
+    {
+      "name": "Vaporwave",
+      "source": "ai"
+    },
+    {
+      "name": "Vocal",
+      "source": "ai"
+    },
+    {
+      "name": "Éntekhno",
+      "source": "ai"
+    }
+  ],
+  "anti_genres": [
+    "80s",
+    "Abstract",
+    "Acid",
+    "Acid House",
+    "Acid Jazz",
+    "Alternative Rock",
+    "Ambient",
+    "AOR",
+    "Arena Rock",
+    "Audiobook",
+    "Ballad",
+    "BASSLINE",
+    "Berlin-School",
+    "Big Beat",
+    "Black Metal",
+    "Bleep",
+    "Boom Bap",
+    "Breakbeat",
+    "Breakcore",
+    "Breaks",
+    "Brit Pop",
+    "Broken Beat",
+    "Bubblegum",
+    "Celtic",
+    "Chanson",
+    "Chill",
+    "Chill Electro",
+    "Chillwave",
+    "Cloud Rap",
+    "Comedy",
+    "Conscious",
+    "Contemporary",
+    "Contemporary R&B",
+    "Dance-pop",
+    "Dancehall",
+    "Dark Ambient",
+    "Deep House",
+    "Deep Techno",
+    "Depressive Black Metal",
+    "Dialogue",
+    "Disco",
+    "Disco Polo",
+    "DJ Battle Tool",
+    "Donk",
+    "Downtempo",
+    "Drone",
+    "Drum & Bass",
+    "Drum n Bass",
+    "Dub Techno",
+    "Dubstep",
+    "EBM",
+    "Education",
+    "Electro",
+    "Electro House",
+    "Euro House",
+    "Euro-Disco",
+    "Eurobeat",
+    "Eurodance",
+    "Europop",
+    "Experimental",
+    "Field Recording",
+    "Folk",
+    "Folk Rock",
+    "Free Improvisation",
+    "Freestyle",
+    "Funk",
+    "Funky House",
+    "Gabber",
+    "Gangsta",
+    "Garage House",
+    "Ghetto",
+    "Ghetto House",
+    "Glam",
+    "Glitch",
+    "Goa Trance",
+    "Gospel",
+    "Grime",
+    "Gypsy Jazz",
+    "Halftime",
+    "Hands Up",
+    "Happy Hardcore",
+    "Hard House",
+    "Hard Rock",
+    "Hard Techno",
+    "Hard Trance",
+    "Hardcore",
+    "Hardcore Hip-Hop",
+    "Hardstyle",
+    "Heavy Metal",
+    "Hi NRG",
+    "Hip Hop",
+    "Hip-House",
+    "Horrorcore",
+    "House",
+    "Indie Rock",
+    "Industrial",
+    "Interview",
+    "Italo House",
+    "Italo-Disco",
+    "Italodance",
+    "J-pop",
+    "Jazzdance",
+    "Juke",
+    "Jumpstyle",
+    "Jungle",
+    "K-pop",
+    "Latin",
+    "Laïkó",
+    "Makina",
+    "Melodic",
+    "Melodic House",
+    "Minimal",
+    "Minimal Techno",
+    "Musique Concrète",
+    "Neo Soul",
+    "Neo-Classical",
+    "New Age",
+    "New Beat",
+    "Noise",
+    "Nu-Disco",
+    "Organic House",
+    "Parody",
+    "Poetry",
+    "Polka",
+    "Pop Rock",
+    "Post-Modern",
+    "Power Electronics",
+    "Progressive",
+    "Progressive Breaks",
+    "Progressive House",
+    "Progressive Trance",
+    "Psy-Trance",
+    "Punk",
+    "Radioplay",
+    "Ragga",
+    "Reggae",
+    "Reggae-Pop",
+    "Religious",
+    "Rhythmic Noise",
+    "RnB/Swing",
+    "Rock & Roll",
+    "Schranz",
+    "Shoegaze",
+    "Ska",
+    "Soca",
+    "Soft Rock",
+    "Soul",
+    "Sound Collage",
+    "Soundtrack",
+    "Speed Garage",
+    "Speedcore",
+    "Spoken Word",
+    "Story",
+    "Swingbeat",
+    "Synth-pop",
+    "Synthwave",
+    "Talk",
+    "Talking",
+    "Tech House",
+    "Tech Trance",
+    "Techno",
+    "Theme",
+    "Thug Rap",
+    "Trance",
+    "Trap",
+    "Tribal",
+    "Tribal House",
+    "Trip Hop",
+    "Tropical House",
+    "Turntablism",
+    "UK Garage",
+    "Vaporwave",
+    "Vocal",
+    "Éntekhno"
+  ]
+}
