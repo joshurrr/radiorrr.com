@@ -5009,7 +5009,23 @@ document.addEventListener("DOMContentLoaded", function () {
       const stuckFrameStatus = document.getElementById("stuckFrameStatus");
       const stuckFrameProgress = document.getElementById("stuckFrameProgress");
       const stuckFrameDownload = document.getElementById("stuckFrameDownload");
+      const stuckFrameAudioOffer = document.getElementById("stuckFrameAudioOffer");
+      const stuckFrameAudio = document.getElementById("stuckFrameAudio");
+      const stuckFrameAudioName = document.getElementById("stuckFrameAudioName");
       let stuckFrameDownloadUrl = "";
+      let stuckFrameNeedsAudio = false;
+
+      function selectedStuckFrameAudio() {
+        return stuckFrameAudio && stuckFrameAudio.files && stuckFrameAudio.files[0]
+          ? stuckFrameAudio.files[0] : null;
+      }
+
+      function validStuckFrameSelection() {
+        const video = selectedStuckFrameFile();
+        const audio = selectedStuckFrameAudio();
+        return !!video && video.size <= 100 * 1024 * 1024 &&
+          (!stuckFrameNeedsAudio || !!audio) && (!audio || audio.size <= 100 * 1024 * 1024);
+      }
 
       function setStuckFrameStatus(message, state) {
         if (!stuckFrameStatus) return;
@@ -5039,6 +5055,10 @@ document.addEventListener("DOMContentLoaded", function () {
       if (stuckFrameVideo) {
         stuckFrameVideo.addEventListener("change", function () {
           clearStuckFrameDownload();
+          stuckFrameNeedsAudio = false;
+          if (stuckFrameAudioOffer) stuckFrameAudioOffer.hidden = true;
+          if (stuckFrameAudio) stuckFrameAudio.value = "";
+          if (stuckFrameAudioName) stuckFrameAudioName.textContent = "No audio selected.";
           const file = selectedStuckFrameFile();
 
           if (!file) {
@@ -5064,9 +5084,25 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       }
 
+      if (stuckFrameAudio) {
+        stuckFrameAudio.addEventListener("change", function () {
+          clearStuckFrameDownload();
+          const audio = selectedStuckFrameAudio();
+          if (stuckFrameAudioName) stuckFrameAudioName.textContent = audio ? audio.name : "No audio selected.";
+          if (stuckFrameStart) stuckFrameStart.disabled = !validStuckFrameSelection();
+          setStuckFrameStatus(
+            audio && audio.size > 100 * 1024 * 1024 ? "This audio file is larger than the 100 MB upload limit." :
+            audio ? "Ready to create the effect using your added audio." : "This video has no audio track. Choose an audio file to continue.",
+            audio && audio.size <= 100 * 1024 * 1024 ? "" : "error"
+          );
+        });
+      }
+
       async function createStuckFrameEffect() {
         const file = selectedStuckFrameFile();
         if (!file || !stuckFrameStart) return;
+        if (!validStuckFrameSelection()) return;
+        const audio = selectedStuckFrameAudio();
 
         if (file.size > 100 * 1024 * 1024) {
           setStuckFrameStatus("This video is larger than the 100 MB upload limit.", "error");
@@ -5076,20 +5112,24 @@ document.addEventListener("DOMContentLoaded", function () {
         clearStuckFrameDownload();
         stuckFrameStart.disabled = true;
         stuckFrameStart.textContent = "Processing…";
+        if (stuckFrameVideo) stuckFrameVideo.disabled = true;
+        if (stuckFrameAudio) stuckFrameAudio.disabled = true;
         if (stuckFrameProgress) stuckFrameProgress.hidden = false;
         setStuckFrameStatus("Uploading the video, detecting the beat and rendering the effect. This can take a minute or two.");
 
         try {
+          const headers = {
+            "Content-Type": audio ? "application/octet-stream" : file.type || "application/octet-stream",
+            "X-RRR-Filename": encodeURIComponent(file.name)
+          };
+          if (audio) headers["X-RRR-Video-Bytes"] = String(file.size);
           const response = await fetch(
             "https://api.radiorrr.com/api/tools/stuck-frame-effect",
             {
               method: "POST",
               cache: "no-store",
-              headers: {
-                "Content-Type": file.type || "application/octet-stream",
-                "X-RRR-Filename": encodeURIComponent(file.name)
-              },
-              body: file
+              headers: headers,
+              body: audio ? new Blob([file, audio]) : file
             }
           );
 
@@ -5097,7 +5137,15 @@ document.addEventListener("DOMContentLoaded", function () {
             let detail = "";
             try {
               const data = await response.json();
-              detail = data && data.detail ? String(data.detail) : "";
+              const problem = data && data.detail;
+              detail = problem && typeof problem === "object" ? problem.message || "" : problem ? String(problem) : "";
+              // Also recognise the old server error until the backend update is activated.
+              if ((problem && problem.code === "no_audio") || /output file does not contain any stream/i.test(detail)) {
+                stuckFrameNeedsAudio = true;
+                if (stuckFrameAudioOffer) stuckFrameAudioOffer.hidden = false;
+                detail = audio ? "The selected audio file has no audio track. Choose another audio file." :
+                  "This video has no audio track. Add an audio file below to create the effect.";
+              }
             } catch (e) {
               try { detail = await response.text(); } catch (ignore) {}
             }
@@ -5127,7 +5175,9 @@ document.addEventListener("DOMContentLoaded", function () {
             "error"
           );
         } finally {
-          stuckFrameStart.disabled = !selectedStuckFrameFile();
+          stuckFrameStart.disabled = !validStuckFrameSelection();
+          if (stuckFrameVideo) stuckFrameVideo.disabled = false;
+          if (stuckFrameAudio) stuckFrameAudio.disabled = false;
           stuckFrameStart.textContent = "Create Effect";
           if (stuckFrameProgress) stuckFrameProgress.hidden = true;
         }

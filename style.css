@@ -6263,6 +6263,24 @@
   line-height: 1.4;
 }
 
+.stuck-frame-audio-offer {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid rgba(34,211,238,0.35);
+  border-radius: 10px;
+  color: #e0e7ff;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.stuck-frame-audio-offer p {
+  margin: 0 0 0.6rem;
+}
+
+.stuck-frame-audio-offer p:last-child {
+  margin: 0.5rem 0 0;
+}
+
 .stuck-frame-status.error {
   color: #fca5a5;
 }

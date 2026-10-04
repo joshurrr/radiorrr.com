@@ -504,6 +504,15 @@
 <button class="tool-button" id="stuckFrameStart" type="button" disabled>Create Effect</button>
 </div>
 <div class="stuck-frame-file-name" id="stuckFrameFileName">No video selected.</div>
+<div id="stuckFrameAudioOffer" class="stuck-frame-audio-offer" hidden>
+<p>Add music or another audio track to use for the beat detection and finished video. Short tracks end in silence; long tracks are trimmed to the video length.</p>
+<label class="stuck-frame-file-label" for="stuckFrameAudio">
+<span>Choose audio</span>
+<input id="stuckFrameAudio" type="file" accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.aiff">
+</label>
+<div class="stuck-frame-file-name" id="stuckFrameAudioName">No audio selected.</div>
+<p>Maximum audio upload size: 100 MB.</p>
+</div>
 <div class="stuck-frame-progress" id="stuckFrameProgress" hidden aria-hidden="true"><span></span></div>
 <div class="stuck-frame-status" id="stuckFrameStatus" role="status" aria-live="polite">MP4, MOV, M4V, WebM and MKV videos are supported. Maximum upload size: 100 MB.</div>
 <a class="tool-button stuck-frame-download" id="stuckFrameDownload" hidden>Download processed video</a>
