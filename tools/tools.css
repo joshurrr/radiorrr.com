@@ -1,6 +1,6 @@
 /* Tools landing page: scoped to this document; routed tool controls keep their shared styles. */
 .tools-page { background-image: linear-gradient(rgba(3,8,17,.75), rgba(3,8,17,.9)), url('/radiorrr_egypt_background.png'); }
-.tools-page .wrapper { max-width: 1240px; background: #090d1b; box-shadow: 0 20px 80px #0008; border-color: #283147; }
+.tools-page .wrapper { background: #090d1b; box-shadow: 0 20px 80px #0008; border-color: #283147; }
 .tools-page .hero { box-shadow: none; border-color: #35405c; }
 .tools-page .nav-tabs a { min-height: 44px; box-shadow: none; }
 .tools-page .nav-tabs a.active { box-shadow: 0 0 14px #e63bb52b; }
@@ -60,7 +60,6 @@
   .tools-page #tools-section .tools-card { padding: 20px; }
 }
 @media (max-width: 560px) {
-  .tools-page .wrapper { padding: 12px; }
   .tools-page #tools-section .tools-card { padding: 18px 14px; }
   .tools-page .tools-hub-grid { grid-template-columns: 1fr; gap: 12px; }
   .tools-page .tool-hub-tile { min-height: 200px; padding: 20px; }
