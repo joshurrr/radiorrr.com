@@ -7,7 +7,7 @@
 <link href="favicon.ico" rel="icon" type="image/x-icon"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <link rel="stylesheet" href="/style.css?v=20261004.3">
-<link rel="stylesheet" href="/tools/tools.css?v=20261004.6">
+<link rel="stylesheet" href="/tools/tools.css?v=20261004.7">
 <meta content="RadioRRR is an online radio station and live DJ discovery platform. Listen to RadioRRR and discover DJs broadcasting live across social platforms." name="description"/>
 <meta content="index, follow, max-image-preview:large" name="robots"/>
 <meta content="#070818" name="theme-color"/>
@@ -309,15 +309,13 @@
 <section class="system-health-dashboard health-dashboard-compact" aria-labelledby="systemHealthTitle">
 <div class="health-compact-header">
   <div class="health-compact-heading">
-    <h2 id="systemHealthTitle">Station status</h2>
-    <div class="tool-health pending health-overall-inline" id="toolOverallHealth" role="status">Checking monitored services…</div>
+    <p class="health-update-note">Service checks &amp; stream links · Updates every 30 seconds</p>
+    <h2 class="health-group-title" id="systemHealthTitle">SERVICES</h2>
   </div>
   <div class="health-refresh"><span>Updated <span id="toolLastRefresh">—</span></span><button class="tool-button secondary tools-refresh-button" id="refreshTools" type="button">↻ Refresh</button></div>
 </div>
 
 <div class="health-details">
-<p class="health-update-note">Service checks &amp; stream links · Updates every 30 seconds</p>
-<h3 class="health-group-title">SERVICES</h3>
 <div class="health-services health-services-compact">
   <div class="health-service-compact"><span>RadioRouter API</span><span class="tool-health pending" id="toolApiHealth">Checking…</span></div>
   <div class="health-service-compact"><span>RadioRouter engine</span><span class="tool-health pending" id="toolRouterEngine">Checking…</span></div>

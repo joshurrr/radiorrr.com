@@ -38,7 +38,8 @@
 .tools-page #tools-section .system-health-dashboard { margin: 0 0 28px; padding: 20px; background: #0d1525; border: 1px solid #2c3c50; box-shadow: none; border-radius: 12px; }
 .tools-page .health-compact-header { margin-bottom: 0; }
 .tools-page .health-compact-heading { flex-direction: column; align-items: flex-start; gap: 6px; }
-.tools-page #systemHealthTitle { font-size: 15px; letter-spacing: normal; }
+.tools-page #systemHealthTitle { margin: 0; font-size: 15px; letter-spacing: normal; }
+.tools-page .health-compact-heading .health-update-note { margin: 0; }
 .tools-page #toolOverallHealth { font-size: 12px; line-height: 1.5; text-shadow: none; }
 .tools-page #toolOverallHealth::before { display: none; }
 .tools-page #toolOverallHealth.pending { color: #f0ce8b; }
@@ -46,7 +47,7 @@
 .tools-page #toolOverallHealth.unhealthy { color: #ffaaaa; }
 .tools-page .health-refresh { font-size: 11px; color: #aabbce; }
 .tools-page .tools-refresh-button, .tools-page .health-stream-copy { min-height: 44px; font-size: 12px; padding: 8px 14px; box-shadow: none; }
-.health-details { border-top: 1px solid #29374d; margin-top: 16px; padding-top: 14px; }
+.health-details { margin-top: 12px; }
 .health-update-note { font-size: 12px; color: #a7b6cc; line-height: 1.5; margin-bottom: 12px; }
 .tools-page .health-services.health-services-compact { grid-template-columns: repeat(3,minmax(0,1fr)); }
 .tools-page .health-services .health-service-compact { background: #121d2e; border: 1px solid #2c3b51; border-radius: 8px; padding: 12px; gap: 8px; box-shadow: none; }
