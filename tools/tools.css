@@ -7,7 +7,7 @@
 .tools-page #tools-section .tools-card { padding: 28px; background: #0b1020; border-color: #2b3450; text-align: left; }
 .tools-page #tools-section .tools-intro { margin: 0 0 28px; padding: 0; border: 0; letter-spacing: normal; }
 .tools-eyebrow { color: #6ee7f2; font-size: 11px; font-weight: 750; letter-spacing: .16em; margin-bottom: 14px; }
-.tools-intro h1 { font-size: var(--tools-heading-size); line-height: 1.15; letter-spacing: -.035em; font-weight: 800; color: #f4f6ff; }
+.tools-page .tools-intro h1, .tools-page #systemHealthTitle { margin: 0; font-family: inherit; font-size: var(--tools-heading-size); line-height: 1.3; letter-spacing: normal; font-weight: 700; color: #9fb3ff; }
 .tools-page #tools-section .tools-intro h1 span { font: inherit; letter-spacing: inherit; color: #a9b5ce; text-shadow: none; }
 .tools-intro > p:not(.tools-eyebrow) { font-size: 15px; color: #bec8dc; margin-top: 16px; line-height: 1.6; }
 .tools-free-note { display: block; color: #98a8c4; font-size: 12px; margin-top: 8px; }
@@ -38,7 +38,6 @@
 .tools-page #tools-section .system-health-dashboard { margin: 0 0 28px; padding: 20px; background: #0d1525; border: 1px solid #2c3c50; box-shadow: none; border-radius: 12px; }
 .tools-page .health-compact-header { margin-bottom: 0; flex-wrap: wrap; }
 .tools-page .health-compact-heading { flex-direction: row; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-.tools-page #systemHealthTitle { margin: 0; font-size: var(--tools-heading-size); line-height: 1.3; letter-spacing: normal; }
 .tools-page .health-compact-heading .health-update-note { margin: 0; font-size: var(--tools-heading-size); line-height: 1.3; }
 .tools-page #toolOverallHealth { font-size: 12px; line-height: 1.5; text-shadow: none; }
 .tools-page #toolOverallHealth::before { display: none; }
