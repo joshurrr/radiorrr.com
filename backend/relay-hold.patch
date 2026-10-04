@@ -1,0 +1,56 @@
+--- app/main.py
++++ app/main.py
+@@ -3655,6 +3655,8 @@
+     current_username,
+     healthy,
+     current_platform="TikTok",
++    relay_selected_at=None,
++    now=None,
+ ):
+     if not candidate:
+         return False, "no_eligible_candidate"
+@@ -3680,6 +3682,13 @@
+         # A non-excluded live candidate is preferable to staying on avoided
+         # content even when that alternative is below the normal score floor.
+         return True, "current_relay_anti_genre"
++    # Score dips and emergency score escapes must respect the same hold as
++    # ordinary ranking improvements. Only failure or explicit exclusions bypass it.
++    if relay_selected_at is not None:
++        decision_time = now or datetime.now(timezone.utc)
++        dwell_elapsed = (decision_time - relay_selected_at).total_seconds()
++        if dwell_elapsed < STAGE3_MIN_DWELL_SECONDS:
++            return False, "minimum_dwell"
+     if current_score < STAGE3_CURRENT_MIN_SCORE:
+         # A low current score removes the large continuity margin. Normally the
+         # replacement must still clear the quality floor. If the current relay
+@@ -3940,28 +3949,9 @@
+                             relay_username,
+                             relay_is_healthy,
+                             relay_platform or "TikTok",
++                            relay_selected_at=stage3_relay_selected_at,
++                            now=decision_time,
+                         )
+-
+-                        # Hold a newly promoted healthy DJ for 15 minutes before
+-                        # allowing an ordinary better-match takeover. Explicit
+-                        # programme exclusions and a below-quality-floor current
+-                        # relay still bypass the dwell protection.
+-                        if (
+-                            should_switch
+-                            and relay_is_healthy
+-                            and reason not in {
+-                                "current_relay_anti_genre",
+-                                "below_quality_floor",
+-                                "escape_poor_current",
+-                            }
+-                            and stage3_relay_selected_at is not None
+-                        ):
+-                            dwell_elapsed = (
+-                                decision_time - stage3_relay_selected_at
+-                            ).total_seconds()
+-                            if dwell_elapsed < STAGE3_MIN_DWELL_SECONDS:
+-                                should_switch = False
+-                                reason = "minimum_dwell"
+ 
+                         # If the current relay is healthy but temporarily absent
+                         # from live_djs, preserve it for the configured grace
