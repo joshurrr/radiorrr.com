@@ -2142,6 +2142,22 @@ document.addEventListener("DOMContentLoaded", function () {
           randomLiveDj.dataset.username = username;
           randomLiveDj.dataset.platform = platform;
         }
+        randomLiveDjName.textContent = "🎧 " + String(name);
+        updateCurrentDJPlatform(dj);
+        updateMainDJMatchScore(dj);
+        updateLiveDjGenres(dj);
+        updateLiveDjProfile(dj);
+        randomLiveDj.style.display = "block";
+
+        connectLivePlayback(streamUrl);
+      }
+
+      function connectLivePlayback(streamUrl) {
+        if (!liveDjVideo) return;
+        // Metadata refreshes and station DJ handoffs share the same HLS feed.
+        // Keep its connection, buffer and the listener's audio choice intact.
+        if (activeLiveStreamUrl === streamUrl &&
+            (window.radioRrrHls || liveDjVideo.getAttribute("src"))) return;
         activeLiveStreamUrl = streamUrl;
         livePlaybackLastTime = Number(liveDjVideo.currentTime) || 0;
         livePlaybackLastProgressAt = Date.now();
@@ -2154,12 +2170,6 @@ document.addEventListener("DOMContentLoaded", function () {
         liveDjVideo.dataset.rrrUserAudio = userRequestedAudio ? "1" : "0";
         updateLiveDjMuteButton();
         startLiveDjBackgroundFill();
-        randomLiveDjName.textContent = "🎧 " + String(name);
-        updateCurrentDJPlatform(dj);
-        updateMainDJMatchScore(dj);
-        updateLiveDjGenres(dj);
-        updateLiveDjProfile(dj);
-        randomLiveDj.style.display = "block";
 
         // Chrome/Edge/Firefox need hls.js for HLS (.m3u8).
         // Safari can use native HLS directly.
@@ -2199,64 +2209,21 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       function showRadioFallback() {
+        // Missing DJ metadata is not evidence that the station feed is down.
+        // Start the shared feed even on a fresh visit with no relay record.
         activeLiveUsername = "";
-        activeLiveStreamKey = "";
-        activeLiveStreamUrl = "";
+        activeLiveStreamKey = "default:station";
         relayMissingSince = 0;
         lastKnownRelayDJ = null;
-
-        if (nativePlaybackRecoveryTimer) {
-          window.clearTimeout(nativePlaybackRecoveryTimer);
-          nativePlaybackRecoveryTimer = null;
+        connectLivePlayback(RADIO_ROUTER_STREAM_URL);
+        if (randomLiveDj) randomLiveDj.style.display = "block";
+        if (randomLiveDjName) {
+          randomLiveDjName.textContent = "📻 Radio RRR · waiting for DJ details…";
         }
-
-        if (window.radioRrrHls) {
-          window.radioRrrHls.destroy();
-          window.radioRrrHls = null;
-        }
-
-        if (window.radioRrrHlsBackground) {
-          window.radioRrrHlsBackground.destroy();
-          window.radioRrrHlsBackground = null;
-        }
-
-        if (liveDjVideo) {
-          liveDjVideo.pause();
-          liveDjVideo.removeAttribute("src");
-          liveDjVideo.load();
-        }
-
-        stopLiveDjBackgroundFill();
-
-        const liveCandidatesAvailable = currentLiveDJs.length > 0;
-
-        if (randomLiveDj) {
-          // /api/live can briefly return live DJs before the backend relay has
-          // finished resolving. Keep the main station panel visible in that
-          // state instead of making the whole Current DJ section disappear.
-          randomLiveDj.style.display = liveCandidatesAvailable ? "block" : "none";
-        }
-
-        if (liveCandidatesAvailable) {
-          if (randomLiveDjName) {
-            randomLiveDjName.textContent = "🎧 Waiting for station relay…";
-            updateCurrentDJPlatform(null);
-          }
-
-          if (liveDjPlaceholder) {
-            const placeholderText = liveDjPlaceholder.querySelector("span");
-            if (placeholderText) {
-              placeholderText.textContent = "Station relay is connecting…";
-            }
-          }
-
-          const player = liveDjVideo && liveDjVideo.closest(".radio-router-player");
-          if (player) player.classList.remove("live-active");
-        }
-
         updateCurrentDJPlatform(null);
         updateMainDJMatchScore(null);
         updateLiveDjProfile(null);
+        if (randomLiveDjGenresField) randomLiveDjGenresField.hidden = true;
       }
 
       if (liveDjUnmute && liveDjVideo) {
@@ -4683,6 +4650,8 @@ document.addEventListener("DOMContentLoaded", function () {
         liveRefresh.addEventListener("click", loadLiveDJs);
       }
 
+      // Playback must not wait for catalogue, ranking or genre-analysis APIs.
+      showRadioFallback();
       loadLiveDJs();
 
       setInterval(loadLiveDJs, 30 * 1000);
