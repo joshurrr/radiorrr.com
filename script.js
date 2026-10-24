@@ -23,6 +23,134 @@ document.addEventListener("DOMContentLoaded", function () {
       const scannerSummary =
         document.getElementById("scannerSummary");
 
+      /* SOUND INTELLIGENCE — READ-ONLY SHADOW MODE */
+      const vocalSoundOpen = document.getElementById('openVocalSoundTool');
+      const vocalSoundPanel = document.getElementById('vocalSoundToolPanel');
+      const vocalSoundClose = document.getElementById('vocalSoundClose');
+      const vocalSoundRefresh = document.getElementById('vocalSoundRefresh');
+      const vocalSoundDj = document.getElementById('vocalSoundDj');
+      const vocalSoundStatus = document.getElementById('vocalSoundStatus');
+      const vocalSoundReadings = document.getElementById('vocalSoundReadings');
+      let vocalSoundRequest = 0;
+
+      function soundText(id, value) {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
+      }
+
+      function closeVocalSound() {
+        ++vocalSoundRequest;
+        if (vocalSoundPanel) vocalSoundPanel.hidden = true;
+        if (vocalSoundOpen) vocalSoundOpen.setAttribute('aria-expanded', 'false');
+        if (vocalSoundReadings) vocalSoundReadings.hidden = true;
+      }
+
+      async function refreshVocalSoundList() {
+        if (!vocalSoundPanel || vocalSoundPanel.hidden || !vocalSoundDj) return;
+        const request = ++vocalSoundRequest;
+        const prior = vocalSoundDj.value;
+        soundText('vocalSoundStatus', 'Loading live DJs…');
+        try {
+          const response = await fetch('https://api.radiorrr.com/api/live', {cache: 'no-store'});
+          if (!response.ok) throw new Error('Live DJ service returned ' + response.status);
+          const data = await response.json();
+          if (request !== vocalSoundRequest) return;
+          const live = Array.isArray(data.live) ? data.live : [];
+          const accounts = new Set();
+          const options = [];
+          live.forEach(function (dj) {
+            const username = String(dj.username || '').trim();
+            const platform = String(dj.platform || 'TikTok').trim();
+            if (!username || !['TikTok', 'Twitch', 'YouTube'].includes(platform)) return;
+            const key = platform + '|' + username;
+            if (accounts.has(key)) return;
+            accounts.add(key);
+            options.push({key, label: String(dj.name || username) + ' (' + platform + ' @' + username + ')'});
+          });
+          vocalSoundDj.replaceChildren();
+          options.forEach(function (dj) {
+            const option = document.createElement('option');
+            option.value = dj.key;
+            option.textContent = dj.label;
+            vocalSoundDj.appendChild(option);
+          });
+          if (!options.length) {
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'No live DJs currently available';
+            vocalSoundDj.appendChild(option);
+            if (vocalSoundReadings) vocalSoundReadings.hidden = true;
+            soundText('vocalSoundStatus', 'No live DJs are currently available for analysis.');
+            return;
+          }
+          vocalSoundDj.value = accounts.has(prior) ? prior : options[0].key;
+          await refreshVocalSoundResult();
+        } catch (error) {
+          if (request !== vocalSoundRequest) return;
+          if (vocalSoundReadings) vocalSoundReadings.hidden = true;
+          soundText('vocalSoundStatus', 'Unable to load DJs: ' + error.message);
+        }
+      }
+
+      async function refreshVocalSoundResult() {
+        if (!vocalSoundPanel || vocalSoundPanel.hidden || !vocalSoundDj) return;
+        const request = ++vocalSoundRequest;
+        const parts = String(vocalSoundDj.value || '').split('|');
+        if (parts.length !== 2 || !parts[1]) return;
+        if (vocalSoundReadings) vocalSoundReadings.hidden = true;
+        soundText('vocalSoundStatus', 'Reading latest vocal analysis…');
+        try {
+          const url = 'https://api.radiorrr.com/api/sound-intelligence?platform=' +
+            encodeURIComponent(parts[0]) + '&username=' + encodeURIComponent(parts[1]);
+          const response = await fetch(url, {cache: 'no-store'});
+          if (request !== vocalSoundRequest) return;
+          if (response.status === 404) {
+            soundText('vocalSoundStatus', 'Awaiting the first sound scan for this DJ.');
+            return;
+          }
+          if (!response.ok) throw new Error('Sound AI returned ' + response.status);
+          const data = await response.json();
+          if (request !== vocalSoundRequest) return;
+          const percent = value => Number.isFinite(Number(value)) ?
+            Math.round(Number(value) * 100) + '%' : '—';
+          soundText('vocalSoundVoice', percent(data.vocal_probability));
+          soundText('vocalSoundInstrumental', percent(data.instrumental_probability));
+          soundText('vocalSoundWindows', percent(data.vocal_dominant_fraction) + ' (' + (data.window_count || 0) + ' windows)');
+          const age = Number(data.age_seconds);
+          soundText('vocalSoundAge', Number.isFinite(age) && age >= 0 ? Math.round(age / 60) + ' min' : '—');
+          if (vocalSoundReadings) vocalSoundReadings.hidden = false;
+          soundText('vocalSoundStatus', data.fresh ? 'Latest model result · Shadow mode' : 'STORED / STALE sample · Shadow mode — waiting for a fresh scan');
+        } catch (error) {
+          if (request !== vocalSoundRequest) return;
+          soundText('vocalSoundStatus', 'Unable to read sound analysis: ' + error.message);
+        }
+      }
+
+      function openVocalSound() {
+        if (!vocalSoundPanel) return;
+        const alreadyOpen = !vocalSoundPanel.hidden;
+        vocalSoundPanel.hidden = false;
+        if (vocalSoundOpen) vocalSoundOpen.setAttribute('aria-expanded', 'true');
+        if (!alreadyOpen) refreshVocalSoundList();
+      }
+      if (vocalSoundOpen) vocalSoundOpen.addEventListener('click', function (event) {
+        if (!isInPageNavigation(event)) return;
+        event.preventDefault();
+        const url = new URL('/tools/?sound=vocal-ai', window.location.origin);
+        window.history.pushState({rrrTool: 'vocal-ai'}, '', url);
+        openVocalSound();
+        if (vocalSoundPanel) vocalSoundPanel.scrollIntoView({behavior: 'smooth', block: 'start'});
+      });
+      if (vocalSoundClose) vocalSoundClose.addEventListener('click', function () {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('sound');
+        window.history.pushState({rrrView: 'tools'}, '', url);
+        closeVocalSound();
+        if (vocalSoundOpen) vocalSoundOpen.focus();
+      });
+      if (vocalSoundRefresh) vocalSoundRefresh.addEventListener('click', refreshVocalSoundList);
+      if (vocalSoundDj) vocalSoundDj.addEventListener('change', refreshVocalSoundResult);
+
       /* RECOMMEND A DJ — FORMSPREE */
       const recommendDjOpen =
         document.getElementById("recommendDjOpen");
@@ -758,7 +886,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       function copyUnrelatedQueryParams(fromUrl, toUrl) {
         fromUrl.searchParams.forEach(function (value, key) {
-          if (key !== "view") toUrl.searchParams.append(key, value);
+          if (key !== "view" && key !== "sound") toUrl.searchParams.append(key, value);
         });
       }
 
@@ -817,6 +945,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       function applyToolRoute(toolRoute) {
         const toolsSection = document.getElementById("tools-section");
+        if (toolRoute) closeVocalSound();
         if (!toolsSection) return;
 
         const detailMode = Boolean(toolRoute && TOOL_ROUTE_CONFIG[toolRoute]);
@@ -901,6 +1030,12 @@ document.addEventListener("DOMContentLoaded", function () {
         switchTab(getTabTargetFromLocation());
         applyToolRoute(toolRoute);
         applyRouteMetadata(toolRoute);
+        if (normalisePathname(window.location.pathname) === TOOLS_HUB_PATH &&
+            new URLSearchParams(window.location.search).get('sound') === 'vocal-ai') {
+          openVocalSound();
+        } else {
+          closeVocalSound();
+        }
       }
 
       function isInPageNavigation(event) {

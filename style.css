@@ -9008,3 +9008,19 @@ button.dj-genre-filter:hover { filter:brightness(1.25); }
 :is(#liveDjsList, #liveDjsToolResults) .dj-card.dj-live-switch-card .dj-secondary-detected-row {
   display: none !important;
 }
+
+/* SOUND INTELLIGENCE — observational Tools panel only */
+.vocal-sound-panel[hidden], .vocal-sound-readings[hidden] { display: none !important; }
+.vocal-sound-panel { margin: 0.75rem 0 1rem; text-align: left; }
+.vocal-sound-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+.vocal-sound-heading > div { min-width: 0; }
+.vocal-sound-label { display: block; margin: 0.8rem 0 0.35rem; font-size: 0.82rem; font-weight: 800; color: #c7d2fe; }
+.vocal-sound-controls { display: flex; align-items: center; gap: 0.55rem; }
+.vocal-sound-controls select { flex: 1; min-width: 0; padding: 0.65rem; border: 1px solid rgba(129,140,248,0.65); border-radius: 9px; color: white; background: #090c20; }
+.vocal-sound-status { margin: 0.8rem 0; font-size: 0.85rem; color: #a5b4fc; }
+.vocal-sound-readings { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 0.55rem; }
+.vocal-sound-readings > div { border: 1px solid rgba(34,211,238,0.3); background: rgba(7,15,34,0.8); border-radius: 10px; padding: 0.7rem; display: flex; flex-direction: column; gap: 0.3rem; }
+.vocal-sound-readings span { font-size: 0.78rem; color: #c7d2fe; }
+.vocal-sound-readings strong { font-size: 1.2rem; color: #67e8f9; }
+.vocal-sound-disclaimer { margin: 0.9rem 0 0; color: #a5b4fc; font-size: 0.75rem; line-height: 1.5; }
+@media (max-width: 600px) { .vocal-sound-heading, .vocal-sound-controls { flex-wrap: wrap; } .vocal-sound-readings { grid-template-columns: minmax(0,1fr); } }
