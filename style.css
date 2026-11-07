@@ -9024,3 +9024,26 @@ button.dj-genre-filter:hover { filter:brightness(1.25); }
 .vocal-sound-readings strong { font-size: 1.2rem; color: #67e8f9; }
 .vocal-sound-disclaimer { margin: 0.9rem 0 0; color: #a5b4fc; font-size: 0.75rem; line-height: 1.5; }
 @media (max-width: 600px) { .vocal-sound-heading, .vocal-sound-controls { flex-wrap: wrap; } .vocal-sound-readings { grid-template-columns: minmax(0,1fr); } }
+
+
+/* RRR Network footer cards, shared with RRR.Trading. */
+.rrr-footer .rrr-network { padding: 24px 0 17px; border-bottom: 1px solid rgba(118,163,186,.18); }
+.rrr-footer .rrr-network h2 { display:flex; align-items:center; justify-content:center; gap:22px; margin:0 auto 19px; max-width:900px; color:#d6e1e8; font-size:14px; line-height:1.4; letter-spacing:.23em; }
+.rrr-network h2::before,.rrr-network h2::after { content:""; flex:1; height:1px; background:linear-gradient(90deg,transparent,#00ba94); }
+.rrr-network h2::after { transform:rotate(180deg); }
+.rrr-network-cards { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; max-width:1200px; margin:auto; }
+.rrr-footer .rrr-network-card { --network-accent:#00d6a6; display:flex; align-items:center; gap:16px; min-width:0; padding:17px; border:1px solid #175346; border-radius:7px; background:rgba(3,15,23,.35); color:#d6e1e8; text-decoration:none; text-align:left; }
+.rrr-footer .rrr-network-radio { --network-accent:#00c9df; border-color:#174d5b; }
+.rrr-footer .rrr-network-home { --network-accent:#A855F7; border-color:rgba(168,85,247,.35); }
+.rrr-footer .rrr-network-finance { --network-accent:#c7a354; border-color:#293a43; }
+.rrr-network-card svg { width:38px; height:38px; flex:none; color:var(--network-accent); }
+.rrr-network-card strong { display:block; font-size:19px; line-height:1.3; font-weight:650; }
+.rrr-network-card em { color:var(--network-accent); font-style:normal; }
+.rrr-network-card small { display:block; margin-top:7px; color:#a9bdcb; font-size:10px; letter-spacing:.12em; line-height:1.5; }
+.rrr-network-arrow { margin-left:auto; color:var(--network-accent); font-size:29px; }
+.rrr-footer a.rrr-network-card:hover { border-color:var(--network-accent); background:rgba(18,45,53,.4); }
+.rrr-footer .rrr-network a:focus-visible { outline:2px solid #87d9e9; outline-offset:4px; }
+
+@media(max-width:1100px) { .rrr-network-cards { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; } .rrr-footer .rrr-network-card { gap:10px; padding:14px 11px; } .rrr-network-card strong { font-size:16px; } .rrr-network-card svg { width:30px; height:30px; } }
+@media(max-width:700px) { .rrr-network-cards { grid-template-columns:1fr; max-width:380px; } .rrr-footer .rrr-network-card { padding:15px 18px; gap:16px; } .rrr-footer .rrr-network h2 { font-size:12px; gap:13px; } }
+.rrr-footer .rrr-network { margin-bottom: 20px; }
