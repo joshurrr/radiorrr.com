@@ -1,0 +1,46 @@
+--- a/main.py
++++ b/main.py
+@@ -12133,7 +12133,7 @@
+     }
+ 
+ 
+-def _load_live_favourites_with_learned_profiles():
++def _load_live_favourites_with_learned_profiles(include_learned=True):
+     """
+     Load favourite DJs and historical learned genres away from the FastAPI
+     event loop. This is intentionally synchronous because it runs via
+@@ -12154,6 +12154,9 @@
+         dict(row)
+         for row in favourite_rows
+     ]
++
++    if not include_learned:
++        return favourites
+ 
+     for favourite in favourites:
+         learned = get_cached_learned_genre_profile(
+@@ -12260,7 +12263,7 @@
+ 
+ 
+ @app.get("/api/live")
+-async def live(all_platforms: bool = True):
++async def live(all_platforms: bool = True, include_learned: bool = True):
+ 
+     # /api/live is platform-neutral. TikTok, Twitch and any future supported
+     # platforms are returned through the same public endpoint. Keep the legacy
+@@ -12272,9 +12275,12 @@
+     # Favourite/profile enrichment includes SQLite reads and historical
+     # genre aggregation for every enabled DJ. Keep that work off the Uvicorn
+     # event loop so /api/live cannot stall HLS/API servicing.
+-    favourites = await asyncio.to_thread(
+-        _load_live_favourites_with_learned_profiles
+-    )
++    if include_learned:
++        favourites = await asyncio.to_thread(_load_live_favourites_with_learned_profiles)
++    else:
++        # The live view needs stored profiles and current detections only.
++        # Its small catalogue query can finish even when analytics workers are busy.
++        favourites = _load_live_favourites_with_learned_profiles(include_learned=False)
+ 
+     # Keep favourite_djs as the canonical profile store.
+     favourite_genres = {

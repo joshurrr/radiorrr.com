@@ -1,0 +1,95 @@
+--- a/main.py
++++ b/main.py
+@@ -1022,21 +1022,15 @@
+     process = audio_process
+     audio_process = None
+ 
+-    if process is not None and process.poll() is None:
+-        try:
+-            process.terminate()
+-            await asyncio.to_thread(process.wait, timeout=3)
+-        except Exception:
+-            try:
+-                process.kill()
+-                await asyncio.to_thread(process.wait, timeout=3)
+-            except Exception:
+-                pass
+-
+     if audio_task is not None:
+         if not audio_task.done():
+             audio_task.cancel()
+         audio_task = None
++
++    try:
++        await terminate_relay_process_async(process, timeout=3)
++    except (OSError, subprocess.TimeoutExpired) as error:
++        print(f"[Audio] Encoder shutdown failed: {error}")
+ 
+ 
+ def stop_relay(*, disconnect_audio_clients=False):
+@@ -1079,8 +1073,6 @@
+     global relay_process, relay_username, relay_platform, RELAY_PLAYLIST
+     global relay_public_sequence_offset, relay_public_discontinuity_sequence
+ 
+-    await stop_audio_relay_async(disconnect_clients=disconnect_audio_clients)
+-
+     process = relay_process
+     relay_process = None
+     relay_username = None
+@@ -1090,16 +1082,11 @@
+     relay_public_discontinuity_sequence = None
+     retired_relay_outputs.clear()
+ 
+-    if process is not None and process.poll() is None:
+-        try:
+-            process.terminate()
+-            await asyncio.to_thread(process.wait, timeout=5)
+-        except Exception:
+-            try:
+-                process.kill()
+-                await asyncio.to_thread(process.wait, timeout=5)
+-            except Exception:
+-                pass
++    await stop_audio_relay_async(disconnect_clients=disconnect_audio_clients)
++    try:
++        await terminate_relay_process_async(process)
++    except (OSError, subprocess.TimeoutExpired) as error:
++        print(f"[Relay] FFmpeg shutdown failed: {error}")
+ 
+     if RELAY_DIR.exists():
+         for item in RELAY_DIR.iterdir():
+@@ -2074,16 +2061,26 @@
+         process.wait(timeout=5)
+ 
+ 
+-async def terminate_relay_process_async(process):
+-    """Terminate FFmpeg without blocking the asyncio event loop."""
++async def terminate_relay_process_async(process, timeout=5):
++    """Reap FFmpeg independently of the shared API worker queue."""
+     if process is None or process.poll() is not None:
+         return
+-    try:
+-        process.terminate()
+-        await asyncio.to_thread(process.wait, timeout=5)
+-    except Exception:
+-        process.kill()
+-        await asyncio.to_thread(process.wait, timeout=5)
++
++    loop = asyncio.get_running_loop()
++    for send_signal in (process.terminate, process.kill):
++        try:
++            send_signal()
++        except ProcessLookupError:
++            pass
++        deadline = loop.time() + timeout
++        while process.poll() is None:
++            remaining = deadline - loop.time()
++            if remaining <= 0:
++                break
++            await asyncio.sleep(min(0.1, remaining))
++        if process.poll() is not None:
++            return
++    raise subprocess.TimeoutExpired("FFmpeg shutdown", 2 * timeout)
+ 
+ 
+ def relay_output_files(playlist):

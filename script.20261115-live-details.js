@@ -1108,6 +1108,7 @@ document.addEventListener("DOMContentLoaded", function () {
       let liveGenreRefreshDeadline = Date.now() + (LIVE_GENRE_REFRESH_SECONDS * 1000);
       let liveGenreCountdownTimer = null;
       let liveDjRequestController = null;
+      let liveDjDetailsPending = false;
       let nativePlaybackRecoveryTimer = null;
       let manualDJStreamFailureHandled = false;
 
@@ -3933,18 +3934,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
         liveDjRequestController = new AbortController();
 
+        const controller = liveDjRequestController;
+        liveDjDetailsPending = true;
+        const detailsTimeout = window.setTimeout(() => controller.abort(), 20000);
+        const matchRequest = fetch(getFreshUrl("https://api.radiorrr.com/api/genre-match"), {
+          cache: "no-store",
+          signal: controller.signal
+        }).then(response => response.ok ? response.json() : null).catch(() => null);
+
         try {
           // /api/live is the single platform-neutral source for the station
           // relay, all live DJs and the complete DJ catalogue.
           const response = await fetch(
-            getFreshUrl("https://api.radiorrr.com/api/live"),
+            getFreshUrl("https://api.radiorrr.com/api/live?include_learned=false"),
             {
               cache: "no-store",
               headers: {
                 "Cache-Control": "no-cache",
                 "Pragma": "no-cache"
               },
-              signal: liveDjRequestController.signal
+              signal: controller.signal
             }
           );
 
@@ -3958,61 +3967,8 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
           }
 
-          // Stage 3 exposes the same ranking used by the automatic relay
-          // selector. Use it only as a display/monitoring signal here.
-          // If the endpoint is temporarily unavailable, the DJ cards still
-          // render normally without scores.
-          let genreMatchData = null;
-          try {
-            const matchResponse = await fetch(
-              getFreshUrl("https://api.radiorrr.com/api/genre-match"),
-              {
-                cache: "no-store",
-                headers: {
-                  "Cache-Control": "no-cache",
-                  "Pragma": "no-cache"
-                },
-                signal: liveDjRequestController.signal
-              }
-            );
+          const live = Array.isArray(data.live) ? data.live : [];
 
-            if (matchResponse.ok) {
-              genreMatchData = await matchResponse.json();
-            }
-          } catch (matchError) {
-            if (matchError && matchError.name === "AbortError") {
-              return;
-            }
-            console.warn("Radio RRR genre-match display unavailable:", matchError);
-          }
-
-          const live = Array.isArray(data.live)
-            ? data.live
-            : [];
-
-          currentLiveMatchScores = {};
-          if (
-            genreMatchData &&
-            Array.isArray(genreMatchData.ranked)
-          ) {
-            genreMatchData.ranked.forEach(item => {
-              const username = String(item.username || "")
-                .replace(/^@/, "")
-                .trim()
-                .toLowerCase();
-              const platform = String(item.platform || "TikTok")
-                .trim()
-                .toLowerCase() || "tiktok";
-              const key = username ? platform + ":" + username : "";
-
-              if (!key) return;
-
-              const score = Number(item.score);
-              if (Number.isFinite(score)) {
-                currentLiveMatchScores[key] = score;
-              }
-            });
-          }
           const favourites =
             Array.isArray(data.favourites)
               ? data.favourites
@@ -4189,22 +4145,12 @@ document.addEventListener("DOMContentLoaded", function () {
             : "";
           const hasRelay = Boolean(selectedFeaturedDj && featuredIdentity);
 
-          await updateLiveGenresDetected(
+          void updateLiveGenresDetected(
             aiGenre,
             featuredIdentity,
             routerIdentity,
             selectedFeaturedDj && selectedFeaturedDj.platform
           );
-
-          // A newer 30-second refresh may have completed while this request was
-          // waiting for /api/ai-genre. Never let an older refresh clear and
-          // repaint the LIVE/DISCOVER area with stale DJ/relay data.
-          if (requestId !== liveDjRequestId) return;
-
-          // Do not collapse the LIVE/DISCOVER area while waiting for the
-          // detector request above. Rebuild only after the async genre refresh
-          // has completed so the browser never sees a temporarily short page.
-          liveDjsList.innerHTML = "";
 
           if (hasRelay) {
             updateLiveDjGenres(selectedFeaturedDj);
@@ -4221,6 +4167,9 @@ document.addEventListener("DOMContentLoaded", function () {
             otherLiveDJs.unshift(routedDj);
           }
 
+          liveDjsList.innerHTML = "";
+          const secondaryCards = [];
+          let sortSecondaryCards = () => {};
           if (otherLiveDJs.length) {
             const otherLiveHeader = document.createElement("div");
             otherLiveHeader.className = "rrr-other-live-djs-header";
@@ -4256,7 +4205,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Queue secondary LIVE DJs by PROGRAM MATCH score.
             // Highest score renders first, ready to take over next.
-            secondaryLiveDJs.sort((a, b) => {
+            const compareDJs = (a, b) => {
               const aKey = getDJMatchKey(a);
               const bKey = getDJMatchKey(b);
 
@@ -4279,16 +4228,20 @@ document.addEventListener("DOMContentLoaded", function () {
               );
 
               return aName.localeCompare(bName);
-            });
+            };
 
-            secondaryLiveDJs.forEach(dj => {
-              appendDjCard(
-                dj,
-                true,
-                featuredIdentity,
-                true
-              );
+            secondaryLiveDJs.sort(compareDJs).forEach(dj => {
+              appendDjCard(dj, true, featuredIdentity, true);
+              secondaryCards.push({ dj, card: liveDjsList.lastElementChild });
             });
+            sortSecondaryCards = () => {
+              secondaryCards.sort((a, b) => compareDJs(a.dj, b.dj));
+              secondaryCards.forEach(({ dj, card }) => {
+                const score = currentLiveMatchScores[getDJMatchKey(dj)];
+                updateLiveCardMatchScore(card, score);
+                liveDjsList.appendChild(card);
+              });
+            };
           } else if (!hasRelay) {
             const emptyLive = document.createElement("div");
             emptyLive.className = "live-empty";
@@ -4302,6 +4255,21 @@ document.addEventListener("DOMContentLoaded", function () {
           // They are available through the searchable DISCOVER DJs section below.
           await renderDjDiscovery(uniqueFavouriteDJs, uniqueLiveDJs);
 
+          // Ranking is optional. Apply it only to the lineup that requested it.
+          void matchRequest.then(genreMatchData => {
+            if (!Array.isArray(genreMatchData?.ranked) || requestId !== liveDjRequestId) return;
+            const scores = {};
+            genreMatchData.ranked.forEach(item => {
+              const key = getDJMatchKey(item);
+              const score = Number(item.score);
+              if (liveKeys.has(key) && Number.isFinite(score)) scores[key] = score;
+            });
+            currentLiveMatchScores = scores;
+            updateMainDJMatchScore(currentFeaturedDJ);
+            sortSecondaryCards();
+            renderDjDiscoveryResults();
+          });
+
           // A Custom Program keeps re-evaluating as the 30-second live refresh
           // brings in fresh genre detections. This is browser-local only.
           scheduleCustomSoundAutoRetune();
@@ -4313,9 +4281,23 @@ document.addEventListener("DOMContentLoaded", function () {
             liveDjsList.innerHTML =
               '<div class="live-error" style="grid-column:1 / -1;">Could not load the Live DJ list right now.<br><small>The API may be temporarily unavailable, or browser access may need CORS enabled.</small></div>';
           }
+        } finally {
+          window.clearTimeout(detailsTimeout);
+          if (requestId === liveDjRequestId) liveDjDetailsPending = false;
         }
       }
 
+      function updateLiveCardMatchScore(card, score) {
+        const value = Number.isFinite(score) ? Math.max(0, Math.min(100, Math.round(score))) : null;
+        const text = value === null ? "—" : value + "%";
+        const bar = card.querySelector(".dj-secondary-match-bar");
+        const fill = bar.firstElementChild;
+        card.querySelector(".dj-secondary-match-value").textContent = text;
+        bar.setAttribute("aria-label", "Program Match " + text);
+        fill.style.width = (value ?? 0) + "%";
+        fill.className = "dj-secondary-match-fill " +
+          (value >= 50 ? "match-high" : value >= 20 ? "match-mid" : "match-low");
+      }
 
       function appendDjCard(dj, isLive, routerIdentity, moveWatchButton) {
         const name =
@@ -4630,11 +4612,15 @@ document.addEventListener("DOMContentLoaded", function () {
       showRadioFallback();
       loadLiveDJs();
 
-      setInterval(loadLiveDJs, 30 * 1000);
+      function refreshLiveDJDetails() {
+        if (!liveDjDetailsPending) loadLiveDJs();
+      }
+
+      setInterval(refreshLiveDJDetails, 30 * 1000);
 
       document.addEventListener("visibilitychange", function () {
         if (!document.hidden) {
-          loadLiveDJs();
+          refreshLiveDJDetails();
 
           // Returning to the RadioRRR tab must NOT change the user's
           // existing mute/unmute state. Only resume playback if necessary.
@@ -4645,7 +4631,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       window.addEventListener("pageshow", function () {
-        loadLiveDJs();
+        refreshLiveDJDetails();
 
         // pageshow must not re-apply a potentially stale mute state.
         if (liveDjVideo && liveDjVideo.paused) {

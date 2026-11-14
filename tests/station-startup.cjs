@@ -20,6 +20,7 @@ async function run() {
     for (const scenario of ['missing relay', 'slow catalogue', 'slow ranking']) {
       const page = await browser.newPage();
       let relay = scenario === 'slow ranking' ? {username:'fixture', name:'Fixture DJ', platform:'TikTok'} : null;
+      const next = {username:'queued', name:'Queued DJ', platform:'TikTok'};
       let release;
       const gate = new Promise(resolve => { release = resolve; });
       await page.addInitScript(() => {
@@ -51,12 +52,13 @@ async function run() {
         if (url.startsWith(base)) return route.continue();
         if (url.includes('/api/live?') || url.endsWith('/api/live')) {
           if (scenario === 'slow catalogue') await gate;
-          return route.fulfill({json:{relay, live:relay ? [relay] : [], favourites:[]}});
+          return route.fulfill({json:{relay, live:relay ? [relay, next] : [], favourites:[]}});
         }
         if (url.includes('/api/genre-match')) {
           if (scenario === 'slow ranking') await gate;
-          return route.fulfill({json:{ranked:[]}});
+          return route.fulfill({json:{ranked:[{...next, score:82}]}});
         }
+        if (url.includes('/api/ai-genre?')) await gate;
         if (url.includes('api.radiorrr.com')) return route.fulfill({json:{}});
         return route.abort();
       });
@@ -66,12 +68,22 @@ async function run() {
       assert.equal(fixture.attached, 1, `${scenario}: stream starts without metadata`);
       assert.equal(fixture.destroyed, 0);
       assert.match(fixture.urls[0], /^https:\/\/stream\.radiorrr\.com\/api\/live-stream\?/);
+      if (scenario === 'slow ranking') {
+        // Ranking and the selected DJ's detector request are both unresolved.
+        await page.waitForFunction(() =>
+          document.getElementById('randomLiveDjName').textContent.includes('Fixture DJ') &&
+          document.querySelector('.dj-secondary-name')?.textContent === 'Queued DJ',
+          null, {timeout: 5000});
+        assert.equal(await page.locator('.dj-secondary-match-value').textContent(), '—');
+      }
       await page.locator('#liveDjUnmute').click();
       const before = await page.locator('#liveDjVideo').evaluate(v => v.currentTime);
       relay = {username:'fixture', name:'Fixture DJ', platform:'TikTok'};
       release();
       await page.evaluate(() => window.dispatchEvent(new Event('pageshow')));
       await page.waitForFunction(() => document.getElementById('randomLiveDjName').textContent.includes('Fixture DJ'));
+      await page.waitForFunction(() =>
+        document.querySelector('.dj-secondary-match-value')?.textContent === '82%');
       fixture = await page.evaluate(() => window.hlsFixture);
       assert.equal(fixture.attached, 1, 'DJ metadata must keep the shared HLS connection');
       assert.equal(fixture.destroyed, 0);
