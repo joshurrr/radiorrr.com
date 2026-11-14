@@ -78,11 +78,14 @@ async function run() {
       assert.equal(await page.locator('#liveDjVideo').evaluate(v => v.muted), false);
       await page.waitForFunction(t => document.getElementById('liveDjVideo').currentTime > t, before + 0.2);
       // A station handoff updates metadata while the shared feed remains connected.
+      // Simulate the media element falling back to muted during the handoff.
+      await page.locator('#liveDjVideo').evaluate(v => { v.muted = true; });
       relay = {username:'second', name:'Second DJ', platform:'YouTube'};
       await page.evaluate(() => window.dispatchEvent(new Event('pageshow')));
       await page.waitForFunction(() => document.getElementById('randomLiveDjName').textContent.includes('Second DJ'));
       assert.equal(await page.evaluate(() => window.hlsFixture.attached), 1);
       assert.equal(await page.locator('#liveDjVideo').evaluate(v => v.muted), false);
+      assert.equal(await page.locator('#liveDjUnmute').getAttribute('aria-pressed'), 'true');
       relay = null;
       await page.evaluate(() => window.dispatchEvent(new Event('pageshow')));
       await page.waitForTimeout(250);
@@ -94,6 +97,12 @@ async function run() {
       assert.equal(await page.evaluate(() => window.hlsFixture.attached), 1);
       assert.equal(await page.evaluate(() => window.hlsFixture.destroyed), 0);
       assert.equal(await page.locator('#liveDjVideo').evaluate(v => v.muted), false);
+      await page.locator('#liveDjUnmute').click();
+      await page.locator('#liveDjVideo').evaluate(v => {
+        for (const type of ['canplay', 'playing']) v.dispatchEvent(new Event(type));
+      });
+      assert.equal(await page.locator('#liveDjVideo').evaluate(v => v.muted), true,
+        'an explicit mute survives playback recovery');
       console.log(`PASS: ${scenario}; playback advances before metadata, preserves HLS and unmute across metadata, DJ handoff and expired metadata grace`);
       await page.close();
     }

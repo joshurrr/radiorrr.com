@@ -1110,7 +1110,7 @@ window.formspree =
 })();
 </script>
 
-<script src="/script.20261025-playback-start.js"></script>
+<script src="/script.20261115-playback-audio.js"></script>
 
 <script>
 /*
@@ -1522,7 +1522,7 @@ window.formspree =
  * This is deliberately isolated from the DJ/genre code.
  *
  * Goals:
- *  1. Preserve an explicit user unmute across HLS recoveries/restarts.
+ *  1. Keep audio preference handling in the main player.
  *  2. Recover a live HLS player that has genuinely stopped progressing.
  *  3. Never create a second HLS player or a second media element.
  */
@@ -1531,44 +1531,13 @@ window.formspree =
 
   function startHlsPlaybackGuard() {
     const video = document.getElementById("liveDjVideo");
-    const unmuteButton = document.getElementById("liveDjUnmute");
 
     if (!video) return;
 
-    let userHasRequestedAudio = false;
     let lastCurrentTime = video.currentTime || 0;
     let lastProgressAt = Date.now();
     let recoveryInProgress = false;
     let recoveryCount = 0;
-
-    function markUserAudioChoice() {
-      userHasRequestedAudio = video.muted;
-      video.dataset.rrrUserAudio = userHasRequestedAudio ? "1" : "0";
-
-      if (userHasRequestedAudio) {
-        video.muted = false;
-        video.defaultMuted = false;
-      } else {
-        video.muted = true;
-        video.defaultMuted = true;
-      }
-    }
-
-    if (unmuteButton) {
-      /*
-       * Capture phase runs before script.js's normal click handler.
-       * This records the user's intent before any playback/recovery code runs.
-       */
-      unmuteButton.addEventListener("click", function () {
-        // Capture the intent only. Do NOT change video.muted here because
-        // script.js owns the actual toggle in the normal click phase.
-        // Mutating it here made script.js see the opposite state and record
-        // a stale mute preference, which was re-applied when the tab returned.
-        const willUnmute = video.muted;
-        userHasRequestedAudio = willUnmute;
-        video.dataset.rrrUserAudio = willUnmute ? "1" : "0";
-      }, true);
-    }
 
     video.addEventListener("timeupdate", function () {
       if (video.currentTime !== lastCurrentTime) {
@@ -1581,15 +1550,6 @@ window.formspree =
     video.addEventListener("playing", function () {
       lastCurrentTime = video.currentTime || lastCurrentTime;
       lastProgressAt = Date.now();
-
-      /*
-       * If the user explicitly unmuted, playback recovery is not allowed
-       * to silently put the video back into muted state.
-       */
-      if (userHasRequestedAudio) {
-        video.muted = false;
-        video.defaultMuted = false;
-      }
     });
 
     video.addEventListener("pause", function () {
@@ -1598,14 +1558,14 @@ window.formspree =
        * Only restart if the player is still the active visible live player.
        */
       if (
-        userHasRequestedAudio &&
+        video.dataset.rrrUserAudio === "1" &&
         document.visibilityState !== "hidden" &&
         video.src &&
         !recoveryInProgress
       ) {
         setTimeout(function () {
           if (
-            userHasRequestedAudio &&
+            video.dataset.rrrUserAudio === "1" &&
             video.paused &&
             video.src
           ) {
@@ -1644,10 +1604,6 @@ window.formspree =
       setTimeout(function () {
         recoveryInProgress = false;
 
-        if (userHasRequestedAudio) {
-          video.muted = false;
-          video.defaultMuted = false;
-        }
 
         if (video.paused && video.src) {
           video.play().catch(function () {});
@@ -1694,10 +1650,6 @@ window.formspree =
         return;
       }
 
-      if (userHasRequestedAudio) {
-        video.muted = false;
-        video.defaultMuted = false;
-      }
 
       const stalledFor = Date.now() - lastProgressAt;
 

@@ -1,0 +1,161 @@
+--- a/main.py
++++ b/main.py
+@@ -3743,6 +3743,7 @@
+                     if str(dj.get("platform") or "").casefold() in {"tiktok", "twitch", "youtube"}
+                 ]
+                 now = datetime.now(timezone.utc)
++                missing_grace_expired = False
+ 
+                 # Keep the current relay only while it is both running
+                 # and actually producing fresh HLS output.
+@@ -3777,19 +3778,20 @@
+                             now - relay_missing_since
+                         ).total_seconds()
+ 
+-                        if (
+-                            relay_output_is_healthy(
+-                                RELAY_PLAYLIST,
+-                                RELAY_DIR,
+-                            )
+-                            and missing_for < RELAY_MISSING_GRACE
+-                        ):
+-                            print(
+-                                f"[Relay] @{relay_username} still healthy; "
+-                                f"holding relay "
+-                                f"({int(missing_for)}s/"
+-                                f"{RELAY_MISSING_GRACE}s grace)"
+-                            )
++                        if relay_output_is_healthy(RELAY_PLAYLIST, RELAY_DIR):
++                            missing_grace_expired = missing_for >= RELAY_MISSING_GRACE
++                            if missing_grace_expired:
++                                print(
++                                    f"[Relay] @{relay_username} missing after grace; "
++                                    "keeping healthy HLS on air while seeking a replacement"
++                                )
++                            else:
++                                print(
++                                    f"[Relay] @{relay_username} still healthy; "
++                                    f"holding relay "
++                                    f"({int(missing_for)}s/"
++                                    f"{RELAY_MISSING_GRACE}s grace)"
++                                )
+                         else:
+                             print(
+                                 f"[Relay] @{relay_username} "
+@@ -3806,17 +3808,6 @@
+                         or relay_process.poll() is not None
+                     ):
+                         relay_missing_since = None
+-
+-                    if relay_process is not None and relay_process.poll() is None and current is not None:
+-
+-                        # Continue below with the normal health check.
+-                        pass
+-
+-                    elif not (
+-                        relay_process is not None
+-                        and relay_process.poll() is None
+-                    ):
+-                        pass
+ 
+                     if current is not None and not relay_output_is_healthy(
+                         RELAY_PLAYLIST,
+@@ -3845,6 +3836,7 @@
+                         RELAY_DIR,
+                     )
+                 )
++                relay_needs_replacement = not relay_is_healthy or missing_grace_expired
+ 
+                 selected = False
+                 featured_holds_relay = False
+@@ -3915,7 +3907,7 @@
+                 # replace it merely because the active programme scores another DJ
+                 # higher. It stays in control until a higher-ranked Featured DJ is
+                 # available, it goes offline/unhealthy, or the operator removes it.
+-                if not featured_holds_relay and relay_is_healthy:
++                if not featured_holds_relay and not relay_needs_replacement:
+                     current_featured_rank = is_featured_identity(
+                         relay_platform or "TikTok", relay_username
+                     )
+@@ -3952,7 +3944,7 @@
+                             candidate,
+                             current_item,
+                             relay_username,
+-                            relay_is_healthy,
++                            not relay_needs_replacement,
+                             relay_platform or "TikTok",
+                             relay_selected_at=stage3_relay_selected_at,
+                             now=decision_time,
+@@ -3985,7 +3977,7 @@
+                                 candidate_platform,
+                                 candidate_username,
+                             )
+-                            if not relay_is_healthy:
++                            if relay_needs_replacement:
+                                 # Dead air is worse than a low programme score.
+                                 # The 3-win confirmation protects a healthy relay
+                                 # from churn; it must not delay station startup.
+@@ -4050,10 +4042,11 @@
+                         stage3_candidate_wins = 0
+                         print(f"[Stage 3] Decision error: {error}")
+ 
+-                # Safety fallback: if there is no active healthy relay,
+-                # find any live DJ whose stream can actually be relayed.
++                # Safety fallback can also replace a missing DJ after grace.
++                # In that case, validate beside the healthy on-air relay.
+                 if not selected and (
+-                    relay_process is None
++                    missing_grace_expired
++                    or relay_process is None
+                     or relay_process.poll() is not None
+                     or not relay_output_is_healthy(
+                         RELAY_PLAYLIST,
+@@ -4088,23 +4081,22 @@
+                                 platform,
+                             )
+ 
+-                            await stop_relay_async()
+-                            process, playlist = start_relay(
+-                                stream_info,
+-                                username,
+-                            )
+-
+-                            await wait_for_relay_ready(
+-                                process,
+-                                playlist,
+-                                RELAY_DIR,
+-                                timeout=15,
+-                            )
+-
+-                            relay_username = username
+-                            relay_platform = platform
++                            if missing_grace_expired:
++                                await validate_and_promote_relay(
++                                    stream_info, username, platform,
++                                )
++                            else:
++                                await stop_relay_async()
++                                process, playlist = start_relay(stream_info, username)
++                                await wait_for_relay_ready(
++                                    process, playlist, RELAY_DIR, timeout=15,
++                                )
++                                relay_username = username
++                                relay_platform = platform
++                                start_audio_relay()
++
++                            relay_missing_since = None
+                             stage3_relay_selected_at = datetime.now(timezone.utc)
+-                            start_audio_relay()
+ 
+                             print(
+                                 f"[Relay] Safety fallback validated "
+@@ -4127,7 +4119,8 @@
+                                 )
+                             )
+ 
+-                            await stop_relay_async()
++                            if not missing_grace_expired:
++                                await stop_relay_async()
+ 
+                 if not selected and (
+                     relay_process is None

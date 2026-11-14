@@ -5,3 +5,4 @@ main.py
 *.db
 *.sqlite
 tiktok_session.json
+/.runtime/

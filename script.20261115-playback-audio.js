@@ -1050,11 +1050,6 @@ document.addEventListener("DOMContentLoaded", function () {
       function navigateWithPlayback(updateLocation) {
         // Keep the actual player and current mute choice through tabs, tools,
         // and browser history. A document reload would destroy both players.
-        if (liveDjVideo) {
-          userRequestedAudio = !liveDjVideo.muted;
-          liveDjVideo.dataset.rrrUserAudio = userRequestedAudio ? "1" : "0";
-          liveDjVideo.defaultMuted = !userRequestedAudio;
-        }
         if (updateLocation) updateLocation();
         applyLocationState();
         if (liveDjVideo) {
@@ -2014,7 +2009,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const streamUrl = activeLiveStreamUrl;
         const streamKey = activeLiveStreamKey;
-        const preserveAudio = userRequestedAudio;
 
         console.warn(
           "Radio RRR: live player stopped advancing; rebuilding HLS at the live edge"
@@ -2034,8 +2028,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
           liveDjVideo.autoplay = true;
           liveDjVideo.playsInline = true;
-          liveDjVideo.muted = !preserveAudio;
-          liveDjVideo.defaultMuted = !preserveAudio;
+          liveDjVideo.muted = !userRequestedAudio;
+          liveDjVideo.defaultMuted = !userRequestedAudio;
           updateLiveDjMuteButton();
 
           if (window.Hls && Hls.isSupported()) {
@@ -2064,11 +2058,7 @@ document.addEventListener("DOMContentLoaded", function () {
           // If Stage 3 changed the relay while recovery was underway, normal
           // relay-selection code owns the newly attached stream.
           if (activeLiveStreamKey === streamKey) {
-            userRequestedAudio = preserveAudio;
-            liveDjVideo.muted = !preserveAudio;
-            liveDjVideo.defaultMuted = !preserveAudio;
-            updateLiveDjMuteButton();
-            liveDjVideo.play().catch(() => {});
+            resumeLivePlayback();
           }
 
           livePlaybackLastTime = Number(liveDjVideo.currentTime) || 0;
@@ -2098,25 +2088,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
       function showLiveDjPlayer(dj) {
         if (!liveDjVideo || !randomLiveDj) return;
-
-        // Preserve the listener's explicit audio choice across automatic DJ
-        // handoffs. HLS/browser recovery can temporarily flip video.muted, so
-        // prefer the persisted user choice instead of treating that transient
-        // muted state as a new request from the listener.
-        if (activeLiveStreamKey && !livePlaybackHardRecoveryInProgress) {
-          const savedAudioChoice = liveDjVideo.dataset.rrrUserAudio;
-          if (savedAudioChoice === "1") {
-            userRequestedAudio = true;
-          } else if (savedAudioChoice === "0") {
-            userRequestedAudio = false;
-          } else {
-            // No saved preference yet: keep the explicit in-memory choice.
-            // Never infer user intent from video.muted here because HLS/browser
-            // recovery can temporarily force the media element back to muted.
-          }
-          liveDjVideo.dataset.rrrUserAudio = userRequestedAudio ? "1" : "0";
-          liveDjVideo.defaultMuted = !userRequestedAudio;
-        }
 
         const username = getDJUsername(dj);
         const name = dj.name || dj.username || dj.display_name || "LIVE DJ";
@@ -2157,7 +2128,12 @@ document.addEventListener("DOMContentLoaded", function () {
         // Metadata refreshes and station DJ handoffs share the same HLS feed.
         // Keep its connection, buffer and the listener's audio choice intact.
         if (activeLiveStreamUrl === streamUrl &&
-            (window.radioRrrHls || liveDjVideo.getAttribute("src"))) return;
+            (window.radioRrrHls || liveDjVideo.getAttribute("src"))) {
+          liveDjVideo.defaultMuted = !userRequestedAudio;
+          liveDjVideo.muted = !userRequestedAudio;
+          updateLiveDjMuteButton();
+          return;
+        }
         activeLiveStreamUrl = streamUrl;
         livePlaybackLastTime = Number(liveDjVideo.currentTime) || 0;
         livePlaybackLastProgressAt = Date.now();

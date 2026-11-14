@@ -1,0 +1,80 @@
+--- a/app/main.py
++++ b/app/main.py
+@@ -29,6 +29,7 @@
+ from fastapi.middleware.cors import CORSMiddleware
+ from starlette.background import BackgroundTask
+ from TikTokLive import TikTokLiveClient
++from tiktok_liveness import request_tiktok_is_live
+ from radio_rrr_genre_matcher import rank_live_djs
+ 
+ 
+@@ -6342,39 +6343,11 @@
+         conn.close()
+ 
+ 
+-TIKTOK_LIVE_REQUEST_TIMEOUT = 25
+-_tiktok_live_request_lock = threading.Lock()
+-
+-
+-def _run_tiktok_is_live_check(username):
+-    """
+-    Run one TikTokLive liveness check on a private asyncio loop.
+-
+-    TikTokLiveClient.is_live() is async, but observed production behaviour shows
+-    that parts of its request path can block the Uvicorn/FastAPI event loop for
+-    several seconds. This helper is called through asyncio.to_thread() so any
+-    blocking work inside TikTokLive cannot stall HTTP/HLS servicing.
+-    """
+-    async def _check():
+-        client = TikTokLiveClient(
+-            unique_id=f"@{username}"
+-        )
+-        return await client.is_live()
+-
+-    # A timed-out to_thread call can outlive its awaiting coroutine.
+-    # Serialize actual TikTok requests so timeouts never cause request bursts.
+-    with _tiktok_live_request_lock:
+-        return asyncio.run(_check())
+-
+-
+ async def check_tiktok_dj(username, name, live_url):
+ 
+     try:
+ 
+-        is_live = await asyncio.wait_for(
+-            asyncio.to_thread(_run_tiktok_is_live_check, username),
+-            timeout=TIKTOK_LIVE_REQUEST_TIMEOUT,
+-        )
++        is_live = await request_tiktok_is_live(username)
+ 
+         # Any successful TikTok liveness response proves this account is
+         # currently queryable, so clear prior invalid-account observations.
+@@ -6585,7 +6558,8 @@
+         # API, JSON/parser, or TikTokLive transport error is fundamentally
+         # different from a confirmed offline response.
+         print(
+-            f"[TikTok] CHECK ERROR @{username}: {e}"
++            f"[TikTok] CHECK ERROR @{username}: "
++            f"{getattr(e, 'diagnostic', repr(e))}"
+         )
+ 
+         _defer_tiktok_transient_error(
+@@ -9368,7 +9342,7 @@
+     started_at = None
+ 
+     if platform_key == 'tiktok':
+-        is_live = bool(await asyncio.to_thread(_run_tiktok_is_live_check, username))
++        is_live = await request_tiktok_is_live(username)
+         _record_tiktok_live_check(username, is_live)
+         invalid_tiktok_account_counts.pop(username, None)
+         live_url = live_url or f'https://www.tiktok.com/@{username}/live'
+@@ -9451,7 +9425,8 @@
+         print(f'[New DJ] CHECK TIMED OUT: {platform} @{username}; scheduled monitoring will retry')
+         return {'status': 'error', 'live': None, 'message': 'Live check timed out. Scheduled monitoring will retry.'}
+     except Exception as error:
+-        print(f'[New DJ] CHECK ERROR: {platform} @{username}: {error}')
++        detail = getattr(error, "diagnostic", str(error))
++        print(f'[New DJ] CHECK ERROR: {platform} @{username}: {detail}')
+         return {'status': 'error', 'live': None, 'message': 'Could not check live status. Scheduled monitoring will retry.'}
+ 
+ 
